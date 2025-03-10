@@ -70,7 +70,7 @@ export default function Navbar() {
             {/* Dropdown เมนู */}
             <div className="dropdown" ref={dropdownRef}> {/* เพิ่ม ref */}
               <ul>
-                <li><a href="/profile">แก้ไขโปรไฟล์</a></li>
+                <li><a href="/profile">แก้ไขโปรไฟล์</a></li
                 {user.role === "customer" && <li><a href="/reservations">ดูรายละเอียดการจอง</a></li>}
                 {user.role === "field_owner" && <li><a href="/register-field">ลงทะเบียนสนาม</a></li>}
                 {user.role === "admin" && <li><a href="/manage-users">จัดการผู้ใช้</a></li>}
