@@ -1,0 +1,152 @@
+nav {
+  z-index: 10;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* จัดให้โลโก้, เมนู และ User อยู่ตรงกลาง */
+  background-color: #edefef;
+  padding: 0px 50px;
+  height: 70px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* ใช้ Flexbox เพื่อจัดวาง 3 ส่วนของ Navbar ให้อยู่ตรงกลาง */
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px; /* กำหนดความกว้างของ Navbar */
+  margin: auto; /* จัดให้ Navbar อยู่กึ่งกลาง */
+}
+
+/* โลโก้ */
+.logo {
+  font-size: 25px;
+  flex: 1; /* ทำให้โลโก้อยู่ด้านซ้าย */
+  text-align: left;
+}
+
+/* เมนูหลัก */
+.nav-menu {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  justify-content: center;
+  flex: 2; /* จัดเมนูให้อยู่ตรงกลาง */
+}
+
+.nav-menu li a {
+  color: black;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+/* ส่วนของผู้ใช้ */
+.user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1; /* ทำให้ User อยู่ด้านขวา */
+  justify-content: flex-end;
+}
+
+/* ช่องค้นหายืดหดได้ */
+.search-box {
+  padding: 5px;
+  border: none;
+  border-radius: 5px;
+  width: 100px;
+  transition: width 0.3s ease-in-out;
+}
+
+.search-box:focus {
+  width: 200px;
+}
+
+/* รูปโปรไฟล์ */
+.user-profile {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  background: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Dropdown เมนู */
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  padding: 5px 0;
+  z-index: 999;
+}
+
+.user-profile.active .dropdown {
+  display: block;
+}
+
+/* ✅ Responsive สำหรับมือถือ */
+@media screen and (max-width: 1024px) {
+  nav {
+    padding: 0 20px;
+  }
+
+  .navbar-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logo {
+    text-align: center;
+    flex: unset;
+  }
+
+  /* แสดงเมนูหลักเมื่อกดปุ่มแฮมเบอร์เกอร์ */
+  .nav-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background-color: #edefef;
+    text-align: center;
+    padding: 10px 0;
+  }
+
+  .nav-menu.active {
+    display: flex;
+  }
+
+  .user {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .search-box {
+    width: 80px;
+  }
+
+  .search-box:focus {
+    width: 150px;
+  }
+}
