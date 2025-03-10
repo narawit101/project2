@@ -1,0 +1,209 @@
+.admin-manager-container {
+    width: 95%;
+    max-width: 1200px;
+    margin: 100px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 🔹 หัวข้อใหญ่ */
+  h2 {
+    text-align: center;
+    background: #15803d;
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 22px;
+    font-weight: bold;
+  }
+  
+  /* 🔹 หัวข้อของแต่ละตาราง */
+  h3 {
+    color: #ffffff;
+    background: #15803d;
+    padding: 8px 15px;
+    border-radius: 5px;
+    margin-top: 20px;
+    font-size: 18px;
+  }
+  
+  /* 🔹 ปรับดีไซน์ตาราง */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  th, td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    background: #15803d;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  td {
+    font-size: 15px;
+    color: #333;
+  }
+  
+  /* 🔹 ปรับปุ่มให้สวยขึ้น */
+  button {
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  /* button:hover {
+    transform: scale(1.05);
+  } */
+  
+  .edit-btn {
+    background-color: #facc15;
+    color: black;
+    font-weight: bold;
+    /* border: 1px solid #d97706; */
+  }
+  
+  .delete-btn {
+    background-color: #dc3545;
+    color: white;
+    font-weight: bold;
+    /* border: 1px solid #b91c1c; */
+  }
+  .ProveEdit-btn{
+    margin: 10px;
+    background-color: #facc15;
+    color: black;
+    font-weight: bold;
+    /* border: 1px solid #d97706;  */
+  }
+  .ProveDelete-btn{
+    background-color: #dc3545;
+    color: white;
+    font-weight: bold;
+    /* border: 1px solid #b91c1c; */
+  }
+  
+  /* 🎨 Modal */
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .modal-content h3 {
+    margin-top: 0;
+    color: #15803d;
+    text-align: center;
+  }
+  
+  .modal-content label {
+    display: block;
+    margin-top: 10px;
+  }
+  
+  .modal-content input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .modal-buttons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .save-btn {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .cancel-btn {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  /* 🔹 Responsive สำหรับ Tablet และมือถือ */
+  @media screen and (max-width: 1024px) {
+    .admin-manager-container {
+      width: 100%;
+      margin: 90px auto;
+      padding: 15px;
+    }
+  
+    table {
+      font-size: 14px;
+    }
+  
+    th, td {
+      padding: 8px;
+    }
+  
+    button {
+      font-size: 14px;
+      padding: 6px 10px;
+    }
+  }
+  
+  /* 🔹 Responsive สำหรับมือถือ */
+  @media screen and (max-width: 768px) {
+    .admin-manager-container {
+      width: 100%;
+      margin: 80px auto;
+      padding: 10px;
+    }
+  
+    table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+      border-radius: 5px;
+    }
+  
+    th, td {
+      padding: 6px;
+    }
+  
+    button {
+      font-size: 12px;
+      padding: 5px 8px;
+    }
+  
+    .modal-content {
+      width: 95%;
+    }
+  }
+  
