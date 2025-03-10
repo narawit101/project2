@@ -24,7 +24,7 @@ nav {
   align-items: center;
   justify-content: space-between;
   background-color: #edefef;
-  padding: 0 170px 0 150px;
+  padding: 0px 150px 120px;
   height: 70px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
@@ -124,7 +124,7 @@ ul li a:hover::after {
 .user {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 .user-profile {
   position: relative;

@@ -60,6 +60,17 @@ export default function Navbar() {
 
   return (
     <nav>
+      {/* ปุ่มค้นหาลอย */}
+      <div className="search-container" ref={searchRef}>
+        <button className="search-button" onClick={() => setIsSearchOpen(!isSearchOpen)}>
+          🔍
+        </button>
+        <input 
+          type="text" 
+          placeholder="ค้นหา..." 
+          className={`search-box ${isSearchOpen ? "active" : ""}`} 
+        />
+      </div>
       <a href="/" className="logo">⚽</a>
 
       {/* เมนูหลัก */}
@@ -94,17 +105,7 @@ export default function Navbar() {
           </div>
         ) : (
           <>
-         {/* ปุ่มค้นหาลอย */}
-      <div className="search-container" ref={searchRef}>
-        <button className="search-button" onClick={() => setIsSearchOpen(!isSearchOpen)}>
-          🔍
-        </button>
-        <input 
-          type="text" 
-          placeholder="ค้นหา..." 
-          className={`search-box ${isSearchOpen ? "active" : ""}`} 
-        />
-      </div>
+         
             <a href="/login" className="login">เข้าสู่ระบบ</a>
             <a href="/register" className="register">สมัครสมาชิก</a>
           </>

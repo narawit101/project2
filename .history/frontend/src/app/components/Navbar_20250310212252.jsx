@@ -23,7 +23,7 @@ export default function Navbar() {
       setUser(JSON.parse(storedUser));
     }
   }, []);
-
+  
   useEffect(() => {
     function handleClickOutside(event) {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
@@ -94,8 +94,8 @@ export default function Navbar() {
           </div>
         ) : (
           <>
-         {/* ปุ่มค้นหาลอย */}
-      <div className="search-container" ref={searchRef}>
+          {/* ปุ่มค้นหาลอย */}
+        <div className="search-container">
         <button className="search-button" onClick={() => setIsSearchOpen(!isSearchOpen)}>
           🔍
         </button>
@@ -104,11 +104,12 @@ export default function Navbar() {
           placeholder="ค้นหา..." 
           className={`search-box ${isSearchOpen ? "active" : ""}`} 
         />
-      </div>
+        </div>
             <a href="/login" className="login">เข้าสู่ระบบ</a>
             <a href="/register" className="register">สมัครสมาชิก</a>
           </>
         )}
+
         {/* Hamburger Menu */}
         <div className="hamburger" onClick={toggleMenu}>
           <span className="bar"></span>

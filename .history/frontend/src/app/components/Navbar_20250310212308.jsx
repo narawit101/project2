@@ -109,6 +109,7 @@ export default function Navbar() {
             <a href="/register" className="register">สมัครสมาชิก</a>
           </>
         )}
+
         {/* Hamburger Menu */}
         <div className="hamburger" onClick={toggleMenu}>
           <span className="bar"></span>

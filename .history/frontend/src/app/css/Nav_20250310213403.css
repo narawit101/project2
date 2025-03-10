@@ -124,7 +124,8 @@ ul li a:hover::after {
 .user {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  right: 50;
 }
 .user-profile {
   position: relative;

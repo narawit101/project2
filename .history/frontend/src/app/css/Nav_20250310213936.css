@@ -80,7 +80,7 @@ ul li a:hover::after {
 .search-container {
   position: relative;
   display: flex;
-  align-items: center;
+  /* align-items: center; */
 }
 
 .search-button {

@@ -9,9 +9,9 @@ export default function Navbar() {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const searchRef = useRef(null); // ใช้ ref เพื่อตรวจจับการคลิกข้างนอก
+  
   const dropdownRef = useRef(null);
-  const userProfileRef = useRef(null); 
+  const userProfileRef = useRef(null);  
 
   useEffect(() => {
     // ดึง token และ user จาก localStorage
@@ -22,18 +22,6 @@ export default function Navbar() {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-  }, []);
-
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setIsSearchOpen(false);
-      }
-    }
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
   }, []);
 
   useEffect(() => {
@@ -94,8 +82,8 @@ export default function Navbar() {
           </div>
         ) : (
           <>
-         {/* ปุ่มค้นหาลอย */}
-      <div className="search-container" ref={searchRef}>
+          {/* ปุ่มค้นหาลอย */}
+        <div className="search-container">
         <button className="search-button" onClick={() => setIsSearchOpen(!isSearchOpen)}>
           🔍
         </button>
@@ -104,11 +92,12 @@ export default function Navbar() {
           placeholder="ค้นหา..." 
           className={`search-box ${isSearchOpen ? "active" : ""}`} 
         />
-      </div>
+        </div>
             <a href="/login" className="login">เข้าสู่ระบบ</a>
             <a href="/register" className="register">สมัครสมาชิก</a>
           </>
         )}
+
         {/* Hamburger Menu */}
         <div className="hamburger" onClick={toggleMenu}>
           <span className="bar"></span>
