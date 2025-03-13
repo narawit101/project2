@@ -1,0 +1,141 @@
+/* ตั้งค่าสไตล์หลัก */
+.homepage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f3f4f6;
+  }
+  
+  /* แบนเนอร์แบบเลื่อนอัตโนมัติ */
+  .banner {
+    width: 100%;
+    height: 400px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.5s ease-in-out;
+  }
+  
+  .banner-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 12px;
+    color: white;
+    text-align: center;
+  }
+  
+  .banner-content h1 {
+    font-size: 48px;
+    font-weight: bold;
+  }
+  
+  .banner-content p {
+    font-size: 18px;
+    margin: 10px 0;
+  }
+  
+  /* ปุ่ม */
+  .btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .btn-primary {
+    background-color: #3b82f6;
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background-color: #2563eb;
+  }
+  
+  .btn-secondary {
+    background-color: #10b981;
+    color: white;
+    width: 100%;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #059669;
+  }
+  
+  /* ส่วนของสนามยอดนิยม */
+  .container {
+    max-width: 1200px;
+    width: 100%;
+    padding: 40px 20px;
+  }
+  
+  .section-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  /* การ์ดสนามกีฬา */
+  .card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: 0.3s;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .card-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .card-body {
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .card-body h3 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .card-body p {
+    font-size: 14px;
+    color: #6b7280;
+  }
+  
+  /* Footer */
+  .footer {
+    width: 100%;
+    background: #1f2937;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    margin-top: 40px;
+  }
+  

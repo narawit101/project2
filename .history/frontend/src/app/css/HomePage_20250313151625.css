@@ -1,0 +1,116 @@
+/* ตั้งค่าพื้นหลังให้เป็นสีน้ำเงิน */
+.homepage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #2564eb;
+    padding: 50px 20px;
+    color: white;
+  }
+  
+  /* แบนเนอร์ใหญ่ */
+  .banner-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    width: 100%;
+  }
+  
+  /* ข้อความทางซ้าย */
+  .banner-text {
+    max-width: 50%;
+  }
+  
+  .banner-text h1 {
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .banner-text p {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+  
+  /* ปุ่มดาวน์โหลด */
+  .download-buttons {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .app-store, .google-play {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    background: white;
+    color: black;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+  }
+  
+  .app-store:hover, .google-play:hover {
+    transform: scale(1.05);
+  }
+  
+  .app-store img, .google-play img {
+    width: 24px;
+  }
+  
+  /* รูปโทรศัพท์ทางขวา */
+  .banner-images {
+    position: relative;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .phone-img {
+    width: 180px;
+    position: absolute;
+    transition: transform 0.3s;
+  }
+  
+  .phone1 {
+    top: 0;
+    left: 20px;
+    transform: rotate(-10deg);
+  }
+  
+  .phone2 {
+    top: 20px;
+    right: 20px;
+    transform: rotate(10deg);
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .banner-container {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .banner-text {
+      max-width: 100%;
+    }
+  
+    .download-buttons {
+      justify-content: center;
+    }
+  
+    .banner-images {
+      width: 100%;
+      margin-top: 20px;
+    }
+  
+    .phone-img {
+      width: 140px;
+    }
+  }
+  
