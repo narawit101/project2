@@ -443,7 +443,7 @@ ul li a:hover::after {
   .ullist {
     justify-content: center;
     align-items: center;
-    margin: 100px 100px 100px 120px;
+    margin: 100px 100px 100px 140px;
   }
 
   .logo {
