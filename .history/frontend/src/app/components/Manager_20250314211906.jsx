@@ -8,35 +8,30 @@ export default function AdminManager() {
   const [currentUser, setCurrentUser] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [emailError, setEmailError] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // ✅ เพิ่ม Loading State
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      setCurrentUser(user);
 
-    if (!token || !storedUser) {
-      router.replace("/login"); 
-      return;
+      if (user.role !== "admin") {
+        alert("คุณไม่มีสิทธิ์เข้าถึงหน้านี้!");
+        router.push("/");
+      }
+    } else {
+      alert("กรุณาเข้าสู่ระบบก่อน!");
+      router.push("/login");
     }
-
-    const user = JSON.parse(storedUser);
-    setCurrentUser(user);
-
-    if (user.role !== "admin") {
-      alert("คุณไม่มีสิทธิ์เข้าถึงหน้านี้");
-      router.push("/");
-      
-    }
-
-    setIsLoading(false);
   }, []);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+  
     if (currentUser?.role === "admin") {
-      const token = localStorage.getItem("token");
-
       fetch(`${API_URL}/users`, {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -47,8 +42,6 @@ export default function AdminManager() {
       .catch((error) => console.error("Error fetching users:", error));
     }
   }, [currentUser]);
-
-  if (isLoading) return <p>กำลังโหลด...</p>;
   
 
   const isEmailDuplicate = (email) => {

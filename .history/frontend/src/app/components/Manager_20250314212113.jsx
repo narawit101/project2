@@ -25,18 +25,16 @@ export default function AdminManager() {
     setCurrentUser(user);
 
     if (user.role !== "admin") {
-      alert("คุณไม่มีสิทธิ์เข้าถึงหน้านี้");
-      router.push("/");
-      
+      router.replace("/");
     }
 
     setIsLoading(false);
   }, []);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+  
     if (currentUser?.role === "admin") {
-      const token = localStorage.getItem("token");
-
       fetch(`${API_URL}/users`, {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -47,8 +45,6 @@ export default function AdminManager() {
       .catch((error) => console.error("Error fetching users:", error));
     }
   }, [currentUser]);
-
-  if (isLoading) return <p>กำลังโหลด...</p>;
   
 
   const isEmailDuplicate = (email) => {

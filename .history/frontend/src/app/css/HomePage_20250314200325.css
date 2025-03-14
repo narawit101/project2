@@ -39,14 +39,13 @@
   font-size: 25px;
   margin-left: 40px;
   color: #000000;
-  background: rgba(255, 255, 255, 0);
   margin-bottom: 100px;
 }
 
 .banner-images {
   padding: 10px; 
   margin-right: 85px;
-  left: 80px;
+  left: 60px;
   position: relative;
   width: 100%;
   display: flex;
@@ -56,8 +55,7 @@
 }
 .banner-images img{
   object-fit: cover;
-  width: auto;
-  height: 400px;
+  h
 }
 
 .carousel-img {
@@ -112,7 +110,7 @@
   padding: 10px 20px;
   border-radius: 8px;
   color: var(--text-color);
-  background: rgba(255, 255, 255, 0.822);
+  background-color: #ffffff;
 }
 
 .grid {
@@ -193,12 +191,8 @@
 
   .banner-images {
     margin-right: 85px;
-    left: 90px;
+    left: 70px;
     width: 100%;
-  }
-  .banner-images img{
-    height: 300px;
-    width: auto;
   }
 
   .carousel-img {
@@ -362,8 +356,6 @@
   .homepage {
     margin: 25px 0px 25px 0px;
     padding-top: 30px;
-    padding-left: 10px;
-    padding-right: 10px;
   }
 
   .banner-container {
@@ -388,10 +380,7 @@
   .banner-images {
     width: 100%;
   }
-  .banner-images img{
-    height: 250px;
-    width: auto;
-  }
+
   .carousel-img {
     width: 100%;
     height: 180px;
@@ -447,14 +436,8 @@
     margin-bottom: 4px;
   }
 
-  .banner-images img{
-    height: 190px;
-    width: auto;
-  }
-  .carousel-img {
+  .banner-images {
     width: 100%;
-    height: 180px;
-    object-fit: cover;
   }
 
   .carousel-img {
@@ -513,10 +496,6 @@
 
   .banner-images {
     width: 100%;
-  }
-  .banner-images img{
-    height: 150px;
-    width: auto;
   }
 
   .carousel-img {

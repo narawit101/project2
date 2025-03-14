@@ -25,7 +25,7 @@ export default function AdminManager() {
     setCurrentUser(user);
 
     if (user.role !== "admin") {
-      alert("คุณไม่มีสิทธิ์เข้าถึงหน้านี้");
+      alert("คุณไม่มีสิทธิ์เข้าถึงหน้านี้")
       router.push("/");
       
     }

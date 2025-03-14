@@ -39,7 +39,6 @@
   font-size: 25px;
   margin-left: 40px;
   color: #000000;
-  background: rgba(255, 255, 255, 0);
   margin-bottom: 100px;
 }
 
@@ -112,7 +111,7 @@
   padding: 10px 20px;
   border-radius: 8px;
   color: var(--text-color);
-  background: rgba(255, 255, 255, 0.822);
+  background-color: #ffffff;
 }
 
 .grid {
@@ -362,8 +361,8 @@
   .homepage {
     margin: 25px 0px 25px 0px;
     padding-top: 30px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 
   .banner-container {
@@ -448,7 +447,7 @@
   }
 
   .banner-images img{
-    height: 190px;
+    height: 180px;
     width: auto;
   }
   .carousel-img {

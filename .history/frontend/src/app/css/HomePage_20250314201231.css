@@ -39,7 +39,6 @@
   font-size: 25px;
   margin-left: 40px;
   color: #000000;
-  background: rgba(255, 255, 255, 0);
   margin-bottom: 100px;
 }
 
@@ -112,7 +111,7 @@
   padding: 10px 20px;
   border-radius: 8px;
   color: var(--text-color);
-  background: rgba(255, 255, 255, 0.822);
+  background-color: #ffffff;
 }
 
 .grid {
@@ -362,8 +361,6 @@
   .homepage {
     margin: 25px 0px 25px 0px;
     padding-top: 30px;
-    padding-left: 10px;
-    padding-right: 10px;
   }
 
   .banner-container {
@@ -389,7 +386,7 @@
     width: 100%;
   }
   .banner-images img{
-    height: 250px;
+    height: 200px;
     width: auto;
   }
   .carousel-img {
@@ -447,14 +444,8 @@
     margin-bottom: 4px;
   }
 
-  .banner-images img{
-    height: 190px;
-    width: auto;
-  }
-  .carousel-img {
+  .banner-images {
     width: 100%;
-    height: 180px;
-    object-fit: cover;
   }
 
   .carousel-img {
@@ -513,10 +504,6 @@
 
   .banner-images {
     width: 100%;
-  }
-  .banner-images img{
-    height: 150px;
-    width: auto;
   }
 
   .carousel-img {
