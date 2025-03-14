@@ -1,0 +1,98 @@
+:root {
+  --text-color: #03045E;
+}
+
+.login-container {
+  max-width: 350px;
+  margin: 90px auto;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  text-align: center;
+}
+
+h2 {
+  color: var(--text-color);
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #03045E; /* ✅ เปลี่ยนสีข้อความ Label เป็นน้ำเงินเข้ม */
+  display: block;
+  margin-bottom: 5px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+input:focus {
+  border-color: #03045E; /* ✅ เปลี่ยนเป็นน้ำเงินเข้ม */
+  box-shadow: 0 0 5px rgba(3, 4, 94, 0.5);
+  outline: none;
+}
+
+button {
+  background: #03045E; /* ✅ เปลี่ยนสีปุ่มเป็นน้ำเงินเข้ม */
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #02226C; /* ✅ เปลี่ยนสีปุ่มเมื่อ Hover เป็นน้ำเงินเข้มกว่า */
+}
+
+.welcome-message {
+  background-color: #03045E; /* ✅ เปลี่ยนเป็นน้ำเงินเข้ม */
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 20px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.message {
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.message.error {
+  background-color: #f8d7da;
+  color: #D90429; /* ✅ เปลี่ยนเป็นแดงเข้ม */
+}
+
+.message.success {
+  background-color: #cce5ff; /* ✅ เปลี่ยนเป็นฟ้าอ่อน */
+  color: #03045E; /* ✅ เปลี่ยนสีข้อความเป็นน้ำเงินเข้ม */
+}
+
+.message i {
+  margin-right: 5px;
+}
