@@ -26,7 +26,9 @@ export default function Login() {
     try {
       const response = await fetch(`${API_URL}/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(formData),
         credentials: "include",
       });
@@ -38,13 +40,12 @@ export default function Login() {
         setMessage({ text: data.message || "เกิดข้อผิดพลาด", type: "error" });
         return;
       }
-  
+
       if (data.token) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("expiresAt", data.expiresAt);
-  
-        router.push("/");
+        localStorage.setItem("user", JSON.stringify(data.user)); // เก็บ user เป็น JSON
+        localStorage.setItem("expiresAt", data.exp)
+        router.push("/"); // เปลี่ยนเส้นทางไปหน้าหลัก
       } else {
         console.error("Token is missing from response:", data);
         setMessage({ text: "ไม่สามารถรับ Token ได้ โปรดลองอีกครั้ง", type: "error" });

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import "../css/manager.css";
-
+import { data } from "autoprefixer";
 
 export default function AdminManager() {
   const [users, setUsers] = useState([]);
@@ -49,7 +49,7 @@ export default function AdminManager() {
         headers: { "Authorization": `Bearer ${token}` }
       })
       .then((response) => {
-        if (response.status === 401) { 
+        if (response.status === 401) { // ✅ ถ้า Token หมดอายุ ให้ลบออกและ Redirect
           localStorage.removeItem("token");
           localStorage.removeItem("user");
           localStorage.removeItem("expiresAt");
@@ -62,7 +62,7 @@ export default function AdminManager() {
       .catch((error) => console.error("Error fetching users:", error));
     }
   }, [currentUser]);
-
+  
   if (isLoading) return <p>กำลังโหลด...</p>;
 
   const isEmailDuplicate = (email) => {

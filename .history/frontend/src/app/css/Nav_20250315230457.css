@@ -937,6 +937,8 @@ ul li a:hover::after {
     position: absolute;
     top: 100%;
     margin-top: 5px;
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 220px;
     padding: 5px 20px;
     z-index: 999;

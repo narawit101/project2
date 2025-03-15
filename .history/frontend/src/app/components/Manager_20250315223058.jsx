@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import "../css/manager.css";
-
+import { data } from "autoprefixer";
 
 export default function AdminManager() {
   const [users, setUsers] = useState([]);

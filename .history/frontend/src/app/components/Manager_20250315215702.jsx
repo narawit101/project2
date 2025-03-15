@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import "../css/manager.css";
 
-
 export default function AdminManager() {
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
@@ -18,16 +17,11 @@ export default function AdminManager() {
     const token = localStorage.getItem("token");
     const expiresAt = localStorage.getItem("expiresAt");
 
-    if (
-      !token ||
-      !storedUser ||
-      !expiresAt ||
-      Date.now() > parseInt(expiresAt)
-    ) {
+    if (!token || !storedUser || !expiresAt || Date.now() > parseInt(expiresAt)) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       localStorage.removeItem("expiresAt");
-      router.push("/login");
+      router.push("/login"); 
       return;
     }
 
@@ -35,7 +29,9 @@ export default function AdminManager() {
     setCurrentUser(user);
 
     if (user.role !== "admin") {
+      alert("คุณไม่มีสิทธิ์เข้าถึงหน้านี้");
       router.push("/");
+      
     }
 
     setIsLoading(false);
@@ -44,80 +40,76 @@ export default function AdminManager() {
   useEffect(() => {
     if (currentUser?.role === "admin") {
       const token = localStorage.getItem("token");
-  
+
       fetch(`${API_URL}/users`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      })
-      .then((response) => {
-        if (response.status === 401) { 
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          localStorage.removeItem("expiresAt");
-          router.replace("/login");
-          return;
+        headers: {
+          "Authorization": `Bearer ${token}`
         }
-        return response.json();
       })
+      .then((response) => response.json())
       .then((data) => setUsers(data))
       .catch((error) => console.error("Error fetching users:", error));
     }
   }, [currentUser]);
 
   if (isLoading) return <p>กำลังโหลด...</p>;
+  
 
   const isEmailDuplicate = (email) => {
     return users.some(
       (user) => user.email === email && user.user_id !== selectedUser?.user_id
     );
   };
+  
 
   const handleDelete = async (id) => {
     if (!window.confirm("คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้?")) return;
-
+  
     const token = localStorage.getItem("token");
-
+  
     try {
       const response = await fetch(`${API_URL}/users/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`, 
         },
       });
-
+  
       if (!response.ok) {
         throw new Error("Unauthorized: คุณไม่มีสิทธิ์ลบผู้ใช้นี้");
       }
-
+  
       setUsers(users.filter((user) => user.user_id !== id));
     } catch (error) {
       console.error("Error deleting user:", error);
     }
   };
+  
 
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-
+  
     if (isEmailDuplicate(selectedUser.email)) {
       setEmailError("อีเมลนี้มีการใช้งานแล้ว");
       return;
     }
-
+  
     try {
       const response = await fetch(`${API_URL}/users/${selectedUser.user_id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(selectedUser),
       });
-
+  
       if (!response.ok) {
         throw new Error("Unauthorized: กรุณาล็อกอินใหม่");
       }
-
+  
       setUsers(
         users.map((user) =>
           user.user_id === selectedUser.user_id ? selectedUser : user
@@ -129,6 +121,7 @@ export default function AdminManager() {
       console.error("Error updating user:", error);
     }
   };
+  
 
   const closeModal = () => {
     setSelectedUser(null);

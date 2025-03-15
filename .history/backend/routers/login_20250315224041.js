@@ -30,9 +30,8 @@ router.post("/", async (req, res) => {
         .status(400)
         .json({ message: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" });
     }
-    
-    //session หมดอายุใน 5 ชั้วโมง ต้อง login ใหม่
-    const expiresIn = 60*60*5000; 
+
+    const expiresIn = 60*60*1000;
 
     // **สร้าง JWT Token**
     const token = jwt.sign(
@@ -42,7 +41,7 @@ router.post("/", async (req, res) => {
         role: user.role,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "5h" }
+      { expiresIn: "1h" }
     );
     
     // **ส่ง JWT ไปยัง Client ผ่าน Cookie**

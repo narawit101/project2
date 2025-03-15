@@ -66,21 +66,7 @@ ul li a {
   transition: color 0.3s ease;
 }
 
-.ullist ul li a::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background-color: var(--text-color);
-  border: #0056b3;
-  transition: width 0.3s ease-in-out;
-}
 
-ul li a:hover::after {
-  width: 100%;
-}
 
 .search-container {
   position: relative;
@@ -167,9 +153,9 @@ ul li a:hover::after {
   margin-top: 5px;
   transform: translateX(-50%);
   background: white;
-  border-radius: 18px;
+  border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 350px;
+  width: 200px;
   padding: 5px 20px;
   z-index: 999;
 }
@@ -291,7 +277,7 @@ ul li a:hover::after {
     transition: color 0.3s ease;
   }
 
-  .ullist ul li a::after {
+  ul li a::after {
     content: "";
     position: absolute;
     bottom: 0;
@@ -383,7 +369,10 @@ ul li a:hover::after {
     top: 100%;
     margin-top: 5px;
     left: 0px;
-    width: 300px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 200px;
     padding: 5px 20px;
     z-index: 999;
   }
@@ -469,7 +458,7 @@ ul li a:hover::after {
     transition: color 0.3s ease;
   }
 
-  .ullist ul li a::after {
+  ul li a::after {
     content: "";
     position: absolute;
     bottom: 0;
@@ -568,7 +557,10 @@ ul li a:hover::after {
     top: 100%;
     margin-top: 5px;
     left: 0px;
-    width: 280px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 200px;
     padding: 5px 20px;
     z-index: 999;
   }
@@ -648,7 +640,10 @@ ul li a:hover::after {
     top: 100%;
     margin-top: 5px;
     transform: translateX(-65%);
-    width: 280px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 200px;
     padding: 5px 20px;
     z-index: 999;
   }
@@ -937,7 +932,10 @@ ul li a:hover::after {
     position: absolute;
     top: 100%;
     margin-top: 5px;
-    width: 220px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 200px;
     padding: 5px 20px;
     z-index: 999;
   }

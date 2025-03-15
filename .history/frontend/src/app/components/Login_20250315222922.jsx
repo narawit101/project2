@@ -42,9 +42,9 @@ export default function Login() {
       if (data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("expiresAt", data.expiresAt);
+        localStorage.setItem("expiresAt", data.expiresAt); // ✅ บันทึกเวลา Token หมดอายุ
   
-        router.push("/");
+        router.push("/"); // ✅ เปลี่ยนเส้นทางไปหน้าหลัก
       } else {
         console.error("Token is missing from response:", data);
         setMessage({ text: "ไม่สามารถรับ Token ได้ โปรดลองอีกครั้ง", type: "error" });

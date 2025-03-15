@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import "../css/manager.css";
-
+import { data } from "autoprefixer";
 
 export default function AdminManager() {
   const [users, setUsers] = useState([]);
@@ -44,25 +44,25 @@ export default function AdminManager() {
   useEffect(() => {
     if (currentUser?.role === "admin") {
       const token = localStorage.getItem("token");
-  
+
       fetch(`${API_URL}/users`, {
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
-      .then((response) => {
-        if (response.status === 401) { 
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          localStorage.removeItem("expiresAt");
-          router.replace("/login");
-          return;
-        }
-        return response.json();
-      })
-      .then((data) => setUsers(data))
-      .catch((error) => console.error("Error fetching users:", error));
+        .then((response) => {
+          if (response.status === 401) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            localStorage.removeItem("expiresAt");
+            router.push("/login");
+          }
+          return response.json();
+        })
+        .then((data) => setUsers(data))
+        .catch((error) => console.error("Error fetching users:", error));
     }
   }, [currentUser]);
-
   if (isLoading) return <p>กำลังโหลด...</p>;
 
   const isEmailDuplicate = (email) => {

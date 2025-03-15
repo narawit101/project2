@@ -23,7 +23,7 @@ export default function Navbar() {
     }
     const expiresAt = localStorage.getItem("expiresAt");
 
-    if (!storedToken || !storedUser || !expiresAt || Date.now() > parseInt(expiresAt)) {
+    if (!storedToken || !storedUser || expiresAt || Date.now() > parseInt(expiresAt)){
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       localStorage.removeItem("expiresAt");
@@ -31,7 +31,6 @@ export default function Navbar() {
       setUser(null);
       return;
     }
-  
     setToken(storedToken);
     setUser(JSON.parse(storedUser));
   }, []);

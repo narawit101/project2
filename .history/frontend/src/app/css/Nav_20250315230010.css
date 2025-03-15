@@ -167,7 +167,7 @@ ul li a:hover::after {
   margin-top: 5px;
   transform: translateX(-50%);
   background: white;
-  border-radius: 18px;
+  border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 350px;
   padding: 5px 20px;
@@ -383,7 +383,10 @@ ul li a:hover::after {
     top: 100%;
     margin-top: 5px;
     left: 0px;
-    width: 300px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 200px;
     padding: 5px 20px;
     z-index: 999;
   }
@@ -568,7 +571,10 @@ ul li a:hover::after {
     top: 100%;
     margin-top: 5px;
     left: 0px;
-    width: 280px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 200px;
     padding: 5px 20px;
     z-index: 999;
   }
@@ -648,7 +654,10 @@ ul li a:hover::after {
     top: 100%;
     margin-top: 5px;
     transform: translateX(-65%);
-    width: 280px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 200px;
     padding: 5px 20px;
     z-index: 999;
   }
@@ -937,7 +946,10 @@ ul li a:hover::after {
     position: absolute;
     top: 100%;
     margin-top: 5px;
-    width: 220px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 200px;
     padding: 5px 20px;
     z-index: 999;
   }
