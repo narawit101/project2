@@ -649,17 +649,14 @@ ul li a:hover::after {
   }
 
   .dropdown {
-    display: none;
-    position: absolute;
-    top: 100%;
-    margin-top: 5px;
-    transform: translateX(-50%);
     background: white;
     border-radius: 5px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 200px;
-    padding: 5px 20px;
-    z-index: 999;
+    margin-top: 10px;
+    transform: translateX(-50%);
+    width: 150px;
+    z-index: 9999;
+    border-radius: 10px;
   }
 
   .dropdown ul {
