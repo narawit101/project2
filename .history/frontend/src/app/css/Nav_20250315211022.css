@@ -941,11 +941,11 @@ ul li a:hover::after {
     padding: 12px 0;
   }
   .dropdown {
-    transform: translateX(-50%);
     display: none;
     position: absolute;
     top: 100%;
     margin-top: 5px;
+    left: 0px;
     background: white;
     border-radius: 5px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
