@@ -1,11 +1,12 @@
-import { Kanit } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const kanitFont = Kanit({
-  variable: "--font-kanit",
-  subsets: ["latin", "thai"],
-  weight: ["300", "400", "600"],
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
 });
+
+
 
 export const metadata = {
   title: "แพลตฟอร์มจองสนามกีฬาออนไลน์",
@@ -15,7 +16,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${kanitFont.variable} antialiased`}>{children}</body>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        {children}
+      </body>
     </html>
   );
 }

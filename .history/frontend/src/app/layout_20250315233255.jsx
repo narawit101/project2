@@ -1,10 +1,10 @@
-import { Kanit } from "next/font/google";
+import { Kanit } from "next/font/google"; 
 import "./globals.css";
 
 const kanitFont = Kanit({
   variable: "--font-kanit",
   subsets: ["latin", "thai"],
-  weight: ["300", "400", "600"],
+  weight: ["300", "400", "600"], // เลือกน้ำหนักที่ต้องการ
 });
 
 export const metadata = {
@@ -15,7 +15,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${kanitFont.variable} antialiased`}>{children}</body>
+     <body className={`${kanitFont.variable} antialiased`}>
+        {children}
+      </body>
     </html>
   );
 }

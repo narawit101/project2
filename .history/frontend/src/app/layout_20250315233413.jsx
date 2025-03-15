@@ -4,7 +4,7 @@ import "./globals.css";
 const kanitFont = Kanit({
   variable: "--font-kanit",
   subsets: ["latin", "thai"],
-  weight: ["300", "400", "600"],
+  weight: [`100`, `200`, `300`, `400`, `500`, `600`, `700`, `800`, `900`], // เลือกน้ำหนักที่ต้องการ
 });
 
 export const metadata = {
