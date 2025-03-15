@@ -617,12 +617,12 @@ ul li a:hover::after {
     padding: 0 20px 0 20px;
   }
 
-  .ullist ul {
+  ul {
     display: none;
     flex-direction: column;
     position: absolute;
     top: 70px;
-    left: 0;
+    /* left: 0; */
     width: 100%;
     background-color: #edefef;
     text-align: center;
@@ -660,7 +660,6 @@ ul li a:hover::after {
   }
 
   .dropdown ul {
-    /* position: absolute; */
     list-style: none;
     padding: 0;
     margin: 0;

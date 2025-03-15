@@ -617,7 +617,7 @@ ul li a:hover::after {
     padding: 0 20px 0 20px;
   }
 
-  .ullist ul {
+  ul {
     display: none;
     flex-direction: column;
     position: absolute;
