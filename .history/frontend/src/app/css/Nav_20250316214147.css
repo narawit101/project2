@@ -489,42 +489,43 @@ ul li a:hover::before {
     padding-bottom: 3px;
   }
 
-  ul {
-    display: flex;
-    gap: 20px;
-    list-style: none;
-  }
+ ul {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
 
-  ul li a {
-    text-decoration: none;
-    color: var(--text-color); 
-    position: relative;
-    transition: color 0.3s ease;
-  }
+ul li a {
+  text-decoration: none;
+  color: var(--text-color); 
+  font-size: 20px;
+  position: relative;
+  transition: color 0.3s ease;
+}
 
-  .ullist ul li a::after,
-  .ullist ul li a::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: var(--text-color); 
-    transition: width 0.3s ease-in-out;
-  }
-  
-  ul li a::before {
-    top: -5px; 
-  }
-  
-  ul li a::after {
-    bottom: -5px; 
-  }
-  
-  ul li a:hover::after,
-  ul li a:hover::before {
-    width: 100%;
-  }
+.ullist ul li a::after,
+.ullist ul li a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--text-color); 
+  transition: width 0.3s ease-in-out;
+}
+
+ul li a::before {
+  top: -5px; 
+}
+
+ul li a::after {
+  bottom: -5px; 
+}
+
+ul li a:hover::after,
+ul li a:hover::before {
+  width: 100%;
+}
 
   .search-container {
     position: relative;
@@ -664,30 +665,6 @@ ul li a:hover::before {
     text-align: center;
     padding: 10px 0;
     z-index: 10;
-  }
-  
-  .ullist ul li a::after,
-  .ullist ul li a::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: var(--text-color); 
-    transition: width 0.3s ease-in-out;
-  }
-  
-  ul li a::before {
-    top: -5px; 
-  }
-  
-  ul li a::after {
-    bottom: -5px; 
-  }
-  
-  ul li a:hover::after,
-  ul li a:hover::before {
-    width: 100%;
   }
 
   ul.active {

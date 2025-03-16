@@ -682,7 +682,7 @@ ul li a:hover::before {
   }
   
   ul li a::after {
-    bottom: -5px; 
+    bottom: -10px; 
   }
   
   ul li a:hover::after,

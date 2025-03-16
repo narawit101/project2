@@ -665,7 +665,6 @@ ul li a:hover::before {
     padding: 10px 0;
     z-index: 10;
   }
-  
   .ullist ul li a::after,
   .ullist ul li a::before {
     content: "";

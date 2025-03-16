@@ -502,27 +502,18 @@ ul li a:hover::before {
     transition: color 0.3s ease;
   }
 
-  .ullist ul li a::after,
-  .ullist ul li a::before {
+  .ullist ul li a::after {
     content: "";
     position: absolute;
+    bottom: 0;
     left: 0;
     width: 0;
     height: 2px;
-    background-color: var(--text-color); 
+    background-color: var(--text-color);
     transition: width 0.3s ease-in-out;
   }
-  
-  ul li a::before {
-    top: -5px; 
-  }
-  
-  ul li a::after {
-    bottom: -5px; 
-  }
-  
-  ul li a:hover::after,
-  ul li a:hover::before {
+
+  ul li a:hover::after {
     width: 100%;
   }
 
@@ -665,31 +656,28 @@ ul li a:hover::before {
     padding: 10px 0;
     z-index: 10;
   }
-  
-  .ullist ul li a::after,
-  .ullist ul li a::before {
+
+  ul li a {
+    text-decoration: none;
+    color: var(--text-color); 
+    position: relative;
+    transition: color 0.3s ease;
+  }
+
+  .ullist ul li a::after {
     content: "";
     position: absolute;
+    bottom: 0;
     left: 0;
     width: 0;
     height: 2px;
-    background-color: var(--text-color); 
+    background-color: var(--text-color);
     transition: width 0.3s ease-in-out;
   }
-  
-  ul li a::before {
-    top: -5px; 
-  }
-  
-  ul li a::after {
-    bottom: -5px; 
-  }
-  
-  ul li a:hover::after,
-  ul li a:hover::before {
+
+  ul li a:hover::after {
     width: 100%;
   }
-
   ul.active {
     display: flex;
   }

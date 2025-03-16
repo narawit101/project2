@@ -153,7 +153,7 @@
   max-width: 500px; 
   height: 300px;
   object-fit: cover;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.421); 
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1); 
 }
 
 .card-body {

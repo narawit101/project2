@@ -494,14 +494,15 @@ ul li a:hover::before {
     gap: 20px;
     list-style: none;
   }
-
+  
   ul li a {
     text-decoration: none;
     color: var(--text-color); 
+    font-size: 20px;
     position: relative;
     transition: color 0.3s ease;
   }
-
+  
   .ullist ul li a::after,
   .ullist ul li a::before {
     content: "";
@@ -665,6 +666,20 @@ ul li a:hover::before {
     padding: 10px 0;
     z-index: 10;
   }
+
+  ul {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+  }
+  
+  ul li a {
+    text-decoration: none;
+    color: var(--text-color); 
+    font-size: 20px;
+    position: relative;
+    transition: color 0.3s ease;
+  }
   
   .ullist ul li a::after,
   .ullist ul li a::before {
@@ -688,10 +703,6 @@ ul li a:hover::before {
   ul li a:hover::after,
   ul li a:hover::before {
     width: 100%;
-  }
-
-  ul.active {
-    display: flex;
   }
 
   .hamburger {
