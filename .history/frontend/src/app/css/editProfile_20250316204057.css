@@ -68,7 +68,7 @@
   }
   
   .change-password-link:hover {
-    background-color: #0003b3;
+    background-color: var(--text-color);
   }
   
   .change-password-link:active {

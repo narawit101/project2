@@ -13,7 +13,7 @@
   h2 {
     text-align: center;
     background: white;
-    color: var(--text-color);
+    color: #00296b;
     padding: 12px;
     border-radius: 8px;
     font-size: 22px;
@@ -27,7 +27,7 @@
   }
   
   label {
-    color:var(--text-color);
+    color: #00296b;
     font-weight: bold;
     margin: 12px 2px 0px;
   }
@@ -57,7 +57,7 @@
   .change-password-link {
     display: inline-block;
     padding: 10px 20px;
-    background-color: var(--text-color);
+    background-color: #023e8a;
     color: white;
     font-size: 16px;
     text-decoration: none;
@@ -68,7 +68,7 @@
   }
   
   .change-password-link:hover {
-    background-color: #0003b3;
+    background-color: #0056b3;
   }
   
   .change-password-link:active {

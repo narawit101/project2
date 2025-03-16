@@ -670,7 +670,6 @@ ul li a:hover::before {
   ul.active {
     display: flex;
   }
-  
 
   .hamburger {
     display: flex;
