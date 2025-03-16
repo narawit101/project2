@@ -70,7 +70,7 @@
   height: 350px;
   border-radius: 5px;
   cursor: pointer;
-  box-shadow: 0 4px 8px #03055e4d;
+  box-shadow: 0 4px 8px rgba(44, 20, 184, 0.164);
   transition: transform 0.3s;
 }
 
@@ -115,17 +115,14 @@
 
 .section-title {
   font-size: 25px;
-  margin-left: 25px;
+  margin-left: 10px;
   font-weight: bold;
-  padding: 5px 5px;
+  padding: 10px 20px;
+  border-radius: 8px;
   color: var(--text-color);
-  /* border-bottom: 4px solid; */
-  /* border-radius: 8px; */
-  /* border-image: linear-gradient(to right, #1d3d97, #3b5df6); */
-  /* border-image-slice: 1; */
+  /* background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);  */
 }
-
-
 
 
 .grid {

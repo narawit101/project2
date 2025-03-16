@@ -545,7 +545,7 @@ ul li a:hover::before {
   }
 
   .search-box.active {
-    width: 130px;
+    width: 120px;
     opacity: 1;
     border-color: #023E8A;
     background: white;

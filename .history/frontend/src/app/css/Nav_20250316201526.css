@@ -77,14 +77,17 @@ ul li a {
   transition: width 0.3s ease-in-out;
 }
 
+/* เส้นขีดด้านบน */
 ul li a::before {
-  top: -5px; 
+  top: -5px; /* ระยะห่างจากข้อความ */
 }
 
+/* เส้นขีดด้านล่าง */
 ul li a::after {
-  bottom: -5px; 
+  bottom: -5px; /* ระยะห่างจากข้อความ */
 }
 
+/* เพิ่ม effect ตอน hover */
 ul li a:hover::after,
 ul li a:hover::before {
   width: 100%;
@@ -128,7 +131,7 @@ ul li a:hover::before {
 }
 
 .search-box.active {
-  width: 300px;
+  width: 150px;
   opacity: 1;
   border-color: var(--text-color);
   background: white;
@@ -352,7 +355,7 @@ ul li a:hover::before {
   }
 
   .search-box.active {
-    width: 250px;
+    width: 150px;
     opacity: 1;
     border-color: #023E8A;
     background: white;
@@ -426,21 +429,6 @@ ul li a:hover::before {
     color: black;
     display: block;
     width: 100%;
-  }
-}
-@media screen and (max-width: 1180px){
-  .search-box.active {
-    width: 200px;
-  }
-}
-@media screen and (max-width: 1070px){
-  .search-box.active {
-    width: 150px;
-  }
-}
-@media screen and (max-width: 980px){
-  .search-box.active {
-    width: 130px;
   }
 }
 
@@ -545,7 +533,7 @@ ul li a:hover::before {
   }
 
   .search-box.active {
-    width: 130px;
+    width: 150px;
     opacity: 1;
     border-color: #023E8A;
     background: white;
@@ -719,7 +707,7 @@ ul li a:hover::before {
   }
 
   .search-box.active {
-    width: 200px;
+    max-width: 100px;
   }
 }
 
@@ -766,7 +754,7 @@ ul li a:hover::before {
     justify-content: center;
   }
   .search-box.active {
-    max-width: 145px;
+    max-width: 80px;
   }
 
   .user-profile {
@@ -824,7 +812,7 @@ ul li a:hover::before {
     justify-content: center;
   }
   .search-box.active {
-    max-width: 95px;
+    max-width: 80px;
   }
 
   .user-profile {

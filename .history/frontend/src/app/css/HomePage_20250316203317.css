@@ -115,14 +115,14 @@
 
 .section-title {
   font-size: 25px;
-  margin-left: 25px;
+  margin-left: 20px;
   font-weight: bold;
-  padding: 5px 5px;
+  padding: 10px 20px;
+  border-radius: 8px;
   color: var(--text-color);
-  /* border-bottom: 4px solid; */
-  /* border-radius: 8px; */
-  /* border-image: linear-gradient(to right, #1d3d97, #3b5df6); */
-  /* border-image-slice: 1; */
+  border-bottom: 4px solid;
+  border-image: linear-gradient(to right, #1E3A8A, #3b3ef6);
+  border-image-slice: 1;
 }
 
 

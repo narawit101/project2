@@ -66,27 +66,18 @@ ul li a {
   transition: color 0.3s ease;
 }
 
-.ullist ul li a::after,
-.ullist ul li a::before {
+.ullist ul li a::after {
   content: "";
   position: absolute;
+  bottom: -3px; /* ลดลงจากข้อความเล็กน้อย */
   left: 0;
   width: 0;
   height: 2px;
-  background-color: var(--text-color); 
+  background-color: #0056b3; /* เปลี่ยนเป็นสีฟ้า */
   transition: width 0.3s ease-in-out;
 }
 
-ul li a::before {
-  top: -5px; 
-}
-
-ul li a::after {
-  bottom: -5px; 
-}
-
-ul li a:hover::after,
-ul li a:hover::before {
+ul li a:hover::after {
   width: 100%;
 }
 
@@ -128,7 +119,7 @@ ul li a:hover::before {
 }
 
 .search-box.active {
-  width: 300px;
+  width: 150px;
   opacity: 1;
   border-color: var(--text-color);
   background: white;
@@ -352,7 +343,7 @@ ul li a:hover::before {
   }
 
   .search-box.active {
-    width: 250px;
+    width: 150px;
     opacity: 1;
     border-color: #023E8A;
     background: white;
@@ -426,21 +417,6 @@ ul li a:hover::before {
     color: black;
     display: block;
     width: 100%;
-  }
-}
-@media screen and (max-width: 1180px){
-  .search-box.active {
-    width: 200px;
-  }
-}
-@media screen and (max-width: 1070px){
-  .search-box.active {
-    width: 150px;
-  }
-}
-@media screen and (max-width: 980px){
-  .search-box.active {
-    width: 130px;
   }
 }
 
@@ -545,7 +521,7 @@ ul li a:hover::before {
   }
 
   .search-box.active {
-    width: 130px;
+    width: 150px;
     opacity: 1;
     border-color: #023E8A;
     background: white;
@@ -719,7 +695,7 @@ ul li a:hover::before {
   }
 
   .search-box.active {
-    width: 200px;
+    max-width: 100px;
   }
 }
 
@@ -766,7 +742,7 @@ ul li a:hover::before {
     justify-content: center;
   }
   .search-box.active {
-    max-width: 145px;
+    max-width: 80px;
   }
 
   .user-profile {
@@ -824,7 +800,7 @@ ul li a:hover::before {
     justify-content: center;
   }
   .search-box.active {
-    max-width: 95px;
+    max-width: 80px;
   }
 
   .user-profile {

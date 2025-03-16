@@ -435,12 +435,7 @@ ul li a:hover::before {
 }
 @media screen and (max-width: 1070px){
   .search-box.active {
-    width: 150px;
-  }
-}
-@media screen and (max-width: 980px){
-  .search-box.active {
-    width: 130px;
+    width: 160px;
   }
 }
 
@@ -545,7 +540,7 @@ ul li a:hover::before {
   }
 
   .search-box.active {
-    width: 130px;
+    width: 120px;
     opacity: 1;
     border-color: #023E8A;
     background: white;
