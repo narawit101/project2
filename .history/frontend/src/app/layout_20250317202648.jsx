@@ -1,6 +1,6 @@
 import { Kanit } from "next/font/google";
 import "./globals.css";
-import  Footer from "./components/Footer"
+import "./components/Footer"
 
 const kanitFont = Kanit({
   variable: "--font-kanit",
@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${kanitFont.variable} antialiased`}>{children}
-      <Footer></Footer>
+      
       </body>
       
     </html>

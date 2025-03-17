@@ -7,24 +7,24 @@ export default function Footer() {
       <footer className="footer">
         <div className="social-icons">
           <a href="#">
-            <img src="img/fblogo.png" alt="Facebook" />
+            <img src="/" alt="Facebook" />
           </a>
           <a href="#">
-            <img src="img/iglogo.png" alt="Instagram" />
+            <img src="instagram.svg" alt="Instagram" />
           </a>
           <a href="#">
-            <img src="img/xlogo.png" alt="Twitter" />
+            <img src="twitter.svg" alt="Twitter" />
           </a>
           <a href="#">
-            <img src="img/gglogo.png" alt="Google" />
+            <img src="google.svg" alt="Google" />
           </a>
           <a href="#">
-            <img src="img/ytlogo.png" alt="YouTube" />
+            <img src="youtube.svg" alt="YouTube" />
           </a>
         </div>
 
         <p className="copyright">
-          &copy; 2025 แพลตฟอร์มจองสนามกีฬาออนไลน์ | All Rights Reserved
+          Copyright ©2024, Designed by <span>XD</span>
         </p>
       </footer>
     </div>

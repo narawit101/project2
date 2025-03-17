@@ -24,7 +24,7 @@ export default function Footer() {
         </div>
 
         <p className="copyright">
-          &copy; 2025 แพลตฟอร์มจองสนามกีฬาออนไลน์ | All Rights Reserved
+          Copyright ©2025 rights reserved.
         </p>
       </footer>
     </div>

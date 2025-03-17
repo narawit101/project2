@@ -1,6 +1,5 @@
 import { Kanit } from "next/font/google";
 import "./globals.css";
-import  Footer from "./components/Footer"
 
 const kanitFont = Kanit({
   variable: "--font-kanit",
@@ -20,7 +19,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${kanitFont.variable} antialiased`}>{children}
-      <Footer></Footer>
+      <footer className="footer">
+        <p>&copy; 2025 แพลตฟอร์มจองสนามกีฬาออนไลน์ | All Rights Reserved</p>
+      </footer>
       </body>
       
     </html>

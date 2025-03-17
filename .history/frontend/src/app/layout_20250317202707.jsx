@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${kanitFont.variable} antialiased`}>{children}
-      <Footer></Footer>
+      <Foooter></Foooter>
       </body>
       
     </html>

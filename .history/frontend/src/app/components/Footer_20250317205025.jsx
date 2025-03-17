@@ -13,18 +13,18 @@ export default function Footer() {
             <img src="img/iglogo.png" alt="Instagram" />
           </a>
           <a href="#">
-            <img src="img/xlogo.png" alt="Twitter" />
+          <span class="prime--twitter"></span>
           </a>
           <a href="#">
-            <img src="img/gglogo.png" alt="Google" />
+            <img src="google.svg" alt="Google" />
           </a>
           <a href="#">
-            <img src="img/ytlogo.png" alt="YouTube" />
+            <img src="youtube.svg" alt="YouTube" />
           </a>
         </div>
 
         <p className="copyright">
-          &copy; 2025 แพลตฟอร์มจองสนามกีฬาออนไลน์ | All Rights Reserved
+          Copyright ©2024, Designed by <span>XD</span>
         </p>
       </footer>
     </div>

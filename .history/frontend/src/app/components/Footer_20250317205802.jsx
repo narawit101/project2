@@ -23,9 +23,9 @@ export default function Footer() {
           </a>
         </div>
 
-        <p className="copyright">
-          &copy; 2025 แพลตฟอร์มจองสนามกีฬาออนไลน์ | All Rights Reserved
-        </p>
+        <div className="copyright">
+        <p>&copy; 2025 แพลตฟอร์มจองสนามกีฬาออนไลน์ | All Rights Reserved</p>
+        </div>
       </footer>
     </div>
   );
