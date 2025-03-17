@@ -13,7 +13,7 @@
 
 .banner-container {
   position: relative;
-  /* margin-top: 70px; */
+  margin-top: 70px;
   padding: 60px 0px;
   display: flex;
   justify-content: center;
@@ -64,14 +64,18 @@
 
 .banner-text {
   padding: 20px;
-  background: rgba(255, 255, 255, 0.411);
+  background: rgba(255, 255, 255, 0.4); /* สีขาวโปร่งแสง */
   border-radius: 12px;
-  backdrop-filter: blur(2px); 
-  -webkit-backdrop-filter: blur(2px); 
-  max-width: 70%;
+  /* border: 2px solid rgba(255, 255, 255, 0.5); เส้นขอบโปร่งใส */
+  backdrop-filter: blur(2px); /* ทำให้พื้นหลังเบลอ */
+  -webkit-backdrop-filter: blur(2px); /* รองรับ Safari */
+  /* border: 2px solid rgba(255, 255, 255, 0.774); */
+  /* box-shadow: 0 0 15px rgba(2, 61, 138, 0.6); */
+  max-width: 80%;
   width: 100%;
   position: relative;
   z-index: 2;
+  /* text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.438); */
 }
 
 .banner-text h1 {
@@ -347,7 +351,6 @@
   }
 
   .banner-container {
-    margin-top: 50px;
     position: relative;
     display: flex;
     justify-content: center;
@@ -429,18 +432,7 @@
     margin-top: 10px;
   }
 
-  .banner-text h1 {
-    font-size: 40px;
-    margin-bottom: 20px;
-    padding: 2px;
-  }
-
-  .banner-text h2 {
-    font-size: 28px;
-    margin-bottom: 20px;
-
-  }
-
+  
   .banner-images {
     width: 100%;
   }
@@ -527,6 +519,7 @@
 
   .banner-text h2 {
     font-size: 26px;
+    margin-bottom: 4px;
   }
 
   .banner-images {
@@ -667,7 +660,7 @@
 
 @media screen and (max-width: 456px) {
   .banner-container {  
-    margin-top: 30px;
+    margin-top: 50px;
     padding-bottom: 40px;
   }
   .banner-video {
@@ -680,22 +673,19 @@
   }
 
   .banner-text h1 {
-    font-size: 26px;
+    font-size: 28px;
     padding: 2px;
   }
 
   .banner-text h2 {
-    font-size: 18px;
+    font-size: 20px;
   }
   .carousel-img {
     margin-top: 0px;
   }
 }
 
-@media screen and (max-width: 394px) {
-  .banner-container{
-    margin-top: 30px;
-  }
+@media screen and (max-width: 384px) {
   .banner-video {
     height: 300px;
   }
@@ -703,6 +693,15 @@
   .banner-text {
     margin-top: 0px;
     padding: 10px;
+  }
+
+  .banner-text h1 {
+    font-size: 28px;
+    padding: 2px;
+  }
+
+  .banner-text h2 {
+    font-size: 20px;
   }
 
   .carousel-img {
@@ -724,6 +723,17 @@
     text-align: center;
     gap: 5px;
     /* margin-top: 40px; */
+  }
+
+  .banner-text h1 {
+    font-size: 28px;
+    margin-bottom: 2px;
+    padding: 2px;
+  }
+
+  .banner-text h2 {
+    font-size: 22px;
+    margin-bottom: 4px;
   }
 
   .banner-images {

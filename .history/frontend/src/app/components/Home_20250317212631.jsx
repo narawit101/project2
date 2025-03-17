@@ -33,12 +33,6 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
-  const scrollToBookingSection = () => {
-    document
-      .querySelector(".section-title")
-      ?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
     <>
       <div className="banner-container">
@@ -49,15 +43,11 @@ export default function HomePage() {
         <div className="banner-text">
           <h1>Sport Booking Online Venue</h1>
           <h2>แพลตฟอร์มจองสนามกีฬาออนไลน์</h2>
-          <div className="btn">
-            <button onClick={scrollToBookingSection}>จองเลย</button>
-          </div>
         </div>
-      </div>
 
-      <div className="homepage">
-        <h2 className="title-notice">ข่าวสาร</h2>
-        <div className="banner-images">
+      </div>
+      
+      <div className="banner-images">
           <img
             src={images[currentIndex].url}
             alt={images[currentIndex].name}
@@ -74,6 +64,7 @@ export default function HomePage() {
             ))}
           </div>
         </div>
+      <div className="homepage">
         <div className="container">
           <div className="section-title-container">
             <h2 className="section-title">สนามที่แนะนำ</h2>

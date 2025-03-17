@@ -527,6 +527,7 @@
 
   .banner-text h2 {
     font-size: 26px;
+    margin-bottom: 4px;
   }
 
   .banner-images {
@@ -685,7 +686,7 @@
   }
 
   .banner-text h2 {
-    font-size: 18px;
+    font-size: 20px;
   }
   .carousel-img {
     margin-top: 0px;
@@ -703,6 +704,15 @@
   .banner-text {
     margin-top: 0px;
     padding: 10px;
+  }
+
+  .banner-text h1 {
+    font-size: 28px;
+    padding: 2px;
+  }
+
+  .banner-text h2 {
+    font-size: 20px;
   }
 
   .carousel-img {
@@ -724,6 +734,17 @@
     text-align: center;
     gap: 5px;
     /* margin-top: 40px; */
+  }
+
+  .banner-text h1 {
+    font-size: 28px;
+    margin-bottom: 2px;
+    padding: 2px;
+  }
+
+  .banner-text h2 {
+    font-size: 22px;
+    margin-bottom: 4px;
   }
 
   .banner-images {

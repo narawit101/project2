@@ -527,6 +527,7 @@
 
   .banner-text h2 {
     font-size: 26px;
+    margin-bottom: 4px;
   }
 
   .banner-images {
@@ -703,6 +704,14 @@
   .banner-text {
     margin-top: 0px;
     padding: 10px;
+  }
+  .banner-text h1 {
+    font-size: 26px;
+    padding: 2px;
+  }
+
+  .banner-text h2 {
+    font-size: 18px;
   }
 
   .carousel-img {

@@ -33,12 +33,6 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
-  const scrollToBookingSection = () => {
-    document
-      .querySelector(".section-title")
-      ?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
     <>
       <div className="banner-container">
@@ -49,9 +43,7 @@ export default function HomePage() {
         <div className="banner-text">
           <h1>Sport Booking Online Venue</h1>
           <h2>แพลตฟอร์มจองสนามกีฬาออนไลน์</h2>
-          <div className="btn">
-            <button onClick={scrollToBookingSection}>จองเลย</button>
-          </div>
+          <button onClick={scrollToBookingSection}>จองเลย</button>
         </div>
       </div>
 
