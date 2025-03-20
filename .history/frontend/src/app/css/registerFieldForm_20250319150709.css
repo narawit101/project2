@@ -1,0 +1,237 @@
+:root {
+  --text-color: #03045e;
+}
+
+.contianer {
+  width: 100%;
+  max-width: 600px;
+  margin: 100px auto;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  text-align: left;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group {
+  margin-bottom: 25px;
+  text-align: left;
+}
+.preview-container {
+  margin: 0px auto 25px auto;
+  text-align: center;
+  border: 2px solid #ddd; 
+  padding: 10px; 
+  max-width: 500px; 
+  overflow: hidden;
+  border-radius: 8px; 
+}
+
+.preview-container img {
+  width: 100%;
+  height: auto; 
+}
+
+.facility-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.input-group-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+.input-group-checkbox input[type="checkbox"] {
+  margin-right: 10px; 
+  width: 20px;
+  height: 20px;
+  accent-color: #333; 
+  cursor: pointer;
+}
+
+.input-group-checkbox input[type="checkbox"]:checked + label {
+  color: var(--text-color); /* เปลี่ยนสีข้อความเมื่อเลือก checkbox */
+}
+
+.input-group-checkbox label:hover {
+  color: #3498db;
+}
+
+label {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-color);
+  display: block;
+  margin-bottom: 5px;
+}
+
+input {
+  margin: 10px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+input:focus {
+  border-color: var(--text-color);
+  box-shadow: 0 0 5px rgba(3, 4, 94, 0.5);
+  outline: none;
+}
+.addbtn {
+  background-color: #28a745;
+  margin: 0px 0px 10px 0px;
+}
+.addbtn:hover {
+  background: #21cd49;
+}
+.delbtn {
+  background-color: red;
+  margin: 0px 0px 10px 10px;
+}
+.delbtn:hover {
+  background-color: rgba(255, 0, 0, 0.774);
+}
+.delevn {
+  background-color: red;
+  margin: 0px 0px 10px 0px;
+}
+.delevn:hover {
+  background-color: rgba(255, 0, 0, 0.774);
+}
+.addsubfield {
+  background-color: #28a745;
+  margin: 10px 0px 20px 0px;
+}
+.addsubfield:hover {
+  background: #21cd49;
+}
+.addfac {
+  background-color: #28a745;
+  margin: 10px 0px 20px 0px;
+}
+.addfac:hover {
+  background: #21cd49;
+}
+.savebtn {
+  background-color: #28a745;
+  margin: 10px 0px 20px 0px;
+}
+.savebtn:hover {
+  background: #21cd49;
+}
+.canbtn {
+  background-color: red;
+  margin: 10px 0px 20px 10px;
+}
+.canbtn:hover {
+  background-color: rgba(255, 0, 0, 0.774);
+}
+.submitbtn{
+    background-color: var(--text-color);
+}
+.submitbtn:hover {
+  background-color: #02226c;
+  }
+
+button {
+  background: var(--text-color);
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.success-message {
+  color: green;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+select {
+  appearance: none; /* ลบสไตล์ดีฟอลต์ของเบราว์เซอร์ */
+  background-color: white;
+  border-color: var(--text-color);
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  width: 100%;
+  outline: none;
+}
+
+/* เพิ่มไอคอนลูกศร */
+select {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='gray'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 35px;
+}
+
+/* เมื่อโฮเวอร์ */
+select:hover {
+  border-color: var(--text-color);
+}
+
+/* เมื่อโฟกัส */
+select:focus {
+  border-color: var(--text-color);
+  
+}
+
+option {
+  background-color: white;
+  color: #333;
+  padding: 10px;
+}
+
+option:checked {
+  background-color: var(--text-color);
+  color: white;
+}
+
+@media screen and (max-width: 700px) {
+  .contianer {
+    width: 100%;
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 20px;
+  }
+}
+@media screen and (max-width: 500px) {
+  .contianer {
+    width: 100%;
+    max-width: 300px;
+    margin: 100px auto;
+    padding: 20px;
+  }
+}
+@media screen and (max-width: 400px) {
+  .contianer {
+    width: 100%;
+    max-width: 250px;
+    margin: 100px auto;
+    padding: 20px;
+  }
+}

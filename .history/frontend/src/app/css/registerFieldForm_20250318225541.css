@@ -1,0 +1,7 @@
+.contianer{
+    margin-top: 80px;
+}
+form {
+    display: flex;
+    flex-direction: column;
+  }

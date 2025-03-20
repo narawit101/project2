@@ -1,0 +1,120 @@
+:root {
+  --text-color: #03045e;
+}
+
+.contianer {
+  width: 100%;
+  max-width: 600px;
+  margin: 100px auto;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  text-align: left;
+}
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group {
+  margin-bottom: 25px;
+  text-align: left;
+}
+.facility-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.input-group-checkbox input[type="checkbox"] {
+  margin-right: 10px; /* เพิ่มช่องว่างระหว่าง checkbox กับ label */
+  width: 20px;
+  height: 20px;
+  accent-color: #3498db; /* เปลี่ยนสีของ checkbox เมื่อเลือก */
+  cursor: pointer;
+}
+
+/* ข้อความเมื่อเลือก checkbox */
+.input-group-checkbox input[type="checkbox"]:checked + label {
+  color: #2980b9; /* เปลี่ยนสีข้อความเมื่อเลือก checkbox */
+}
+
+/* ป้อนราคา */
+.input-group-checkbox input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+.input-group-checkbox input[type="number"]:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+/* Hover effect สำหรับ label */
+.input-group-checkbox:hover {
+  color: #3498db;
+}
+
+label {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-color);
+  display: block;
+  margin-bottom: 5px;
+}
+
+input {
+  margin: 10px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+input:focus {
+  border-color: var(--text-color);
+  box-shadow: 0 0 5px rgba(3, 4, 94, 0.5);
+  outline: none;
+}
+.addbtn {
+  margin: 0px 0px 10px 0px;
+}
+.delbtn {
+  margin: 0px 0px 10px 10px;
+}
+.delevn {
+  margin: 0px 0px 10px 0px;
+}
+.addsubfield {
+  margin: 10px 0px 20px 0px;
+}
+.addfac {
+  margin: 10px 0px 20px 0px;
+}
+.savebtn {
+  margin: 10px 0px 20px 0px;
+}
+.canbtn {
+  margin: 10px 0px 20px 10px;
+}
+button {
+  background: var(--text-color);
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #02226c;
+}
