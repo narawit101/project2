@@ -1,0 +1,50 @@
+/* Default Styles (สำหรับขนาดหน้าจอใหญ่) */
+.containercategory {
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 100px auto;
+  width: 50%;
+}
+
+.Category {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+  text-align: center;
+  padding: 15px;
+}
+
+@media screen and (max-width: 768px) {
+  .containercategory {
+    width: 80%;
+  }
+
+  .Category {
+    width: 50%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .containercategory {
+    width: 80%;
+  }
+
+  .Category {
+    width: 60%;
+  }
+}
+@media screen and (max-width: 380px) {
+    .containercategory {
+      width: 80%;
+    }
+  
+    .Category {
+      width: 60%;
+    }
+  }

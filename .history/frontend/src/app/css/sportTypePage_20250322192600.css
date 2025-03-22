@@ -1,0 +1,45 @@
+/* Default Styles (สำหรับขนาดหน้าจอใหญ่) */
+.containercategory {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 100px auto;
+    width: 50%;
+  }
+  
+  .Category {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    text-align: center;
+    padding: 15px;
+  }
+  
+  /* Media Query สำหรับหน้าจอขนาดเล็ก (เช่นมือถือ) */
+  @media screen and (max-width: 768px) {
+    .containercategory {
+      width: 80%; /* กำหนดความกว้าง 80% สำหรับหน้าจอเล็ก */
+      margin: 20px auto; /* ปรับระยะห่างจากขอบให้เหมาะสม */
+    }
+  
+    .Category {
+      width: 100%; /* ให้ Category ใช้ความกว้างเต็ม */
+    }
+  }
+  
+  /* Media Query สำหรับหน้าจอขนาดเล็กกว่ามือถือ (เช่นบนมือถือขนาดเล็ก) */
+  @media screen and (max-width: 480px) {
+    .containercategory {
+      width: 100%; /* กำหนดความกว้างเต็ม 100% สำหรับหน้าจอที่เล็กกว่า */
+      margin: 10px auto;
+    }
+  
+    .Category {
+      width: 100%; /* ให้ Category ใช้ความกว้างเต็ม */
+    }
+  }
