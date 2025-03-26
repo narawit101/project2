@@ -31,7 +31,6 @@ export default function RegisterFieldForm() {
     selectedSport: "",
     depositChecked: false,
     open_days: [], // เพิ่ม open_days
-    field_description: "",  // Include description
   });
 
   //  โหลดประเภทกีฬา
@@ -259,8 +258,7 @@ export default function RegisterFieldForm() {
       !fieldData.number_bank ||
       !fieldData.account_holder ||
       !fieldData.price_deposit ||
-      !fieldData.name_bank ||
-      !fieldData.field_description
+      !fieldData.name_bank
     ) {
       setMessage("กรุณากรอกข้อมูลให้ครบถ้วน");
       setMessageType("error-message");
@@ -356,7 +354,6 @@ export default function RegisterFieldForm() {
         selectedSport: "",
         depositChecked: false,
         open_days: [], // ล้าง open_days
-        field_description: "",  // Include description
       });
       setSubFields([]); // เคลียร์สนามย่อย
       setSelectedFacilities({}); // เคลียร์สิ่งอำนวยความสะดวก
@@ -813,7 +810,7 @@ export default function RegisterFieldForm() {
             <div className="textarea">
               <textarea
                 name="field_description"
-                placeholder="ใส่รายละเอียดสนาม หมายเหตุต่างๆ เช่นสนามหญ้าเทียม 7 คน "
+                placeholder="ใส่รายละเอียดสนาม"
                 value={fieldData.field_description}
                 onChange={handleFieldChange}
               />

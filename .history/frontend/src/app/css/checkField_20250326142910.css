@@ -154,9 +154,9 @@ p {
 }
 
 .field-image {
-  width: 450px; 
-  height: 450px; 
-  max-width: 100%; 
+  width: 450px; /* กำหนดขนาดของรูปภาพ */
+  height: 450px; /* กำหนดขนาดของรูปภาพ */
+  max-width: 100%; /* ทำให้ไม่เกินขนาดที่กำหนด */
   border-radius: 50%;
   object-fit: cover;
 }

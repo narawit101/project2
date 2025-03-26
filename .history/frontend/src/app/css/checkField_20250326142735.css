@@ -97,7 +97,7 @@ p {
 .newstatus {
   font-size: 18px;
   color: #333;
-  font-weight: bold;
+  font-weight: bold; 
   margin-bottom: 10px;
 }
 .message-box {
@@ -154,12 +154,14 @@ p {
 }
 
 .field-image {
-  width: 450px; 
-  height: 450px; 
-  max-width: 100%; 
-  border-radius: 50%;
-  object-fit: cover;
+  width: 300px; /* กำหนดขนาดของรูปภาพ */
+  height: 350px; /* กำหนดขนาดของรูปภาพ */
+  max-width: 100%; /* ทำให้ไม่เกินขนาดที่กำหนด */
+  border-radius: 50%; /* ทำให้เป็นรูปวงกลม */
+  object-fit: cover; /* ปรับขนาดรูปภาพให้พอดีกับกรอบ โดยไม่เสียสัดส่วน */
+  border: none; /* เอาขอบที่อาจจะมีออก */
 }
+
 
 /* Information Section */
 .field-info {
@@ -399,7 +401,7 @@ ul li {
 }
 
 .reject-btn {
-  background-color: #dc3545;
+  background-color: #dc3545; 
   color: white;
 }
 

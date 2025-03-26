@@ -339,12 +339,12 @@ input[type="time"]:focus {
 }
 
 textarea {
-  width: 100%;
-  height: 150px; 
-  padding: 10px; 
-  border: 1px solid #ccc; 
-  border-radius: 5px;
-  resize: vertical; 
+  width: 100%; /* ให้ textarea ใช้ความกว้างทั้งหมดของ .textarea */
+  height: 150px; /* กำหนดความสูงที่ต้องการ */
+  padding: 10px; /* เพิ่ม padding ให้กับข้อความภายใน textarea */
+  border: 1px solid #ccc; /* กำหนดขอบที่ดูดี */
+  border-radius: 5px; /* ให้ขอบมุมโค้งมน */
+  resize: vertical; อนุญาตให้ผู้ใช้ปรับขนาดสูง-ต่ำได้ แต่ไม่สามารถปรับขนาดซ้าย-ขวา
   overflow: hidden;
 }
 

@@ -155,7 +155,7 @@ router.get("/:field_id",authMiddleware, async (req, res) => {
             f.field_id, f.field_name, f.address, f.gps_location, f.documents,
             f.open_hours, f.close_hours, f.img_field, f.name_bank, 
             f.number_bank, f.account_holder, f.status, f.price_deposit, 
-            f.open_days,field_description,
+            f.open_days,
             u.user_id, u.first_name, u.last_name, u.email,
 
             -- ดึงข้อมูล sub_field และรวม add_on เป็น JSON

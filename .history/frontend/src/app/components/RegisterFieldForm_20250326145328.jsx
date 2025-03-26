@@ -813,7 +813,7 @@ export default function RegisterFieldForm() {
             <div className="textarea">
               <textarea
                 name="field_description"
-                placeholder="ใส่รายละเอียดสนาม หมายเหตุต่างๆ เช่นสนามหญ้าเทียม 7 คน "
+                placeholder="ใส่รายละเอียดสนาม เช่นสนามหญ้าเทียม 7 คน หมายเหตุต่างๆ"
                 value={fieldData.field_description}
                 onChange={handleFieldChange}
               />

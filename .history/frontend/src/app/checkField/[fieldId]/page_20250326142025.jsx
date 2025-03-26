@@ -199,9 +199,6 @@ export default function CheckFieldDetail() {
               <strong>เลขบัญชีธนาคาร:</strong> {fieldData?.number_bank}
             </p>
             <p>
-              <strong>รายละเอียดสนาม:</strong> {fieldData?.field_description}
-            </p>
-            <p>
               <strong>สถานะ:</strong>
               <span
                 className={

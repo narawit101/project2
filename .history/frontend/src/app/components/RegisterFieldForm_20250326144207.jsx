@@ -31,7 +31,6 @@ export default function RegisterFieldForm() {
     selectedSport: "",
     depositChecked: false,
     open_days: [], // เพิ่ม open_days
-    field_description: "",  // Include description
   });
 
   //  โหลดประเภทกีฬา
@@ -259,8 +258,7 @@ export default function RegisterFieldForm() {
       !fieldData.number_bank ||
       !fieldData.account_holder ||
       !fieldData.price_deposit ||
-      !fieldData.name_bank ||
-      !fieldData.field_description
+      !fieldData.name_bank
     ) {
       setMessage("กรุณากรอกข้อมูลให้ครบถ้วน");
       setMessageType("error-message");
@@ -321,7 +319,6 @@ export default function RegisterFieldForm() {
         selectedFacilities,
         subFields: subFields,
         open_days: fieldData.open_days, // เพิ่ม open_days
-        field_description: fieldData.field_description,  // Include description
       })
     );
 
@@ -356,7 +353,6 @@ export default function RegisterFieldForm() {
         selectedSport: "",
         depositChecked: false,
         open_days: [], // ล้าง open_days
-        field_description: "",  // Include description
       });
       setSubFields([]); // เคลียร์สนามย่อย
       setSelectedFacilities({}); // เคลียร์สิ่งอำนวยความสะดวก
@@ -808,21 +804,19 @@ export default function RegisterFieldForm() {
               </button>
             </div>
           )}
-          <div className="input-group">
-            <label>รายละเอียดสนาม</label>
-            <div className="textarea">
-              <textarea
-                name="field_description"
-                placeholder="ใส่รายละเอียดสนาม หมายเหตุต่างๆ เช่นสนามหญ้าเทียม 7 คน "
-                value={fieldData.field_description}
-                onChange={handleFieldChange}
-              />
-            </div>
-          </div>
+
           <button className="submitbtn" type="submit">
             ยืนยัน
           </button>
-
+          <div className="input-group">
+  <label>รายละเอียดสนาม</label>
+  <textarea
+    name="field_description"
+    placeholder="ใส่รายละเอียดสนาม"
+    value={fieldData.field_description}
+    onChange={handleFieldChange}
+  />
+</div>
           {message && (
             <div className={`message-box ${messageType}`}>
               <p>{message}</p>

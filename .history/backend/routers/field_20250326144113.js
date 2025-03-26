@@ -64,7 +64,7 @@ router.post("/register", upload.fields([{ name: "documents" }, { name: "img_fiel
 
     const fieldResult = await pool.query(
       `INSERT INTO field (user_id, field_name, address, gps_location, open_hours, close_hours, number_bank, account_holder, price_deposit, name_bank, documents, img_field, status, open_days, field_description) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING field_id`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING field_id`,
       [user_id, field_name, address, gps_location, open_hours, close_hours, number_bank, account_holder, price_deposit, name_bank, documents, imgField, status || "รอตรวจสอบ", open_days, field_description]  // Save the description
     );
 
@@ -155,7 +155,7 @@ router.get("/:field_id",authMiddleware, async (req, res) => {
             f.field_id, f.field_name, f.address, f.gps_location, f.documents,
             f.open_hours, f.close_hours, f.img_field, f.name_bank, 
             f.number_bank, f.account_holder, f.status, f.price_deposit, 
-            f.open_days,field_description,
+            f.open_days,
             u.user_id, u.first_name, u.last_name, u.email,
 
             -- ดึงข้อมูล sub_field และรวม add_on เป็น JSON

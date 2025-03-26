@@ -199,9 +199,6 @@ export default function CheckFieldDetail() {
               <strong>เลขบัญชีธนาคาร:</strong> {fieldData?.number_bank}
             </p>
             <p>
-              <strong>รายละเอียดสนาม:</strong> {fieldData?.field_description}
-            </p>
-            <p>
               <strong>สถานะ:</strong>
               <span
                 className={
@@ -269,22 +266,18 @@ export default function CheckFieldDetail() {
           )}
         </div>
         <div className="status-buttons">
-          {currentUser?.role === "admin" && (
-            <>
-              <button
-                className="approve-btn"
-                onClick={() => openConfirmModal("ผ่านการอนุมัติ")}
-              >
-                ผ่านการอนุมัติ
-              </button>
-              <button
-                className="reject-btn"
-                onClick={() => openConfirmModal("ไม่ผ่านการอนุมัติ")}
-              >
-                ไม่ผ่านการอนุมัติ
-              </button>
-            </>
-          )}
+          <button
+            className="approve-btn"
+            onClick={() => openConfirmModal("ผ่านการอนุมัติ")}
+          >
+            ผ่านการอนุมัติ
+          </button>
+          <button
+            className="reject-btn"
+            onClick={() => openConfirmModal("ไม่ผ่านการอนุมัติ")}
+          >
+            ไม่ผ่านการอนุมัติ
+          </button>
         </div>
         {message && (
           <div className={`message-box ${messageType}`}>

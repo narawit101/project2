@@ -474,7 +474,7 @@ export default function AdminManager() {
                       }
                       className="ProveEdit-btn"
                     >
-                      ตรวจสอบสนาม
+                      ตรวจสอบสถานะ
                     </button>
                     <button
                       className="ProveDelete-btn"
@@ -523,7 +523,7 @@ export default function AdminManager() {
                       }
                       className="ProveEdit-btn"
                     >
-                      ตรวจสอบสนาม
+                      ตรวจสอบสถานะ
                     </button>
                     <button
                       className="ProveDelete-btn"
