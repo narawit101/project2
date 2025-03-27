@@ -36,7 +36,7 @@ export default function CheckFieldDetail() {
     const user = JSON.parse(storedUser);
     setCurrentUser(user);
 
-    if (user.role !== "admin") {
+    if (user.role !== "admin" && user.role !== "field_owner") {
       router.push("/login");
     }
   }, []);
@@ -199,6 +199,9 @@ export default function CheckFieldDetail() {
               <strong>เลขบัญชีธนาคาร:</strong> {fieldData?.number_bank}
             </p>
             <p>
+              <strong>รายละเอียดสนาม:</strong> {fieldData?.field_description}
+            </p>
+            <p>
               <strong>สถานะ:</strong>
               <span
                 className={
@@ -266,18 +269,22 @@ export default function CheckFieldDetail() {
           )}
         </div>
         <div className="status-buttons">
-          <button
-            className="approve-btn"
-            onClick={() => openConfirmModal("ผ่านการอนุมัติ")}
-          >
-            ผ่านการอนุมัติ
-          </button>
-          <button
-            className="reject-btn"
-            onClick={() => openConfirmModal("ไม่ผ่านการอนุมัติ")}
-          >
-            ไม่ผ่านการอนุมัติ
-          </button>
+          {currentUser?.role === "admin" && (
+            <>
+              <button
+                className="approve-btn"
+                onClick={() => openConfirmModal("ผ่านการอนุมัติ")}
+              >
+                ผ่านการอนุมัติ
+              </button>
+              <button
+                className="reject-btn"
+                onClick={() => openConfirmModal("ไม่ผ่านการอนุมัติ")}
+              >
+                ไม่ผ่านการอนุมัติ
+              </button>
+            </>
+          )}
         </div>
         {message && (
           <div className={`message-box ${messageType}`}>

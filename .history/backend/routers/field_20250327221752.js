@@ -258,7 +258,7 @@ router.put("/:field_id",authMiddleware, async (req, res) => {
 router.put("/edit/:field_id", async (req, res) => {
   try {
     const { field_id } = req.params;
-    const { field_name, address, gps_location, open_hours, close_hours, price_deposit, name_bank, account_holder, number_bank ,img_field, documents, field_description} = req.body;
+    const { field_name, address, gps_location, open_hours, close_hours, price_deposit, name_bank, account_holder, number_bank ,img_field,documents} = req.body;
 
     console.log("📌 field_id ที่ได้รับ:", field_id);
     console.log("📌 ข้อมูลที่ได้รับจาก Frontend:", req.body);
@@ -279,7 +279,7 @@ router.put("/edit/:field_id", async (req, res) => {
 
     // ✅ อัปเดตข้อมูลสนามกีฬา
     console.log("📌 กำลังอัปเดตสนามกีฬา:", {
-      field_name, address, gps_location, open_hours, close_hours, price_deposit, name_bank, account_holder, number_bank,img_field,documents, field_id, field_description
+      field_name, address, gps_location, open_hours, close_hours, price_deposit, name_bank, account_holder, number_bank,img_field,documents, field_id
     });
 
     const result = await pool.query(
@@ -292,13 +292,12 @@ router.put("/edit/:field_id", async (req, res) => {
            price_deposit = COALESCE($6, price_deposit), 
            name_bank = COALESCE($7, name_bank),
            account_holder = COALESCE($8, account_holder), 
-           number_bank = COALESCE($9, number_bank),
-           field_description =  COALESCE($10, field_description),
-           img_field = COALESCE($11, img_field),
-           documents = COALESCE($12, documents)
-       WHERE field_id = $13
+           number_bank = COALESCE($9, number_bank),  -- ✅ เพิ่ม comma ตรงนี้
+           img_field = COALESCE($10, img_field),
+           documents = COALESCE($11, documents)
+       WHERE field_id = $12
        RETURNING *;`,
-      [field_name, address, gps_location, open_hours, close_hours, price_deposit, name_bank, account_holder, number_bank, field_description, img_field, documents, field_id]
+      [field_name, address, gps_location, open_hours, close_hours, price_deposit, name_bank, account_holder, number_bank, img_field, documents, field_id]
     );
     
 
@@ -348,6 +347,65 @@ router.post("/:field_id/upload-document", upload.single("documents"), async (req
   } catch (error) {
     console.error("❌ Upload document error:", error);
     res.status(500).json({ error: "❌ อัปโหลดเอกสารไม่สำเร็จ", details: error.message });
+  }
+});
+
+
+
+router.put("/:field_id",authMiddleware, async (req, res) => {
+  try {
+    const { field_id } = req.params;
+    const { status } = req.body;
+
+    console.log("📌 field_id ที่ได้รับ:", field_id);
+    console.log("📌 ข้อมูลที่ได้รับจาก Frontend:", req.body);
+
+    if (!field_id || isNaN(field_id)) {
+      console.log("❌ field_id ไม่ถูกต้อง");
+      return res.status(400).json({ error: "❌ field_id ไม่ถูกต้อง" });
+    }
+
+    // ตรวจสอบว่ามี field_id อยู่จริง
+    const checkField = await pool.query("SELECT * FROM field WHERE field_id = $1", [field_id]);
+    console.log("📌 ข้อมูลจากฐานข้อมูล:", checkField.rows);
+
+    if (checkField.rows.length === 0) {
+      console.log("❌ ไม่พบข้อมูลสนามกีฬาในฐานข้อมูล");
+      return res.status(404).json({ error: "❌ ไม่พบข้อมูลสนามกีฬา" });
+    }
+
+    // ถ้าสถานะเป็น "ผ่านการอนุมัติ" ให้เปลี่ยน role ของผู้ใช้งานเป็น "field_owner"
+    if (status === "ผ่านการอนุมัติ") {
+      const userId = checkField.rows[0].user_id;  // ดึง user_id ของเจ้าของสนาม
+      await pool.query(
+        "UPDATE users SET role = 'field_owner' WHERE user_id = $1",
+        [userId]
+      );
+    }
+    // ถ้าสถานะเป็น "ไม่ผ่านการอนุมัติ" ให้เปลี่ยน role ของผู้ใช้งานเป็น "customer"
+    else if (status === "ไม่ผ่านการอนุมัติ") {
+      const userId = checkField.rows[0].user_id;  // ดึง user_id ของเจ้าของสนาม
+      await pool.query(
+        "UPDATE users SET role = 'field_owner' WHERE user_id = $1",
+        [userId]
+      );
+    }
+
+    // ✅ อัปเดตแค่สถานะของสนาม
+    const result = await pool.query(
+      `UPDATE field 
+       SET status = $1  -- อัปเดตสถานะ
+       WHERE field_id = $2 
+       RETURNING *;`,
+      [status, field_id]
+    );
+
+    console.log("✅ ข้อมูลอัปเดตสำเร็จ:", result.rows[0]);
+
+    res.json({ message: "✅ อัปเดตข้อมูลสำเร็จ", data: result.rows[0] });
+  } catch (error) {
+    console.error("❌ Database Error:", error);
+    res.status(500).json({ error: "❌ เกิดข้อผิดพลาดในการอัปเดตสนามกีฬา", details: error.message });
   }
 });
 

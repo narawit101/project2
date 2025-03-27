@@ -351,6 +351,65 @@ router.post("/:field_id/upload-document", upload.single("documents"), async (req
   }
 });
 
+
+
+router.put("/:field_id",authMiddleware, async (req, res) => {
+  try {
+    const { field_id } = req.params;
+    const { status } = req.body;
+
+    console.log("📌 field_id ที่ได้รับ:", field_id);
+    console.log("📌 ข้อมูลที่ได้รับจาก Frontend:", req.body);
+
+    if (!field_id || isNaN(field_id)) {
+      console.log("❌ field_id ไม่ถูกต้อง");
+      return res.status(400).json({ error: "❌ field_id ไม่ถูกต้อง" });
+    }
+
+    // ตรวจสอบว่ามี field_id อยู่จริง
+    const checkField = await pool.query("SELECT * FROM field WHERE field_id = $1", [field_id]);
+    console.log("📌 ข้อมูลจากฐานข้อมูล:", checkField.rows);
+
+    if (checkField.rows.length === 0) {
+      console.log("❌ ไม่พบข้อมูลสนามกีฬาในฐานข้อมูล");
+      return res.status(404).json({ error: "❌ ไม่พบข้อมูลสนามกีฬา" });
+    }
+
+    // ถ้าสถานะเป็น "ผ่านการอนุมัติ" ให้เปลี่ยน role ของผู้ใช้งานเป็น "field_owner"
+    if (status === "ผ่านการอนุมัติ") {
+      const userId = checkField.rows[0].user_id;  // ดึง user_id ของเจ้าของสนาม
+      await pool.query(
+        "UPDATE users SET role = 'field_owner' WHERE user_id = $1",
+        [userId]
+      );
+    }
+    // ถ้าสถานะเป็น "ไม่ผ่านการอนุมัติ" ให้เปลี่ยน role ของผู้ใช้งานเป็น "customer"
+    else if (status === "ไม่ผ่านการอนุมัติ") {
+      const userId = checkField.rows[0].user_id;  // ดึง user_id ของเจ้าของสนาม
+      await pool.query(
+        "UPDATE users SET role = 'field_owner' WHERE user_id = $1",
+        [userId]
+      );
+    }
+
+    // ✅ อัปเดตแค่สถานะของสนาม
+    const result = await pool.query(
+      `UPDATE field 
+       SET status = $1  -- อัปเดตสถานะ
+       WHERE field_id = $2 
+       RETURNING *;`,
+      [status, field_id]
+    );
+
+    console.log("✅ ข้อมูลอัปเดตสำเร็จ:", result.rows[0]);
+
+    res.json({ message: "✅ อัปเดตข้อมูลสำเร็จ", data: result.rows[0] });
+  } catch (error) {
+    console.error("❌ Database Error:", error);
+    res.status(500).json({ error: "❌ เกิดข้อผิดพลาดในการอัปเดตสนามกีฬา", details: error.message });
+  }
+});
+
 // ❌ แก้จาก :filed_id
 router.put("/supfiled/:sub_field_id", async (req, res) => {
   const { sub_field_id } = req.params;
