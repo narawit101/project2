@@ -1,0 +1,152 @@
+/* ✅ Refactored CSS Structure */
+
+.navbar button {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .checkfield-container {
+    width: 100%;
+    max-width: 700px;
+    margin: 100px auto;
+    padding: 20px;
+    background: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+  
+  .field-group {
+    margin-bottom: 25px;
+    text-align: left;
+  }
+  
+  .field-label {
+    display: block;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  
+  .field-input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+  
+  .field-display p {
+    font-size: 18px;
+    font-weight: 400;
+    margin: 10px 0;
+  }
+  
+  .btn {
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 10px;
+  }
+  
+  .btn.edit {
+    background: linear-gradient(135deg, #1b0ed4, #055199);
+    box-shadow: 0 4px 10px rgba(135, 126, 255, 0.3);
+  }
+  
+  .btn.save {
+    background-color: #28a745;
+  }
+  
+  .btn.save:hover {
+    background-color: #21cd49;
+  }
+  
+  .btn.cancel {
+    background-color: red;
+  }
+  
+  .btn.cancel:hover {
+    background-color: rgba(255, 0, 0, 0.8);
+  }
+  
+  .field-edit,
+  .field-display {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  .preview-container {
+    border: 2px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 400px;
+    margin: 10px auto;
+    min-height: 50vh;
+  }
+  
+  .preview-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+  }
+  
+  .document-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+  }
+  
+  .document-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .sub-fields-container {
+    margin-top: 40px;
+    text-align: left;
+  }
+  
+  .sub-field-card {
+    border: 1px solid #e1e1e1;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    background-color: #fafafa;
+  }
+  
+  .sport-select {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .add-addon-form,
+  .subfield-form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  

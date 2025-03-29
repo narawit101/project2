@@ -1,0 +1,19 @@
+
+.logout-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0px;
+}
+
+.logout-button {
+  text-decoration: none;
+  color: #000000;
+  display: block;
+  width: 100%;
+}
+
+
+.logout-button i {
+  font-size: 18px;
+}

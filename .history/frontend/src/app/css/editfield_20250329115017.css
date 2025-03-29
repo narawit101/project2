@@ -1,0 +1,18 @@
+.container {
+    width: 100%;
+    max-width: 700px;
+    margin: 100px auto;
+    padding: 5px 15px 15px 15px;
+    background: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+  
+.input-group {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  /* text-align: left; */
+}

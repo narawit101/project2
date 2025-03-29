@@ -1,0 +1,125 @@
+.navbar button{
+    margin: 0px;
+    padding: 0px;
+}
+.container {
+  width: 100%;
+  max-width: 700px;
+  margin: 100px auto;
+  padding: 5px 15px 15px 15px;
+  background: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-group {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-group label {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0px 0px 10px 0px;
+  text-align: left;
+}
+
+input {
+  border-radius: 5px;
+  padding: 10px 0px 10px 0px;
+  border: #b3b3b3 solid 1px;
+}
+
+.sport-select {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #000000;
+  outline: none;
+  cursor: pointer;
+  font-weight: 300;
+}
+
+.preview-container {
+  margin: 10px auto 10px auto;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ddd;
+  padding: 10px;
+  width: 100%;
+  height: auto;
+  max-width: 400px;
+  overflow: hidden;
+  border-radius: 8px;
+  min-height: 50vh;
+}
+
+.preview-container img {
+  width: 100%;
+  height: 100%;
+}
+
+
+p {
+  margin: 10px;
+  display: inline-block;
+}
+button {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  outline: none;
+}
+.editbtn {
+  background: linear-gradient(135deg, #1b0ed4, #055199); /* ไล่สี */
+  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
+}
+.delsub {
+  background-color: red;
+  margin: 10px 0px 20px 0px;
+}
+.delsub:hover {
+    background-color: rgba(255, 0, 0, 0.774);
+  }
+.savebtn {
+  background-color: #28a745;
+  margin: 10px 0px 20px 10px;
+}
+.savebtn:hover {
+  background: #21cd49;
+}
+.canbtn {
+  background-color: red;
+  margin: 10px 0px 20px 10px;
+}
+.canbtn:hover {
+  background-color: rgba(255, 0, 0, 0.774);
+}
+
+.textarea {
+  width: 100%; /* ทำให้ textarea ขยายเต็มความกว้างของ container */
+  max-width: 100%; /* จำกัดความกว้างไม่ให้เกิน container */
+  box-sizing: border-box; /* รวม padding และ border ในการคำนวณความกว้าง */
+}
+
+textarea {
+  width: 100%;
+  height: 150px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+  overflow: hidden;
+}
