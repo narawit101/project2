@@ -111,9 +111,9 @@ export default function MyFieldPage() {
                 <p className="custom-owner-info">
                   เจ้าของ: {field.first_name} {field.last_name}
                 </p>
-                {/* <p className="custom-owner-info">
+                <p className="custom-owner-info">
                   ประเภทกีฬา: {field.sport_name}
-                </p> */}
+                </p>
                 <div className="custom-button-group">
                   <button
                     onClick={() =>

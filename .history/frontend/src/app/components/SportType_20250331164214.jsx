@@ -93,75 +93,30 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="container">
-        <div className="section-title-container">
-          <h2 className="section-title">สนามที่แนะนำ</h2>
-          {/* Dropdown เพื่อเลือกประเภทกีฬา */}
-          <select
-            value={selectedSport}
-            onChange={handleSportChange}
-            className="sport-select"
-          >
-            <option value="">ประเภทกีฬาทั้งหมด</option>
-            {sportsCategories.map((category) => (
-              <option key={category.sport_id} value={category.sport_id}>
-                {category.sport_name}
-              </option>
-            ))}
-          </select>
-        </div>
-
+       <div className="container">
+    {Object.keys(groupedFields).map((sportName) => (
+      <div key={sportName}>
+        <h3>{sportName}</h3> {/* แสดงชื่อประเภทกีฬา */}
         <div className="grid">
-          {approvedFields.length > 0 ? (
-            approvedFields.map((field, index) => (
-              <div
-                key={`${field.field_id}-${index}`} // Combine field_id and index to ensure uniqueness
-                className="card"
-                onClick={() => router.push(`/profile/${field.field_id}`)}
-              >
-                <img
-                  src={
-                    field.img_field
-                      ? `${API_URL}/${field.img_field}`
-                      : "https://via.placeholder.com/300x200"
-                  }
-                  alt={field.field_name}
-                  className="card-img"
-                />
-                <div className="card-body">
-                  <h3>{field.field_name}</h3>
-                  <div className="firstname">
-                    <p className="filedname">
-                      <span className="first-label-time">เปิดเวลา: </span>
-                      {field.open_hours} น. - {field.close_hours} น.
-                    </p>
-                  </div>
-                  <div className="firstopen">
-                    <p>
-                      <span className="first-label-date">วันทำการ: </span>
-                      {convertToThaiDays(field.open_days)}
-                    </p>
-                  </div>
-                  <div className="firstopen">
-                    <p>
-                      <span className="first-label-date">ประเภทกีฬา: </span>
-                      {convertToThaiDays(field.sport_name)}
-                    </p>
-                  </div>
-                </div>
+          {groupedFields[sportName].map((field) => (
+            <div key={field.field_id} className="card">
+              <img
+                src={field.img_field ? `${API_URL}/${field.img_field}` : "https://via.placeholder.com/300x200"}
+                alt={field.field_name}
+                className="card-img"
+              />
+              <div className="card-body">
+                <h3>{field.field_name}</h3>
+                <p><strong>เปิดเวลา:</strong> {field.open_hours} น. - {field.close_hours} น.</p>
+                <p><strong>วันทำการ:</strong> {convertToThaiDays(field.open_days)}</p>
+                <p><strong>ประเภทกีฬา:</strong> {field.sport_name}</p>
               </div>
-            ))
-          ) : (
-            <div className="load">กำลังโหลด...</div>
-          )}
-
-          {approvedFields.length === 0 && (
-            <div className="no-fields-message">
-              ยังไม่มีสนาม <strong>{selectedSportName}</strong> สำหรับกีฬานี้
             </div>
-          )}
+          ))}
         </div>
       </div>
+    ))}
+  </div>
     </>
   );
 }

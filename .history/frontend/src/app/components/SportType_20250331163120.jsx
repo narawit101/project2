@@ -142,12 +142,12 @@ export default function HomePage() {
                       {convertToThaiDays(field.open_days)}
                     </p>
                   </div>
-                  <div className="firstopen">
+                  {/* <div className="firstopen">
                     <p>
                       <span className="first-label-date">ประเภทกีฬา: </span>
                       {convertToThaiDays(field.sport_name)}
                     </p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             ))

@@ -202,7 +202,7 @@ export default function CheckFieldDetail() {
               <strong>รายละเอียดสนาม:</strong> {fieldData?.field_description}
             </p>
             <p>
-              <strong>สถานะ: </strong>
+              <strong>สถานะ:</strong>
               <span
                 className={
                   fieldData?.status === "ผ่านการอนุมัติ"
@@ -274,6 +274,12 @@ export default function CheckFieldDetail() {
                 onClick={() => openConfirmModal("ผ่านการอนุมัติ")}
               >
                 ผ่านการอนุมัติ
+              </button>
+              <button
+                className="reject-btn"
+                onClick={() => openConfirmModal("ไม่ผ่านการอนุมัติ")}
+              >
+                ไม่ผ่านการอนุมัติ
               </button>
               <button
                 className="reject-btn"

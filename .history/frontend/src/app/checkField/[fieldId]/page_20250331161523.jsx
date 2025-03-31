@@ -67,6 +67,35 @@ export default function CheckFieldDetail() {
       .catch((error) => console.error("Error fetching field data:", error));
   }, [fieldId, router]);
 
+  useEffect(() => {
+    const fetchMyFields = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(`${API_URL}/myfield/myfields`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || "เกิดข้อผิดพลาดในการดึงข้อมูลสนาม");
+        }
+
+        setFilteredFields(data); // Initially set the filtered fields to all fields
+      } catch (err) {
+        console.error("Error loading fields:", err.message);
+        setError(err.message);
+      }
+    };
+
+    fetchMyFields();
+  }, []);
+
   // ฟังก์ชันเปิดโมดอลการยืนยันการเปลี่ยนสถานะ
   const openConfirmModal = (status) => {
     setNewStatus(status); // ตั้งค่าสถานะใหม่ที่ต้องการเปลี่ยน
@@ -202,7 +231,7 @@ export default function CheckFieldDetail() {
               <strong>รายละเอียดสนาม:</strong> {fieldData?.field_description}
             </p>
             <p>
-              <strong>สถานะ: </strong>
+              <strong>สถานะ:</strong>
               <span
                 className={
                   fieldData?.status === "ผ่านการอนุมัติ"
@@ -278,6 +307,12 @@ export default function CheckFieldDetail() {
               <button
                 className="reject-btn"
                 onClick={() => openConfirmModal("ไม่ผ่านการอนุมัติ")}
+              >
+                ไม่ผ่านการอนุมัติ
+              </button>
+              <button
+                className="reject-btn"
+                onClick={() => router.push(`/editfield/${field.field_id}`)}
               >
                 ไม่ผ่านการอนุมัติ
               </button>

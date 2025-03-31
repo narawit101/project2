@@ -1155,7 +1155,7 @@ export default function CheckFieldDetail() {
                     <label>ราคากิจกรรมพิเศษของสนามย่อย</label>
                     <div>
                       {sub.add_ons.map((addon) => (
-                        <p key={`${sub.sub_field_id}-${addon.add_on_id}`}>
+                        <li key={`${sub.sub_field_id}-${addon.add_on_id}`}>
                           {editingAddon.addOnId === addon.add_on_id ? (
                             <>
                               <input
@@ -1214,7 +1214,7 @@ export default function CheckFieldDetail() {
                               </button>
                             </>
                           )}
-                        </p>
+                        </li>
                       ))}
                     </div>
                   </div>

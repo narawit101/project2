@@ -202,7 +202,7 @@ export default function CheckFieldDetail() {
               <strong>รายละเอียดสนาม:</strong> {fieldData?.field_description}
             </p>
             <p>
-              <strong>สถานะ: </strong>
+              <strong>สถานะ:</strong>
               <span
                 className={
                   fieldData?.status === "ผ่านการอนุมัติ"

@@ -119,7 +119,7 @@ export default function Navbar() {
                 {user.role === "field_owner" && <li><a href="/registerField">ลงทะเบียนสนาม</a></li>}
                 {user.role === "field_owner" && <li><a href="/myfield">สนามของฉัน</a></li>}
                 {user.role === "admin" && <li><a href="/manager">จัดการผู้ใช้</a></li>}
-                {user.role === "admin" && <li><a href="/myfield">จัดการสนามกีฬา</a></li>}
+                {user.role === "admin" && <li><a href="/myfield">จัดการผู้ใช้</a></li>}
                 {user.role === "admin" && <li><a href="/addfac">จัดการสิ่งอำนวยความสะดวก</a></li>}
                 {user.role === "admin" && <li><a href="/addtype">จัดการประเภทกีฬา</a></li>}
                 <LogoutButton />

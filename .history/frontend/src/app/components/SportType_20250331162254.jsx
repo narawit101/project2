@@ -132,19 +132,19 @@ export default function HomePage() {
                   <h3>{field.field_name}</h3>
                   <div className="firstname">
                     <p className="filedname">
-                      <span className="first-label-time">เปิดเวลา: </span>
+                      <span className="first-label-time">เปิดเวลา:</span>
                       {field.open_hours} น. - {field.close_hours} น.
                     </p>
                   </div>
                   <div className="firstopen">
                     <p>
-                      <span className="first-label-date">วันทำการ: </span>
+                      <span className="first-label-date">วันทำการ:</span>
                       {convertToThaiDays(field.open_days)}
                     </p>
                   </div>
                   <div className="firstopen">
                     <p>
-                      <span className="first-label-date">ประเภทกีฬา: </span>
+                      <span className="first-label-date">วันทำการ:</span>
                       {convertToThaiDays(field.sport_name)}
                     </p>
                   </div>

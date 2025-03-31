@@ -4,19 +4,19 @@
   padding: 0px;
 }
 .navbar .logout-button {
-  color: black;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.3s;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-}
+    color:black;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
 
 .container {
   width: 100%;
@@ -71,28 +71,10 @@
 }
 
 .input-group p {
-  color: #00a093;
+  background-color: #055199;
   font-size: 18px;
   font-weight: 400;
   margin-bottom: 10px;
-}
-.input-group li {
-  color: #00a093;
-  font-size: 18px;
-  font-weight: 400;
-  margin-bottom: 10px;
-}
-
-.document-container {
-  text-align: center;
-  border: #333 solid 2px;
-  margin-top: 0px;
-  padding: 5px;
-  border-radius: 8px;
-}
-.document-container:hover {
-  border: #15ff00 solid 2px;
-  color: #22dfcf;
 }
 
 input,
@@ -312,18 +294,21 @@ button {
     width: 100%;
     max-width: 450px;
   }
+
 }
 @media screen and (max-width: 468px) {
   .container {
     width: 100%;
     max-width: 400px;
   }
+
 }
 @media screen and (max-width: 428px) {
   .container {
     width: 100%;
     max-width: 350px;
   }
+
 }
 @media screen and (max-width: 361px) {
   .container {
@@ -338,14 +323,15 @@ button {
     border-radius: 5px;
   }
 
-  .input-group {
+  .input-group{
     text-align: center;
     margin: 8px;
   }
+  
 }
 @media screen and (max-width: 338px) {
   .container {
     width: 100%;
     max-width: 250px;
-  }
+}
 }
