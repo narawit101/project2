@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Navbar from "@/app/components/Navbar";
 import "@/app/css/checkField.css";
 
 export default function CheckFieldDetail() {
@@ -135,6 +136,7 @@ export default function CheckFieldDetail() {
 
   return (
     <>
+      <Navbar></Navbar>
       <div className="field-detail-container">
         <h1 className="h1">รายละเอียดสนามกีฬา</h1>
 

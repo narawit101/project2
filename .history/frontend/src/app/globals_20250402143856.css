@@ -21,7 +21,7 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }  */
-
+  
 .navbar button {
   margin: 0px;
   padding: 0px;
@@ -50,21 +50,4 @@ body {
 
 .logout-button i {
   font-size: 20px;
-}
-
-@import url("https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap");
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Kanit", sans-serif;
-}
-
-body {
-  background: rgba(173, 216, 230, 0.514) ;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
 }

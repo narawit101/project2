@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import "@/app/css/editfield.css";
-// import Navbar from "@/app/components/Navbar";
+import Navbar from "@/app/components/Navbar";
 
 export default function CheckFieldDetail() {
   const { fieldId } = useParams();
@@ -619,9 +619,9 @@ export default function CheckFieldDetail() {
 
   return (
     <>
-      {/* <div className="navbar">
+      <div className="navbar">
         <Navbar></Navbar>
-      </div> */}
+      </div>
       {message && (
         <div className={`message-box ${messageType}`}>
           <p>{message}</p>

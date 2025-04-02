@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import "@/app/css/editfield.css";
-// import Navbar from "@/app/components/Navbar";
+import Navbar from "@/app/components/Navbar";
 
 export default function CheckFieldDetail() {
   const { fieldId } = useParams();

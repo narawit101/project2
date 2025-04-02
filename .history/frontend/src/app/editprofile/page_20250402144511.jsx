@@ -1,5 +1,5 @@
 import React from "react";
-import EditProfile from "@/app/components/EditProfile";
+import EditProfile from "../components/EditProfile";
 // import Navbar from "@/app/components/Navbar";
 
 
