@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",
+    "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
     "jsonwebtoken": "^9.0.2",
     "next": "15.1.5",

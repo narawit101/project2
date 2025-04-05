@@ -1,0 +1,16 @@
+:root {
+  --text-color: #03045e;
+}
+.footer {
+  background: #edefef;
+  padding: 10px 0;
+  height: 80px;
+  text-align: center;
+  color: var(--text-color);
+  position: relative;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.copyright {
+  font-size: 16px;
+}

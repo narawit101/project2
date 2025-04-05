@@ -1,0 +1,22 @@
+:root {
+  --text-color: #03045e; /* Main text color */
+  --footer-bg-color: #edf2f7; /* Background color for footer */
+  --footer-text-color: #03045e; /* Text color */
+  --footer-shadow-color: rgba(0, 0, 0, 0.1); /* Light shadow for footer */
+}
+
+footer {
+  background: var(--footer-bg-color);
+  padding: 10px 0px;
+  text-align: center;
+  color: var(--footer-text-color);
+  position: relative;
+  box-shadow: 0px 10px 30px var(--footer-shadow-color);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+footer p {
+  margin: 0;
+  font-weight: 300;
+}

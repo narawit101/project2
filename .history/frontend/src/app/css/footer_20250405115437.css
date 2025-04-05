@@ -1,0 +1,52 @@
+:root {
+  --text-color: #03045e; /* Main text color */
+  --footer-bg-color: #edf2f7; /* Background color for footer */
+  --footer-text-color: #03045e; /* Text color */
+  --footer-shadow-color: rgba(0, 0, 0, 0.1); /* Light shadow for footer */
+}
+
+footer {
+  background: var(--footer-bg-color);
+  padding: 20px 0;
+  text-align: center;
+  color: var(--footer-text-color);
+  position: relative;
+  box-shadow: 0px 10px 30px var(--footer-shadow-color);
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+footer p {
+  margin: 0;
+  font-family: 'Kanit', sans-serif;
+  font-weight: 300;
+}
+
+footer a {
+  color: var(--footer-text-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+footer a:hover {
+  text-decoration: underline;
+  color: #007bff; /* Adds a hover color effect */
+}
+
+footer .social-icons {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+footer .social-icons a img {
+  width: 40px;
+  height: 40px;
+  transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;
+}
+
+footer .social-icons a img:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
