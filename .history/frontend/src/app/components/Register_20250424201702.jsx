@@ -60,7 +60,7 @@ export default function Register() {
       const updatedPassword = name === "password" ? value : formData.password;
       const updatedConfirmPassword =
         name === "confirmPassword" ? value : formData.confirmPassword;
-
+        if (updatedPassword.length < 10) {
       if (updatedPassword.length < 10) {
         setErrors((prevErrors) => ({
           ...prevErrors,
@@ -72,7 +72,7 @@ export default function Register() {
           passwordLength: "",
         }));
       }
-
+    }
       if (updatedPassword !== updatedConfirmPassword) {
         setErrors((prevErrors) => ({
           ...prevErrors,
@@ -109,7 +109,7 @@ export default function Register() {
           password:
             "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]",
         }));
-      } else {
+      }else {
         setErrors((prevErrors) => ({
           ...prevErrors,
           password: "",

@@ -92,7 +92,7 @@ export default function Register() {
           ...prevErrors,
           email: "โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmail.com",
         }));
-      } else {
+      }else {
         setErrors((prevErrors) => ({
           ...prevErrors,
           email: "",
@@ -102,20 +102,15 @@ export default function Register() {
 
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    if (name === "password" && value.length > 0) {
-      if (!passwordRegex.test(formData.password)) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          password:
-            "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]",
-        }));
-      } else {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          password: "",
-        }));
-      }
+      if (name === "password" && value.length > 0) {
+    if (!passwordRegex.test(formData.password)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        password:
+          "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]",
+      }));
     }
+  }
     // ตรวจสอบ Username และ Email แบบ Real-Time
     if (name === "user_name" || name === "email") {
       clearTimeout(window.checkDuplicateTimeout);

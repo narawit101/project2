@@ -1,26 +1,26 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React, { useState,useEffect } from "react";
 import "@/app/css/register.css";
 
 export default function Register() {
-  useEffect(() => {
-    // ตรวจสอบว่า token มีอยู่หรือไม่ และไม่หมดอายุ
-    const token = localStorage.getItem("token");
-    const expiresAt = localStorage.getItem("expiresAt");
-
-    // ถ้า token มีอยู่และยังไม่หมดอายุ เปลี่ยนเส้นทางไปหน้า "/"
-    if (token && Date.now() < expiresAt) {
-      const user = localStorage.getItem("user");
-      const userStatus = JSON.parse(user);
-      // เช็คสถานะของผู้ใช้
-      if (userStatus?.status !== "ตรวจสอบแล้ว") {
-        router.push("/verification"); // ถ้ายังไม่ตรวจสอบแล้ว ให้ไปหน้า verification
-      } else {
-        router.push("/"); // ถ้าสถานะเป็นตรวจสอบแล้ว ให้ไปหน้าแรก
+   useEffect(() => {
+      // ตรวจสอบว่า token มีอยู่หรือไม่ และไม่หมดอายุ
+      const token = localStorage.getItem("token");
+      const expiresAt = localStorage.getItem("expiresAt");
+  
+      // ถ้า token มีอยู่และยังไม่หมดอายุ เปลี่ยนเส้นทางไปหน้า "/"
+      if (token && Date.now() < expiresAt) {
+        const user = localStorage.getItem("user");
+        const userStatus = JSON.parse(user);
+        // เช็คสถานะของผู้ใช้
+        if (userStatus?.status !== "ตรวจสอบแล้ว") {
+          router.push("/verification"); // ถ้ายังไม่ตรวจสอบแล้ว ให้ไปหน้า verification
+        } else {
+          router.push("/"); // ถ้าสถานะเป็นตรวจสอบแล้ว ให้ไปหน้าแรก
+        }
       }
-    }
-  }, []);
+    }, []);
 
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
@@ -85,36 +85,18 @@ export default function Register() {
         }));
       }
     }
-    const allowDomain = ["@gmail.com", "@hotmail.com"];
-    if (name === "email" && value.length > 0) {
-      if (!allowDomain.some((domain) => value.endsWith(domain))) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          email: "โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmail.com",
-        }));
-      } else {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          email: "",
-        }));
-      }
-    }
+    const allowDomain = ["@gmail.com", "@hotmali.com"];
 
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    if (name === "password" && value.length > 0) {
-      if (!passwordRegex.test(formData.password)) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          password:
-            "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]",
-        }));
-      } else {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          password: "",
-        }));
-      }
+    if (!allowDomain.some((domain) => formData.email.endsWith(domain))) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        email: "โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmali.com",
+      }));
+    } else {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        email: "",
+      }));
     }
     // ตรวจสอบ Username และ Email แบบ Real-Time
     if (name === "user_name" || name === "email") {
@@ -160,18 +142,11 @@ export default function Register() {
       newErrors.passwordMatch = "รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน";
     }
 
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    
     if (!passwordRegex.test(formData.password)) {
       newErrors.password =
         "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]";
-    }
-
-    // ตรวจสอบอีเมลและชื่อผู้ใช้
-    const allowDomain = ["@gmail.com", "@hotmail.com"];
-    if (!allowDomain.some((domain) => formData.email.endsWith(domain))) {
-      newErrors.email = "โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmail.com";
     }
 
     if (!newErrors.user_name && !newErrors.email) {
@@ -222,11 +197,11 @@ export default function Register() {
         setErrors({ serverError: errorData.message || "การลงทะเบียนล้มเหลว" });
         return;
       }
-
+      
       setSuccessMessage("ลงทะเบียนสำเร็จ");
-      setTimeout(() => {
+      setTimeout(() => {        
         router.push("/login");
-      }, 1500);
+      }, 1500); 
 
       setFormData({
         user_name: "",
@@ -333,9 +308,7 @@ export default function Register() {
               {errors.passwordLength}
             </p>
           )}
-          {errors.password && (
-            <p className="error-message">{errors.password}</p>
-          )}
+              {errors.password && <p className="error-message">{errors.password}</p>}
         </div>
 
         <div className="input-group">
@@ -353,9 +326,7 @@ export default function Register() {
               {errors.passwordMatch}
             </p>
           )}
-          {errors.password && (
-            <p className="error-message">{errors.password}</p>
-          )}
+          {errors.password && <p className="error-message">{errors.password}</p>}
         </div>
 
         <button type="submit">ลงทะเบียน</button>

@@ -109,12 +109,13 @@ export default function Register() {
           password:
             "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]",
         }));
-      } else {
+      }else {
         setErrors((prevErrors) => ({
           ...prevErrors,
           password: "",
         }));
       }
+    
     }
     // ตรวจสอบ Username และ Email แบบ Real-Time
     if (name === "user_name" || name === "email") {

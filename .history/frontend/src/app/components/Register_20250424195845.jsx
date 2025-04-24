@@ -85,36 +85,28 @@ export default function Register() {
         }));
       }
     }
-    const allowDomain = ["@gmail.com", "@hotmail.com"];
-    if (name === "email" && value.length > 0) {
-      if (!allowDomain.some((domain) => value.endsWith(domain))) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          email: "โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmail.com",
-        }));
-      } else {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          email: "",
-        }));
-      }
-    }
+    const allowDomain = ["@gmail.com", "@hotmali.com"];
 
+    if (!allowDomain.some((domain) => formData.email.endsWith(domain))) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        email: "โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmali.com",
+      }));
+    } else {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        email: "",
+      }));
+    }
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    if (name === "password" && value.length > 0) {
-      if (!passwordRegex.test(formData.password)) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          password:
-            "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]",
-        }));
-      } else {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          password: "",
-        }));
-      }
+
+    if (!passwordRegex.test(formData.password)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        password:
+          "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]",
+      }));
     }
     // ตรวจสอบ Username และ Email แบบ Real-Time
     if (name === "user_name" || name === "email") {
@@ -160,19 +152,6 @@ export default function Register() {
       newErrors.passwordMatch = "รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน";
     }
 
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-
-    if (!passwordRegex.test(formData.password)) {
-      newErrors.password =
-        "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]";
-    }
-
-    // ตรวจสอบอีเมลและชื่อผู้ใช้
-    const allowDomain = ["@gmail.com", "@hotmail.com"];
-    if (!allowDomain.some((domain) => formData.email.endsWith(domain))) {
-      newErrors.email = "โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmail.com";
-    }
 
     if (!newErrors.user_name && !newErrors.email) {
       try {

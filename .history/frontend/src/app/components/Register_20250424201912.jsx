@@ -109,7 +109,7 @@ export default function Register() {
           password:
             "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]",
         }));
-      } else {
+      }else {
         setErrors((prevErrors) => ({
           ...prevErrors,
           password: "",
@@ -160,13 +160,7 @@ export default function Register() {
       newErrors.passwordMatch = "รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน";
     }
 
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-
-    if (!passwordRegex.test(formData.password)) {
-      newErrors.password =
-        "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]";
-    }
+   
 
     // ตรวจสอบอีเมลและชื่อผู้ใช้
     const allowDomain = ["@gmail.com", "@hotmail.com"];

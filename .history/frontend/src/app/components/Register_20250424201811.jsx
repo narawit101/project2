@@ -85,20 +85,7 @@ export default function Register() {
         }));
       }
     }
-    const allowDomain = ["@gmail.com", "@hotmail.com"];
-    if (name === "email" && value.length > 0) {
-      if (!allowDomain.some((domain) => value.endsWith(domain))) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          email: "โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmail.com",
-        }));
-      } else {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          email: "",
-        }));
-      }
-    }
+
 
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
@@ -109,7 +96,7 @@ export default function Register() {
           password:
             "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]",
         }));
-      } else {
+      }else {
         setErrors((prevErrors) => ({
           ...prevErrors,
           password: "",

@@ -100,22 +100,23 @@ export default function Register() {
       }
     }
 
+    // ตรวจสอบรหัสผ่านให้มีตัวพิมพ์ใหญ่, ตัวพิมพ์เล็ก, ตัวเลข และอักขระพิเศษ
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    if (name === "password" && value.length > 0) {
-      if (!passwordRegex.test(formData.password)) {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          password:
-            "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]",
-        }));
-      } else {
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          password: "",
-        }));
-      }
+    if (!passwordRegex.test(updatedPassword)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        password:
+          "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]",
+      }));
+    } else {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        password: "",
+      }));
     }
+  }
+};
     // ตรวจสอบ Username และ Email แบบ Real-Time
     if (name === "user_name" || name === "email") {
       clearTimeout(window.checkDuplicateTimeout);

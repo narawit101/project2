@@ -86,7 +86,7 @@ export default function Register() {
       }
     }
     const allowDomain = ["@gmail.com", "@hotmail.com"];
-    if (name === "email" && value.length > 0) {
+    if (name === "email" && value.length > 10) {
       if (!allowDomain.some((domain) => value.endsWith(domain))) {
         setErrors((prevErrors) => ({
           ...prevErrors,
@@ -109,7 +109,7 @@ export default function Register() {
           password:
             "รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]",
         }));
-      } else {
+      }else {
         setErrors((prevErrors) => ({
           ...prevErrors,
           password: "",
