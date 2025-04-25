@@ -1,0 +1,41 @@
+
+.calendar-container{
+    margin: 100px auto;
+}
+/* ปรับขนาดของปฏิทิน */
+.react-calendar {
+    width: 100%;  /* ทำให้ปฏิทินขยายเต็มความกว้าง */
+    max-width: 500px;  /* กำหนดขนาดสูงสุด */
+    margin: 10px auto;
+  }
+  
+  /* ปรับขนาดของวันที่ในปฏิทิน */
+  .react-calendar__tile {
+    font-size: 26px;  /* ปรับขนาดตัวอักษรของวันที่ */
+    padding: 20px;  /* เพิ่มระยะห่างรอบๆ วันที่ */
+  }
+  
+  /* ปรับขนาดวันที่ที่ถูกเลือก */
+  .react-calendar__tile--active {
+    font-size: 18px;  /* ขนาดตัวอักษรของวันที่ที่ถูกเลือก */
+    background-color: #1E90FF;  /* สีพื้นหลัง */
+    color: white;  /* สีข้อความ */
+  }
+  
+  /* ปรับขนาดวันที่ที่ปัจจุบัน */
+  .react-calendar__tile--now {
+    font-weight: bold;
+    color: rgb(245, 0, 0);  /* สีข้อความ */
+  }
+  
+  /* ปรับขนาดและสีของวันที่ปฏิทิน */
+  .react-calendar__tile--weekend {
+    color: rgb(0, 0, 0);
+  }
+  
+  /* เปลี่ยนสีพื้นหลังวันที่ที่ถูกเลือก */
+  .react-calendar__tile--hasActive {
+    background-color: #F0F8FF;
+  }
+
+  

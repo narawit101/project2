@@ -1,0 +1,161 @@
+:root {
+  --text-color: #03045e;
+}
+
+.calendar-container {
+  margin: 100px auto 20px auto;
+}
+/* ปรับขนาดและจัดตำแหน่งของปุ่มเลือกเดือน ปี */
+.react-calendar__navigation {
+  margin: 20px auto 20px auto;
+  display: flex;
+  justify-content: space-between; /* ให้ปุ่ม << และ >> อยู่ห่างกัน */
+  align-items: center; /* จัดให้ปุ่มกลางของเดือน/ปี อยู่ตรงกลาง */
+}
+
+/* ปรับขนาดฟอนต์ของเดือน/ปี */
+.react-calendar__navigation__label {
+  color: var(--text-color);
+  font-size: 20px; /* ขนาดฟอนต์ของชื่อเดือน/ปี */
+  font-weight: bold;
+  padding: 0 10px;
+}
+
+/* เพิ่มระยะห่างระหว่างปุ่ม */
+.react-calendar__navigation button {
+  background-color: #f0f0f0; /* เพิ่มพื้นหลังให้ปุ่ม */
+  border: 1px solid #ddd; /* ขอบปุ่ม */
+  border-radius: 4px; /* ขอบมน */
+  padding: 8px 12px; /* ขนาดปุ่ม */
+  cursor: pointer;
+}
+
+/* เปลี่ยนสีเมื่อเอาเมาส์ไปชี้ที่ปุ่ม */
+.react-calendar__navigation button:hover {
+  background-color: #ddd;
+}
+
+.react-calendar__month-view__weekdays {
+  margin: 10px auto 10px auto;
+  display: flex;
+  justify-content: space-between; /* ให้วันทั้งหมดอยู่ห่างกันพอสมควร */
+  font-size: 16px; /* ปรับขนาดฟอนต์ */
+  font-weight: bold;
+}
+
+/* ปรับระยะห่างระหว่างวัน */
+.react-calendar__month-view__weekdays__weekday {
+  font-size: 14px;
+  font-weight: bold;
+  color: #555;
+  text-align: center;
+}
+.react-calendar__month-view__days__day {
+  font-size: 16px;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* ปรับให้ตัวอักษรไม่หดหรือบิด */
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none;
+  display: block;
+  white-space: nowrap;
+  font-size: 16px; /* ปรับขนาดฟอนต์ */
+}
+
+.react-calendar {
+  padding: 20px;
+  width: 100%; /* ทำให้ปฏิทินขยายเต็มความกว้าง */
+  max-width: 800px; /* กำหนดขนาดสูงสุด */
+  margin: 10px auto;
+  background-color: #f5f5f5; /* สีพื้นหลัง */
+  border-radius: 18px; /* ขอบมน */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* เงา */
+}
+
+/* ปรับขนาดของวันที่ในปฏิทิน */
+.react-calendar__tile {
+  font-size: 26px; /* ปรับขนาดตัวอักษรของวันที่ */
+  padding: 20px; /* เพิ่มระยะห่างรอบๆ วันที่ */
+}
+
+/* ปรับขนาดวันที่ที่ถูกเลือก */
+.react-calendar__tile--active {
+  font-weight: bold;
+  background-color:green; /* สีพื้นหลัง */
+  color: white; /* สีข้อความ */
+}
+
+/* ปรับขนาดวันที่ที่ปัจจุบัน */
+.react-calendar__tile--now {
+    background-color: none;
+  border: solid rebeccapurple 8px;
+  font-weight: bold;
+  color: rgba(255, 0, 0, 0.718); /* สีข้อความ */
+}
+
+/* ปรับขนาดและสีของวันที่ปฏิทิน */
+.react-calendar__tile--weekend {
+  color: rgb(0, 0, 0);
+}
+
+/* เปลี่ยนสีพื้นหลังวันที่ที่ถูกเลือก */
+.react-calendar__tile--hasActive {
+  background-color: var(--text-color);
+}
+.select-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px auto 10px auto;
+  p {
+    color: var(--text-color);
+    font-weight: bold;
+    font-size: 22px;
+  }
+}
+.save-btn button {
+  width: 40%;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  margin: 20px auto 20px auto;
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save-btn button:hover {
+  background-color: #45a049;
+}
+
+@media screen and (max-width: 800px) {
+  .react-calendar {
+    width: 100%; /* ทำให้ปฏิทินขยายเต็มความกว้าง */
+    max-width: 500px; /* กำหนดขนาดสูงสุด */
+    margin: 10px auto;
+  }
+  .react-calendar__tile {
+    font-size: 24px; /* ปรับขนาดตัวอักษรของวันที่ */
+    padding: 10px; /* เพิ่มระยะห่างรอบๆ วันที่ */
+  }
+}
+@media screen and (max-width: 550px) {
+  .react-calendar {
+    width: 100%; /* ทำให้ปฏิทินขยายเต็มความกว้าง */
+    max-width: 350px; /* กำหนดขนาดสูงสุด */
+    margin: 10px auto;
+  }
+  .react-calendar__tile {
+    font-size: 22px; /* ปรับขนาดตัวอักษรของวันที่ */
+    padding: 5px; /* เพิ่มระยะห่างรอบๆ วันที่ */
+  }
+}
