@@ -93,7 +93,7 @@ export default function ResetPassword() {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
+        credentials:"include",
         body: JSON.stringify({ email }),
       });
 
@@ -103,11 +103,11 @@ export default function ResetPassword() {
         setMessage(`ส่ง OTP ใหม่ไปที่ ${email} สำเร็จ`);
         setMessageType("success");
         localStorage.setItem("user", JSON.stringify(result.user)); // เก็บข้อมูลผู้ใช้
-        localStorage.setItem("expiresAt", JSON.stringify(result.expiresAt)); // เก็บเวลา expiresAt
+        localStorage.setItem("expiresAt", JSON.stringify(result.expiresAt).toDateString); // เก็บเวลา expiresAt
       } else {
         localStorage.removeItem("user", JSON.stringify(result));
         localStorage.removeItem("expiresAt", result);
-        router.push("/resetPassword");
+        router.push("/resetPassword")
         setMessage(result.message);
         setMessageType("error");
       }
@@ -134,7 +134,6 @@ export default function ResetPassword() {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
         body: JSON.stringify({ email, otp }),
       });
 
@@ -204,18 +203,22 @@ export default function ResetPassword() {
         )}
         {canEnterOTP && (
           <div className="input">
-            <input
-              type="text"
-              required
-              placeholder="ใส่ OTP"
-              value={otp}
-              onChange={(e) => setOTP(e.target.value)}
-            />
+          <input
+            type="text"
+            required
+            placeholder="ใส่ OTP"
+            value={otp}
+            onChange={(e) => setOTP(e.target.value)}
+          />
           </div>
         )}
         {canEnterOTP && (
           <div className="btn-resend">
-            <button disabled={!canEnterOTP} type="button" onClick={reSentOTP}>
+            <button
+              disabled={!canEnterOTP}
+              type="button"
+              onClick={reSentOTP}
+            >
               ขอ OTP ใหม่
             </button>
           </div>

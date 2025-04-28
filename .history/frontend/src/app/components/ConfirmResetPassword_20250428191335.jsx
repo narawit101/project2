@@ -29,7 +29,7 @@ export default function ConfirmResetPassword() {
     const user_id = localStorage.getItem("user");
 
     if (!user_id) {
-      setMessage("session หมดอายุกรุณาทำรายการใหม่");
+      setMessage("ไม่พบข้อมูลผู้ใช้ในระบบ");
       setMessageType("error");
       setTimeout(()=>{
         router.push("/resetPassword")
@@ -81,7 +81,6 @@ export default function ConfirmResetPassword() {
           headers: {
             "Content-Type": "application/json",
           },
-          credentials:"include",
           body: JSON.stringify({
             password: newPassword,
           }),

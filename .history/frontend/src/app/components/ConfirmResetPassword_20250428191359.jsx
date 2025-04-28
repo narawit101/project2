@@ -81,7 +81,6 @@ export default function ConfirmResetPassword() {
           headers: {
             "Content-Type": "application/json",
           },
-          credentials:"include",
           body: JSON.stringify({
             password: newPassword,
           }),

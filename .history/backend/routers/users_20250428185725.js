@@ -140,17 +140,17 @@ router.post("/reset-password", async (req, res) => {
       [user_id, otp, otpExpiry]
     );
 
-    if (otp_reset.rowCount > 0) {
-      resend.emails.send({
-        from: process.env.Sender_Email,
-        to: email,
-        subject: "OTP Reset Password",
-        text: `รหัส OTP ของคุณคือ ${otp} กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ`,
-      });
-    }
+    // if (otp_reset.rowCount > 0) {
+    //   resend.emails.send({
+    //     from: process.env.Sender_Email,
+    //     to: email,
+    //     subject: "OTP Reset Password",
+    //     text: `รหัส OTP ของคุณคือ ${otp} กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ`,
+    //   });
+    // }
+     //session หมดอายุใน 5 ชั้วโมง ต้อง login ใหม่
+        const expiresIn = 60 * 60 * 5000;
     
-    const expiresIn = 60 * 1000 * 10;
-   
         // **สร้าง JWT Token**
         const token = jwt.sign(
           {
@@ -159,25 +159,31 @@ router.post("/reset-password", async (req, res) => {
             role: user.role,
           },
           process.env.JWT_SECRET,
-          { expiresIn: "10m" }
+          { expiresIn: "5h" }
         );
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
-      maxAge: expiresIn,
-    });
     
-    res.status(200).json({
-      message: "ข้อมูล",
-      token,
-      expiresAt: Date.now() + expiresIn, 
-      user: {
-        user_id: user.user_id,
-        email: user.email,
-        status: user.status,
-      },
-    });
+        // **ส่ง JWT ไปยัง Client ผ่าน Cookie**
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Strict",
+          maxAge: expiresIn,
+        });
+    
+        res.status(200).json({
+          message: "เข้าสู่ระบบสำเร็จ",
+          token,
+          expiresAt: Date.now() + expiresIn,
+          user: {
+            user_id: user.user_id,
+            user_name: user.user_name,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            role: user.role,
+            status: user.status,
+          },
+        });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
@@ -210,18 +216,17 @@ router.post("/resent-reset-password", async (req, res) => {
       [user_id, otp, otpExpiry]
     );
 
-    if (otp_reset.rowCount > 0) {
-      resend.emails.send({
-        from: process.env.Sender_Email,
-        to: email,
-        subject: "OTP Reset Password",
-        text: `รหัส OTP ของคุณคือ ${otp} กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ`,
-      });
-    }
+    // if (otp_reset.rowCount > 0) {
+    //   resend.emails.send({
+    //     from: process.env.Sender_Email,
+    //     to: email,
+    //     subject: "OTP Reset Password",
+    //     text: `รหัส OTP ของคุณคือ ${otp} กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ`,
+    //   });
+    // }
 
-    const expiresIn = 60 * 1000 * 10;
-   
-    // **สร้าง JWT Token**
+    const expiresIn = 60 * 5; 
+
     const token = jwt.sign(
       {
         user_id: user.user_id,
@@ -229,8 +234,9 @@ router.post("/resent-reset-password", async (req, res) => {
         role: user.role,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "10m" }
+      { expiresIn: "5m" }
     );
+
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -241,20 +247,20 @@ router.post("/resent-reset-password", async (req, res) => {
     res.status(200).json({
       message: "ข้อมูล",
       token,
-      expiresAt: Date.now() + expiresIn, 
+      expiresAt: Date.now() + expiresIn * 1000,
       user: {
         user_id: user.user_id,
         email: user.email,
         status: user.status,
       },
     });
-    } catch (error) {
+  } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
-    }
-    });
+  }
+});
 
-router.post("/verify-otp",authMiddleware, async (req, res) => {
+router.post("/verify-otp", async (req, res) => {
   const { email, otp } = req.body; // รับ email และ otp จาก frontend
   try {
     // ตรวจสอบผู้ใช้จากอีเมล
@@ -314,5 +320,33 @@ router.put("/:id/change-password", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "เกิดข้อผิดพลาดในการอัปเดต" });
   }
 });
+
+router.put("/:id/change-password/reset", async (req, res) => {
+  const { id } = req.params;
+  const { password } = req.body;
+
+  try {
+    if (!password) {
+      return res.status(400).json({ message: "รหัสผ่านใหม่ไม่สามารถเป็นค่าว่าง" });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const updateResult = await pool.query(
+      "UPDATE users SET password = $1 WHERE user_id = $2", 
+      [hashedPassword, id]
+    );
+
+    if (updateResult.rowCount === 0) {
+      return res.status(400).json({ message: "ไม่พบผู้ใช้ในการอัปเดต" });
+    }
+
+    res.status(200).json({ message: "เปลี่ยนรหัสผ่านเรียบร้อยแล้ว" });
+  } catch (error) {
+    console.error("Error updating password:", error);
+    res.status(500).json({ message: "เกิดข้อผิดพลาดในการอัปเดต" });
+  }
+});
+
+
 
 module.exports = router;
