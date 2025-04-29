@@ -35,25 +35,6 @@ export default function MyCalendar() {
 
   }, [user, isLoading, router]);
 
-  useEffect(() => {
-    const storedData = sessionStorage.getItem("booking_date");
-    const storedExpiry = sessionStorage.getItem("booking_date_expiry");
-
-    if (storedData && storedExpiry) {
-      const expiryDate = new Date(storedExpiry);
-      const currentDate = new Date();
-
-      // ถ้าวันหมดอายุยังไม่ถึงให้แสดงข้อมูล
-      if (currentDate < expiryDate) {
-        setDate(new Date(storedData));
-      } else {
-        // ถ้าวันหมดอายุผ่านไปแล้ว ลบข้อมูลใน `sessionStorage`
-        sessionStorage.removeItem("booking_date");
-        sessionStorage.removeItem("booking_date_expiry");
-        setDate(null);
-      }
-    }
-  }, []);
 
   useEffect(() => {
     setDate(null);

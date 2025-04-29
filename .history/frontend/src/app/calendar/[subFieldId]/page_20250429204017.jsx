@@ -36,8 +36,8 @@ export default function MyCalendar() {
   }, [user, isLoading, router]);
 
   useEffect(() => {
-    const storedData = sessionStorage.getItem("booking_date");
-    const storedExpiry = sessionStorage.getItem("booking_date_expiry");
+    const storedData = localStorage.getItem("booking_date");
+    const storedExpiry = localStorage.getItem("booking_date_expiry");
 
     if (storedData && storedExpiry) {
       const expiryDate = new Date(storedExpiry);
@@ -47,9 +47,9 @@ export default function MyCalendar() {
       if (currentDate < expiryDate) {
         setDate(new Date(storedData));
       } else {
-        // ถ้าวันหมดอายุผ่านไปแล้ว ลบข้อมูลใน `sessionStorage`
-        sessionStorage.removeItem("booking_date");
-        sessionStorage.removeItem("booking_date_expiry");
+        // ถ้าวันหมดอายุผ่านไปแล้ว ลบข้อมูลใน `localStorage`
+        localStorage.removeItem("booking_date");
+        localStorage.removeItem("booking_date_expiry");
         setDate(null);
       }
     }
@@ -115,15 +115,15 @@ export default function MyCalendar() {
     // ถ้าคลิกวันที่เดิม, รีเซ็ตค่า
     if (date && newDate.toDateString() === date.toDateString()) {
       setDate(null);
-      sessionStorage.removeItem("booking_date");
-      sessionStorage.removeItem("booking_date_expiry");
+      localStorage.removeItem("booking_date");
+      localStorage.removeItem("booking_date_expiry");
     } else {
       setDate(newDate);
-      sessionStorage.setItem("booking_date", newDate.toDateString());
+      localStorage.setItem("booking_date", newDate.toDateString());
       // ตั้งวันหมดอายุหลังจาก 10 นาที
       const expiryDate = new Date();
       expiryDate.setMinutes(expiryDate.getMinutes() + 10); // ตั้งวันหมดอายุหลังจาก 10 นาที
-      sessionStorage.setItem("booking_date_expiry", expiryDate.toString()); // เก็บวันหมดอายุ
+      localStorage.setItem("booking_date_expiry", expiryDate.toString()); // เก็บวันหมดอายุ
     }
   };
 
@@ -140,7 +140,7 @@ export default function MyCalendar() {
     }
     // ตรวจสอบว่ามีวันที่เลือกหรือไม่
     if (date) {
-      const storedExpiry = sessionStorage.getItem("booking_date_expiry");
+      const storedExpiry = localStorage.getItem("booking_date_expiry");
       const expiryDate = new Date(storedExpiry);
       const currentDate = new Date();
 

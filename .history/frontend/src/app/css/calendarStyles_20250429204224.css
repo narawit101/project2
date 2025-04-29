@@ -233,6 +233,7 @@
     padding: 5px;
   }
   .sub-field-detail-container {
+    align-items: center;
     .detail{
       justify-content: left;
       text-align: left;

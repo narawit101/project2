@@ -35,25 +35,6 @@ export default function MyCalendar() {
 
   }, [user, isLoading, router]);
 
-  useEffect(() => {
-    const storedData = sessionStorage.getItem("booking_date");
-    const storedExpiry = sessionStorage.getItem("booking_date_expiry");
-
-    if (storedData && storedExpiry) {
-      const expiryDate = new Date(storedExpiry);
-      const currentDate = new Date();
-
-      // ถ้าวันหมดอายุยังไม่ถึงให้แสดงข้อมูล
-      if (currentDate < expiryDate) {
-        setDate(new Date(storedData));
-      } else {
-        // ถ้าวันหมดอายุผ่านไปแล้ว ลบข้อมูลใน `sessionStorage`
-        sessionStorage.removeItem("booking_date");
-        sessionStorage.removeItem("booking_date_expiry");
-        setDate(null);
-      }
-    }
-  }, []);
 
   useEffect(() => {
     setDate(null);
@@ -116,14 +97,9 @@ export default function MyCalendar() {
     if (date && newDate.toDateString() === date.toDateString()) {
       setDate(null);
       sessionStorage.removeItem("booking_date");
-      sessionStorage.removeItem("booking_date_expiry");
     } else {
       setDate(newDate);
       sessionStorage.setItem("booking_date", newDate.toDateString());
-      // ตั้งวันหมดอายุหลังจาก 10 นาที
-      const expiryDate = new Date();
-      expiryDate.setMinutes(expiryDate.getMinutes() + 10); // ตั้งวันหมดอายุหลังจาก 10 นาที
-      sessionStorage.setItem("booking_date_expiry", expiryDate.toString()); // เก็บวันหมดอายุ
     }
   };
 
@@ -140,17 +116,7 @@ export default function MyCalendar() {
     }
     // ตรวจสอบว่ามีวันที่เลือกหรือไม่
     if (date) {
-      const storedExpiry = sessionStorage.getItem("booking_date_expiry");
-      const expiryDate = new Date(storedExpiry);
-      const currentDate = new Date();
-
-      // ตรวจสอบวันหมดอายุ
-      if (currentDate > expiryDate) {
-        setMessage("กรุณาเลือกวันที่ใหม่");
-        setMessageType("error");
-        return;
-      }
-
+     
       // ตรวจสอบว่าเป็นวันเปิดหรือไม่
       const day = date.getDay();
       if (opendays.includes(day)) {

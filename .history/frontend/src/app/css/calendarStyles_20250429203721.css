@@ -233,11 +233,15 @@
     padding: 5px;
   }
   .sub-field-detail-container {
-    .detail{
-      justify-content: left;
-      text-align: left;
-      display: flex;
-      flex-direction: column;
+   
+    .sub-name {
+      font-size: 22px;
+    }
+    .price {
+      font-size: 20px;
+    }
+    .type {
+      font-size: 20px;
     }
   }
 }

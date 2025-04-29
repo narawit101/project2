@@ -233,6 +233,7 @@
     padding: 5px;
   }
   .sub-field-detail-container {
+    align-items: last baseline;
     .detail{
       justify-content: left;
       text-align: left;

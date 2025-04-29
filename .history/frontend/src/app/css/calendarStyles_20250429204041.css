@@ -234,8 +234,6 @@
   }
   .sub-field-detail-container {
     .detail{
-      justify-content: left;
-      text-align: left;
       display: flex;
       flex-direction: column;
     }
