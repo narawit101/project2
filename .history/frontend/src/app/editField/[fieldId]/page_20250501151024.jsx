@@ -84,6 +84,7 @@ export default function CheckFieldDetail() {
           setMessageType("error");
           router.push("/"); // กลับไปหน้าหลักถ้าเกิดข้อผิดพลาด
         } else {
+          console.log(" ข้อมูลสนามกีฬา:", data); // ตรวจสอบข้อมูลที่ได้จาก Backend
           setField(data);
           setSubFields(data.sub_fields || []);
         }
@@ -128,7 +129,7 @@ export default function CheckFieldDetail() {
         const data = await response.json();
         setFacilities(data);
       } catch (err) {
-        console.error(err);
+        console.log(err);
       }
     };
 
@@ -454,6 +455,7 @@ export default function CheckFieldDetail() {
   };
 
   const deleteSubField = async (sub_field_id) => {
+    console.log("Sub-field ID:", sub_field_id);
     if (!sub_field_id || isNaN(sub_field_id)) {
       setMessage("Invalid sub-field ID");
       setMessageType("error");
@@ -504,6 +506,7 @@ export default function CheckFieldDetail() {
         }),
       });
       const result = await res.json();
+      console.log("เพิ่ม Add-on:", result);
       setMessage("เพิ่มสำเร็จ");
       setMessageType("success");
       return setTimeout(() => {

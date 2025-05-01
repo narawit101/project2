@@ -10,7 +10,7 @@ export default function MyFieldPage() {
   const [myFields, setMyFields] = useState([]);
   const [filteredFields, setFilteredFields] = useState([]);
   const [error, setError] = useState(null);
-  const [statusFilter, setStatusFilter] = useState("ทั้งหมด"); // Default filter to show all
+  const [statusFilter, setStatusFilter] = useState("ทั้งหมด");
   const [currentUser, setCurrentUser] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [fieldIdToDelete, setFieldIdToDelete] = useState(null);
@@ -45,7 +45,6 @@ export default function MyFieldPage() {
         });
 
         const data = await res.json();
-        console.log(data);
 
         if (!res.ok) {
           throw new Error(data.error || "เกิดข้อผิดพลาดในการดึงข้อมูลสนาม");

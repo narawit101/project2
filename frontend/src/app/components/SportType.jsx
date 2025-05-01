@@ -22,7 +22,6 @@ export default function HomePage() {
       .then((res) => res.json())
       .then((data) => {
         if (data.error) {
-          console.log("ไม่พบข้อมูลประเภทกีฬา");
         } else {
           setSportsCategories(data); 
         }
@@ -44,7 +43,6 @@ export default function HomePage() {
       .then((res) => res.json())
       .then((data) => {
         if (data.error) {
-          console.log("ไม่พบข้อมูลสนามกีฬา");
         } else {
           setApprovedFields(data);
         }

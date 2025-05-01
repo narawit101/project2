@@ -96,11 +96,13 @@ export default function CheckFieldDetail() {
       .then((res) => res.json())
       .then((data) => {
         if (data.message === "ไม่มีโพส") {
+          console.log("No posts available");
           setPostData([]);
         } else if (data.error) {
           console.error("Backend error:", data.error);
           router.push("/");
         } else {
+          console.log("Post data:", data);
           setPostData(data);
         }
       })

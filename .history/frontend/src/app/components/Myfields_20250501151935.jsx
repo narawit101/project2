@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import "@/app/css/myfield.css";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function MyFieldPage() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -9,46 +10,38 @@ export default function MyFieldPage() {
   const [myFields, setMyFields] = useState([]);
   const [filteredFields, setFilteredFields] = useState([]);
   const [error, setError] = useState(null);
-  const [statusFilter, setStatusFilter] = useState("ทั้งหมด"); // Default filter to show all
+  const [statusFilter, setStatusFilter] = useState("ทั้งหมด");
+  const [currentUser, setCurrentUser] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [fieldIdToDelete, setFieldIdToDelete] = useState(null);
+  const { user, isLoading } = useAuth();
+
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
-    const expiresAt = localStorage.getItem("expiresAt");
+    if (isLoading) return;
 
-    if (
-      !token ||
-      !storedUser ||
-      !expiresAt ||
-      Date.now() > parseInt(expiresAt)
-    ) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      localStorage.removeItem("expiresAt");
+    if (!user) {
       router.push("/login");
-      return;
     }
 
-    const user = JSON.parse(storedUser);
-    setCurrentUser(user);
-    setUserId(user.user_id);
-    if (user.role !== "admin" && user.role !== "field_owner") {
+    if (user?.status !== "ตรวจสอบแล้ว") {
+      router.push("/verification");
+    }
+
+    if (user?.role !== "admin" && user?.role !== "field_owner") {
       router.push("/");
     }
-    console.log(user);
-  }, []);
+  }, [user, isLoading, , router]);
 
   useEffect(() => {
     const fetchMyFields = async () => {
       try {
-        const token = localStorage.getItem("token");
-
         const res = await fetch(`${API_URL}/myfield/myfields`, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
+          credentials: "include",
         });
 
         const data = await res.json();
@@ -79,6 +72,48 @@ export default function MyFieldPage() {
     }
   }, [statusFilter, myFields]);
 
+  const handleDeleteField = (field_id) => {
+    // Set the field_id to be deleted and show the modal
+    setFieldIdToDelete(field_id);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteSubField = async () => {
+    try {
+      const res = await fetch(
+        `${API_URL}/field/delete/field/${fieldIdToDelete}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to delete field");
+      }
+
+      // Remove the deleted field from the state
+      setMyFields(
+        myFields.filter((field) => field.field_id !== fieldIdToDelete)
+      );
+      setFilteredFields(
+        filteredFields.filter((field) => field.field_id !== fieldIdToDelete)
+      );
+      setShowDeleteModal(false); // Close the modal after deletion
+    } catch (error) {
+      console.error("Error deleting field:", error);
+    }
+  };
+  if (isLoading)
+    return (
+      <div className="load">
+        <span className="spinner"></span> กำลังโหลด...
+      </div>
+    );
+
   return (
     <div className="container">
       <div className="section-title-container">
@@ -99,6 +134,7 @@ export default function MyFieldPage() {
           filteredFields.map((field) => (
             <div key={field.field_id} className="card">
               <img
+                onClick={() => router.push(`/profile/${field.field_id}`)}
                 src={
                   field.img_field
                     ? `${API_URL}/${field.img_field}`
@@ -111,6 +147,7 @@ export default function MyFieldPage() {
               <p className="custom-owner-info">
                 เจ้าของ: {field.first_name} {field.last_name}
               </p>
+              <p className="custom-owner-info">: {field.status}</p>
               <div className="custom-button-group">
                 <button
                   onClick={() => router.push(`/checkField/${field.field_id}`)}
@@ -118,11 +155,19 @@ export default function MyFieldPage() {
                 >
                   ดูรายละเอียด
                 </button>
+                {field.status !== "รอตรวจสอบ" && (
+                  <button
+                    onClick={() => router.push(`/editField/${field.field_id}`)}
+                    className="custom-button-edit"
+                  >
+                    แก้ไข
+                  </button>
+                )}
                 <button
-                  onClick={() => router.push(`/editField/${field.field_id}`)}
-                  className="custom-button-edit"
+                  onClick={() => handleDeleteField(field.field_id)}
+                  className="custom-button-delete"
                 >
-                  แก้ไข
+                  ลบ
                 </button>
               </div>
             </div>
@@ -133,6 +178,25 @@ export default function MyFieldPage() {
           </p>
         )}
       </div>
+      {showDeleteModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>ยืนยันการลบสนาม</h3>
+            <p>คุณต้องการลบสนามหรือไม่</p>
+            <div className="modal-actions">
+              <button className="savebtn" onClick={confirmDeleteSubField}>
+                ยืนยัน
+              </button>
+              <button
+                className="canbtn"
+                onClick={() => setShowDeleteModal(false)} // Close the modal
+              >
+                ยกเลิก
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -60,7 +60,9 @@ export default function CheckFieldDetail() {
         if (data.error) {
           router.push("/"); // กลับไปหน้าหลักถ้าเกิดข้อผิดพลาด
         } else {
+          console.log(" ข้อมูลสนามกีฬา:", data); // ตรวจสอบข้อมูลที่ได้จาก Backend
           setFieldData(data);
+
           const fieldOwnerId = data.user_id;
           const currentUserId = user?.user_id;
           const currentUserRole = user?.role;
@@ -96,11 +98,13 @@ export default function CheckFieldDetail() {
       .then((res) => res.json())
       .then((data) => {
         if (data.message === "ไม่มีโพส") {
+          console.log("No posts available");
           setPostData([]);
         } else if (data.error) {
           console.error("Backend error:", data.error);
           router.push("/");
         } else {
+          console.log("Post data:", data);
           setPostData(data);
         }
       })
@@ -119,7 +123,7 @@ export default function CheckFieldDetail() {
         const data = await response.json();
         setFacilities(data);
       } catch (err) {
-        console.error(err);
+        console.log(err);
       }
     };
 

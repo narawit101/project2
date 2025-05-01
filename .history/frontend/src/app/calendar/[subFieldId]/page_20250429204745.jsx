@@ -82,7 +82,7 @@ export default function MyCalendar() {
         .then((res) => res.json())
         .then((data) => {
           if (data.error) {
-            console.error("ไม่พบข้อมูลวันเปิดสนาม");
+            console.log("ไม่พบข้อมูลวันเปิดสนาม");
           } else {
             if (data[0] && data[0].open_days) {
               const mapDaysToNum = data[0].open_days.map(
