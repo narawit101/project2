@@ -1,0 +1,494 @@
+:root {
+  --text-color: #03045e;
+}
+
+.heder {
+  color: var(--text-color);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.field-register-contianer {
+  width: 100%;
+  max-width: 700px;
+  margin: 100px auto;
+  padding: 5px 15px 15px 15px;
+  background: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  text-align: left;
+}
+
+.field-register-contianer form {
+  display: flex;
+  flex-direction: column;
+}
+
+.datetimecon {
+  padding: 15px;
+  border: #b3b3b3 solid 1px;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  border-radius: 5px;
+}
+
+.checkbox-label {
+  flex-wrap: wrap;
+  margin: 15px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  width: 100%;
+}
+
+.subfieldcon {
+  align-items: center;
+  padding: 15px;
+  margin-top: 20px;
+  border: #b3b3b3 solid 1px;
+}
+
+.subfieldcon:hover {
+  border: #21cd49 solid 1px;
+}
+
+.addoncon {
+  padding: 20px;
+}
+
+.datetimecon:hover {
+  border: #21cd49 solid 1px;
+}
+
+.time-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.input-group-register-field {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.input-group-deposit-regisfield {
+  margin-top: 5px;
+}
+
+.depositcon-regisfield {
+  border-radius: 5px;
+  padding: 10px 10px 10px 10px;
+  border: #b3b3b3 solid 1px;
+  margin-bottom: 10px;
+}
+.factcon-register-field {
+  max-height: 300px;
+  overflow-y: auto;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  padding: 10px 10px 0px 10px;
+  border: #b3b3b3 solid 1px;
+}
+
+.input-group-register-field label {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0px 0px 10px 0px;
+  text-align: left;
+}
+
+.preview-container-regis-field {
+  margin: 0px auto 25px auto;
+  text-align: center;
+  border: 2px solid #ddd;
+  padding: 10px;
+  width: 100%;
+  height: auto;
+  max-width: 600px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.preview-container-regis-field img {
+  width: 100%;
+  height: 100%;
+}
+
+.facility-item-register-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.input-group-checkbox-register-field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0px;
+}
+
+.input-group-checkbox-register-field input[type="checkbox"] {
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
+  accent-color: #333;
+  cursor: pointer;
+}
+
+.input-group-checkbox-register-field input[type="checkbox"]:checked + label {
+  color: var(--text-color); /* เปลี่ยนสีข้อความเมื่อเลือก checkbox */
+}
+
+.input-group-checkbox-register-field label:hover {
+  color: #3498db;
+}
+
+label {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-color);
+  display: block;
+  margin-bottom: 5px;
+}
+
+input {
+  margin: 10px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+input:focus {
+  border-color: var(--text-color);
+  box-shadow: 0 0 5px rgba(3, 4, 94, 0.5);
+  outline: none;
+}
+.addbtn-regisfield {
+  background-color: #28a745;
+  margin: 0px 0px 10px 0px;
+}
+.addbtn-regisfield:hover {
+  background: #21cd49;
+}
+.delbtn-regisfield {
+  background-color: red;
+  margin: 0px 0px 10px 10px;
+}
+.delbtn-regisfield:hover {
+  background-color: rgba(255, 0, 0, 0.774);
+}
+.delevn {
+  background-color: red;
+  margin: 0px 0px 10px 0px;
+}
+.delevn:hover {
+  background-color: rgba(255, 0, 0, 0.774);
+}
+.addsubfield-regisfield {
+  background-color: #28a745;
+  margin: 10px 0px 10px 250px;
+}
+.addsubfield-regisfield:hover {
+  background: #21cd49;
+}
+.addfac-regisfield {
+  background-color: #28a745;
+  margin: 10px 0px 10px 0px;
+}
+.addfac-regisfield:hover {
+  background: #21cd49;
+}
+.savebtn-regisfield {
+  background-color: #28a745;
+  margin: 10px 0px 20px 0px;
+}
+.savebtn-regisfield:hover {
+  background: #21cd49;
+}
+.canbtn-regisfield {
+  background-color: red;
+  margin: 10px 0px 20px 10px;
+}
+.canbtn-regisfield:hover {
+  background-color: rgba(255, 0, 0, 0.774);
+}
+.submitbtn-regisfield {
+  border-radius: 0px;
+  margin: 10px 0px 10px 0px;
+  background-color: var(--text-color);
+}
+.submitbtn-regisfield:hover {
+  background-color: #02226c;
+}
+
+field-register-contianerbutton {
+  background: var(--text-color);
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: 0.3s;
+}
+
+/* Style for the message box */
+.message-box {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border: 2px solid #ccc;
+  padding: 20px 30px;
+  z-index: 1000;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  color: #d90429;
+  background-color: #ffd4cc;
+  font-size: 14px;
+}
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  font-size: 14px;
+  display: flex;
+}
+
+.success-message i {
+  margin-right: 5px;
+}
+/* Optional: Add animations or transitions */
+.message-box {
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* Optional: Fade out the message after 3 seconds */
+.message-box.fade-out {
+  opacity: 0;
+}
+
+select {
+  appearance: none; /* ลบสไตล์ดีฟอลต์ของเบราว์เซอร์ */
+  background-color: white;
+  border-color: var(--text-color);
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  width: 100%;
+  outline: none;
+}
+
+/* เพิ่มไอคอนลูกศร */
+select {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='gray'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 35px;
+}
+
+select:hover {
+  border-color: var(--text-color);
+}
+
+select:focus {
+  border-color: var(--text-color);
+}
+
+option {
+  background-color: white;
+  color: #333;
+  padding: 10px;
+}
+
+option:checked {
+  background-color: var(--text-color);
+  color: white;
+}
+
+input[type="time"] {
+  width: 200px;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f8f8f8;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+input[type="time"]:focus {
+  border-color: var(--text-color);
+  background-color: #fff;
+  outline: none;
+}
+
+.textarea {
+  width: 100%; /* ทำให้ textarea ขยายเต็มความกว้างของ container */
+  max-width: 100%; /* จำกัดความกว้างไม่ให้เกิน container */
+  box-sizing: border-box; /* รวม padding และ border ในการคำนวณความกว้าง */
+}
+
+textarea {
+  width: 100%;
+  height: 150px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 880px) {
+  .field-register-contianer {
+    width: 100%;
+    max-width: 500px;
+    margin: 100px auto;
+    padding: 20px;
+  }
+  .datetimecon {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+  }
+  input[type="time"] {
+    width: 100%;
+    font-size: 10px;
+    transition: all 0.3s ease;
+  }
+  .open-days-container {
+    margin-top: 0px;
+  }
+  .addsubfield-regisfield {
+    margin: 0px 0px 0px 0px;
+  }
+}
+@media screen and (max-width: 550px) {
+  .field-register-contianer {
+    width: 100%;
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 20px;
+  }
+  button {
+    background: var(--text-color);
+    color: white;
+    border: none;
+    padding: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: 0.3s;
+  }
+  .delbtn-regisfield {
+    margin: 0px 0px 0px 0px;
+  }
+  .delevn {
+    margin: 0px 0px 0px 0px;
+  }
+  .input-group-register-field {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .input-group-register-field label {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    width: 100%;
+    margin: 10px 0px 0px 5px;
+  }
+  .open-days-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .time-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .input-group-checkbox-register-field {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}
+@media screen and (max-width: 420px) {
+  .heder {
+    font-size: 12px;
+    color: var(--text-color);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .field-register-contianer {
+    width: 100%;
+    max-width: 280px;
+    margin: 100px auto;
+    padding: 20px;
+  }
+
+  .open-days-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .time-selection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .input-group-checkbox-register-field {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    width: 100%;
+    margin: 10px 0px 0px 5px;
+  }
+
+  .input-group-register-field {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .input-group-register-field label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  .input-group-register-field input::placeholder,
+  .input-group-register-field select::placeholder {
+    font-size: 12px; /* ลดฟอนต์มากขึ้น */
+  }
+}

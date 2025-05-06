@@ -1,0 +1,52 @@
+:root {
+  --text-color: #03045e;
+}
+
+.contact-container .admin-contact {
+  min-height: 500px;
+  overflow-y: auto;
+  max-height: 600px;
+  padding: 5px 40px 30px 40px;
+  gap: 40px;
+  display: flex;
+  flex-direction: column;
+  margin: 100px auto 20px auto;
+  max-width: 1200px;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 108px;
+}
+
+.contact-container h1 {
+  text-align: center;
+  font-weight: 500;
+  color: var(--text-color);
+  font-size: 50px;
+}
+
+.admin-contact label {
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 22px;
+}
+
+.admin-contact strong {
+  display: inline-block;
+  font-weight: 500;
+  color: #333;
+  font-size: 22px;
+}
+
+.detail-contact .more-contact {
+  margin: 10px auto;
+  display: flex;
+  align-items: center;
+}
+
+.detail-contact p {
+  display: inline-block;
+  font-weight: 400;
+  color: #333;
+  font-size: 20px;
+}

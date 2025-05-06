@@ -1,0 +1,134 @@
+:root {
+  --text-color: #03045e;
+}
+
+.load {
+  font-size: 2rem;
+  color: #555;
+  text-align: center;
+  padding: 3rem;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 9999;
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.edit-profile-container {
+  width: 70%;
+  margin: 100px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.head-edit-profile {
+  text-align: center;
+  background: white;
+  color: var(--text-color);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.edit-profile-title {
+  color: var(--text-color);
+  font-weight: bold;
+  margin: 12px 2px 0px;
+}
+
+input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+button.save-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button.save-btn:hover {
+  background-color: #218838;
+}
+
+.change-password-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: var(--text-color);
+  color: white;
+  font-size: 16px;
+  text-decoration: none;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.change-password-link:hover {
+  background-color: #0003b3;
+}
+
+.change-password-link:active {
+  background-color: #003f6a;
+}
+
+.message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border: 2px solid #ccc;
+  padding: 20px 30px;
+  z-index: 1000;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.message.error {
+  display: flex;
+  align-items: center;
+  color: #d90429;
+  background-color: #ffd4cc;
+  font-size: 14px;
+}
+
+.message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  font-size: 14px;
+}

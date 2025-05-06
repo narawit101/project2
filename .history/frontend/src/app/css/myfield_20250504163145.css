@@ -1,0 +1,295 @@
+:root {
+  --text-color: #03045e;
+}
+
+.load {
+  font-size: 2rem;
+  color: #555;
+  text-align: center;
+  padding: 3rem;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 9999;
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.myfield-container {
+  min-height: 80vh;
+  max-width: 100%;
+  width: 1300px;
+  padding: 10px 0px;
+  background: rgba(255, 255, 255, 0.822);
+  border-radius: 20px;
+  margin: 100px auto 20px auto;
+}
+
+.field-section-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  gap: 20px;
+}
+
+.sport-select-myfield {
+  width: 150px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #000000;
+  outline: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.grid-myfield {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.card-myfield {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  min-height: 420px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: 0.3s;
+  padding: 16px;
+}
+.card-myfield:hover {
+  cursor: pointer;
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+.card-myfield-img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.custom-field-name {
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-color);
+  margin: 10px;
+}
+
+.custom-owner-info-myfield {
+  font-size: 18px;
+  text-align: center;
+  color: #616161;
+  margin: 5px;
+}
+
+.custom-owner-info-myfield.passed {
+  font-weight: 500;
+  color: green;
+}
+
+.custom-owner-info-myfield.failed {
+  font-weight: 500;
+  color: red;
+}
+
+.custom-owner-info-myfield.pending {
+  font-weight: 500;
+  color: rgb(221, 208, 25);
+}
+
+.custom-button-group-myfield {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+  gap: 10px;
+}
+
+.custom-button-view-myfield,
+.custom-button-edit-myfield,
+.custom-button-delete-myfield {
+  cursor: pointer;
+  border: none;
+  font-size: 0.8rem;
+  border-radius: 10px;
+  flex: 1;
+  background-color: #007bff;
+  color: #fff;
+}
+
+.myfield-container button {
+  color: #fff;
+  margin-top: 2px;
+  padding: 10px 10px;
+  border-radius: 15px;
+  font-weight: 00;
+  border: none;
+}
+
+.custom-button-view-myfield {
+  background: linear-gradient(135deg, #1b0ed4, #055199);
+  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
+  color: white;
+}
+
+.custom-button-view-myfield:hover {
+  background: linear-gradient(135deg, #3c30e6, #0d5599);
+  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
+}
+
+.custom-button-edit-myfield {
+  background-color: #616161;
+  color: white;
+}
+
+.custom-button-edit-myfield:hover {
+  background-color: #424242;
+}
+
+.custom-button-delete-myfield {
+  background-color: #dc3545;
+  color: white;
+}
+
+.custom-button-delete-myfield:hover {
+  background-color: #c82333;
+}
+
+.custom-no-fields-message {
+  text-align: center;
+  color: #d32f2f;
+  font-size: 1.25rem;
+}
+
+.field-section-title {
+  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.244);
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: var(--text-color);
+  border-radius: 25px;
+  border: none;
+  margin: 0px 0px 0px 0px;
+  padding: 0.95rem;
+}
+
+.modal-overlay-myfield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-myfield {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.modal-actions-myfield {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+.savebtn-myfield {
+  background-color: #28a745;
+  margin: 10px;
+}
+.savebtn-myfield:hover {
+  background: #21cd49;
+}
+.canbtn-myfield {
+  margin: 10px;
+  background-color: #dc3545;
+}
+.canbtn-myfield:hover {
+  background-color: #c82333;
+}
+
+
+@media screen and (max-width: 980px) {
+}
+
+@media screen and (max-width: 820px) {
+  .myfield-container {
+    max-width: 540px;
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 674px) {
+}
+.grid-myfield {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+@media screen and (max-width: 580px) {
+  .myfield-container {
+    max-width: 450px;
+    width: 100%;
+  }
+}
+@media screen and (max-width: 490px) {
+  .myfield-container {
+    max-width: 400px;
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 431px) {
+  .myfield-container {
+    max-width: 360px;
+    width: 100%;
+  }
+  .field-section-title-container {
+    flex-direction: column;
+  }
+  .field-section-title {
+    margin: 0px;
+  }
+}
+
+@media screen and (max-width: 395px) {
+  .myfield-container {
+    max-width: 320px;
+    width: 100%;
+  }
+  .field-section-title-container {
+    flex-direction: column;
+  }
+}

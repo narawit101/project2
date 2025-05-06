@@ -1,0 +1,15 @@
+:root {
+    --text-color: #03045e;
+  }
+  .contact-container{
+    margin: 100px auto 20px auto;
+    background: rgb(255, 255, 255);
+}
+  .contact-container .title-contact{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .contact-container .title-contact h1{
+    font-size: 50px;
+  }
