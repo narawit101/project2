@@ -1,0 +1,125 @@
+:root {
+  --text-color: #03045e;
+}
+
+.myorder-container {
+  padding: 1.8rem;
+  max-width: 100%;
+  margin: 50px auto 20px auto;
+  min-height: 800px;
+}
+
+.myorder-container h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+  text-align: center;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+}
+
+.filters label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95rem;
+  color: var(--text-color);
+}
+
+.myorder-container input[type="date"],
+.myorder-container select {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  margin-top: 0.4rem;
+  min-width: 300px;
+}
+
+.booking-list {
+  /* border: 2px solid black; */
+  background: rgba(255, 255, 255, 0.603);
+  border-radius: 20px;
+  margin: 0px auto 10px auto;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.booking-card {
+  background-color: #ffffff;
+  border: 3px var(--text-color);
+  border-radius: 19px;
+  padding: 1.2rem;
+  margin-bottom: 1.3rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.detail-button {
+  margin: 20px auto;
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.detail-button:hover {
+  background-color: #0056b3;
+}
+
+.booking-detail p {
+  margin: 0.6rem 0;
+  line-height: 1.5;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.booking-detail strong {
+  color: #333;
+}
+
+/* Responsive */
+@media (max-width: 755px) {
+  .booking-list {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 675px) {
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .myorder-container input[type="date"],
+  .myorder-container select {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+@media (max-width: 350px) {
+  .myorder-container input[type="date"],
+  .myorder-container select {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 150px;
+    margin: auto;
+  }
+  .booking-list {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+  .myorder-container h1 {
+    margin-top: 50px;
+  }
+}

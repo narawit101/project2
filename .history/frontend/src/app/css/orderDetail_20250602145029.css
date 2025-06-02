@@ -1,0 +1,179 @@
+:root {
+  --text-color: #03045e;
+}
+
+.order-detail {
+  padding: 2rem;
+  max-width: 800px;
+  margin: 100px auto 40px auto;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.order-detail-title {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  color: var(--text-color);
+}
+
+.order-detail-empty {
+  text-align: center;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.booking-card-order-detail {
+  list-style-type: none;
+  padding: 1.2rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #fafafa;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+}
+
+.booking-card-order-detail p {
+  margin: 0.6rem 0;
+  line-height: 1.6;
+  color: #333;
+}
+.booking-card-order-detail strong {
+  color: var(--text-color);
+}
+
+.status-buttons-order-detail {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.approve-btn-order-detail,
+.reject-btn-order-detail,
+.cancel-booking-btn-order-detail {
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  border: none;
+}
+
+.approve-btn-order-detail {
+  background-color: #4caf50;
+  color: white;
+}
+
+.reject-btn-order-detail {
+  background-color: #f44336;
+  color: white;
+}
+
+.cancel-booking-btn-order-detail {
+  margin-top: 1.5rem;
+  background-color: #ff9800;
+  color: white;
+}
+
+.deposit-slip-container-order-detail {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.deposit-slip-order-detail {
+  max-width: 100%;
+  width: 300px;        /* หรือปรับขนาดที่ต้องการ */
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  object-fit: contain;
+}
+
+
+/* พื้นหลังเทาโปร่ง */
+.modal-overlay-order-detail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* กล่อง modal */
+.modal-content-order-detail {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.modal-header-order-detail {
+  margin-bottom: 1.5rem;
+}
+
+.modal-header-order-detail h2 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.status-label-order-detail {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2196f3;
+}
+
+.modal-actions-order-detail {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.modal-confirm-btn-order-detail,
+.modal-cancel-btn-order-detail {
+  padding: 0.6rem 1.4rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.modal-confirm-btn-order-detail {
+  background-color: #4caf50;
+  color: white;
+}
+
+.modal-cancel-btn-order-detail {
+  background-color: #f44336;
+  color: white;
+}
+
+
+@media (max-width: 600px) {
+  .order-detail {
+    padding: 1rem;
+  }
+
+  .status-buttons-order-detail {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .approve-btn-order-detail,
+  .reject-btn-order-detail,
+  .cancel-booking-btn-order-detail {
+    width: 100%;
+  }
+}
