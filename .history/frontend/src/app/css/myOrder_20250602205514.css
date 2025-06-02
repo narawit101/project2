@@ -74,6 +74,7 @@
   background: linear-gradient(135deg, #1b0ed4, #055199);
   box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
   color: white;
+  color: white;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 8px;
@@ -82,8 +83,7 @@
 }
 
 .detail-button:hover {
-  background: linear-gradient(135deg, #3c30e6, #0d5599);
-  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
+  background-color: #0056b3;
 }
 
 .booking-detail p {

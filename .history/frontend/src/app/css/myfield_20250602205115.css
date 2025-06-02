@@ -119,7 +119,6 @@
   margin-top: auto;
   gap: 20px;
   margin-bottom: 17px;
-  font-size: 0.8rem;
 }
 
 .custom-button-view-myfield,
@@ -128,9 +127,10 @@
 .custom-button-view-order-myfield {
   cursor: pointer;
   border: none;
+  font-size: 0.7rem;
   border-radius: 10px;
   flex: 1;
-  /* background-color: #007bff; */
+  background-color: #007bff;
   color: #fff;
 }
 .custom-button-view-order-myfield {
