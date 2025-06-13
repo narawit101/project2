@@ -1,0 +1,394 @@
+:root {
+  --text-color: #03045e;
+}
+
+.editfield-container {
+  width: 100%;
+  max-width: 700px;
+  margin: 100px auto;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.input-group-editfield {
+  margin: 20px 0;
+  text-align: left;
+}
+
+.input-group-editfield label {
+  color: var(--text-color);
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 5px;
+  margin-left: 10px;
+}
+
+.input-group-editfield p {
+  color: #333;
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+.input-group-editfield li {
+  color: #00a093;
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+
+.document-container-editfield {
+  margin: 15px;
+  text-align: center;
+  border: #333 solid 2px;
+  margin-top: 0px;
+  padding: 5px;
+  border-radius: 8px;
+}
+.document-container-editfield:hover {
+  border: #15ff00 solid 2px;
+  color: #22dfcf;
+}
+
+.editfield-container input,
+textarea,
+select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #b3b3b3;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.editfield-container textarea {
+  resize: vertical;
+  min-height: 150px;
+}
+
+.sport-select-editfield {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #000000;
+  outline: none;
+  cursor: pointer;
+  font-weight: 300;
+}
+
+.preview-container-editfield {
+  margin: 20px auto;
+  text-align: center;
+  border: 2px solid #ddd;
+  padding: 10px;
+  width: 100%;
+  max-width: 600px;
+  border-radius: 8px;
+  min-height: 50vh;
+  background-color: #fafafa;
+  /* object-fit: cover; */
+}
+
+.preview-container-editfield img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.editfield-container h1 {
+  color: var(--text-color);
+}
+.editfield-container p {
+  margin: 10px;
+  display: inline-block;
+}
+.field-facilities {
+  margin-top: 15px;
+}
+.field-facilities h1 {
+  margin: 0px 0px 5px 0px;
+  color: var(--text-color);
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.facbox-editfield {
+  text-align: left;
+  padding: 8px 8px 8px 0;
+}
+
+.facitem-editfield strong {
+  color: var(--text-color);
+}
+
+.facitem-editfield {
+  padding: 0px 10px 10px 0px;
+}
+
+.facitem-editfield span {
+  color: #000000;
+}
+
+.sub-fields-container-editfield {
+  max-height: 500px;
+  overflow-y: auto;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 2px solid #e0e0e0;
+}
+
+.sub-fields-container-editfield h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.sub-field-card-editfield {
+  background: #f9f9f9;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.sub-field-card-editfield input,
+.sub-field-card-editfield select {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.add-ons-container-editfield {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 15px;
+  padding: 10px;
+  background: #f0f0f0;
+  border-left: 4px solid #28a745;
+  border-radius: 6px;
+}
+
+.add-ons-container-editfield label {
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.add-ons-container-editfield li {
+  list-style: none;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.add-addon-form-editfield,
+.subfield-form-editfield {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.subfield-form-editfield input,
+.add-addon-form-editfield input,
+.subfield-form-editfield select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  width: 100%;
+}
+
+.editfield-container button {
+  width: auto;
+  color: #fff;
+  margin-top: 10px;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+.del-myfac-btn-editfield {
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  width: auto;
+  background-color: red;
+}
+.editbtn-editfield {
+  background: var(--text-color); /* ไล่สี */
+  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
+  margin: 10px;
+}
+.add-fac-editfield-btn button {
+  width: 100px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  background-color: var(--text-color);
+  margin: 10px 0 10px 0;
+}
+.savebtn-editfield {
+  background-color: #28a745;
+  margin: 10px;
+}
+.savebtn-editfield:hover {
+  background: #21cd49;
+}
+.canbtn-editfield {
+  margin: 10px;
+  background-color: #dc3545;
+}
+.canbtn-editfield:hover {
+  background-color: #c82333;
+}
+
+.delsub-editfield {
+  background-color: #dc3545;
+  color: #fff;
+  margin-top: 10px;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+.delsub-editfield:hover {
+  background-color: #c82333;
+}
+
+.modal-overlay-editfield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-editfield {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.modal-actions-editfield {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.factcon-editfield {
+  min-height: 20vh;
+  max-height: 300px;
+  overflow-y: auto;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  padding: 10px 20px 0px 20px;
+  border: #b3b3b3 solid 1px;
+}
+.facility-item-editfield {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+.input-group-checkbox-editfield {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0px;
+}
+
+.input-group-checkbox-editfield input[type="checkbox"] {
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
+  accent-color: #333;
+  cursor: pointer;
+}
+
+.input-group-checkbox-editfield input[type="checkbox"]:checked + label {
+  color: var(--text-color); /* เปลี่ยนสีข้อความเมื่อเลือก checkbox */
+}
+
+.input-group-checkbox-editfield label:hover {
+  color: #3498db;
+}
+.addfac-editfield {
+  background-color: #28a745;
+  margin: 10px 0px 10px 0px;
+}
+.addfac-editfield:hover {
+  background: #21cd49;
+}
+
+@media screen and (max-width: 769px) {
+  .editfield-container {
+    width: 100%;
+    max-width: 500px;
+  }
+  .preview-container-editfield {
+    object-fit: cover;
+  }
+}
+@media screen and (max-width: 568px) {
+  .editfield-container {
+    width: 100%;
+    max-width: 450px;
+  }
+}
+@media screen and (max-width: 468px) {
+  .editfield-container {
+    width: 100%;
+    max-width: 400px;
+  }
+}
+@media screen and (max-width: 428px) {
+  .editfield-container {
+    width: 100%;
+    max-width: 350px;
+  }
+}
+@media screen and (max-width: 361px) {
+  .editfield-container {
+    width: 100%;
+    max-width: 320px;
+  }
+  .preview-container-editfield {
+    object-fit: cover;
+  }
+  .preview-container-editfield img {
+    width: 100%;
+    border-radius: 5px;
+  }
+
+  .input-group-editfield {
+    text-align: center;
+    margin: 8px;
+  }
+}
+@media screen and (max-width: 338px) {
+  .editfield-container {
+    width: 100%;
+    max-width: 250px;
+  }
+}
