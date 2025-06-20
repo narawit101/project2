@@ -1,9 +1,13 @@
 const express = require("express");
 const router = express.Router();
 
-
 router.post("/", (req, res) => {
-  res.clearCookie("token"); // ลบ Cookie ที่มี JWT
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "None",
+  });
+
   res.status(200).json({ message: "ออกจากระบบสำเร็จ" });
 });
 
