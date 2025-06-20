@@ -306,7 +306,7 @@ export default function BookingDetail() {
   const confirmCancelBooking = async () => {
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       const res = await fetch(
         `${API_URL}/booking/cancel-bookings/${booking.booking_id}`,
         {
@@ -326,7 +326,7 @@ export default function BookingDetail() {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage(data.message);
+        setMessage(data.message + "ยกเลิกสำเร็จ");
         setMessageType("success");
         setTimeout(() => {
           window.location.reload();

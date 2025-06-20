@@ -326,11 +326,8 @@ export default function BookingDetail() {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage(data.message);
+        setMessage(data.message + "ยกเลิกสำเร็จ");
         setMessageType("success");
-        setTimeout(() => {
-          window.location.reload();
-        }, 2000);
       } else {
         setMessage(data.message || "ยกเลิกไม่สำเร็จ");
         setMessageType("error");
