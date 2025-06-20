@@ -57,31 +57,28 @@ export default function BookingDetail() {
     }
   }, [user, isLoading, booking_id]);
 
-  //  1. fetchData แยกไว้เพื่อใช้ซ้ำได้
+ // ✅ fetchData ดึงรายละเอียดการจอง
   const fetchData = useCallback(async () => {
     try {
       if (!booking_id) return;
 
-      const res = await fetch(
-        `${API_URL}/booking/bookings-detail/${booking_id}`,
-        {
-          credentials: "include",
-        }
-      );
+      const res = await fetch(`${API_URL}/booking/bookings-detail/${booking_id}`, {
+        credentials: "include",
+      });
 
       const data = await res.json();
 
       if (data.success) {
         setMybooking(data.data);
         setFieldId(data.data.field_id);
-        console.log(" Booking Data:", data.data);
+        console.log("📦 Booking Data:", data.data);
       } else {
-        console.log("Booking fetch error:", data.error);
+        console.log("❌ Booking fetch error:", data.error);
         setMessage(data.error);
         setMessageType("error");
       }
     } catch (error) {
-      console.error("Fetch error:", error);
+      console.error("❌ Fetch error:", error);
       setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
       setMessageType("error");
     } finally {
@@ -89,12 +86,12 @@ export default function BookingDetail() {
     }
   }, [booking_id, API_URL]);
 
-  // 2. โหลดข้อมูลรอบแรก
+  // ✅ โหลดข้อมูลรอบแรกเมื่อเข้า
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  // 3. เชื่อม socket แล้วฟัง slot_booked เฉพาะ booking นี้
+  // ✅ เชื่อม socket แล้วฟัง event review_posted เฉพาะ booking_id
   useEffect(() => {
     const socket = io(API_URL, {
       transports: ["websocket"],
@@ -107,22 +104,15 @@ export default function BookingDetail() {
       console.log("🔌 Socket connected:", socket.id);
     });
 
-    socket.on("slot_booked", (data) => {
-      if (data.bookingId === booking_id) {
-        console.log("ได้ slot ของตัวเอง → รีโหลดข้อมูล");
+    socket.on("review_posted", (data) => {
+      if (String(data.bookingId) === String(booking_id)) {
+        console.log("📝 ได้รีวิวใหม่ของ booking นี้ → reload");
         fetchData();
       }
     });
 
-    socket.on("review_posted", (data) => {
-      if (String(data.bookingId) === String(booking_id)) {
-        console.log("ได้รีวิวใหม่ → โหลดรีวิวใหม่");
-        fetchReview(); // โหลดรีวิวใหม่
-      }
-    });
-
     socket.on("connect_error", (err) => {
-      console.error(" Socket connect_error:", err.message);
+      console.error("❌ Socket connect_error:", err.message);
     });
 
     return () => {
@@ -500,33 +490,33 @@ export default function BookingDetail() {
     }
   }, [message]);
 
-  const fetchReview = useCallback(async () => {
-    try {
-      const res = await fetch(`${API_URL}/reviews/get/${booking_id}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        setReviewData(data.data);
-      } else {
-        setMessage("เกิดข้อผิดพลาด: " + data.message);
-        setMessageType("error");
-      }
-    } catch (error) {
-      console.error("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
-      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
-      setMessageType("error");
-    } finally {
-      setDataLoading(false);
-    }
-  }, [booking_id, API_URL]);
-
   useEffect(() => {
-    fetchReview();
-  }, [fetchReview]);
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`${API_URL}/reviews/get/${booking_id}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          setReviewData(data.data);
+        } else {
+          setMessage("เกิดข้อผิดพลาด: " + data.message);
+          setMessageType("error");
+        }
+      } catch (error) {
+        setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
+        setMessageType("error");
+        console.error("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
+      } finally {
+        setDataLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [booking_id, bookingId]);
 
   const handleSubmitReview = async () => {
     if (!rating || rating < 1) {

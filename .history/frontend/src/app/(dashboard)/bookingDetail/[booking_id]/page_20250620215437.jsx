@@ -114,13 +114,6 @@ export default function BookingDetail() {
       }
     });
 
-    socket.on("review_posted", (data) => {
-      if (String(data.bookingId) === String(booking_id)) {
-        console.log("ได้รีวิวใหม่ → โหลดรีวิวใหม่");
-        fetchReview(); // โหลดรีวิวใหม่
-      }
-    });
-
     socket.on("connect_error", (err) => {
       console.error(" Socket connect_error:", err.message);
     });
@@ -516,7 +509,7 @@ export default function BookingDetail() {
         setMessageType("error");
       }
     } catch (error) {
-      console.error("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
+      console.error("❌ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
       setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
       setMessageType("error");
     } finally {
