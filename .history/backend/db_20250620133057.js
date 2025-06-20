@@ -5,7 +5,9 @@ const isProduction = process.env.NODE_ENV === "production";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: isProduction ? { rejectUnauthorized: false } : false,
+  ssl: isProduction
+    ? { rejectUnauthorized: false } // สำหรับ Railway
+    : false,                        // สำหรับ localhost
 });
 
 pool.connect((err) => {
@@ -13,8 +15,6 @@ pool.connect((err) => {
     console.error("❌ Database connection error:", err.stack);
   } else {
     console.log("✅ Connected to PostgreSQL database");
-    console.log("🌐 DATABASE_URL =", process.env.DATABASE_URL);
-    console.log("📦 Running in", process.env.NODE_ENV, "mode");
   }
 });
 
