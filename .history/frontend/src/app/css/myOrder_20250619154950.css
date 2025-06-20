@@ -1,0 +1,582 @@
+:root {
+  --text-color: #03045e;
+}
+
+.myorder-container {
+  padding: 1.8rem;
+  max-width: 100%;
+  margin: 50px auto 20px auto;
+  min-height: 800px;
+}
+
+.myorder-container h1 {
+  margin: 0 auto;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border-radius: 10px;
+  width: auto;
+  height: 70px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+}
+
+.filters label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95rem;
+  color: var(--text-color);
+}
+
+.myorder-container input[type="date"],
+.myorder-container select {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  margin-top: 0.4rem;
+  min-width: 300px;
+}
+
+.booking-list {
+  list-style: none;
+  min-height: 500px;
+  background: rgba(255, 255, 255, 0.715);
+  border-radius: 20px;
+  margin: 0px auto 10px auto;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.load-container-order {
+  list-style: none;
+  min-height: 500px;
+  background: rgba(255, 255, 255, 0.715);
+  border-radius: 20px;
+  margin: 0px auto 10px auto;
+  padding: 1.5rem;
+}
+
+.booking-list h1 {
+  align-items: center;
+  text-align: center;
+}
+
+.booking-card {
+  max-height: 600px;
+  overflow-y: auto;
+  background-color: #ffffff;
+  border: 3px var(--text-color);
+  border-radius: 19px;
+  padding: 1.2rem;
+  margin-bottom: 1.3rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.hours-container-my-order {
+  margin-bottom: 0.5rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.5rem;
+  padding: 0.6rem;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+}
+
+.price-container-my-order {
+  margin-bottom: 0.5rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.5rem;
+  padding: 0.6rem;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+}
+
+.activity-label {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.facility-container-order {
+  background-color: #f9f9f9;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.facility-list-order {
+  margin: 0.5rem 0;
+  padding-left: 1.2rem;
+}
+
+.no-facility-price {
+  margin-top: 0.5rem;
+  font-weight: 700;
+  color: #333;
+}
+
+
+
+.detail-button {
+  margin: 20px auto;
+  background: linear-gradient(135deg, #1b0ed4, #055199);
+  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.detail-button:hover {
+  background: linear-gradient(135deg, #3c30e6, #0d5599);
+  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
+}
+
+.booking-detail p {
+  font-weight: 700;
+  margin: 0.4rem 0;
+  line-height: 1.5;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.booking-detail strong {
+  color: #333;
+}
+
+.status-text-detail {
+  font-weight: 600;
+}
+
+.status-text-detail.unknown {
+  color: gray;
+}
+
+.status-text-detail {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}
+
+.total-date-order strong {
+  text-align: center;
+  font-weight: 700;
+  color: #d32f2f;
+}
+
+.total-date-order p {
+  text-align: center;
+  font-weight: 700;
+  color: #d32f2f;
+}
+
+.price-deposit-order strong {
+  text-align: center;
+  font-weight: 700;
+  color: #d32f2f;
+}
+
+.price-deposit-order p {
+  text-align: center;
+  font-weight: 700;
+  color: #d32f2f;
+}
+
+.total-hours-order strong {
+  text-align: center;
+  font-weight: 700;
+  color: #2e7d32;
+}
+
+.total-hours-order p {
+  text-align: center;
+  font-weight: 700;
+  color: #2e7d32;
+}
+.total-remaining-order strong {
+  text-align: center;
+  font-weight: 700;
+  color: #2e7d32;
+}
+
+.total-remaining-order p {
+  text-align: center;
+  font-weight: 700;
+  color: #2e7d32;
+}
+
+/* เพิ่ม CSS ใหม่ใน myOrder.css */
+
+/* Date Range Filter Styles */
+.date-range-filter {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.date-range-filter label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  color: #333;
+}
+
+.date-range-filter input[type="date"] {
+  padding: 8px 12px;
+  border: 2px solid #e1e5e9;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-top: 5px;
+  transition: border-color 0.3s ease;
+}
+
+.date-range-filter input[type="date"]:focus {
+  border-color: var(--text-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Clear Filters Button */
+.clear-filters-btn {
+  width: 150px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 17px 3px;
+  transition: background-color 0.3s ease;
+}
+
+.clear-filters-btn:hover {
+  background-color: #5a6268;
+}
+
+/* Booking Summary */
+.booking-summary {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.booking-summary p {
+  margin: 0;
+  color: #495057;
+  font-size: 16px;
+}
+
+/* แก้ไข Filters Section */
+.filters {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.filters label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.filters select,
+.filters input {
+  padding: 10px 12px;
+  border: 2px solid #e1e5e9;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-top: 5px;
+  transition: all 0.3s ease;
+}
+
+.filters select:focus,
+.filters input:focus {
+  border-color: var(--text-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Status Badge Colors */
+.status-text-detail.pending {
+  color: #856404;
+  background-color: #fff4ce;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.status-text-detail.approved {
+  color: #155724;
+  background-color: #d4f4dd;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.status-text-detail.complete {
+  color: #155724;
+  background-color: #d4f4dd;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.status-text-detail.rejected {
+  color: #721c24;
+  background-color: #fddede;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Stats Summary */
+.stats-summary {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 2px;
+}
+
+.stat-card {
+  height: 60px;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  border: 2px solid #e9ecef;
+  transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-1px);
+}
+
+.stat-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.stat-inline {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #495057;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.stat-number {
+  font-size: 18px;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.stat-card.pending {
+  border-color: #ffc107;
+}
+
+.stat-card.pending .stat-number {
+  color: #856404;
+}
+
+.stat-card.approved {
+  border-color: #28a745;
+}
+
+.stat-card.approved .stat-number {
+  color: #155724;
+}
+
+.stat-card.complete {
+  border-color: #0e7025;
+}
+
+.stat-card.complete .stat-number {
+  color: #0f501e;
+}
+
+.stat-card.rejected {
+  border-color: #dc3545;
+}
+
+.stat-card.rejected .stat-number {
+  color: #721c24;
+}
+
+/* Revenue Summary */
+.revenue-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.revenue-card {
+  margin: 0 auto;
+  background: linear-gradient(135deg, #1b0ed4, #055199);
+  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  /* height: 90px; */
+  width: 100%;
+}
+
+.revenue-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.revenue-amount {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Responsive Design for Stats */
+@media (max-width: 768px) {
+  .myorder-container h1 {
+    width: 100%;
+    font-size: 1.3rem;
+  }
+
+  .date-range-filter {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .clear-filters-btn {
+    margin-left: 0;
+    margin-top: 10px;
+    width: 100%;
+  }
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .revenue-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 10px;
+  }
+
+  .stat-number {
+    font-size: 20px;
+  }
+
+  .revenue-amount {
+    font-size: 18px;
+  }
+}
+
+/* Responsive */
+@media (max-width: 755px) {
+  .booking-list {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 675px) {
+  .myorder-container input[type="date"],
+  .myorder-container select {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: auto;
+    min-width: 150px;
+  }
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 380px) {
+  .stat-inline {
+    font-size: 14px;
+  }
+
+  .stat-number {
+    font-size: 14px;
+  }
+  .booking-detail p {
+    font-size: 0.8rem;
+  }
+  .myorder-container input[type="date"],
+  .myorder-container select {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 150px;
+    margin: auto;
+  }
+  .booking-list {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+  .myorder-container h1 {
+    margin-top: 50px;
+  }
+}
