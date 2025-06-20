@@ -47,7 +47,7 @@ router.post("/", async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: true, // ใช้ secure แค่บน production
-      sameSite: "none", // ปรับค่า sameSite ให้เหมาะกับ env
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // ปรับค่า sameSite ให้เหมาะกับ env
       maxAge: expiresIn,
     });
 
