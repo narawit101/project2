@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter, useParams } from "next/navigation";
 import { io } from "socket.io-client";
@@ -34,6 +34,40 @@ export default function Myorder() {
       router.replace("/verification");
     }
   }, [user, isLoading, router]);
+
+  useEffect(() => {
+    console.log("API_URL:", API_URL);
+    console.log(" connecting socket...");
+
+    socketRef.current = io(API_URL, {
+      transports: ["websocket"],
+      withCredentials: true,
+    });
+
+    const socket = socketRef.current;
+
+    socket.on("connect", () => {
+      console.log(" Socket connected:", socket.id);
+    });
+
+    socket.on("slot_booked", () => {
+      console.log("📩 slot_booked: reload my-orders");
+      fetchData(); // ← เรียกตรงๆ
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error(" Socket connect_error:", err.message);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+  fetchData();
+}, [fetchData]);
+
 
   const fetchData = useCallback(async () => {
     if (!fieldId) return;
@@ -75,36 +109,6 @@ export default function Myorder() {
       setDataLoading(false);
     }
   }, [fieldId, API_URL, filters, router]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  useEffect(() => {
-    socketRef.current = io(API_URL, {
-      transports: ["websocket"],
-      withCredentials: true,
-    });
-
-    const socket = socketRef.current;
-
-    socket.on("connect", () => {
-      console.log(" Socket connected:", socket.id);
-    });
-
-    socket.on("slot_booked", () => {
-      console.log("📩 slot_booked received");
-      fetchData(); // ✅ reload เมื่อมีจองใหม่
-    });
-
-    socket.on("connect_error", (err) => {
-      console.error("Socket connect_error:", err.message);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [API_URL, fetchData]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;

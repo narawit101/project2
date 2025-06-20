@@ -335,34 +335,34 @@ module.exports = function (io) {
   );
 
   router.get(
-  "/booked-block/:subFieldId/:startDate/:endDate",
-  authMiddleware,
-  async (req, res) => {
-    const { subFieldId, startDate, endDate } = req.params;
+    "/booked-block/:subFieldId/:startDate/:endDate",
+    authMiddleware,
+    async (req, res) => {
+      const { subFieldId, startDate, endDate } = req.params;
 
-    try {
-      const client = await pool.connect();
-      const result = await client.query(
-        `SELECT *
-         FROM bookings
-         WHERE sub_field_id = $1
-         AND booking_date >= $2
-         AND booking_date < $3
-         AND status IN ('pending', 'approved', 'complete')`,
-        [subFieldId, startDate, endDate]
-      );
-      client.release();
+      try {
+        const client = await pool.connect();
+        const result = await client.query(
+          `SELECT *
+       FROM bookings
+       where booking_date = $2   and sub_field_id = $1 
+         AND status IN ('pending', 'approved','complete')
+      `,
+          [subFieldId, startDate]
+        );
 
-      res.status(200).json({
-        success: true,
-        data: result.rows,
-      });
-    } catch (error) {
-      console.error("Error fetching booked range:", error);
-      res.status(500).json({ success: false, error: "Database error" });
+        client.release();
+
+        res.status(200).json({
+          success: true,
+          data: result.rows,
+        });
+      } catch (error) {
+        console.error("Error fetching booked range:", error);
+        res.status(500).json({ success: false, error: "Database error" });
+      }
     }
-  }
-);
+  );
 
   router.get("/my-bookings/:user_id", authMiddleware, async (req, res) => {
     const { user_id } = req.params;
@@ -579,6 +579,12 @@ WHERE b.field_id = $1
         //   .reduce((sum, row) => sum + parseFloat(row.price_deposit || 0), 0)
       };
 
+      if (req.io) {
+        req.io.emit("slot_booked", {
+          bookingId: result.rows[0]?.booking_id,
+        });
+      }
+
       res.status(200).json({
         success: true,
         data: result.rows,
@@ -691,6 +697,12 @@ LIMIT 1;
           return res.status(403).json({
             success: false,
             error: "คุณไม่มีสิทธิ์ดูข้อมูลการจองนี้",
+          });
+        }
+
+        if (req.io) {
+          req.io.emit("slot_booked", {
+            bookingId: result.rows.booking_id,
           });
         }
 

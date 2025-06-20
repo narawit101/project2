@@ -77,19 +77,12 @@ app.use("/posts", posts);
 app.use("/booking",booking)
 app.use("/reviews",reviews)
 io.on("connection", (socket) => {
-  console.log("📡 User connected:", socket.id);
-
-  // ✅ ฟัง event ที่ client ส่งมาเพื่อ join ห้อง user_id
-  socket.on("join_room", (userId) => {
-    socket.join(userId.toString());
-    console.log(`✅ User joined room: ${userId}`);
-  });
+  console.log(" Client connected:", socket.id);
 
   socket.on("disconnect", () => {
-    console.log("❌ User disconnected:", socket.id);
+    console.log(" Client disconnected:", socket.id);
   });
 });
-
 
 const port = 5000;
 server.listen(port, () => {

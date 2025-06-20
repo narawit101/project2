@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter, useParams } from "next/navigation";
 
@@ -57,71 +57,67 @@ export default function BookingDetail() {
     }
   }, [user, isLoading, booking_id]);
 
-  // ✅ 1. fetchData แยกไว้เพื่อใช้ซ้ำได้
-  const fetchData = useCallback(async () => {
-    try {
-      if (!booking_id) return;
-
-      const res = await fetch(
-        `${API_URL}/booking/bookings-detail/${booking_id}`,
-        {
-          credentials: "include",
-        }
-      );
-
-      const data = await res.json();
-
-      if (data.success) {
-        setMybooking(data.data);
-        setFieldId(data.data.field_id);
-        console.log("📦 Booking Data:", data.data);
-      } else {
-        console.log("❌ Booking fetch error:", data.error);
-        setMessage(data.error);
-        setMessageType("error");
-      }
-    } catch (error) {
-      console.error("❌ Fetch error:", error);
-      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
-      setMessageType("error");
-    } finally {
-      setDataLoading(false);
-    }
-  }, [booking_id, API_URL]);
-
-  // ✅ 2. โหลดข้อมูลรอบแรก
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    console.log("API_URL:", API_URL);
+    console.log(" connecting socket...");
 
-  // ✅ 3. เชื่อม socket แล้วฟัง slot_booked เฉพาะ booking นี้
-  useEffect(() => {
-    const socket = io(API_URL, {
+    socketRef.current = io(API_URL, {
       transports: ["websocket"],
       withCredentials: true,
     });
 
-    socketRef.current = socket;
+    const socket = socketRef.current;
 
     socket.on("connect", () => {
-      console.log("🔌 Socket connected:", socket.id);
+      console.log(" Socket connected:", socket.id);
     });
 
     socket.on("slot_booked", (data) => {
-      if (data.bookingId === booking_id) {
-        console.log("📩 ได้ slot ของตัวเอง → รีโหลดข้อมูล");
+      console.log(" booking_id:", data.bookingId);
+      if (data.bookingId == booking_id) {
         fetchData();
       }
+      setBookingId(data.bookingId);
     });
 
     socket.on("connect_error", (err) => {
-      console.error("❌ Socket connect_error:", err.message);
+      console.error(" Socket connect_error:", err.message);
     });
 
     return () => {
       socket.disconnect();
     };
-  }, [API_URL, booking_id, fetchData]);
+  }, [API_URL, booking_id]);
+
+  useEffect(() => {
+    fetchData();
+  }, [booking_id, isLoading]);
+
+  const fetchData = async () => {
+    try {
+      if (!booking_id) return;
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      const res = await fetch(
+        `${API_URL}/booking/bookings-detail/${booking_id}`,
+        { credentials: "include" }
+      );
+      const data = await res.json();
+      if (data.success) {
+        setMybooking(data.data);
+        setFieldId(data.data.field_id);
+        console.log(" Booking Data:", data.data);
+        console.log(" field_id:", data.data.field_id);
+      } else {
+        console.log(" Booking fetch error:", data.error);
+      }
+    } catch (error) {
+      console.error(" Fetch error:", error);
+      setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+      setMessageType("error");
+    } finally {
+      setDataLoading(false);
+    }
+  };
 
   useEffect(() => {
     console.log("BookingDetail Debug - user:", user);

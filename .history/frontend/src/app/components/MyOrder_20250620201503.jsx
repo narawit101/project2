@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter, useParams } from "next/navigation";
 import { io } from "socket.io-client";
@@ -35,52 +35,10 @@ export default function Myorder() {
     }
   }, [user, isLoading, router]);
 
-  const fetchData = useCallback(async () => {
-    if (!fieldId) return;
-    try {
-      const queryParams = new URLSearchParams();
-      if (filters.startDate) queryParams.append("startDate", filters.startDate);
-      if (filters.endDate) queryParams.append("endDate", filters.endDate);
-      if (filters.status) queryParams.append("status", filters.status);
-
-      const res = await fetch(
-        `${API_URL}/booking/my-orders/${fieldId}?${queryParams.toString()}`,
-        { credentials: "include" }
-      );
-
-      const data = await res.json();
-      if (data.success) {
-        setMybooking(data.data);
-        setFieldName(data.fieldInfo?.field_name || "");
-        if (data.stats) console.log("Stats:", data.stats);
-      } else {
-        if (data.fieldInfo) {
-          setFieldName(data.fieldInfo.field_name || "");
-          setMessage(
-            `สนาม ${data.fieldInfo.field_name} ${data.fieldInfo.field_status}`
-          );
-          setMessageType("error");
-          setTimeout(() => {
-            router.replace("/myfield");
-          }, 2000);
-        }
-        setMessage(data.error);
-        setMessageType("error");
-      }
-    } catch (error) {
-      console.error("Fetch error:", error);
-      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
-      setMessageType("error");
-    } finally {
-      setDataLoading(false);
-    }
-  }, [fieldId, API_URL, filters, router]);
-
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    console.log("API_URL:", API_URL);
+    console.log(" connecting socket...");
 
-  useEffect(() => {
     socketRef.current = io(API_URL, {
       transports: ["websocket"],
       withCredentials: true,
@@ -93,18 +51,71 @@ export default function Myorder() {
     });
 
     socket.on("slot_booked", () => {
-      console.log("📩 slot_booked received");
-      fetchData(); // ✅ reload เมื่อมีจองใหม่
+      console.log("📩 slot_booked: reload my-orders");
+      fetchData(); // ← เรียกตรงๆ
     });
 
     socket.on("connect_error", (err) => {
-      console.error("Socket connect_error:", err.message);
+      console.error(" Socket connect_error:", err.message);
     });
 
     return () => {
       socket.disconnect();
     };
-  }, [API_URL, fetchData]);
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!fieldId) return;
+      try {
+        // แก้ไขการส่ง parameters
+        const queryParams = new URLSearchParams();
+        if (filters.startDate)
+          queryParams.append("startDate", filters.startDate);
+        if (filters.endDate) queryParams.append("endDate", filters.endDate);
+        if (filters.status) queryParams.append("status", filters.status);
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        const res = await fetch(
+          `${API_URL}/booking/my-orders/${fieldId}?${queryParams.toString()}`,
+          {
+            credentials: "include",
+          }
+        );
+        const data = await res.json();
+        if (data.success) {
+          setMybooking(data.data);
+          setFieldName(data.fieldInfo?.field_name || "");
+          console.log("Booking data:", data.data);
+          if (data.stats) {
+            console.log("Stats:", data.stats);
+          }
+        } else {
+          // ดักกรณีสนามยังไม่ผ่าน
+          if (data.fieldInfo) {
+            setFieldName(data.fieldInfo.field_name || "");
+            setMessage(
+              `สนาม ${data.fieldInfo.field_name} ${data.fieldInfo.field_status}`
+            );
+            setMessageType("error");
+            setTimeout(() => {
+              router.replace("/myfield");
+            }, 2000);
+          }
+          console.log("Booking fetch error:", data.error);
+          setMessage(data.error);
+          setMessageType("error");
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+        setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+        setMessageType("error");
+      } finally {
+        setDataLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [fieldId, API_URL, filters, bookingId]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;

@@ -1,86 +1,40 @@
 "use client";
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/app/contexts/AuthContext";
-import { useRouter, useParams } from "next/navigation";
-import { io } from "socket.io-client";
+import { useRouter } from "next/navigation";
 import "@/app/css/myOrder.css";
-
-export default function Myorder() {
+import { io } from "socket.io-client";
+export default function Mybooking() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const { user, isLoading } = useAuth();
   const [booking, setMybooking] = useState([]);
-  const [filters, setFilters] = useState({
-    startDate: "",
-    endDate: "",
-    status: "",
-  });
-  const socketRef = useRef(null);
-  const [bookingId, setBookingId] = useState("");
+  const [filters, setFilters] = useState({ date: "", status: "" });
   const router = useRouter();
-  const { fieldId } = useParams();
+  const socketRef = useRef(null);
   const [message, setMessage] = useState(""); // State for messages
   const [messageType, setMessageType] = useState(""); // State for message type (error, success)
-  const [fieldName, setFieldName] = useState(""); // เพิ่ม state สำหรับชื่อสนาม
+  const [userName, setUserName] = useState("");
+  const [userInfo, setUserInfo] = useState("");
+  const [bookingId, setBookingId] = useState("");
   const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
     if (isLoading) return;
+
     if (!user) {
       router.replace("/login");
       return;
     }
-    if (user?.role === "customer") router.replace("/");
+
     if (user?.status !== "ตรวจสอบแล้ว") {
       router.replace("/verification");
     }
   }, [user, isLoading, router]);
 
-  const fetchData = useCallback(async () => {
-    if (!fieldId) return;
-    try {
-      const queryParams = new URLSearchParams();
-      if (filters.startDate) queryParams.append("startDate", filters.startDate);
-      if (filters.endDate) queryParams.append("endDate", filters.endDate);
-      if (filters.status) queryParams.append("status", filters.status);
-
-      const res = await fetch(
-        `${API_URL}/booking/my-orders/${fieldId}?${queryParams.toString()}`,
-        { credentials: "include" }
-      );
-
-      const data = await res.json();
-      if (data.success) {
-        setMybooking(data.data);
-        setFieldName(data.fieldInfo?.field_name || "");
-        if (data.stats) console.log("Stats:", data.stats);
-      } else {
-        if (data.fieldInfo) {
-          setFieldName(data.fieldInfo.field_name || "");
-          setMessage(
-            `สนาม ${data.fieldInfo.field_name} ${data.fieldInfo.field_status}`
-          );
-          setMessageType("error");
-          setTimeout(() => {
-            router.replace("/myfield");
-          }, 2000);
-        }
-        setMessage(data.error);
-        setMessageType("error");
-      }
-    } catch (error) {
-      console.error("Fetch error:", error);
-      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
-      setMessageType("error");
-    } finally {
-      setDataLoading(false);
-    }
-  }, [fieldId, API_URL, filters, router]);
-
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    console.log("API_URL:", API_URL);
+    console.log(" connecting socket...");
 
-  useEffect(() => {
     socketRef.current = io(API_URL, {
       transports: ["websocket"],
       withCredentials: true,
@@ -89,16 +43,16 @@ export default function Myorder() {
     const socket = socketRef.current;
 
     socket.on("connect", () => {
-      console.log(" Socket connected:", socket.id);
+      console.log("🔌 Socket connected:", socket.id);
     });
 
     socket.on("slot_booked", () => {
-      console.log("📩 slot_booked received");
-      fetchData(); // ✅ reload เมื่อมีจองใหม่
+      console.log("📩 slot_booked → reload my-bookings");
+      fetchData(); // ✅ โหลดข้อมูลใหม่เมื่อมีคนจอง
     });
 
     socket.on("connect_error", (err) => {
-      console.error("Socket connect_error:", err.message);
+      console.error(" Socket connect_error:", err.message);
     });
 
     return () => {
@@ -106,14 +60,55 @@ export default function Myorder() {
     };
   }, [API_URL, fetchData]);
 
+
+
+  const fetchData = useCallback(async () => {
+    if (!user?.user_id) return;
+
+    try {
+      const queryParams = new URLSearchParams();
+      if (filters.date) queryParams.append("date", filters.date);
+      if (filters.status) queryParams.append("status", filters.status);
+
+      const res = await fetch(
+        `${API_URL}/booking/my-bookings/${
+          user.user_id
+        }?${queryParams.toString()}`,
+        {
+          credentials: "include",
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.success) {
+        setMybooking(data.data);
+        setUserName(data.user?.user_name || "");
+        setUserInfo(
+          `${data.user?.first_name || ""} ${data.user?.last_name || ""}`
+        );
+        console.log("📦 Booking Data:", data.data);
+      } else {
+        console.log("❌ Booking fetch error:", data.error);
+        setMessage(data.error);
+        setMessageType("error");
+      }
+    } catch (error) {
+      console.error("❌ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      setMessageType("error");
+    } finally {
+      setDataLoading(false);
+    }
+  }, [user?.user_id, filters, API_URL]);
+
+    useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // เพิ่มฟังก์ชันสำหรับ Clear Filters
-  const clearFilters = () => {
-    setFilters({ startDate: "", endDate: "", status: "" });
   };
 
   const formatDate = (isoString) => {
@@ -126,13 +121,25 @@ export default function Myorder() {
   };
 
   const getCancelDeadlineTime = (start_date, start_time, cancel_hours) => {
-    if (!start_date || !start_time || cancel_hours == null) return "-";
+    if (
+      !start_date ||
+      !start_time ||
+      cancel_hours === undefined ||
+      cancel_hours === null
+    ) {
+      return "-";
+    }
 
     const cleanDate = start_date.includes("T")
       ? start_date.split("T")[0]
       : start_date;
+
     const bookingDateTime = new Date(`${cleanDate}T${start_time}+07:00`);
-    if (isNaN(bookingDateTime.getTime())) return "-";
+
+    if (isNaN(bookingDateTime.getTime())) {
+      console.log(" Invalid Date from:", cleanDate, start_time);
+      return "-";
+    }
 
     bookingDateTime.setHours(bookingDateTime.getHours() - cancel_hours);
 
@@ -143,25 +150,6 @@ export default function Myorder() {
     });
   };
 
-  // คำนวณสถิติจากข้อมูลที่ได้
-  const calculateStats = () => {
-    const stats = {
-      total: booking.length,
-      pending: booking.filter((item) => item.status === "pending").length,
-      approved: booking.filter((item) => item.status === "approved").length,
-      rejected: booking.filter((item) => item.status === "rejected").length,
-      complete: booking.filter((item) => item.status === "complete").length,
-      totalRevenue: booking
-
-        .filter((item) => item.status === "complete")
-        .reduce((sum, item) => sum + parseFloat(item.total_price || 0), 0),
-      // totalDeposit: booking
-      //   .filter(item => item.status === 'approved')
-      //   .reduce((sum, item) => sum + parseFloat(item.price_deposit || 0), 0)
-    };
-    return stats;
-  };
-
   const getFacilityNetPrice = (item) => {
     const totalFac = (item.facilities || []).reduce(
       (sum, fac) => sum + (parseFloat(fac.fac_price) || 0),
@@ -170,7 +158,6 @@ export default function Myorder() {
     return Math.abs(totalFac - (parseFloat(item.total_remaining) || 0));
   };
 
-  const stats = calculateStats();
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
@@ -190,36 +177,18 @@ export default function Myorder() {
         </div>
       )}
       <div className="myorder-container">
-        <h1>รายการจองสนาม {fieldName}</h1>
-        <div className="filters">
-          <div className="date-range-filter">
-            <label>
-              วันที่เริ่ม:
-              {(filters.startDate || filters.endDate) && (
-                <>{filters.startDate && formatDate(filters.startDate)}</>
-              )}
-              <input
-                type="date"
-                name="startDate"
-                value={filters.startDate}
-                onChange={handleFilterChange}
-              />
-            </label>
+        <h1 className="head-title-my-order">รายการจองสนามของคุณ {userName}</h1>
 
-            <label>
-              ถึงวันที่:
-              {(filters.startDate || filters.endDate) && (
-                <>{filters.endDate && formatDate(filters.endDate)}</>
-              )}
-              <input
-                type="date"
-                name="endDate"
-                value={filters.endDate}
-                onChange={handleFilterChange}
-                min={filters.startDate} // ป้องกันเลือกวันที่สิ้นสุดก่อนวันที่เริ่มต้น
-              />
-            </label>
-          </div>
+        <div className="filters">
+          <label>
+            วันที่:
+            <input
+              type="date"
+              name="date"
+              value={filters.date}
+              onChange={handleFilterChange}
+            />
+          </label>
 
           <label>
             สถานะ:
@@ -235,63 +204,7 @@ export default function Myorder() {
               <option value="complete">การจองสำเร็จ</option>
             </select>
           </label>
-
-          <button onClick={clearFilters} className="clear-filters-btn">
-            ล้างตัวกรอง
-          </button>
-          {stats.totalRevenue >= 0 && (
-            <div className="revenue-summary">
-              <div className="revenue-card">
-                <h3>รายได้รวม (การจองสำเร็จ)</h3>
-                <p className="revenue-amount">
-                  {stats.totalRevenue.toLocaleString()} บาท
-                </p>
-              </div>
-              {/* <div className="revenue-card">
-                <h3>ค่ามัดจำรวม</h3>
-                <p className="revenue-amount">{stats.totalDeposit.toLocaleString()} บาท</p>
-              </div> */}
-            </div>
-          )}
         </div>
-
-        {/* แสดงสถิติ */}
-        {booking.length > 0 && (
-          <div className="stats-summary">
-            <div className="stats-grid">
-              <div className="stat-card">
-                <p className="stat-inline">
-                  รายการทั้งหมด:{" "}
-                  <span className="stat-number">{stats.total}</span>
-                </p>
-              </div>
-              <div className="stat-card pending">
-                <p className="stat-inline">
-                  รอตรวจสอบ:{" "}
-                  <span className="stat-number">{stats.pending}</span>
-                </p>
-              </div>
-              <div className="stat-card approved">
-                <p className="stat-inline">
-                  อนุมัติแล้ว:{" "}
-                  <span className="stat-number">{stats.approved}</span>
-                </p>
-              </div>
-              <div className="stat-card rejected">
-                <p className="stat-inline">
-                  ไม่อนุมัติ:{" "}
-                  <span className="stat-number">{stats.rejected}</span>
-                </p>
-              </div>
-              <div className="stat-card complete">
-                <p className="stat-inline">
-                  การจองสำเร็จ:{" "}
-                  <span className="stat-number">{stats.complete}</span>
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
         {dataLoading ? (
           <div className="load-container-order">
             <div className="loading-data">
@@ -305,7 +218,7 @@ export default function Myorder() {
                 <div className="booking-detail">
                   <p>
                     <strong>ชื่อผู้จอง: </strong>
-                    {item.first_name} {item.last_name}
+                    {userInfo}
                   </p>
                   <p>
                     <strong>วันที่จอง: </strong>
@@ -345,6 +258,7 @@ export default function Myorder() {
                       </p>
                     </div>
                   </div>
+
                   <div className="compact-price-box-order">
                     {/* กิจกรรม */}
                     <div className="line-item-order">
@@ -407,6 +321,7 @@ export default function Myorder() {
                       <span>{item.total_price} บาท</span>
                     </div>
                   </div>
+
                   <p>
                     <strong>สถานะ:</strong>{" "}
                     <span className={`status-text-detail ${item.status}`}>
@@ -422,6 +337,7 @@ export default function Myorder() {
                     </span>
                   </p>
                 </div>
+
                 <button
                   className="detail-button"
                   onClick={() =>

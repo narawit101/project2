@@ -1,0 +1,244 @@
+ router.get("/my-bookings/:user_id", authMiddleware, async (req, res) => {
+    const { user_id } = req.params;
+    const { date, status } = req.query;
+
+    try {
+      // 1. ดึงข้อมูลผู้ใช้ก่อน
+      const userResult = await pool.query(
+        `SELECT user_name, first_name, last_name FROM users WHERE user_id = $1`,
+        [user_id]
+      );
+
+      if (userResult.rows.length === 0) {
+        return res.status(404).json({
+          success: false,
+          error: "ไม่พบผู้ใช้",
+        });
+      }
+
+      const userInfo = userResult.rows[0];
+
+      let query = `
+      SELECT 
+        b.booking_id,
+        b.user_id,
+        b.field_id,
+        f.field_name,
+        f.gps_location,
+        f.price_deposit,
+        f.cancel_hours,
+        b.sub_field_id,
+        sf.sub_field_name,
+        sf.price,
+        b.booking_date,
+        b.start_date,
+        b.start_time,
+        b.end_date,
+        b.end_time,
+        b.total_hours,
+        b.total_price,
+        b.total_remaining,
+        b.pay_method,
+        b.status,
+        b.activity,
+        b.selected_slots,
+        (
+  SELECT COALESCE(json_agg(jsonb_build_object(
+    'field_fac_id', bf.field_fac_id,
+    'fac_name', bf.fac_name,
+    'fac_price', ff.fac_price
+  )), '[]')
+  FROM booking_fac bf
+  LEFT JOIN field_facilities ff ON ff.field_fac_id = bf.field_fac_id
+  WHERE bf.booking_id = b.booking_id
+) AS facilities
+      FROM bookings b
+      LEFT JOIN field f ON b.field_id = f.field_id
+      LEFT JOIN sub_field sf ON b.sub_field_id = sf.sub_field_id
+      WHERE b.user_id = $1
+    `;
+
+      let values = [user_id];
+      let i = 2;
+
+      if (date) {
+        query += ` AND b.start_date = $${i}`;
+        values.push(date);
+        i++;
+      }
+
+      if (status) {
+        query += ` AND b.status = $${i}`;
+        values.push(status);
+        i++;
+      }
+
+      query += ` ORDER BY b.booking_date ASC, b.start_time ASC`;
+
+      const bookingResult = await pool.query(query, values);
+
+      // ส่งกลับ user + bookings แม้จะไม่มี booking ก็มีชื่อ
+      res.status(200).json({
+        success: true,
+        user: userInfo, // ✅ ชื่อผู้ใช้
+        data: bookingResult.rows, // ✅ การจอง (อาจว่าง)
+      });
+
+      // (Optional) ส่ง event
+      if (req.io && bookingResult.rows.length > 0) {
+        req.io.emit("slot_booked", {
+          bookingId: bookingResult.rows[0].booking_id,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      res.status(500).json({
+        success: false,
+        error: "เกิดข้อผิดพลาดในการโหลดข้อมูล",
+      });
+    }
+  });
+
+    router.get("/my-orders/:field_id", authMiddleware, async (req, res) => {
+    const { field_id } = req.params;
+    // แก้ไขรับ startDate และ endDate แทน date
+    const { startDate, endDate, status, bookingDate } = req.query;
+    const user_id = req.user.user_id;
+    const user_role = req.user.role;
+
+    try {
+      // 1. ถ้าไม่ใช่ admin → ตรวจสอบว่า user นี้เป็นเจ้าของสนาม
+      const fieldQuery = await pool.query(
+        `SELECT user_id, field_name, status AS field_status FROM field WHERE field_id = $1`,
+        [field_id]
+      );
+
+      if (fieldQuery.rowCount === 0) {
+        return res
+          .status(404)
+          .json({ success: false, error: "Field not found" });
+      }
+
+      const field = fieldQuery.rows[0];
+
+      if (user_role !== "admin" && field.user_id !== user_id) {
+        return res.status(403).json({ success: false, error: "Access denied" });
+      }
+
+      if (field.field_status !== "ผ่านการอนุมัติ") {
+        return res.status(403).json({
+          success: false,
+          error: `สนาม ${field.field_name} ${field.field_status}`,
+          fieldInfo: {
+            field_name: field.field_name,
+            field_status: field.field_status,
+          },
+        });
+      }
+
+      let query = `
+SELECT 
+  b.booking_id, b.user_id, b.field_id,
+  u.first_name, u.last_name, u.email,
+  f.field_name, f.gps_location, f.price_deposit, f.cancel_hours, f.status AS field_status,
+  b.sub_field_id, sf.sub_field_name, sf.price AS sub_field_price,
+  b.booking_date, b.start_date, b.start_time, b.end_date, b.end_time,
+  b.total_hours, b.total_price, b.total_remaining,
+  b.pay_method, b.status, b.activity, b.selected_slots,
+
+  -- รวม facility เฉพาะของ booking นั้น
+(
+  SELECT COALESCE(json_agg(jsonb_build_object(
+    'field_fac_id', bf.field_fac_id,
+    'fac_name', bf.fac_name,
+    'fac_price', ff.fac_price
+  )), '[]')
+  FROM booking_fac bf
+  LEFT JOIN field_facilities ff ON ff.field_fac_id = bf.field_fac_id
+  WHERE bf.booking_id = b.booking_id
+) AS facilities
+FROM bookings b
+INNER JOIN users u ON u.user_id = b.user_id
+LEFT JOIN field f ON b.field_id = f.field_id
+LEFT JOIN sub_field sf ON b.sub_field_id = sf.sub_field_id
+WHERE b.field_id = $1
+    `;
+
+      let values = [field_id];
+      let paramIndex = 2;
+
+      if (bookingDate) {
+        query += ` AND b.booking_date= $${paramIndex}`;
+        values.push(bookingDate);
+        paramIndex++;
+      }
+      // แก้ไขการกรองวันที่แบบช่วง
+      else if (startDate && endDate) {
+        // กรองแบบช่วงวันที่
+        query += ` AND b.start_date BETWEEN $${paramIndex} AND $${paramIndex + 1}`;
+        values.push(startDate, endDate);
+        paramIndex += 2;
+      } else if (startDate) {
+        // กรองตั้งแต่วันที่เริ่มต้นขึ้นไป
+        query += ` AND b.start_date >= $${paramIndex}`;
+        values.push(startDate);
+        paramIndex++;
+      } else if (endDate) {
+        // กรองจนถึงวันที่สิ้นสุด
+        query += ` AND b.start_date <= $${paramIndex}`;
+        values.push(endDate);
+        paramIndex++;
+      }
+
+      if (status) {
+        query += ` AND b.status = $${paramIndex}`;
+        values.push(status);
+        paramIndex++;
+      }
+
+      query += ` ORDER BY b.booking_date ASC, b.start_time ASC`;
+
+      const result = await pool.query(query, values);
+
+      // คำนวณสถิติเพิ่มเติมสำหรับรายงาน
+      const stats = {
+        totalBookings: result.rows.length,
+        statusCounts: {
+          pending: result.rows.filter((row) => row.status === "pending").length,
+          approved: result.rows.filter((row) => row.status === "approved")
+            .length,
+          rejected: result.rows.filter((row) => row.status === "rejected")
+            .length,
+        },
+        totalRevenue: result.rows
+          .filter((row) => row.status === "approved")
+          .reduce((sum, row) => sum + parseFloat(row.total_price || 0), 0),
+        // totalDeposit: result.rows
+        //   .filter(row => row.status === 'approved')
+        //   .reduce((sum, row) => sum + parseFloat(row.price_deposit || 0), 0)
+      };
+
+      if (req.io) {
+        req.io.emit("slot_booked", {
+          bookingId: result.rows[0]?.booking_id,
+        });
+      }
+
+      res.status(200).json({
+        success: true,
+        data: result.rows,
+        fieldInfo: {
+          field_name: field.field_name,
+          field_status: field.field_status,
+        },
+        stats: stats,
+        dateRange: {
+          startDate: startDate || null,
+          endDate: endDate || null,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      res.status(500).json({ success: false, error: "Failed to get bookings" });
+    }
+  });

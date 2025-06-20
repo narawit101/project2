@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter, useParams } from "next/navigation";
 import { io } from "socket.io-client";
@@ -34,6 +34,32 @@ export default function Myorder() {
       router.replace("/verification");
     }
   }, [user, isLoading, router]);
+
+  useEffect(() => {
+    socketRef.current = io(API_URL, {
+      transports: ["websocket"],
+      withCredentials: true,
+    });
+
+    const socket = socketRef.current;
+
+    socket.on("connect", () => {
+      console.log(" Socket connected:", socket.id);
+    });
+
+    socket.on("slot_booked", () => {
+      console.log("📩 slot_booked received");
+      fetchData(); // ✅ reload เมื่อมีจองใหม่
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error("Socket connect_error:", err.message);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [API_URL, fetchData]);
 
   const fetchData = useCallback(async () => {
     if (!fieldId) return;
@@ -76,35 +102,9 @@ export default function Myorder() {
     }
   }, [fieldId, API_URL, filters, router]);
 
-  useEffect(() => {
+    useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  useEffect(() => {
-    socketRef.current = io(API_URL, {
-      transports: ["websocket"],
-      withCredentials: true,
-    });
-
-    const socket = socketRef.current;
-
-    socket.on("connect", () => {
-      console.log(" Socket connected:", socket.id);
-    });
-
-    socket.on("slot_booked", () => {
-      console.log("📩 slot_booked received");
-      fetchData(); // ✅ reload เมื่อมีจองใหม่
-    });
-
-    socket.on("connect_error", (err) => {
-      console.error("Socket connect_error:", err.message);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [API_URL, fetchData]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
