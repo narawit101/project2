@@ -63,6 +63,7 @@ app.options('*', cors({
 app.use(cookieParser());
 
 // body parser middleware
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(bodyParser.json());
