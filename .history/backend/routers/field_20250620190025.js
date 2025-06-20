@@ -342,7 +342,8 @@ router.put("/:field_id", authMiddleware, async (req, res) => {
 
   else if (status === "ไม่ผ่านการอนุมัติ") {
     const userId = checkField.rows[0].user_id; 
-    const userRole = userData.rows[0].role;
+        const userRole = userData.rows[0].role;
+
     if(userRole === "field_owner") {
     await pool.query(
       "UPDATE users SET role = 'field_owner' WHERE user_id = $1", 
