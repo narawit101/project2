@@ -91,7 +91,7 @@ export default function BookingDetail() {
 
   useEffect(() => {
     fetchData();
-  }, [booking_id, isLoading]);
+  }, [booking_id, user, isLoading]);
 
   const fetchData = async () => {
     try {
