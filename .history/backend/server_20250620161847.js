@@ -11,7 +11,7 @@ const server = http.createServer(app);
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://https://project-eight-jet-70.vercel.app", // เปลี่ยนให้ตรงกับของคุณจริงๆ
+  "https://https://project-eight-jet-70.vercel.app/", // เปลี่ยนให้ตรงกับของคุณจริงๆ
 ];
 
 const io = new Server(server, {

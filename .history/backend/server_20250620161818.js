@@ -11,12 +11,12 @@ const server = http.createServer(app);
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://https://project-eight-jet-70.vercel.app", // เปลี่ยนให้ตรงกับของคุณจริงๆ
+  "https://your-vercel-frontend-url.vercel.app", // เปลี่ยนให้ตรงกับของคุณจริงๆ
 ];
 
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 });
 app.use(
   cors({
-    origin: allowedOrigins, 
+    origin: "http://localhost:3000", 
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE","PATCH"],
     allowedHeaders: ["Content-Type"],
