@@ -82,59 +82,50 @@ export default function Booking() {
   // ดึง slot ที่มีสถานะ
   const fetchBookedSlots = useCallback(async () => {
     try {
-      const bookingDateRaw = sessionStorage.getItem("booking_date");
+      if (!subFieldId || !bookingDate) return;
+
       const bookingDateFormatted = new Date(bookingDate).toLocaleDateString(
         "en-CA"
       );
-      const day = new Date(`${bookingDateFormatted}T00:00:00`);
-      const today = new Date(day);
-      today.setDate(day.getDate() + 1);
-      const tomorrow = new Date(day);
-      tomorrow.setDate(day.getDate() + 2);
+      const start = new Date(bookingDateFormatted);
+      start.setDate(start.getDate() + 1);
 
-      const start = today.toISOString().split("T")[0];
-      const end = tomorrow.toISOString().split("T")[0];
+      const end = new Date(start);
+      end.setDate(end.getDate() + 1);
 
-      console.log(`today: ${bookingDateRaw}`);
-      console.log(`start: ${start}`);
-      console.log(`end: ${end}`);
+      const startStr = start.toISOString().split("T")[0];
+      const endStr = end.toISOString().split("T")[0];
 
       const res = await fetch(
-        `${API_URL}/booking/booked-block/${subFieldId}/${start}/${end}`,
+        `${API_URL}/booking/booked-block/${subFieldId}/${startStr}/${endStr}`,
         {
           credentials: "include",
         }
       );
+
       const data = await res.json();
 
-      if (!data.error) {
-        setBookedSlots(data.data);
-        // setDataLoading(false);
-
+      if (data.success) {
         const timeRangesWithStatus = data.data.flatMap((item) =>
           (item.selected_slots || []).map((time) => ({
             time,
             status: item.status,
           }))
         );
+console.log("📦 booked data from API:", data.data);
 
-        const selectedSlotsFromAPI = timeRangesWithStatus.map(
-          (item) => item.time
-        );
 
+        setBookedSlots(data.data);
         setBookTimeArr(timeRangesWithStatus);
-        setSelectedSlotsArr(selectedSlotsFromAPI);
-
-        // console.log("bookingtime", timeRangesWithStatus);
-        //console.log(data.data);
+        setSelectedSlotsArr(timeRangesWithStatus.map((item) => item.time));
       } else {
-        console.error("API returned error:", data.message);
-        setMessage("ไม่สามารถดึงข้อมูลได้", data.message);
+        console.error("API error:", data.message);
+        setMessage("ไม่สามารถดึงข้อมูลได้");
         setMessageType("error");
       }
     } catch (error) {
-      console.error("Failed to fetch booked slots:", error.message);
-      setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error.message);
+      console.error("Fetch failed:", error.message);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
       setMessageType("error");
     } finally {
       setDataLoading(false);

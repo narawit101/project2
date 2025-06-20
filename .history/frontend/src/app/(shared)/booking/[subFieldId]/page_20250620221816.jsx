@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import "@/app/css/Booking.css";
 import { useAuth } from "@/app/contexts/AuthContext";
@@ -80,103 +80,88 @@ export default function Booking() {
   }, [user, isLoading, router, bookingDate]);
 
   // ดึง slot ที่มีสถานะ
-  const fetchBookedSlots = useCallback(async () => {
-    try {
-      const bookingDateRaw = sessionStorage.getItem("booking_date");
-      const bookingDateFormatted = new Date(bookingDate).toLocaleDateString(
-        "en-CA"
+ const fetchBookedSlots = useCallback(async () => {
+  try {
+    if (!subFieldId || !bookingDate) return;
+
+    const bookingDateFormatted = new Date(bookingDate).toLocaleDateString("en-CA");
+    const start = new Date(bookingDateFormatted);
+    start.setDate(start.getDate() + 1);
+
+    const end = new Date(start);
+    end.setDate(end.getDate() + 1);
+
+    const startStr = start.toISOString().split("T")[0];
+    const endStr = end.toISOString().split("T")[0];
+
+    const res = await fetch(`${API_URL}/booking/booked-block/${subFieldId}/${startStr}/${endStr}`, {
+      credentials: "include",
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      const timeRangesWithStatus = data.data.flatMap((item) =>
+        (item.selected_slots || []).map((time) => ({
+          time,
+          status: item.status,
+        }))
       );
-      const day = new Date(`${bookingDateFormatted}T00:00:00`);
-      const today = new Date(day);
-      today.setDate(day.getDate() + 1);
-      const tomorrow = new Date(day);
-      tomorrow.setDate(day.getDate() + 2);
 
-      const start = today.toISOString().split("T")[0];
-      const end = tomorrow.toISOString().split("T")[0];
-
-      console.log(`today: ${bookingDateRaw}`);
-      console.log(`start: ${start}`);
-      console.log(`end: ${end}`);
-
-      const res = await fetch(
-        `${API_URL}/booking/booked-block/${subFieldId}/${start}/${end}`,
-        {
-          credentials: "include",
-        }
-      );
-      const data = await res.json();
-
-      if (!data.error) {
-        setBookedSlots(data.data);
-        // setDataLoading(false);
-
-        const timeRangesWithStatus = data.data.flatMap((item) =>
-          (item.selected_slots || []).map((time) => ({
-            time,
-            status: item.status,
-          }))
-        );
-
-        const selectedSlotsFromAPI = timeRangesWithStatus.map(
-          (item) => item.time
-        );
-
-        setBookTimeArr(timeRangesWithStatus);
-        setSelectedSlotsArr(selectedSlotsFromAPI);
-
-        // console.log("bookingtime", timeRangesWithStatus);
-        //console.log(data.data);
-      } else {
-        console.error("API returned error:", data.message);
-        setMessage("ไม่สามารถดึงข้อมูลได้", data.message);
-        setMessageType("error");
-      }
-    } catch (error) {
-      console.error("Failed to fetch booked slots:", error.message);
-      setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error.message);
+      setBookedSlots(data.data);
+      setBookTimeArr(timeRangesWithStatus);
+      setSelectedSlotsArr(timeRangesWithStatus.map((item) => item.time));
+    } else {
+      console.error("API error:", data.message);
+      setMessage("ไม่สามารถดึงข้อมูลได้");
       setMessageType("error");
-    } finally {
-      setDataLoading(false);
     }
-  }, [API_URL, subFieldId, bookingDate]);
+  } catch (error) {
+    console.error("Fetch failed:", error.message);
+    setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+    setMessageType("error");
+  } finally {
+    setDataLoading(false);
+  }
+}, [API_URL, subFieldId, bookingDate]);
 
-  useEffect(() => {
-    fetchBookedSlots();
-  }, [fetchBookedSlots]);
+useEffect(() => {
+  fetchBookedSlots();
+}, [fetchBookedSlots]);
 
-  useEffect(() => {
-    const socket = io(API_URL, {
-      transports: ["websocket"],
-      withCredentials: true,
-    });
+useEffect(() => {
+  const socket = io(API_URL, {
+    transports: ["websocket"],
+    withCredentials: true,
+  });
 
-    socketRef.current = socket;
+  socketRef.current = socket;
 
-    socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
-    });
+  socket.on("connect", () => {
+    console.log("Socket connected:", socket.id);
+  });
 
-    socket.on("slot_booked", (data) => {
-      console.log("slot_booked:", data);
-      if (subFieldId && bookingDate) {
-        fetchBookedSlots();
-      }
-    });
-
-    socket.on("connect_error", (err) => {
-      console.error("Socket error:", err.message);
-    });
-
-    return () => socket.disconnect();
-  }, [API_URL, subFieldId, bookingDate]);
-
-  useEffect(() => {
-    if (isBooked) {
+  socket.on("slot_booked", (data) => {
+    console.log("slot_booked:", data);
+    if (subFieldId && bookingDate) {
       fetchBookedSlots();
-      setIsBooked(false);
     }
-  }, [isBooked, fetchBookedSlots]);
+  });
+
+  socket.on("connect_error", (err) => {
+    console.error("Socket error:", err.message);
+  });
+
+  return () => socket.disconnect();
+}, [API_URL, subFieldId, bookingDate]);
+
+useEffect(() => {
+  if (isBooked) {
+    fetchBookedSlots();
+    setIsBooked(false);
+  }
+}, [isBooked, fetchBookedSlots]);
+
 
   // สิ่งอำนวย
   useEffect(() => {
