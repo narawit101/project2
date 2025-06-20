@@ -5,8 +5,8 @@ import "@/app/css/login.css";
 
 export default function page() {
   return (
-    <Suspense fallback={<div>กำลังโหลด...</div>}>
-      <Login />
-    </Suspense>
+    <>
+      <Login></Login>
+    </>
   );
 }
