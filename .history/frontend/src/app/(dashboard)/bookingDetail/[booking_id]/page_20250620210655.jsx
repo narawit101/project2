@@ -57,7 +57,7 @@ export default function BookingDetail() {
     }
   }, [user, isLoading, booking_id]);
 
-  //  1. fetchData แยกไว้เพื่อใช้ซ้ำได้
+  // ✅ 1. fetchData แยกไว้เพื่อใช้ซ้ำได้
   const fetchData = useCallback(async () => {
     try {
       if (!booking_id) return;
@@ -74,14 +74,14 @@ export default function BookingDetail() {
       if (data.success) {
         setMybooking(data.data);
         setFieldId(data.data.field_id);
-        console.log(" Booking Data:", data.data);
+        console.log("📦 Booking Data:", data.data);
       } else {
-        console.log("Booking fetch error:", data.error);
+        console.log("❌ Booking fetch error:", data.error);
         setMessage(data.error);
         setMessageType("error");
       }
     } catch (error) {
-      console.error("Fetch error:", error);
+      console.error("❌ Fetch error:", error);
       setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
       setMessageType("error");
     } finally {
@@ -89,12 +89,12 @@ export default function BookingDetail() {
     }
   }, [booking_id, API_URL]);
 
-  // 2. โหลดข้อมูลรอบแรก
+  // ✅ 2. โหลดข้อมูลรอบแรก
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  // 3. เชื่อม socket แล้วฟัง slot_booked เฉพาะ booking นี้
+  // ✅ 3. เชื่อม socket แล้วฟัง slot_booked เฉพาะ booking นี้
   useEffect(() => {
     const socket = io(API_URL, {
       transports: ["websocket"],
@@ -109,13 +109,13 @@ export default function BookingDetail() {
 
     socket.on("slot_booked", (data) => {
       if (data.bookingId === booking_id) {
-        console.log("ได้ slot ของตัวเอง → รีโหลดข้อมูล");
+        console.log("📩 ได้ slot ของตัวเอง → รีโหลดข้อมูล");
         fetchData();
       }
     });
 
     socket.on("connect_error", (err) => {
-      console.error(" Socket connect_error:", err.message);
+      console.error("❌ Socket connect_error:", err.message);
     });
 
     return () => {
@@ -326,7 +326,7 @@ export default function BookingDetail() {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage(data.message + "ยกเลิกสำเร็จ");
+        setMessage(data.message+"ยกเลิกสำเร็จ");
         setMessageType("success");
         setTimeout(() => {
           window.location.reload();
