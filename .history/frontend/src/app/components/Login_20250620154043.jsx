@@ -5,8 +5,7 @@ import "@/app/css/login.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import Link from "next/link";
 
-// แยก component ที่ใช้ useSearchParams ออกมา
-function LoginForm() {
+export default function Login() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const { user, setUser, isLoading } = useAuth();
   const [formData, setFormData] = useState({
@@ -24,7 +23,7 @@ function LoginForm() {
     if (!isLoading && user) {
       router.replace(redirect);
     }
-  }, [user, isLoading, redirect, router]);
+  }, [user, isLoading, redirect]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -128,14 +127,5 @@ function LoginForm() {
         </div>
       )}
     </div>
-  );
-}
-
-// Component หลักที่มี Suspense boundary
-export default function Login() {
-  return (
-    <Suspense fallback={<div className="login-container"><h2>กำลังโหลด...</h2></div>}>
-      <LoginForm />
-    </Suspense>
   );
 }

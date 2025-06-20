@@ -1,9 +1,10 @@
+"use client";
 import React from 'react'
-import MyBooking from "@/app/components/Mybooking";
+import MyOrder from "@/app/components/MyOrder";
 function page() {
   return (
     <div>
-     <MyBooking></MyBooking>
+     <MyOrder></MyOrder>
     </div>
   )
 }
