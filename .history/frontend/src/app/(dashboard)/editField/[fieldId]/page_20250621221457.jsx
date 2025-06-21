@@ -1012,10 +1012,9 @@ export default function CheckFieldDetail() {
             )}
           </div>
           <div className="input-group-editfield">
-            <label>พิกัดGPS: </label>
+            <label>พิกัดGPS:(เช่น16.05xxxxx, 103.65xxxxx) </label>
             {editingField === "gps_location" ? (
               <>
-                <label>(เช่น16.05xxxxx, 103.65xxxxx) </label>
                 <input
                   maxLength={100}
                   type="text"

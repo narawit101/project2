@@ -524,7 +524,7 @@ export default function RegisterFieldForm() {
             />
           </div>
           <div className="input-group-register-field">
-            <label>พิกัด GPS:(เช่น16.05xxxxx, 103.65xxxxx)</label>
+            <label>ตำแหน่งพิกัด GPS:(เช่น)</label>
             <input
               type="text"
               maxLength={100}

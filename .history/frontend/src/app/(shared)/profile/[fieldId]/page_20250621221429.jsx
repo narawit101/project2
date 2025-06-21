@@ -770,7 +770,7 @@ export default function CheckFieldDetail() {
               <strong>ที่อยู่:</strong> {fieldData?.address}
             </p>
             <p>
-              <strong>พิกัด GPS:</strong>
+              <strong>พิกัด GPS:(เช่น16.05xxxxx, 103.65xxxxx)</strong>
             </p>
 
             {fieldData?.gps_location ? (

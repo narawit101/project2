@@ -794,7 +794,7 @@ export default function CheckFieldDetail() {
                     marginTop: "10px",
                     padding: "6px 12px",
                     backgroundColor: "#e0f2fe",
-                    color: "#03045e",
+                    color: "#0369a1",
                     borderRadius: "999px",
                     fontSize: "14px",
                     textDecoration: "none",

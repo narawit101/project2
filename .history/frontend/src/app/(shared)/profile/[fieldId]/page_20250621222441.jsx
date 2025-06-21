@@ -782,7 +782,7 @@ export default function CheckFieldDetail() {
                   loading="lazy"
                   allowFullScreen
                   referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://www.google.com/maps/embed/v1/directions?key=${MAPS_EMBED_API}&destination=${coordinates}&origin=current+location`}
+                  src={`https://www.google.com/maps/embed/v1/directions?key=${MAPS_EMBED_API}&destination=${coordinates}&origin=current`}
                 ></iframe>
 
                 <a

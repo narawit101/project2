@@ -412,21 +412,22 @@ export default function CheckFieldDetail() {
   const coordinates = extractLatLngFromUrl(fieldData?.gps_location);
 
   const getGoogleMapsLink = (gpsLocation) => {
-    if (!gpsLocation) return "#";
+  if (!gpsLocation) return "#";
 
-    // ลบช่องว่างก่อน
-    const cleaned = gpsLocation.replace(/\s+/g, "");
+  // ลบช่องว่างก่อน
+  const cleaned = gpsLocation.replace(/\s+/g, '');
 
-    // ถ้าเป็น URL (เริ่มต้นด้วย http) ให้ใช้เลย
-    if (cleaned.startsWith("http")) return cleaned;
+  // ถ้าเป็น URL (เริ่มต้นด้วย http) ให้ใช้เลย
+  if (cleaned.startsWith('http')) return cleaned;
 
-    // ถ้าเป็นพิกัด ให้สร้างลิงก์ Google Maps
-    if (/^-?[0-9.]+,-?[0-9.]+$/.test(cleaned)) {
-      return `https://www.google.com/maps/search/?api=1&query=${cleaned}`;
-    }
+  // ถ้าเป็นพิกัด ให้สร้างลิงก์ Google Maps
+  if (/^-?[0-9.]+,-?[0-9.]+$/.test(cleaned)) {
+    return `https://www.google.com/maps/search/?api=1&query=${cleaned}`;
+  }
 
-    return "#";
-  };
+  return "#";
+};
+
 
   useEffect(() => {
     if (message) {
@@ -786,7 +787,7 @@ export default function CheckFieldDetail() {
                 ></iframe>
 
                 <a
-                  href={getGoogleMapsLink(fieldData.gps_location)}
+                  href={fieldData.gps_location}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
@@ -794,7 +795,7 @@ export default function CheckFieldDetail() {
                     marginTop: "10px",
                     padding: "6px 12px",
                     backgroundColor: "#e0f2fe",
-                    color: "#03045e",
+                    color: "#0369a1",
                     borderRadius: "999px",
                     fontSize: "14px",
                     textDecoration: "none",

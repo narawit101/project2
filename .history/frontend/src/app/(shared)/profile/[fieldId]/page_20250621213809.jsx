@@ -382,25 +382,21 @@ export default function CheckFieldDetail() {
   const extractLatLngFromUrl = (input) => {
     if (!input) return null;
 
-    // ลบช่องว่างทั้งหมดออก (หรืออย่างน้อยช่องว่างหลัง comma)
-    const cleanedInput = input.replace(/\s+/g, "");
-
-    // ถ้าเป็นพิกัดตรง ๆ เช่น "16.05498987029293,103.65254733566806"
-    if (/^-?[0-9.]+,-?[0-9.]+$/.test(cleanedInput)) {
-      return cleanedInput;
+    // ถ้าเป็นพิกัดตรง ๆ เช่น "16.05500,103.65255"
+    if (/^-?[0-9.]+,-?[0-9.]+$/.test(input.trim())) {
+      return input.trim();
     }
 
-    // ถ้าเป็น URL ที่มีพิกัด เช่น /place/16.05498987029293,103.65254733566806
-    const match = cleanedInput.match(/([-0-9.]+),([-0-9.]+)/);
+    // ถ้าเป็น URL ที่มีพิกัด เช่น /place/16.05500,103.65255
+    const match = input.match(/([-0-9.]+),([-0-9.]+)/);
     if (match) {
-      return `${match[1]},${match[2]}`;
+      const coords = `${match[1]},${match[2]}`;
+      console.log("Extracted coordinates:", coords);
+      return coords;
     }
 
-    // short URL ที่ไม่รองรับ
-    if (
-      cleanedInput.includes("maps.app.goo.gl") ||
-      cleanedInput.includes("goo.gl/maps")
-    ) {
+    // ถ้าเป็น short URL ที่ใช้ไม่ได้
+    if (input.includes("maps.app.goo.gl") || input.includes("goo.gl/maps")) {
       console.warn("Short URL detected - need to resolve manually");
       return null;
     }
@@ -410,23 +406,6 @@ export default function CheckFieldDetail() {
   };
 
   const coordinates = extractLatLngFromUrl(fieldData?.gps_location);
-
-  const getGoogleMapsLink = (gpsLocation) => {
-    if (!gpsLocation) return "#";
-
-    // ลบช่องว่างก่อน
-    const cleaned = gpsLocation.replace(/\s+/g, "");
-
-    // ถ้าเป็น URL (เริ่มต้นด้วย http) ให้ใช้เลย
-    if (cleaned.startsWith("http")) return cleaned;
-
-    // ถ้าเป็นพิกัด ให้สร้างลิงก์ Google Maps
-    if (/^-?[0-9.]+,-?[0-9.]+$/.test(cleaned)) {
-      return `https://www.google.com/maps/search/?api=1&query=${cleaned}`;
-    }
-
-    return "#";
-  };
 
   useEffect(() => {
     if (message) {
@@ -782,11 +761,12 @@ export default function CheckFieldDetail() {
                   loading="lazy"
                   allowFullScreen
                   referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://www.google.com/maps/embed/v1/directions?key=${MAPS_EMBED_API}&destination=${coordinates}&origin=current+location`}
+                  src={`https://www.google.com/maps/embed/v1/directions?key=${MAPS_EMBED_API}&destination=${coordinates}
+                  )}&origin=current+location`}
                 ></iframe>
 
                 <a
-                  href={getGoogleMapsLink(fieldData.gps_location)}
+                  href={fieldData.gps_location}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
@@ -794,7 +774,7 @@ export default function CheckFieldDetail() {
                     marginTop: "10px",
                     padding: "6px 12px",
                     backgroundColor: "#e0f2fe",
-                    color: "#03045e",
+                    color: "#0369a1",
                     borderRadius: "999px",
                     fontSize: "14px",
                     textDecoration: "none",

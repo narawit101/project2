@@ -1015,7 +1015,8 @@ export default function CheckFieldDetail() {
             <label>พิกัดGPS: </label>
             {editingField === "gps_location" ? (
               <>
-                <label>(เช่น16.05xxxxx, 103.65xxxxx) </label>
+            <label>พิกัดGPS:(เช่น16.05xxxxx, 103.65xxxxx) </label>
+
                 <input
                   maxLength={100}
                   type="text"

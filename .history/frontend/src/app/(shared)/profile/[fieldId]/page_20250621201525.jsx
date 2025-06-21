@@ -14,7 +14,6 @@ dayjs.locale("th");
 
 export default function CheckFieldDetail() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const MAPS_EMBED_API = process.env.NEXT_PUBLIC_MAPS_EMBED_API;
   const searchParams = useSearchParams();
   const highlightId = searchParams.get("highlight");
   const { fieldId } = useParams();
@@ -254,7 +253,9 @@ export default function CheckFieldDetail() {
   const handleImageClick = (imgUrl, postId) => {
     const currentPost = postData.find((p) => p.post_id === postId);
     const images = currentPost?.images || [];
-    const index = images.findIndex((img) => `${img.image_url}` === `${imgUrl}`);
+    const index = images.findIndex(
+      (img) => `${img.image_url}` === `${imgUrl}`
+    );
     setSelectedImage(`${imgUrl}`);
     setSelectedPostId(postId);
     setImageIndexes((prev) => ({ ...prev, [postId]: index }));
@@ -377,55 +378,6 @@ export default function CheckFieldDetail() {
     } finally {
       SetstartProcessLoad(false);
     }
-  };
-
-  const extractLatLngFromUrl = (input) => {
-    if (!input) return null;
-
-    // ลบช่องว่างทั้งหมดออก (หรืออย่างน้อยช่องว่างหลัง comma)
-    const cleanedInput = input.replace(/\s+/g, "");
-
-    // ถ้าเป็นพิกัดตรง ๆ เช่น "16.05498987029293,103.65254733566806"
-    if (/^-?[0-9.]+,-?[0-9.]+$/.test(cleanedInput)) {
-      return cleanedInput;
-    }
-
-    // ถ้าเป็น URL ที่มีพิกัด เช่น /place/16.05498987029293,103.65254733566806
-    const match = cleanedInput.match(/([-0-9.]+),([-0-9.]+)/);
-    if (match) {
-      return `${match[1]},${match[2]}`;
-    }
-
-    // short URL ที่ไม่รองรับ
-    if (
-      cleanedInput.includes("maps.app.goo.gl") ||
-      cleanedInput.includes("goo.gl/maps")
-    ) {
-      console.warn("Short URL detected - need to resolve manually");
-      return null;
-    }
-
-    console.log("No coordinates found");
-    return null;
-  };
-
-  const coordinates = extractLatLngFromUrl(fieldData?.gps_location);
-
-  const getGoogleMapsLink = (gpsLocation) => {
-    if (!gpsLocation) return "#";
-
-    // ลบช่องว่างก่อน
-    const cleaned = gpsLocation.replace(/\s+/g, "");
-
-    // ถ้าเป็น URL (เริ่มต้นด้วย http) ให้ใช้เลย
-    if (cleaned.startsWith("http")) return cleaned;
-
-    // ถ้าเป็นพิกัด ให้สร้างลิงก์ Google Maps
-    if (/^-?[0-9.]+,-?[0-9.]+$/.test(cleaned)) {
-      return `https://www.google.com/maps/search/?api=1&query=${cleaned}`;
-    }
-
-    return "#";
   };
 
   useEffect(() => {
@@ -769,44 +721,15 @@ export default function CheckFieldDetail() {
             <p>
               <strong>ที่อยู่:</strong> {fieldData?.address}
             </p>
-            <p>
-              <strong>พิกัด GPS:</strong>
-            </p>
+<a
+  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(13.7563,100.5018)}`}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-block mt-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-md text-sm hover:bg-blue-200"
+>
+  เปิดแผนที่ใน Google Maps
+</a>
 
-            {fieldData?.gps_location ? (
-              <div style={{ marginTop: "8px" }}>
-                <iframe
-                  width="100%"
-                  height="250"
-                  style={{ border: 0, borderRadius: "8px" }}
-                  loading="lazy"
-                  allowFullScreen
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://www.google.com/maps/embed/v1/directions?key=${MAPS_EMBED_API}&destination=${coordinates}&origin=current+location`}
-                ></iframe>
-
-                <a
-                  href={getGoogleMapsLink(fieldData.gps_location)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: "inline-block",
-                    marginTop: "10px",
-                    padding: "6px 12px",
-                    backgroundColor: "#e0f2fe",
-                    color: "#03045e",
-                    borderRadius: "999px",
-                    fontSize: "14px",
-                    textDecoration: "none",
-                    fontWeight: "bold",
-                  }}
-                >
-                  เปิดใน Google Maps
-                </a>
-              </div>
-            ) : (
-              <p style={{ color: "gray" }}>ไม่มีพิกัด GPS</p>
-            )}
             <p>
               <strong>วันที่เปิดสนาม</strong>
             </p>

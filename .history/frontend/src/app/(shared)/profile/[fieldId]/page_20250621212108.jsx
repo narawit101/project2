@@ -379,53 +379,32 @@ export default function CheckFieldDetail() {
     }
   };
 
-  const extractLatLngFromUrl = (input) => {
-    if (!input) return null;
+  const extractLatLngFromUrl = async (url) => {
+    try {
+      console.log("Original URL:", url);
 
-    // ลบช่องว่างทั้งหมดออก (หรืออย่างน้อยช่องว่างหลัง comma)
-    const cleanedInput = input.replace(/\s+/g, "");
+      // ถ้าเป็น short link
+      if (url.includes("maps.app.goo.gl") || url.includes("goo.gl/maps")) {
+        // ต้องใช้ server-side หรือ proxy เพื่อ resolve short URL
+        // หรือให้ user paste long URL แทน
+        console.log("Short URL detected - need to resolve");
+        return null;
+      }
 
-    // ถ้าเป็นพิกัดตรง ๆ เช่น "16.05498987029293,103.65254733566806"
-    if (/^-?[0-9.]+,-?[0-9.]+$/.test(cleanedInput)) {
-      return cleanedInput;
-    }
+      // สำหรับ long URL
+      const match = url.match(/([-0-9.]+),([-0-9.]+)/);
+      if (match) {
+        const coords = `${match[1]},${match[2]}`;
+        console.log("Extracted coordinates:", coords);
+        return coords;
+      }
 
-    // ถ้าเป็น URL ที่มีพิกัด เช่น /place/16.05498987029293,103.65254733566806
-    const match = cleanedInput.match(/([-0-9.]+),([-0-9.]+)/);
-    if (match) {
-      return `${match[1]},${match[2]}`;
-    }
-
-    // short URL ที่ไม่รองรับ
-    if (
-      cleanedInput.includes("maps.app.goo.gl") ||
-      cleanedInput.includes("goo.gl/maps")
-    ) {
-      console.warn("Short URL detected - need to resolve manually");
+      console.log("No coordinates found");
+      return null;
+    } catch (error) {
+      console.error("Error extracting coordinates:", error);
       return null;
     }
-
-    console.log("No coordinates found");
-    return null;
-  };
-
-  const coordinates = extractLatLngFromUrl(fieldData?.gps_location);
-
-  const getGoogleMapsLink = (gpsLocation) => {
-    if (!gpsLocation) return "#";
-
-    // ลบช่องว่างก่อน
-    const cleaned = gpsLocation.replace(/\s+/g, "");
-
-    // ถ้าเป็น URL (เริ่มต้นด้วย http) ให้ใช้เลย
-    if (cleaned.startsWith("http")) return cleaned;
-
-    // ถ้าเป็นพิกัด ให้สร้างลิงก์ Google Maps
-    if (/^-?[0-9.]+,-?[0-9.]+$/.test(cleaned)) {
-      return `https://www.google.com/maps/search/?api=1&query=${cleaned}`;
-    }
-
-    return "#";
   };
 
   useEffect(() => {
@@ -782,11 +761,13 @@ export default function CheckFieldDetail() {
                   loading="lazy"
                   allowFullScreen
                   referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://www.google.com/maps/embed/v1/directions?key=${MAPS_EMBED_API}&destination=${coordinates}&origin=current+location`}
+                  src={`https://www.google.com/maps/embed/v1/directions?key=${MAPS_EMBED_API}&destination=${extractLatLngFromUrl(
+                    fieldData.gps_location
+                  )}&origin=current+location`}
                 ></iframe>
 
                 <a
-                  href={getGoogleMapsLink(fieldData.gps_location)}
+                  href={fieldData.gps_location}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
@@ -794,7 +775,7 @@ export default function CheckFieldDetail() {
                     marginTop: "10px",
                     padding: "6px 12px",
                     backgroundColor: "#e0f2fe",
-                    color: "#03045e",
+                    color: "#0369a1",
                     borderRadius: "999px",
                     fontSize: "14px",
                     textDecoration: "none",
