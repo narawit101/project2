@@ -89,7 +89,7 @@
   border-radius: 8px;
   min-height: 50vh;
   background-color: #fafafa;
-  object-fit: contain;
+  /* object-fit: cover; */
 }
 
 .preview-container-editfield img {
@@ -346,6 +346,9 @@
     width: 100%;
     max-width: 500px;
   }
+  .preview-container-editfield {
+    object-fit: cover;
+  }
 }
 @media screen and (max-width: 568px) {
   .editfield-container {
@@ -369,6 +372,9 @@
   .editfield-container {
     width: 100%;
     max-width: 320px;
+  }
+  .preview-container-editfield {
+    object-fit: cover;
   }
   .preview-container-editfield img {
     width: 100%;

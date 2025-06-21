@@ -370,6 +370,9 @@
     width: 100%;
     max-width: 320px;
   }
+  .preview-container-editfield {
+    object-fit: cover;
+  }
   .preview-container-editfield img {
     width: 100%;
     border-radius: 5px;
