@@ -166,9 +166,8 @@ export default function MyCalendar() {
       setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
       setMessageType("error");
     } finally {
-      setTimeout(() => {
-        SetstartProcessLoad(false);
-      }, 500);
+      
+      SetstartProcessLoad(false);
     }
   };
 

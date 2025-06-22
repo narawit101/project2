@@ -142,7 +142,7 @@ export default function MyCalendar() {
         setMessageType("error");
         return;
       }
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 2500));
 
       const storedExpiry = sessionStorage.getItem("booking_date_expiry");
       const expiryDate = new Date(storedExpiry);
@@ -166,9 +166,8 @@ export default function MyCalendar() {
       setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
       setMessageType("error");
     } finally {
-      setTimeout(() => {
-        SetstartProcessLoad(false);
-      }, 500);
+      
+      SetstartProcessLoad(false);
     }
   };
 
