@@ -326,7 +326,7 @@ export default function BookingDetail() {
         }
       );
 
-      const cancel_time = new Date().toISOString();
+      const cancel_time = new Date(Date.now()).toISOString();
 
       console.log(cancel_time);
 
