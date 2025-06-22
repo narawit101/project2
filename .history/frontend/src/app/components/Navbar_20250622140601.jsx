@@ -111,6 +111,7 @@ export default function Navbar() {
               }
             }}
           />
+         
         </div>
 
         {isLoading ? (
@@ -130,6 +131,11 @@ export default function Navbar() {
                 {user?.role === "customer" && (
                   <li>
                     <Link href="/editprofile">แก้ไขโปรไฟล์</Link>
+                  </li>
+                )}
+                {user?.role === "customer" && (
+                  <li>
+                    <Link href="/reservations">ดูรายละเอียดการจอง</Link>
                   </li>
                 )}
                 {user?.role === "customer" && (

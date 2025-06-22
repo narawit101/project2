@@ -102,14 +102,6 @@ export default function Navbar() {
             type="text"
             placeholder="ค้นหา..."
             className={`search-box ${isSearchOpen ? "active" : ""}`}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                const query = e.target.value.trim();
-                if (query) {
-                  router.push(`/search?query=${encodeURIComponent(query)}`);
-                }
-              }
-            }}
           />
         </div>
 

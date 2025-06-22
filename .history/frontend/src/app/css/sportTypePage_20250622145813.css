@@ -2,15 +2,14 @@
   justify-content: center;
   align-items: center;
   padding: 20px;
-  margin: 90px auto;
-  width: 100%;
+  margin: 100px auto;
+  width: 80%;
 }
 
 .Category {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 50%;
   text-align: center;
   padding: 15px;
 }

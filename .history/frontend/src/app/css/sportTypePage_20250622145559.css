@@ -2,7 +2,7 @@
   justify-content: center;
   align-items: center;
   padding: 20px;
-  margin: 90px auto;
+  margin: 100px auto;
   width: 100%;
 }
 
@@ -17,29 +17,29 @@
 
 @media screen and (max-width: 768px) {
   .containercategory {
-    width: 80%;
+    width: 100%;
   }
 
   .Category {
-    width: 50%;
+    width: 100%;
   }
 }
 
 @media screen and (max-width: 480px) {
   .containercategory {
-    width: 80%;
+    width: 100%;
   }
 
   .Category {
-    width: 60%;
+    width: 100%;
   }
 }
 @media screen and (max-width: 380px) {
-    .containercategory {
-      width: 90%;
-    }
-  
-    .Category {
-      width: 60%;
-    }
+  .containercategory {
+    width: 100%;
   }
+
+  .Category {
+    width: 100%;
+  }
+}
