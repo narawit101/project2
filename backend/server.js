@@ -13,7 +13,7 @@ const server = http.createServer(app);
 const allowedOrigins = [
   "http://localhost:3000",
   "https://project-eight-jet-70.vercel.app", 
-  "https://sport-hub-70.vercel.app/", 
+  "https://sport-hub-70.vercel.app", 
   // เปลี่ยนให้ตรงกับของคุณจริงๆ
 ];
 
