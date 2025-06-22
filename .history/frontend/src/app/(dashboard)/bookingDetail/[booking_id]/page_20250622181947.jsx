@@ -326,10 +326,6 @@ export default function BookingDetail() {
         }
       );
 
-      const cancel_time = new Date(Date.now()).toISOString();
-
-      console.log(cancel_time);
-
       const data = await res.json();
 
       if (res.ok) {

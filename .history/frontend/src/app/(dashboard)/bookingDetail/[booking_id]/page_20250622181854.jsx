@@ -321,14 +321,14 @@ export default function BookingDetail() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ cancel_time: new Date().toISOString() }),
+          body: JSON.stringify({
+            cancel_time: new Date(
+              Date.now() + 7 * 60 * 60 * 1000
+            ).toISOString(),
+          }),
           credentials: "include",
         }
       );
-
-      const cancel_time = new Date(Date.now()).toISOString();
-
-      console.log(cancel_time);
 
       const data = await res.json();
 

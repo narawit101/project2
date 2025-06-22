@@ -321,7 +321,9 @@ export default function BookingDetail() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ cancel_time: new Date().toISOString() }),
+          body: JSON.stringify({
+            cancel_time: new Date(Date.now()).toISOString(),
+          }),
           credentials: "include",
         }
       );
