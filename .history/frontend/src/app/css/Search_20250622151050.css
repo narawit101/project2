@@ -129,14 +129,14 @@
   font-size: large;
 }
 
-.pagination-previwe-field-search {
+.pagination-previwe-field-home {
   margin-top: 20px;
   display: flex;
   justify-content: center;
   gap: 8px;
 }
 
-.pagination-previwe-field-search button {
+.pagination-previwe-field-home button {
   padding: 6px 12px;
   font-size: 14px;
   background: #eee;
@@ -145,7 +145,7 @@
   cursor: pointer;
 }
 
-.pagination-previwe-field-search button.active {
+.pagination-previwe-field-home button.active {
   background-color: var(--text-color);
   color: white;
   font-weight: bold;

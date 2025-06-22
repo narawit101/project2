@@ -1,26 +1,28 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import "@/app/css/HomePage.css";
 import { useAuth } from "@/app/contexts/AuthContext";
-import "@/app/css/Search.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faStar as solidStar,
   faStarHalfAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
-export default function Search() {
+
+export default function HomePage() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const query = searchParams.get("query");
+  const [selectedSport, setSelectedSport] = useState("");
   const [approvedFields, setApprovedFields] = useState([]);
+  const [selectedSportName, setSelectedSportName] = useState("");
   const [message, setMessage] = useState(""); // State for messages
   const [messageType, setMessageType] = useState(""); // State for message type (error, success)
+  const [sportsCategories, setSportsCategories] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
   const { user, isLoading } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
-  const fieldPerPage = 16;
+  const fieldPerPage = 20;
 
   useEffect(() => {
     if (isLoading) return;
@@ -30,15 +32,46 @@ export default function Search() {
         router.push("/verification");
       }
     }
-  }, [user, isLoading, router]);
+  }, [user, isLoading, , router]);
+
+  useEffect(() => {
+    const fetchSportsCategories = async () => {
+      try {
+        const res = await fetch(`${API_URL}/sports_types/preview/type`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          console.error("เกิดข้อผิดพลาด:", data.error);
+          setMessage(data.error);
+          setMessageType("error");
+        } else {
+          setSportsCategories(data);
+        }
+      } catch (error) {
+        console.error("Error fetching sports categories:", error);
+        setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+        setMessageType("error");
+      } finally {
+        setDataLoading(false);
+      }
+    };
+
+    fetchSportsCategories();
+  }, []);
 
   useEffect(() => {
     const fetchApprovedFields = async () => {
       try {
-        setDataLoading(true)
-        console.log("query", query);
+        const queryParams = selectedSport ? `?sport_id=${selectedSport}` : "";
+
         const res = await fetch(
-          `${API_URL}/search?query=${encodeURIComponent(query)}`,
+          `${API_URL}/sports_types/preview${queryParams}`,
           {
             method: "GET",
             headers: {
@@ -54,7 +87,7 @@ export default function Search() {
           setMessage(data.error);
           setMessageType("error");
         } else {
-          setApprovedFields(data.data);
+          setApprovedFields(data);
           console.log("approvefield", data);
         }
       } catch (error) {
@@ -67,7 +100,7 @@ export default function Search() {
     };
 
     fetchApprovedFields();
-  }, [query]);
+  }, [selectedSport]);
 
   const indexOfLast = currentPage * fieldPerPage;
   const indexOfFirst = indexOfLast - fieldPerPage;
@@ -96,6 +129,13 @@ export default function Search() {
       .join(" ");
   };
 
+  const handleSportChange = (e) => {
+    setSelectedSport(e.target.value);
+    const sport = sportsCategories.find(
+      (category) => category.sport_id === e.target.value
+    );
+    setSelectedSportName(sport ? sport.sport_name : "");
+  };
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
@@ -114,26 +154,32 @@ export default function Search() {
           <p>{message}</p>
         </div>
       )}
-
-      <div className="container-search">
-        <div className="topbar-serach">
-          {approvedFields.length > 0 && !dataLoading && (
-            <div className="find-fields-message-search">
-              พบทั้งหมด {approvedFields.length} รายการสำหรับ
-              <p> "{query || ""}"</p>
-            </div>
-          )}
+      <div className="container-home">
+        <div className="section-title-container">
+          <h2 className="section-title-home">สนามที่แนะนำ</h2>
+          <select
+            value={selectedSport}
+            onChange={handleSportChange}
+            className="sport-select-main"
+          >
+            <option value="">ประเภทกีฬาทั้งหมด</option>
+            {sportsCategories.map((category) => (
+              <option key={category.sport_id} value={category.sport_id}>
+                {category.sport_name}
+              </option>
+            ))}
+          </select>
         </div>
         {dataLoading ? (
           <div className="loading-data">
             <div className="loading-data-spinner"></div>
           </div>
         ) : currentField.length > 0 ? (
-          <div className="grid-search">
+          <div className="grid-home">
             {currentField.map((field, index) => (
               <div
                 key={`${field.field_id}-${index}`}
-                className="card-search"
+                className="card-home"
                 onClick={() => router.push(`/profile/${field.field_id}`)}
               >
                 <img
@@ -143,30 +189,12 @@ export default function Search() {
                       : "https://via.placeholder.com/300x200"
                   }
                   alt={field.field_name}
-                  className="card-img-search"
+                  className="card-img-home"
                 />
-                <div className="card-body-search">
+                <div className="card-body-home">
                   <h3>{field.field_name}</h3>
-                  <div className="firsttime-search">
-                    <p className="filedname">
-                      <span className="first-label-time">เปิดเวลา: </span>
-                      {field.open_hours} น. - {field.close_hours} น.
-                    </p>
-                  </div>
-                  <div className="firstopen-search">
-                    <p>
-                      <span className="first-label-time">วันทำการ: </span>
-                      {convertToThaiDays(field.open_days)}
-                    </p>
-                  </div>
-                  <div className="firstopen-search">
-                    <p>
-                      <span className="first-label-time">กีฬา: </span>
-                      {field.sport_names?.join(" / ")}
-                    </p>
-                  </div>
-                  <div className="reviwe-container-search">
-                    <strong className="reviwe-star-search">
+                  <div className="reviwe-container-home">
+                    <strong className="reviwe-star-home">
                       <p>คะแนนรีวิว {field.avg_rating}</p>
                       {[1, 2, 3, 4, 5].map((num) => {
                         const roundedRating =
@@ -199,16 +227,34 @@ export default function Search() {
                       })}
                     </strong>
                   </div>
+                  <div className="firsttime-home">
+                    <p className="filedname">
+                      <span className="first-label-time">เปิดเวลา: </span>
+                      {field.open_hours} น. - {field.close_hours} น.
+                    </p>
+                  </div>
+                  <div className="firstopen-home">
+                    <p>
+                      <span className="first-label-time">วันทำการ: </span>
+                      {convertToThaiDays(field.open_days)}
+                    </p>
+                  </div>
+                  <div className="firstopen-home">
+                    <p>
+                      <span className="first-label-time">กีฬา: </span>
+                      {field.sport_names?.join(" / ")}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="no-fields-message-search">
-            ไม่พบคำค้นหา "<p>{query}</p>"
+          <div className="no-fields-message">
+            ยังไม่มีสนาม <strong>{selectedSportName}</strong> สำหรับกีฬานี้
           </div>
         )}
-        <div className="pagination-previwe-field-search">
+        <div className="pagination-previwe-field-home">
           {Array.from(
             { length: Math.ceil(approvedFields.length / fieldPerPage) },
             (_, i) => (

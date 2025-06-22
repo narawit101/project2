@@ -37,7 +37,7 @@ router.get("/", async (req, res) => {
         f.open_hours, 
         f.close_hours, 
         f.open_days
-      ORDER BY avg_rating DESC, f.field_id DESC`,
+      ORDER BY avg_rating DESC, field.field_id DESC`,
       [keyword]
     );
 
@@ -74,7 +74,7 @@ router.get("/", async (req, res) => {
         f.open_hours, 
         f.close_hours, 
         f.open_days
-     ORDER BY avg_rating DESC, f.field_id DESC`,
+     ORDER BY avg_rating DESC, field.field_id DESC`,
       [query]
     );
 

@@ -20,7 +20,7 @@ export default function Search() {
   const [dataLoading, setDataLoading] = useState(true);
   const { user, isLoading } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
-  const fieldPerPage = 16;
+  const fieldPerPage = 2;
 
   useEffect(() => {
     if (isLoading) return;
@@ -35,7 +35,6 @@ export default function Search() {
   useEffect(() => {
     const fetchApprovedFields = async () => {
       try {
-        setDataLoading(true)
         console.log("query", query);
         const res = await fetch(
           `${API_URL}/search?query=${encodeURIComponent(query)}`,

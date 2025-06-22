@@ -20,7 +20,7 @@ export default function Search() {
   const [dataLoading, setDataLoading] = useState(true);
   const { user, isLoading } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
-  const fieldPerPage = 16;
+  const fieldPerPage = 20;
 
   useEffect(() => {
     if (isLoading) return;
@@ -35,7 +35,6 @@ export default function Search() {
   useEffect(() => {
     const fetchApprovedFields = async () => {
       try {
-        setDataLoading(true)
         console.log("query", query);
         const res = await fetch(
           `${API_URL}/search?query=${encodeURIComponent(query)}`,
@@ -208,20 +207,6 @@ export default function Search() {
             ไม่พบคำค้นหา "<p>{query}</p>"
           </div>
         )}
-        <div className="pagination-previwe-field-search">
-          {Array.from(
-            { length: Math.ceil(approvedFields.length / fieldPerPage) },
-            (_, i) => (
-              <button
-                key={i}
-                className={currentPage === i + 1 ? "active" : ""}
-                onClick={() => setCurrentPage(i + 1)}
-              >
-                {i + 1}
-              </button>
-            )
-          )}
-        </div>
       </div>
     </>
   );

@@ -35,7 +35,6 @@ export default function Search() {
   useEffect(() => {
     const fetchApprovedFields = async () => {
       try {
-        setDataLoading(true)
         console.log("query", query);
         const res = await fetch(
           `${API_URL}/search?query=${encodeURIComponent(query)}`,
