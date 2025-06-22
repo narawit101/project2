@@ -155,7 +155,6 @@ export default function CheckFieldDetail() {
           setMessageType("error");
         } else {
           setPostData(data);
-          console.log(data)
         }
       } catch (error) {
         console.error("Error fetching post data:", error);

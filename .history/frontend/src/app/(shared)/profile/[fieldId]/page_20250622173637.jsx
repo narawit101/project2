@@ -643,7 +643,7 @@ export default function CheckFieldDetail() {
               ) : (
                 <>
                   <h2 className="post-title">{post.content}</h2>
-                  <div className="time">{dayjs(post.created_at).fromNow()}</div>
+                  <div className="time">{(post.created_at).fromNow()}</div>
                   {post.images && post.images.length > 0 && (
                     <div className="ig-carousel-container">
                       <div className="ig-carousel-track-wrapper">
