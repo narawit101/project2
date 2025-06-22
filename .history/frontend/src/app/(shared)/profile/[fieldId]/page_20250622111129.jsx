@@ -802,13 +802,9 @@ export default function CheckFieldDetail() {
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
-                    display: "flex",
-                    width:"160px",
+                    display: "inline-block",
                     marginTop: "10px",
-                    marginLeft: "auto",
-                    marginRight: "auto",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    marginLeft: "10px",
                     padding: "6px 12px",
                     backgroundColor: "#e0f2fe",
                     color: "#03045e",

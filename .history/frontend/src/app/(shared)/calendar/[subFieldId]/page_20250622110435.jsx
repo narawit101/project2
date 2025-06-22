@@ -142,7 +142,7 @@ export default function MyCalendar() {
         setMessageType("error");
         return;
       }
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
       const storedExpiry = sessionStorage.getItem("booking_date_expiry");
       const expiryDate = new Date(storedExpiry);
@@ -156,6 +156,8 @@ export default function MyCalendar() {
 
       const day = date.getDay();
       if (opendays.includes(day)) {
+      SetstartProcessLoad(false);
+
         router.push(`/booking/${subFieldId}`);
       } else {
         setMessage("ไม่สามารถเลือกวันนี้ได้");
@@ -258,13 +260,13 @@ export default function MyCalendar() {
           disabled={startProcessLoad}
         >
           เลือกวันที่
-          {startProcessLoad && (
-            <div className="loading-overlay">
-              <div className="loading-spinner"></div>
-            </div>
-          )}
         </button>
       </div>
+      {startProcessLoad && (
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+        </div>
+      )}
     </div>
   );
 }

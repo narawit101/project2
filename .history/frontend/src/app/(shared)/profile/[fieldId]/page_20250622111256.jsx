@@ -803,7 +803,7 @@ export default function CheckFieldDetail() {
                   rel="noopener noreferrer"
                   style={{
                     display: "flex",
-                    width:"160px",
+                    width:"auto",
                     marginTop: "10px",
                     marginLeft: "auto",
                     marginRight: "auto",

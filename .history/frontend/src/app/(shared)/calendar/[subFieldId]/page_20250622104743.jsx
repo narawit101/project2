@@ -12,7 +12,7 @@ export default function MyCalendar() {
   const [opendays, setOenDays] = useState([]);
   const [fieldData, setFieldData] = useState([]);
   const { subFieldId } = useParams();
-  const [isClient, setIsClient] = useState(true);
+  const [isClient, setIsClient] = useState(false);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const { user, isLoading } = useAuth();
@@ -134,7 +134,7 @@ export default function MyCalendar() {
     return new Intl.DateTimeFormat("th-TH", options).format(date);
   };
 
-  const handleDateConfirm = async () => {
+  const handleDateConfirm = () => {
     try {
       SetstartProcessLoad(true);
       if (!date) {
@@ -142,7 +142,6 @@ export default function MyCalendar() {
         setMessageType("error");
         return;
       }
-      await new Promise((resolve) => setTimeout(resolve, 150));
 
       const storedExpiry = sessionStorage.getItem("booking_date_expiry");
       const expiryDate = new Date(storedExpiry);
@@ -234,8 +233,7 @@ export default function MyCalendar() {
         <p>วันที่: {date ? formatDateToThai(date) : "ยังไม่ได้เลือกวันที่"}</p>
         <div>**สามารถจองล่วงหน้าได้ไม่เกิน 7 วัน</div>
       </div>
-      <div className="calendar-wrapper" style={{ position: "relative" }}>
-        {startProcessLoad && <div className="calendar-overlay" />}
+      <div className="calendar-container">
         <Calendar
           onChange={handleDateChange}
           value={date}
@@ -249,22 +247,15 @@ export default function MyCalendar() {
           }}
         />
       </div>
+
       <div className="save-btn-calendar">
-        <button
-          onClick={handleDateConfirm}
-          style={{
-            cursor: startProcessLoad ? "not-allowed" : "pointer",
-          }}
-          disabled={startProcessLoad}
-        >
-          เลือกวันที่
-          {startProcessLoad && (
-            <div className="loading-overlay">
-              <div className="loading-spinner"></div>
-            </div>
-          )}
-        </button>
+        <button onClick={handleDateConfirm}>เลือกวันที่</button>
       </div>
+      {startProcessLoad && (
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+        </div>
+      )}
     </div>
   );
 }

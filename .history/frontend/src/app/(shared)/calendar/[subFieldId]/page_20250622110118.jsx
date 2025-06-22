@@ -142,7 +142,7 @@ export default function MyCalendar() {
         setMessageType("error");
         return;
       }
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       const storedExpiry = sessionStorage.getItem("booking_date_expiry");
       const expiryDate = new Date(storedExpiry);
@@ -235,7 +235,8 @@ export default function MyCalendar() {
         <div>**สามารถจองล่วงหน้าได้ไม่เกิน 7 วัน</div>
       </div>
       <div className="calendar-wrapper" style={{ position: "relative" }}>
-        {startProcessLoad && <div className="calendar-overlay" />}
+        {startProcessLoad && <div className="calendar-overlay" 
+        style={{opacity: startProcessLoad ? 0.5 : 1}}/>}
         <Calendar
           onChange={handleDateChange}
           value={date}
@@ -249,6 +250,7 @@ export default function MyCalendar() {
           }}
         />
       </div>
+
       <div className="save-btn-calendar">
         <button
           onClick={handleDateConfirm}
@@ -258,13 +260,13 @@ export default function MyCalendar() {
           disabled={startProcessLoad}
         >
           เลือกวันที่
-          {startProcessLoad && (
-            <div className="loading-overlay">
-              <div className="loading-spinner"></div>
-            </div>
-          )}
         </button>
       </div>
+      {startProcessLoad && (
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+        </div>
+      )}
     </div>
   );
 }

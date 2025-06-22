@@ -1045,10 +1045,6 @@ export default function Booking() {
               </div>
               <div className="facility-wrapper">
                 <button
-                  style={{
-                    cursor: startProcessLoad ? "not-allowed" : "pointer",
-                  }}
-                  disabled={startProcessLoad}
                   onClick={() => setShowFacilities(!showFacilities)}
                   className="toggle-facilities"
                 >
@@ -1175,20 +1171,12 @@ export default function Booking() {
               </div>
               <div className="modal-buttons-confirmbooking">
                 <button
-                  style={{
-                    cursor: startProcessLoad ? "not-allowed" : "pointer",
-                  }}
-                  disabled={startProcessLoad}
                   onClick={handleConfirm}
                   className="btn-confirm-confirmbooking"
                 >
                   ยืนยัน
                 </button>
                 <button
-                  style={{
-                    cursor: startProcessLoad ? "not-allowed" : "pointer",
-                  }}
-                  disabled={startProcessLoad}
                   onClick={handleCancel}
                   className="btn-cancel-confirmbooking"
                 >
