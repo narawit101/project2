@@ -85,6 +85,9 @@ export default function Booking() {
     console.log(" connecting socket...");
     console.log(" connecting socket...");
     console.log(" connecting socket...");
+    console.log(" connecting socket...");
+    console.log(" connecting socket...");
+    console.log(" connecting socket...");
 
     socketRef.current = io(API_URL, {
       transports: ["websocket"],
