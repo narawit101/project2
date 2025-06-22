@@ -298,22 +298,11 @@ export default function BookingDetail() {
         <div className="modal-actions-order-detail">
           <button
             className="modal-confirm-btn-order-detail"
-            style={{
-              cursor: startProcessLoad ? "not-allowed" : "pointer",
-            }}
-            disabled={startProcessLoad}
             onClick={onConfirm}
           >
             ยืนยัน
           </button>
-          <button
-            className="modal-cancel-btn-order-detail"
-            style={{
-              cursor: startProcessLoad ? "not-allowed" : "pointer",
-            }}
-            disabled={startProcessLoad}
-            onClick={onClose}
-          >
+          <button className="modal-cancel-btn-order-detail" onClick={onClose}>
             ยกเลิก
           </button>
         </div>
@@ -1082,6 +1071,10 @@ export default function BookingDetail() {
             {showCancelModal && (
               <CancelBookingModal
                 onConfirm={confirmCancelBooking}
+                                style={{
+                  cursor: startProcessLoad ? "not-allowed" : "pointer",
+                }}
+                disabled={startProcessLoad}
                 onClose={() => setShowCancelModal(false)}
               />
             )}
