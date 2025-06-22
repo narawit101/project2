@@ -5,6 +5,7 @@ import Footer from "@/app/components/Footer";
 import { AuthProvider } from "@/app/contexts/AuthContext";
 import { Suspense } from "react";
 
+
 const kanitFont = Kanit({
   variable: "--font-kanit",
   subsets: ["latin", "thai"],

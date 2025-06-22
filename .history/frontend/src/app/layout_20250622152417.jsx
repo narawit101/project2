@@ -3,7 +3,6 @@ import "./globals.css";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import { AuthProvider } from "@/app/contexts/AuthContext";
-import { Suspense } from "react";
 
 const kanitFont = Kanit({
   variable: "--font-kanit",
