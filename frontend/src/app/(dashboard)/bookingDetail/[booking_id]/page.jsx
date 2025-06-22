@@ -341,11 +341,12 @@ export default function BookingDetail() {
         }
       );
 
-      // const cancel_time = new Date(
-      //   Date.now() + 7 * 60 * 60 * 1000
-      // ).toISOString();
+      const cancel_time = new Date(
+        Date.now() + 7 * 60 * 60 * 1000
+      ).toISOString();
 
-      // console.log(cancel_time);
+      console.log(cancel_time);
+      console.log(cancel_time);
 
       const data = await res.json();
 
