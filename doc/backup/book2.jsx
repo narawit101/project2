@@ -82,6 +82,9 @@ export default function Booking() {
   useEffect(() => {
     console.log("API_URL:", API_URL);
     console.log(" connecting socket...");
+    console.log(" connecting socket...");
+    console.log(" connecting socket...");
+    console.log(" connecting socket...");
 
     socketRef.current = io(API_URL, {
       transports: ["websocket"],
