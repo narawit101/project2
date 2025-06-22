@@ -128,10 +128,6 @@ export default function Booking() {
         console.log(`today: ${bookingDateRaw}`);
         console.log(`start: ${start}`);
         console.log(`end: ${end}`);
-        console.log(`end: ${end}`);
-        console.log(`end: ${end}`);
-        console.log(`end: ${end}`);
-        console.log(`end: ${end}`);
 
         const res = await fetch(
           `${API_URL}/booking/booked-block/${subFieldId}/${start}/${end}`,
