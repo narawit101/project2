@@ -346,7 +346,6 @@ export default function BookingDetail() {
       ).toISOString();
 
       console.log(cancel_time);
-      console.log(cancel_time);
 
       const data = await res.json();
 
