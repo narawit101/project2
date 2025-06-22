@@ -1,1 +1,0 @@
-manager.js
