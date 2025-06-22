@@ -208,7 +208,7 @@ router.get("/", async (req, res) => {
           p.field_id,
           p.title,
           p.content,
-          (p.created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Bangkok')::text AS created_at,
+         (p.created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Bangkok')::text AS created_at,
           COALESCE(
             json_agg(
               json_build_object('image_url', pi.image_url)
@@ -304,6 +304,8 @@ router.patch(
   }
 );
 
+
+
 // DELETE ลบโพส
 router.delete("/delete/:post_id", authMiddleware, async (req, res) => {
   const { post_id } = req.params;
@@ -325,7 +327,7 @@ router.delete("/delete/:post_id", authMiddleware, async (req, res) => {
       `SELECT image_url FROM post_images WHERE post_id = $1`,
       [post_id]
     );
-
+    
     for (const img of images.rows) {
       await deleteCloudinaryFile(img.image_url);
     }

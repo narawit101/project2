@@ -138,7 +138,7 @@ router.post(
            p.field_id,
            p.title,
            p.content,
-          (p.created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Bangkok')::text AS created_at,
+          (p.created_at) AS created_at,
            COALESCE(
              json_agg(json_build_object('image_url', pi.image_url)) 
              FILTER (WHERE pi.image_url IS NOT NULL), '[]'
