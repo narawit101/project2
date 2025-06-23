@@ -13,6 +13,7 @@ module.exports = function (io) {
   const authMiddleware = require("../middlewares/auth");
   const { CloudinaryStorage } = require("multer-storage-cloudinary");
   const cloudinary = require("../server");
+  const { DateTime } = require("luxon");
 
   const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
@@ -90,14 +91,14 @@ module.exports = function (io) {
   }
 
   cron.schedule(
-    "*/5 * * * *",
+    "*/1 * * * *",
     async () => {
-      const now = new Date();
-      const todayStr = now.toISOString().split("T")[0]; // YYYY-MM-DD
-      const offsetMs = 7 * 60 * 60 * 1000; // 7 ชั่วโมง (ms)
-      const nowPlus7 = new Date(now.getTime() + offsetMs);
-      console.log("Time +7", nowPlus7);
-      console.log(" CRON WORKING", now.toISOString());
+      const now = DateTime.now().setZone("Asia/Bangkok"); // เวลาไทย
+      const todayStr = now.toFormat("yyyy-MM-dd");
+      // const offsetMs = 7 * 60 * 60 * 1000; // 7 ชั่วโมง (ms)
+      // const nowPlus7 = new Date(now.getTime() + offsetMs);
+      console.log("Time +7", now);
+      console.log(" CRON WORKING", now.toISO());
 
       try {
         const result = await pool.query(
@@ -115,17 +116,22 @@ module.exports = function (io) {
 
         for (const booking of result.rows) {
           try {
-            const rawTime = booking.start_time;
-            const datetimeStr = `${todayStr}T${rawTime}`;
+            // const rawTime = booking.start_time;
+            // const datetimeStr = `${todayStr}T${rawTime}`;
 
-            const startTime = new Date(datetimeStr);
-            const nowTime = nowPlus7;
+            const startTime = DateTime.fromISO(
+              `${todayStr}T${booking.start_time}`,
+              { zone: "Asia/Bangkok" }
+            );
+            // const nowTime = nowPlus7;
 
-            const diffMinutes = (startTime - nowTime) / (1000 * 60);
+            const diffMinutes = startTime
+              .diff(now, "minutes")
+              .toObject().minutes;
 
             console.log(` ตรวจ booking: ${booking.booking_id}`);
-            console.log(` startTime: ${startTime.toISOString()}`);
-            console.log(` nowTime:   ${nowcoTime.toISOString()}`);
+            console.log(` startTime: ${startTime.toISO()}`);
+            console.log(` nowTime:   ${now.toISO()}`);
             console.log(` diff:      ${diffMinutes.toFixed(2)} นาที`);
 
             if (diffMinutes >= 29 && diffMinutes <= 31) {
@@ -150,8 +156,8 @@ module.exports = function (io) {
             `,
               });
 
-              console.log(` แจ้งเตือนล่วงหน้าแล้ว: ${booking.email}`);
-            } else if (diffMinutes === 0) {
+              console.log(` แจ้งเตือน: ${booking.email}`);
+            } else if (diffMinutes >= -1 && diffMinutes <= 1) {
               await resend.emails.send({
                 from: process.env.Sender_Email,
                 to: booking.email,
@@ -197,7 +203,7 @@ module.exports = function (io) {
               AND f.price_deposit > 0
               AND b.booking_id NOT IN (SELECT booking_id FROM payment)
               AND (
-                $1 > b.updated_at + INTERVAL '60 minutes'
+                $1 > b.updated_at + INTERVAL '2 minutes'
                 OR (
                   b.updated_at > (b.start_date || ' ' || b.start_time)::timestamp - INTERVAL '10 minutes'
                   AND $1 >= (b.start_date || ' ' || b.start_time)::timestamp
@@ -205,7 +211,7 @@ module.exports = function (io) {
               )
             RETURNING b.booking_id, u.email, f.field_name, b.start_time, b.start_date;
 `,
-          [nowPlus7]
+          [now]
         );
 
         if (expired.rows.length > 0) {
