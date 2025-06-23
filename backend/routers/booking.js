@@ -120,7 +120,7 @@ module.exports = function (io) {
 
             const startTime = new Date(datetimeStr);
             const nowTime = new Date(
-              `${todayStr}T${now.toTimeString().split(" ")[0]}`
+              `${todayStr}T${now.toTimeString().split(" ")[0] + offsetMs}`
             );
 
             const diffMinutes = (startTime - nowTime) / (1000 * 60);
