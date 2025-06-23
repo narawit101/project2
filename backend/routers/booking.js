@@ -91,7 +91,7 @@ module.exports = function (io) {
   }
 
   cron.schedule(
-    "*/1 * * * *",
+    "*/5 * * * *",
     async () => {
       const now = DateTime.now().setZone("Asia/Bangkok"); // เวลาไทย
       const todayStr = now.toFormat("yyyy-MM-dd");
