@@ -119,9 +119,7 @@ module.exports = function (io) {
             const datetimeStr = `${todayStr}T${rawTime}`;
 
             const startTime = new Date(datetimeStr);
-            const nowTime = new Date(
-              `${todayStr}T${now.toTimeString().split(" ")[0] + offsetMs}`
-            );
+            const nowTime = nowPlus7
 
             const diffMinutes = (startTime - nowTime) / (1000 * 60);
 
