@@ -97,7 +97,7 @@ module.exports = function (io) {
       const offsetMs = 7 * 60 * 60 * 1000; // 7 ชั่วโมง (ms)
       const nowPlus7 = new Date(now.getTime() + offsetMs);
       console.log("Time +7", nowPlus7);
-      console.log(" CRON WORKING", nowPlus7);
+      console.log(" CRON WORKING", now.toISOString());
 
       try {
         const result = await pool.query(
@@ -125,7 +125,7 @@ module.exports = function (io) {
 
             console.log(` ตรวจ booking: ${booking.booking_id}`);
             console.log(` startTime: ${startTime.toISOString()}`);
-            console.log(` nowTime:   ${nowTime.toISOString()}`);
+            console.log(` nowTime:   ${nowcoTime.toISOString()}`);
             console.log(` diff:      ${diffMinutes.toFixed(2)} นาที`);
 
             if (diffMinutes >= 29 && diffMinutes <= 31) {
