@@ -203,7 +203,7 @@ module.exports = function (io) {
               AND f.price_deposit > 0
               AND b.booking_id NOT IN (SELECT booking_id FROM payment)
               AND (
-                $1 > b.updated_at + INTERVAL '2 minutes'
+                $1 > b.updated_at + INTERVAL '60 minutes'
                 OR (
                   b.updated_at > (b.start_date || ' ' || b.start_time)::timestamp - INTERVAL '10 minutes'
                   AND $1 >= (b.start_date || ' ' || b.start_time)::timestamp
