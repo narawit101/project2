@@ -333,19 +333,11 @@ export default function BookingDetail() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            cancel_time: new Date(
-              Date.now() + 7 * 60 * 60 * 1000
-            ).toISOString(),
+            cancel_time: new Date().toISOString(),
           }),
           credentials: "include",
         }
       );
-
-      const cancel_time = new Date(
-        Date.now() + 7 * 60 * 60 * 1000
-      ).toISOString();
-
-      console.log(cancel_time);
 
       const data = await res.json();
 
