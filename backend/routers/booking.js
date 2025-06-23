@@ -97,7 +97,7 @@ module.exports = function (io) {
       const offsetMs = 7 * 60 * 60 * 1000; // 7 ชั่วโมง (ms)
       const nowPlus7 = new Date(now.getTime() + offsetMs);
       console.log("Time +7", nowPlus7);
-      console.log(" CRON WORKING",nowPlus7);
+      console.log(" CRON WORKING", nowPlus7);
 
       try {
         const result = await pool.query(
@@ -106,7 +106,7 @@ module.exports = function (io) {
       FROM bookings b
       JOIN users u ON u.user_id = b.user_id
       JOIN field f ON f.field_id = b.field_id
-      WHERE b.status = 'pending' AND b.start_date = $1
+      WHERE b.status IN ('pending', 'approved') AND b.start_date = $1
     `,
           [todayStr]
         );
