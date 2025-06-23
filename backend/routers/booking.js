@@ -90,7 +90,7 @@ module.exports = function (io) {
   }
 
   cron.schedule(
-    "*/1 * * * *",
+    "*/5 * * * *",
     async () => {
       const now = new Date();
       const todayStr = now.toISOString().split("T")[0]; // YYYY-MM-DD
