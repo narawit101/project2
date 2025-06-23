@@ -97,7 +97,7 @@ module.exports = function (io) {
       const offsetMs = 7 * 60 * 60 * 1000; // 7 ชั่วโมง (ms)
       const nowPlus7 = new Date(now.getTime() + offsetMs);
       console.log("Time +7", nowPlus7);
-      console.log(" CRON WORKING", now.toISOString());
+      console.log(" CRON WORKING", now.toISOString() + nowPlus7);
 
       try {
         const result = await pool.query(
@@ -119,7 +119,7 @@ module.exports = function (io) {
             const datetimeStr = `${todayStr}T${rawTime}`;
 
             const startTime = new Date(datetimeStr);
-            const nowTime = nowPlus7
+            const nowTime = nowPlus7;
 
             const diffMinutes = (startTime - nowTime) / (1000 * 60);
 
