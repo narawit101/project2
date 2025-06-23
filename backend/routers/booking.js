@@ -119,7 +119,9 @@ module.exports = function (io) {
             const datetimeStr = `${todayStr}T${rawTime}`;
 
             const startTime = new Date(datetimeStr);
-            const nowTime = now;
+            const nowTime = new Date(
+              `${todayStr}T${now.toTimeString().split(" ")[0]}`
+            );
 
             const diffMinutes = (startTime - nowTime) / (1000 * 60);
 
@@ -197,7 +199,7 @@ module.exports = function (io) {
               AND f.price_deposit > 0
               AND b.booking_id NOT IN (SELECT booking_id FROM payment)
               AND (
-                $1 > b.updated_at + INTERVAL '60 minutes'
+                $1 > b.updated_at + INTERVAL '2 minutes'
                 OR (
                   b.updated_at > (b.start_date || ' ' || b.start_time)::timestamp - INTERVAL '10 minutes'
                   AND $1 >= (b.start_date || ' ' || b.start_time)::timestamp
