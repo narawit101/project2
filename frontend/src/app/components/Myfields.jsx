@@ -73,9 +73,10 @@ export default function MyFieldPage() {
 
   const indexOfLast = currentPage * fieldPerPage;
   const indexOfFirst = indexOfLast - fieldPerPage;
-  const currentField = myFields.slice(indexOfFirst, indexOfLast);
+  const currentField = filteredFields.slice(indexOfFirst, indexOfLast);
 
   useEffect(() => {
+    setDataLoading(true);
     try {
       if (statusFilter === "ทั้งหมด") {
         setFilteredFields(myFields);
@@ -83,6 +84,7 @@ export default function MyFieldPage() {
         setFilteredFields(
           myFields.filter((field) => field.status === statusFilter)
         );
+        setCurrentPage(1);
       }
     } catch (error) {
       console.error("Error filtering fields:", error);
@@ -248,21 +250,6 @@ export default function MyFieldPage() {
             ไม่มีสนามที่ตรงกับสถานะที่เลือก
           </p>
         )}
-        <div className="pagination-myfield">
-          {Array.from(
-            { length: Math.ceil(myFields.length / fieldPerPage) },
-            (_, i) => (
-              <button
-                key={i}
-                className={currentPage === i + 1 ? "active" : ""}
-                onClick={() => setCurrentPage(i + 1)}
-              >
-                {i + 1}
-              </button>
-            )
-          )}
-        </div>
-
         {showDeleteModal && (
           <div className="modal-overlay-myfield">
             <div className="modal-myfield">
@@ -297,6 +284,20 @@ export default function MyFieldPage() {
               )}
             </div>
           </div>
+        )}
+      </div>
+      <div className="pagination-myfield">
+        {Array.from(
+          { length: Math.ceil(filteredFields.length / fieldPerPage) },
+          (_, i) => (
+            <button
+              key={i}
+              className={currentPage === i + 1 ? "active" : ""}
+              onClick={() => setCurrentPage(i + 1)}
+            >
+              {i + 1}
+            </button>
+          )
         )}
       </div>
     </>

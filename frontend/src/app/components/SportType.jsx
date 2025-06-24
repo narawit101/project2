@@ -36,6 +36,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const fetchSportsCategories = async () => {
+      setDataLoading(true);
       try {
         const res = await fetch(`${API_URL}/sports_types/preview/type`, {
           method: "GET",
@@ -67,6 +68,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const fetchApprovedFields = async () => {
+      setDataLoading(true);
       try {
         const queryParams = selectedSport ? `?sport_id=${selectedSport}` : "";
 
@@ -254,20 +256,20 @@ export default function HomePage() {
             ยังไม่มีสนาม <strong>{selectedSportName}</strong> สำหรับกีฬานี้
           </div>
         )}
-        <div className="pagination-previwe-field-home">
-          {Array.from(
-            { length: Math.ceil(approvedFields.length / fieldPerPage) },
-            (_, i) => (
-              <button
-                key={i}
-                className={currentPage === i + 1 ? "active" : ""}
-                onClick={() => setCurrentPage(i + 1)}
-              >
-                {i + 1}
-              </button>
-            )
-          )}
-        </div>
+      </div>
+      <div className="pagination-previwe-field-home">
+        {Array.from(
+          { length: Math.ceil(approvedFields.length / fieldPerPage) },
+          (_, i) => (
+            <button
+              key={i}
+              className={currentPage === i + 1 ? "active" : ""}
+              onClick={() => setCurrentPage(i + 1)}
+            >
+              {i + 1}
+            </button>
+          )
+        )}
       </div>
     </>
   );
