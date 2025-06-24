@@ -10,6 +10,7 @@ router.use(cookieParser());
 
 router.post("/", async (req, res) => {
   const { identifier, password } = req.body;
+  console.log("Request protocol:", req.protocol);
 
   try {
     const userQuery = `SELECT * FROM users WHERE user_name = $1 OR email = $1`;
