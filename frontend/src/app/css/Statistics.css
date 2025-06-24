@@ -207,7 +207,7 @@
 }
 
 .pagination-container-stat .active-page-stat {
-  background-color: var(--text-color);
+  background-color: #ffc107;
   color: white;
   font-weight: bold;
 }
