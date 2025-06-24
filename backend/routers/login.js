@@ -13,6 +13,7 @@ router.post("/", async (req, res) => {
   console.log("Request protocol:", req.protocol);
   console.log("NODE_ENV:", process.env.NODE_ENV);
   console.log("Hostname:", req.hostname);
+  console.log("x-forwarded-proto:", req.headers["x-forwarded-proto"]);
 
   try {
     const userQuery = `SELECT * FROM users WHERE user_name = $1 OR email = $1`;
@@ -46,7 +47,7 @@ router.post("/", async (req, res) => {
       { expiresIn: "5h" }
     );
     const isProd = process.env.NODE_ENV === "production";
-    const isHttps = req.protocol === "https"; // ตรวจ protocol ด้วย
+    const isHttps = req.headers["x-forwarded-proto"] === "https";
     // **ส่ง JWT ไปยัง Client ผ่าน Cookie**
     res.cookie("token", token, {
       httpOnly: true,

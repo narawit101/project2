@@ -3,7 +3,9 @@ const router = express.Router();
 
 router.post("/", (req, res) => {
   const isProd = process.env.NODE_ENV === "production";
-  const isHttps = req.protocol === "https"; // ตรวจ protocol ด้วย
+  const isHttps = req.headers["x-forwarded-proto"] === "https";
+  console.log("x-forwarded-proto:", req.headers["x-forwarded-proto"]);
+
   res.clearCookie("token", {
     httpOnly: true,
     secure: isProd && isHttps, // ใช้ secure แค่บน production
