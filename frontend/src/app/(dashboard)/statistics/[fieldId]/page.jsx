@@ -1,11 +1,12 @@
 "use client";
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter, useParams } from "next/navigation";
 import { io } from "socket.io-client";
 import "@/app/css/myOrder.css";
+import "@/app/css/Statistics.css";
 
-export default function Myorder() {
+export default function Statistics() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const { user, isLoading } = useAuth();
   const [booking, setMybooking] = useState([]);
@@ -19,9 +20,9 @@ export default function Myorder() {
   const [bookingId, setBookingId] = useState("");
   const router = useRouter();
   const { fieldId } = useParams();
-  const [message, setMessage] = useState(""); // State for messages
-  const [messageType, setMessageType] = useState(""); // State for message type (error, success)
-  const [fieldName, setFieldName] = useState(""); // เพิ่ม state สำหรับชื่อสนาม
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
+  const [fieldName, setFieldName] = useState("");
   const [dataLoading, setDataLoading] = useState(true);
   const [useDateRange, setUseDateRange] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,18 +48,22 @@ export default function Myorder() {
       if (filters.startDate) queryParams.append("startDate", filters.startDate);
       if (filters.endDate) queryParams.append("endDate", filters.endDate);
       if (filters.status) queryParams.append("status", filters.status);
-
       const res = await fetch(
-        `${API_URL}/booking/my-orders/${fieldId}?${queryParams.toString()}`,
-        { credentials: "include" }
+        `${API_URL}/statistics/${fieldId}?${queryParams.toString()}`,
+        {
+          credentials: "include",
+        }
       );
-
       const data = await res.json();
       if (data.success) {
         setMybooking(data.data);
         setFieldName(data.fieldInfo?.field_name || "");
-        if (data.stats) console.log("Stats:", data.stats);
+        console.log("Booking data:", data.data);
+        if (data.stats) {
+          console.log("Stats:", data.stats);
+        }
       } else {
+        // ดักกรณีสนามยังไม่ผ่าน
         if (data.fieldInfo) {
           setFieldName(data.fieldInfo.field_name || "");
           setMessage(
@@ -69,12 +74,13 @@ export default function Myorder() {
             router.replace("/myfield");
           }, 2000);
         }
+        console.log("Booking fetch error:", data.error);
         setMessage(data.error);
         setMessageType("error");
       }
     } catch (error) {
       console.error("Fetch error:", error);
-      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
       setMessageType("error");
     } finally {
       setDataLoading(false);
@@ -103,7 +109,7 @@ export default function Myorder() {
     });
 
     socket.on("connect_error", (err) => {
-      console.error("Socket connect_error:", err.message);
+      console.error(" Socket connect_error:", err.message);
     });
 
     return () => {
@@ -114,11 +120,13 @@ export default function Myorder() {
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
+    setCurrentPage(1); // รีเซ็ตหน้าทันทีเมื่อกรอง
   };
 
   // เพิ่มฟังก์ชันสำหรับ Clear Filters
   const clearFilters = () => {
     setFilters({ startDate: "", endDate: "", status: "", bookingDate: "" });
+    setCurrentPage(1); // รีเซ็ตหน้าทันทีเมื่อกรอง
   };
 
   const formatDate = (isoString) => {
@@ -127,24 +135,6 @@ export default function Myorder() {
       year: "numeric",
       month: "long",
       day: "numeric",
-    });
-  };
-
-  const getCancelDeadlineTime = (start_date, start_time, cancel_hours) => {
-    if (!start_date || !start_time || cancel_hours == null) return "-";
-
-    const cleanDate = start_date.includes("T")
-      ? start_date.split("T")[0]
-      : start_date;
-    const bookingDateTime = new Date(`${cleanDate}T${start_time}+07:00`);
-    if (isNaN(bookingDateTime.getTime())) return "-";
-
-    bookingDateTime.setHours(bookingDateTime.getHours() - cancel_hours);
-
-    return bookingDateTime.toLocaleTimeString("th-TH", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
     });
   };
 
@@ -160,19 +150,11 @@ export default function Myorder() {
 
         .filter((item) => item.status === "complete")
         .reduce((sum, item) => sum + parseFloat(item.total_price || 0), 0),
-      // totalDeposit: booking
-      //   .filter(item => item.status === 'approved')
-      //   .reduce((sum, item) => sum + parseFloat(item.price_deposit || 0), 0)
+      totalDeposit: booking
+        .filter((item) => item.status === "approved")
+        .reduce((sum, item) => sum + parseFloat(item.price_deposit || 0), 0),
     };
     return stats;
-  };
-
-  const getFacilityNetPrice = (item) => {
-    const totalFac = (item.facilities || []).reduce(
-      (sum, fac) => sum + (parseFloat(fac.fac_price) || 0),
-      0
-    );
-    return Math.abs(totalFac - (parseFloat(item.total_remaining) || 0));
   };
 
   const stats = calculateStats();
@@ -187,7 +169,7 @@ export default function Myorder() {
     }
   }, [message]);
 
-  const bookingPerPage = 4;
+  const bookingPerPage = 20;
 
   const filteredBookings = booking.filter((item) => {
     if (!filters.status) return true;
@@ -240,9 +222,8 @@ export default function Myorder() {
         </div>
       )}
       <div className="myorder-container">
-        <h1>รายการจองสนาม {fieldName}</h1>
-
-        {!useDateRange && (
+        <h1>สถิติการจองสนาม {fieldName}</h1>
+        {useDateRange && (
           <div className="filters-order">
             <label>
               วันที่จอง:
@@ -286,7 +267,7 @@ export default function Myorder() {
                 }));
               }}
             >
-              {useDateRange ? "ใช้วันที่อย่างเดียว" : "ใช้ช่วงวัน"}
+              {!useDateRange ? "ใช้วันที่อย่างเดียว" : "ใช้ช่วงวัน"}
             </button>
             {stats.totalRevenue >= 0 && (
               <div className="revenue-summary">
@@ -305,7 +286,7 @@ export default function Myorder() {
           </div>
         )}
 
-        {useDateRange && (
+        {!useDateRange && (
           <div className="filters-order">
             <div className="date-range-filter">
               <label>
@@ -368,9 +349,8 @@ export default function Myorder() {
                   status: useDateRange ? "" : prev.status,
                 }));
               }}
-              style={{ marginBottom: "10px" }}
             >
-              {useDateRange ? "ใช้วันที่อย่างเดียว" : "ใช้ช่วงวัน"}
+              {!useDateRange ? "ใช้วันที่อย่างเดียว" : "ใช้ช่วงวัน"}
             </button>
             {stats.totalRevenue >= 0 && (
               <div className="revenue-summary">
@@ -417,15 +397,16 @@ export default function Myorder() {
                   <span className="stat-number">{stats.rejected}</span>
                 </p>
               </div>
-              <div className="stat-card complete">
+              <div className="stat-card approved">
                 <p className="stat-inline">
-                  การจองสำเร็จ:{" "}
+                  เสร็จสมบูรณ์:{" "}
                   <span className="stat-number">{stats.complete}</span>
                 </p>
               </div>
             </div>
           </div>
         )}
+        {/* ส่วนสถิติ */}
         {dataLoading ? (
           <div className="load-container-order">
             <div className="loading-data">
@@ -433,143 +414,97 @@ export default function Myorder() {
             </div>
           </div>
         ) : currentBookings.length > 0 ? (
-          <>
-            <ul className="booking-list">
-              {currentBookings.map((item, index) => (
-                <li key={index} className="booking-card">
-                  <div className="booking-detail">
-                    <p>
-                      <strong>ชื่อผู้จอง: </strong>
+          <div>
+            <table className="table-stat">
+              <thead>
+                <tr>
+                  <th>วันที่จอง</th>
+                  <th>ชื่อผู้จอง</th>
+                  <th>สนาม</th>
+                  <th>สนามย่อย</th>
+                  <th>เวลา</th>
+                  <th>กิจกรรม</th>
+                  <th>มัดจำ</th>
+                  <th>ราคารวมสุทธิ</th>
+                  <th>สิ่งอำนวยความสะดวก</th>
+                  <th>คะแนนรีวิว</th>
+                  <th>คอมเมนต์</th>
+                  <th>สถานะ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentBookings.map((item, index) => (
+                  <tr key={index} className="booking-data-table-stat">
+                    <td>
+                      {formatDate(item.start_date)}{" "}
+                      <a
+                        href={`/bookingDetail/${item.booking_id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          marginLeft: "8px",
+                          color: "blue",
+                          cursor: "pointer",
+                          textDecoration: "none",
+                        }}
+                      >
+                        ↗
+                      </a>
+                    </td>
+
+                    <td>
                       {item.first_name} {item.last_name}
-                    </p>
-                    <p>
-                      <strong>วันที่จอง: </strong>
-                      {formatDate(item.start_date)}
-                    </p>
-                    <p>
-                      <strong>สนาม: </strong>
-                      {item.field_name}
-                    </p>
-                    <p>
-                      <strong>สนามย่อย: </strong>
-                      {item.sub_field_name}
-                    </p>
-                    <div className="hours-container-my-order">
-                      <div className="total-hours-order">
-                        <p>
-                          <strong> เวลา: </strong>
-                          {item.start_time} - {item.end_time}
-                        </p>
-                        <p>
-                          <strong> สามารถยกเลิกก่อนเวลาเริ่ม: </strong>
-                          {item.cancel_hours} ชม.
-                        </p>
-                        <hr className="divider-order" />
-                      </div>
-                      <div className="total-date-order">
-                        <p>
-                          ยกเลิกได้ถึง <strong>วันที่:</strong>{" "}
-                          {formatDate(item.start_date)} <br />
-                          <strong> ** เวลา:</strong>{" "}
-                          {getCancelDeadlineTime(
-                            item.start_date,
-                            item.start_time,
-                            item.cancel_hours
-                          )}{" "}
-                          น. **
-                        </p>
-                      </div>
-                    </div>
-                    <div className="compact-price-box-order">
-                      {/* กิจกรรม */}
-                      <div className="line-item-order">
-                        <span>กิจกรรม:</span>
-                        <span>{item.activity}</span>
-                      </div>
-
-                      {/* สนาม */}
-                      <div className="line-item-order">
-                        <span>ราคาสนาม:</span>
-                        <span>
-                          {item.total_price -
-                            item.price_deposit -
-                            (item.facilities?.reduce(
-                              (sum, f) => sum + f.fac_price,
-                              0
-                            ) || 0)}{" "}
-                          บาท
-                        </span>
-                      </div>
-
-                      {/* สิ่งอำนวยความสะดวก */}
+                    </td>
+                    <td>{item.field_name}</td>
+                    <td>{item.sub_field_name}</td>
+                    <td>
+                      {item.start_time} - {item.end_time}
+                    </td>
+                    <td>{item.activity}</td>
+                    <td>{item.price_deposit}</td>
+                    <td>{item.total_price}</td>
+                    <td>
                       {Array.isArray(item.facilities) &&
-                        item.facilities.length > 0 && (
-                          <div className="line-item-order">
-                            <span>ราคาสิ่งอำนวยความสะดวก:</span>
-                            <span>
-                              {item.facilities.reduce(
-                                (sum, f) => sum + f.fac_price,
-                                0
-                              )}{" "}
-                              บาท
+                      item.facilities.length > 0
+                        ? item.facilities.map((fac, i) => (
+                            <span key={i}>
+                              {fac.fac_name}
+                              {i < item.facilities.length - 1 ? ", " : ""}
                             </span>
-                          </div>
-                        )}
-
-                      <hr className="divider-order" />
-
-                      {/* รวมที่ต้องจ่าย (ไม่รวมมัดจำ) */}
-                      <div className="line-item-order remaining">
-                        <span className="total-remaining-order">
-                          รวมที่ต้องจ่าย(ยอดคงเหลือ):
-                        </span>
-                        <span className="total-remaining-order">
-                          +{item.total_remaining} บาท
-                        </span>
-                      </div>
-
-                      {/* มัดจำ */}
-                      <div className="line-item-order plus">
-                        <span className="total_deposit-order">มัดจำ:</span>
-                        <span>+{item.price_deposit} บาท</span>
-                      </div>
-
-                      <hr className="divider-order" />
-
-                      {/* สุทธิทั้งหมด */}
-                      <div className="line-item-order total">
-                        <span>สุทธิ:</span>
-                        <span>{item.total_price} บาท</span>
-                      </div>
-                    </div>
-                    <p>
-                      <strong>สถานะ:</strong>{" "}
-                      <span className={`status-text-detail ${item.status}`}>
-                        {item.status === "pending"
-                          ? "รอตรวจสอบ"
-                          : item.status === "approved"
-                          ? "อนุมัติแล้ว"
-                          : item.status === "rejected"
-                          ? "ไม่อนุมัติ"
-                          : item.status === "complete"
-                          ? "การจองสำเร็จ"
-                          : "ไม่ทราบสถานะ"}
-                      </span>
-                    </p>
-                  </div>
-                  <button
-                    className="detail-button"
-                    onClick={() =>
-                      window.open(`/bookingDetail/${item.booking_id}`, "_blank")
-                    }
-                  >
-                    ดูรายละเอียด
-                  </button>
-                </li>
-              ))}
-            </ul>
+                          ))
+                        : "ไมได้เลือก"}
+                    </td>
+                    <td>
+                      {item.status !== "complete"
+                        ? "ยังไม่มีคะแนน"
+                        : item.rating != null
+                        ? item.rating
+                        : "ไม่มีรีวิว"}
+                    </td>
+                    <td>
+                      {item.status !== "complete"
+                        ? "ยังไม่มีคอมเมนต์"
+                        : item.comment != null
+                        ? item.comment
+                        : "ไม่มีรีวิว"}
+                    </td>
+                    <td className={`status-text-detail-stat ${item.status}`}>
+                      {item.status === "pending"
+                        ? "รอตรวจสอบ"
+                        : item.status === "approved"
+                        ? "อนุมัติแล้ว"
+                        : item.status === "rejected"
+                        ? "ไม่อนุมัติ"
+                        : item.status === "complete"
+                        ? "การจองสำเร็จ"
+                        : "ไม่ทราบสถานะ"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
             {filteredBookings.length > bookingPerPage && (
-              <div className="pagination-container-order">
+              <div className="pagination-container-stat">
                 <button
                   onClick={() =>
                     setCurrentPage((prev) => Math.max(prev - 1, 1))
@@ -584,7 +519,7 @@ export default function Myorder() {
                   Math.ceil(filteredBookings.length / bookingPerPage)
                 ).map((page, index) =>
                   page === "..." ? (
-                    <span key={index} className="pagination-dots-order">
+                    <span key={index} className="pagination-dots-stat">
                       ...
                     </span>
                   ) : (
@@ -592,7 +527,7 @@ export default function Myorder() {
                       key={index}
                       onClick={() => setCurrentPage(page)}
                       className={
-                        page === currentPage ? "active-page-order" : ""
+                        page === currentPage ? "active-page-stat" : ""
                       }
                     >
                       {page}
@@ -617,10 +552,11 @@ export default function Myorder() {
                 </button>
               </div>
             )}
-          </>
+          </div>
         ) : (
           <h1 className="booking-list">ไม่พบคำสั่งจอง</h1>
         )}
+        {/* ส่วนสถิติ */}
       </div>
     </>
   );

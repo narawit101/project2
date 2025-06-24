@@ -17,6 +17,7 @@ export default function Mybooking() {
   const [userInfo, setUserInfo] = useState("");
   const [bookingId, setBookingId] = useState("");
   const [dataLoading, setDataLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     if (isLoading) return;
@@ -155,6 +156,50 @@ export default function Mybooking() {
     );
     return Math.abs(totalFac - (parseFloat(item.total_remaining) || 0));
   };
+  const bookingPerPage = 4;
+
+  const filteredBookings = booking.filter((item) => {
+    if (!filters.status) return true;
+    return item.status === filters.status;
+  });
+
+  const indexOfLastBooking = currentPage * bookingPerPage;
+  const indexOfFirstBooking = indexOfLastBooking - bookingPerPage;
+  const currentBookings = filteredBookings.slice(
+    indexOfFirstBooking,
+    indexOfLastBooking
+  );
+
+  const getPaginationRange = (current, total) => {
+    const delta = 2; // จำนวนหน้าที่แสดงก่อน/หลังหน้าปัจจุบัน
+    const range = [];
+    const rangeWithDots = [];
+    let l;
+
+    for (let i = 1; i <= total; i++) {
+      if (
+        i === 1 ||
+        i === total ||
+        (i >= current - delta && i <= current + delta)
+      ) {
+        range.push(i);
+      }
+    }
+
+    for (let i of range) {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l > 2) {
+          rangeWithDots.push("...");
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    }
+
+    return rangeWithDots;
+  };
 
   useEffect(() => {
     if (message) {
@@ -177,7 +222,7 @@ export default function Mybooking() {
       <div className="myorder-container">
         <h1 className="head-title-my-order">รายการจองสนามของคุณ {userName}</h1>
 
-        <div className="filters">
+        <div className="filters-order">
           <label>
             วันที่:
             <input
@@ -209,144 +254,195 @@ export default function Mybooking() {
               <div className="loading-data-spinner"></div>
             </div>
           </div>
-        ) : booking.length > 0 ? (
-          <ul className="booking-list">
-            {booking.map((item, index) => (
-              <li key={index} className="booking-card">
-                <div className="booking-detail">
-                  <p>
-                    <strong>ชื่อผู้จอง: </strong>
-                    {userInfo}
-                  </p>
-                  <p>
-                    <strong>วันที่จอง: </strong>
-                    {formatDate(item.start_date)}
-                  </p>
-                  <p>
-                    <strong>สนาม: </strong>
-                    {item.field_name}
-                  </p>
-                  <p>
-                    <strong>สนามย่อย: </strong>
-                    {item.sub_field_name}
-                  </p>
-                  <div className="hours-container-my-order">
-                    <div className="total-hours-order">
-                      <p>
-                        <strong> เวลา: </strong>
-                        {item.start_time} - {item.end_time}
-                      </p>
-                      <p>
-                        <strong> สามารถยกเลิกก่อนเวลาเริ่ม: </strong>
-                        {item.cancel_hours} ชม.
-                      </p>
-                      <hr className="divider-order" />
-                    </div>
-                    <div className="total-date-order">
-                      <p>
-                        ยกเลิกได้ถึง <strong>วันที่:</strong>{" "}
-                        {formatDate(item.start_date)} <br />
-                        <strong> ** เวลา:</strong>{" "}
-                        {getCancelDeadlineTime(
-                          item.start_date,
-                          item.start_time,
-                          item.cancel_hours
-                        )}{" "}
-                        น. **
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="compact-price-box-order">
-                    {/* กิจกรรม */}
-                    <div className="line-item-order">
-                      <span>กิจกรรม:</span>
-                      <span>{item.activity}</span>
+        ) : currentBookings.length > 0 ? (
+          <>
+            <ul className="booking-list">
+              {currentBookings.map((item, index) => (
+                <li key={index} className="booking-card">
+                  <div className="booking-detail">
+                    <p>
+                      <strong>ชื่อผู้จอง: </strong>
+                      {userInfo}
+                    </p>
+                    <p>
+                      <strong>วันที่จอง: </strong>
+                      {formatDate(item.start_date)}
+                    </p>
+                    <p>
+                      <strong>สนาม: </strong>
+                      {item.field_name}
+                    </p>
+                    <p>
+                      <strong>สนามย่อย: </strong>
+                      {item.sub_field_name}
+                    </p>
+                    <div className="hours-container-my-order">
+                      <div className="total-hours-order">
+                        <p>
+                          <strong> เวลา: </strong>
+                          {item.start_time} - {item.end_time}
+                        </p>
+                        <p>
+                          <strong> สามารถยกเลิกก่อนเวลาเริ่ม: </strong>
+                          {item.cancel_hours} ชม.
+                        </p>
+                        <hr className="divider-order" />
+                      </div>
+                      <div className="total-date-order">
+                        <p>
+                          ยกเลิกได้ถึง <strong>วันที่:</strong>{" "}
+                          {formatDate(item.start_date)} <br />
+                          <strong> ** เวลา:</strong>{" "}
+                          {getCancelDeadlineTime(
+                            item.start_date,
+                            item.start_time,
+                            item.cancel_hours
+                          )}{" "}
+                          น. **
+                        </p>
+                      </div>
                     </div>
 
-                    {/* สนาม */}
-                    <div className="line-item-order">
-                      <span>ราคาสนาม:</span>
-                      <span>
-                        {item.total_price -
-                          item.price_deposit -
-                          (item.facilities?.reduce(
-                            (sum, f) => sum + f.fac_price,
-                            0
-                          ) || 0)}{" "}
-                        บาท
-                      </span>
-                    </div>
+                    <div className="compact-price-box-order">
+                      {/* กิจกรรม */}
+                      <div className="line-item-order">
+                        <span>กิจกรรม:</span>
+                        <span>{item.activity}</span>
+                      </div>
 
-                    {/* สิ่งอำนวยความสะดวก */}
-                    {Array.isArray(item.facilities) &&
-                      item.facilities.length > 0 && (
-                        <div className="line-item-order">
-                          <span>ราคาสิ่งอำนวยความสะดวก:</span>
-                          <span>
-                            {item.facilities.reduce(
+                      {/* สนาม */}
+                      <div className="line-item-order">
+                        <span>ราคาสนาม:</span>
+                        <span>
+                          {item.total_price -
+                            item.price_deposit -
+                            (item.facilities?.reduce(
                               (sum, f) => sum + f.fac_price,
                               0
-                            )}{" "}
-                            บาท
-                          </span>
-                        </div>
-                      )}
+                            ) || 0)}{" "}
+                          บาท
+                        </span>
+                      </div>
 
-                    <hr className="divider-order" />
+                      {/* สิ่งอำนวยความสะดวก */}
+                      {Array.isArray(item.facilities) &&
+                        item.facilities.length > 0 && (
+                          <div className="line-item-order">
+                            <span>ราคาสิ่งอำนวยความสะดวก:</span>
+                            <span>
+                              {item.facilities.reduce(
+                                (sum, f) => sum + f.fac_price,
+                                0
+                              )}{" "}
+                              บาท
+                            </span>
+                          </div>
+                        )}
 
-                    {/* รวมที่ต้องจ่าย (ไม่รวมมัดจำ) */}
-                    <div className="line-item-order remaining">
-                      <span className="total-remaining-order">
-                        รวมที่ต้องจ่าย(ยอดคงเหลือ):
+                      <hr className="divider-order" />
+
+                      {/* รวมที่ต้องจ่าย (ไม่รวมมัดจำ) */}
+                      <div className="line-item-order remaining">
+                        <span className="total-remaining-order">
+                          รวมที่ต้องจ่าย(ยอดคงเหลือ):
+                        </span>
+                        <span className="total-remaining-order">
+                          +{item.total_remaining} บาท
+                        </span>
+                      </div>
+
+                      {/* มัดจำ */}
+                      <div className="line-item-order plus">
+                        <span className="total_deposit-order">มัดจำ:</span>
+                        <span>+{item.price_deposit} บาท</span>
+                      </div>
+
+                      <hr className="divider-order" />
+
+                      {/* สุทธิทั้งหมด */}
+                      <div className="line-item-order total">
+                        <span>สุทธิ:</span>
+                        <span>{item.total_price} บาท</span>
+                      </div>
+                    </div>
+
+                    <p>
+                      <strong>สถานะ:</strong>{" "}
+                      <span className={`status-text-detail ${item.status}`}>
+                        {item.status === "pending"
+                          ? "รอตรวจสอบ"
+                          : item.status === "approved"
+                          ? "อนุมัติแล้ว"
+                          : item.status === "rejected"
+                          ? "ไม่อนุมัติ"
+                          : item.status === "complete"
+                          ? "การจองสำเร็จ"
+                          : "ไม่ทราบสถานะ"}
                       </span>
-                      <span className="total-remaining-order">
-                        +{item.total_remaining} บาท
-                      </span>
-                    </div>
-
-                    {/* มัดจำ */}
-                    <div className="line-item-order plus">
-                      <span className="total_deposit-order">มัดจำ:</span>
-                      <span>+{item.price_deposit} บาท</span>
-                    </div>
-
-                    <hr className="divider-order" />
-
-                    {/* สุทธิทั้งหมด */}
-                    <div className="line-item-order total">
-                      <span>สุทธิ:</span>
-                      <span>{item.total_price} บาท</span>
-                    </div>
+                    </p>
                   </div>
 
-                  <p>
-                    <strong>สถานะ:</strong>{" "}
-                    <span className={`status-text-detail ${item.status}`}>
-                      {item.status === "pending"
-                        ? "รอตรวจสอบ"
-                        : item.status === "approved"
-                        ? "อนุมัติแล้ว"
-                        : item.status === "rejected"
-                        ? "ไม่อนุมัติ"
-                        : item.status === "complete"
-                        ? "การจองสำเร็จ"
-                        : "ไม่ทราบสถานะ"}
+                  <button
+                    className="detail-button"
+                    onClick={() =>
+                      window.open(`/bookingDetail/${item.booking_id}`, "_blank")
+                    }
+                  >
+                    ดูรายละเอียด
+                  </button>
+                </li>
+              ))}
+            </ul>
+            {filteredBookings.length > bookingPerPage && (
+              <div className="pagination-container-order">
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                >
+                  «
+                </button>
+
+                {getPaginationRange(
+                  currentPage,
+                  Math.ceil(filteredBookings.length / bookingPerPage)
+                ).map((page, index) =>
+                  page === "..." ? (
+                    <span key={index} className="pagination-dots-order">
+                      ...
                     </span>
-                  </p>
-                </div>
+                  ) : (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentPage(page)}
+                      className={
+                        page === currentPage ? "active-page-order" : ""
+                      }
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
 
                 <button
-                  className="detail-button"
                   onClick={() =>
-                    window.open(`/bookingDetail/${item.booking_id}`, "_blank")
+                    setCurrentPage((prev) =>
+                      prev < Math.ceil(filteredBookings.length / bookingPerPage)
+                        ? prev + 1
+                        : prev
+                    )
+                  }
+                  disabled={
+                    currentPage >=
+                    Math.ceil(filteredBookings.length / bookingPerPage)
                   }
                 >
-                  ดูรายละเอียด
+                  »
                 </button>
-              </li>
-            ))}
-          </ul>
+              </div>
+            )}
+          </>
         ) : (
           <h1 className="booking-list">ไม่พบคำสั่งจอง</h1>
         )}

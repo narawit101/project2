@@ -65,6 +65,7 @@ const profile = require("./routers/profile");
 const posts = require("./routers/posts");
 const booking = require("./routers/booking")(io);
 const reviews = require("./routers/reviews");
+const statistics = require("./routers/statistics");
 const search = require("./routers/search");
 
 app.get("/", (req, res) => {
@@ -83,9 +84,10 @@ app.use("/profile", profile);
 app.use("/posts", posts);
 app.use("/booking", booking);
 app.use("/reviews", reviews);
+app.use("/statistics",statistics)
 app.use("/search", search);
 io.on("connection", (socket) => {
-  console.log("📡 User connected:", socket.id);
+  console.log("User connected:", socket.id);
 
   // ฟัง event ที่ client ส่งมาเพื่อ join ห้อง user_id
   socket.on("join_room", (userId) => {

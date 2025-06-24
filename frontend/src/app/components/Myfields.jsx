@@ -234,6 +234,12 @@ export default function MyFieldPage() {
                 >
                   รายการจองของสนาม
                 </button>
+                <button
+                  onClick={() => router.push(`/statistics/${field.field_id}`)}
+                  className="custom-button-view-stat-myfield"
+                >
+                  สถิติการจองสนาม
+                </button>
               </div>
             ))}
           </div>

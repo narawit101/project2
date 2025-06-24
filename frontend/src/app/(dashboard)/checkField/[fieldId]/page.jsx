@@ -135,6 +135,16 @@ export default function CheckFieldDetail() {
     }
   };
 
+  const daysInThai = {
+    Mon: "จันทร์",
+    Tue: "อังคาร",
+    Wed: "พุธ",
+    Thu: "พฤหัสบดี",
+    Fri: "ศุกร์",
+    Sat: "เสาร์",
+    Sun: "อาทิตย์",
+  };
+
   const StatusChangeModal = ({ newStatus, onConfirm, onClose }) => (
     <div className="confirm-modal-check-field">
       <div className="modal-content-check-field">
@@ -232,11 +242,10 @@ export default function CheckFieldDetail() {
                 <div className="loading-data-spinner"></div>
               </div>
             ) : (
-              fieldData?.open_days?.map((day, index) => (
-                <p key={index}>{day}</p>
-              ))
+              <p>
+                {fieldData?.open_days?.map((day) => daysInThai[day])?.join(", ")}
+              </p>
             )}
-
             <p>
               <strong>เวลาทำการ:</strong> {fieldData?.open_hours} -{" "}
               {fieldData?.close_hours}

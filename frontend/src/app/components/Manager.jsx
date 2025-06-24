@@ -77,18 +77,6 @@ export default function AdminManager() {
     fetchUsers();
   }, [user]);
 
-  const usersPerPage = 50;
-
-  const filteredUsers = users.filter((user) => {
-    if (roleFilter === "all")
-      return user.role === "customer" || user.role === "field_owner";
-    return user.role === roleFilter;
-  });
-
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
@@ -284,6 +272,49 @@ export default function AdminManager() {
     setEmailError("");
   };
 
+  const usersPerPage = 30;
+
+  const filteredUsers = users.filter((user) => {
+    if (roleFilter === "all")
+      return user.role === "customer" || user.role === "field_owner";
+    return user.role === roleFilter;
+  });
+
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+  const getPaginationRange = (current, total) => {
+    const delta = 2; // จำนวนหน้าที่แสดงก่อน/หลังหน้าปัจจุบัน
+    const range = [];
+    const rangeWithDots = [];
+    let l;
+
+    for (let i = 1; i <= total; i++) {
+      if (
+        i === 1 ||
+        i === total ||
+        (i >= current - delta && i <= current + delta)
+      ) {
+        range.push(i);
+      }
+    }
+
+    for (let i of range) {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l > 2) {
+          rangeWithDots.push("...");
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    }
+
+    return rangeWithDots;
+  };
+
   // if (isLoading)
   //   return (
   //     <div className="load">
@@ -429,20 +460,51 @@ export default function AdminManager() {
             ))}
           </tbody>
         </table>
-        <div className="pagination">
-          {Array.from(
-            { length: Math.ceil(filteredUsers.length / usersPerPage) },
-            (_, i) => (
-              <button
-                key={i}
-                className={currentPage === i + 1 ? "active" : ""}
-                onClick={() => setCurrentPage(i + 1)}
-              >
-                {i + 1}
-              </button>
-            )
-          )}
-        </div>
+
+        {filteredUsers.length > usersPerPage && (
+          <div className="pagination-container-manager">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              «
+            </button>
+
+            {getPaginationRange(
+              currentPage,
+              Math.ceil(filteredUsers.length / usersPerPage)
+            ).map((page, index) =>
+              page === "..." ? (
+                <span key={index} className="pagination-dots-manager">
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={index}
+                  onClick={() => setCurrentPage(page)}
+                  className={page === currentPage ? "active-page-manager" : ""}
+                >
+                  {page}
+                </button>
+              )
+            )}
+
+            <button
+              onClick={() =>
+                setCurrentPage((prev) =>
+                  prev < Math.ceil(filteredUsers.length / usersPerPage)
+                    ? prev + 1
+                    : prev
+                )
+              }
+              disabled={
+                currentPage >= Math.ceil(filteredUsers.length / usersPerPage)
+              }
+            >
+              »
+            </button>
+          </div>
+        )}
         {selectedUser && (
           <div className="modal-manager">
             <div className="modal-content-manager">

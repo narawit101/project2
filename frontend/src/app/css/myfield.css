@@ -92,6 +92,18 @@
   margin-bottom: 17px;
   font-size: 0.8rem;
 }
+.custom-button-view-stat-myfield {
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  flex: 1;
+  background-color: var(--text-color);
+  color: #fff;
+}
+
+.custom-button-view-stat-myfield:hover {
+ background-color: #10127c;
+}
 
 .custom-button-view-myfield,
 .custom-button-edit-myfield,
@@ -103,6 +115,7 @@
   flex: 1;
   /* background-color: #007bff; */
   color: #fff;
+  margin-bottom: 20px;
 }
 .custom-button-view-order-myfield {
   font-size: 1rem;
@@ -134,13 +147,12 @@
 }
 
 .custom-button-view-myfield {
-  background: linear-gradient(135deg, #1b0ed4, #055199);
-  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
+  background: var(--text-color);
   color: white;
 }
 
 .custom-button-view-myfield:hover {
-  background: linear-gradient(135deg, #3c30e6, #0d5599);
+ background-color: #10127c;
   box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
 }
 
@@ -179,7 +191,6 @@
   padding: 0.95rem;
 }
 
-  
 .pagination-myfield {
   margin-top: 20px;
   display: flex;

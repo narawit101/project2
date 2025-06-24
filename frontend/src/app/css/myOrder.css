@@ -24,7 +24,7 @@
   height: 70px;
 }
 
-.filters {
+.filters-order {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
@@ -32,7 +32,7 @@
   justify-content: center;
 }
 
-.filters label {
+.filters-order label {
   display: flex;
   flex-direction: column;
   font-size: 0.95rem;
@@ -163,8 +163,7 @@
 
 .detail-button {
   margin: 20px auto;
-  background: linear-gradient(135deg, #1b0ed4, #055199);
-  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
+  background: var(--text-color);
   color: white;
   padding: 0.5rem 1rem;
   border: none;
@@ -174,8 +173,7 @@
 }
 
 .detail-button:hover {
-  background: linear-gradient(135deg, #3c30e6, #0d5599);
-  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
+  background-color: #101169;
 }
 
 .booking-detail p {
@@ -291,6 +289,27 @@
   background-color: #5a6268;
 }
 
+.swip-mode-order {
+  width: 150px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 17px 3px;
+  transition: background-color 0.3s ease;
+}
+
+.swip-mode-order:hover {
+  background-color: #5a6268;
+}
+
 /* Booking Summary */
 .booking-summary {
   background-color: #f8f9fa;
@@ -308,7 +327,7 @@
 }
 
 /* แก้ไข Filters Section */
-.filters {
+.filters-order {
   background-color: #f8f9fa;
   padding: 20px;
   border-radius: 8px;
@@ -316,7 +335,7 @@
   border: 1px solid #e9ecef;
 }
 
-.filters label {
+.filters-order label {
   display: flex;
   flex-direction: column;
   margin-bottom: 15px;
@@ -324,8 +343,8 @@
   color: #495057;
 }
 
-.filters select,
-.filters input {
+.filters-order select,
+.filters-order input {
   padding: 10px 12px;
   border: 2px solid #e1e5e9;
   border-radius: 6px;
@@ -334,8 +353,8 @@
   transition: all 0.3s ease;
 }
 
-.filters select:focus,
-.filters input:focus {
+.filters-order select:focus,
+.filters-order input:focus {
   border-color: var(--text-color);
   outline: none;
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
@@ -469,8 +488,7 @@
 
 .revenue-card {
   margin: 0 auto;
-  background: linear-gradient(135deg, #1b0ed4, #055199);
-  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
+  background: var(--text-color);
   color: white;
   padding: 10px;
   border-radius: 8px;
@@ -493,6 +511,47 @@
   font-size: 20px;
   font-weight: bold;
   margin: 0;
+}
+
+.pagination-container-order {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.pagination-container-order button {
+  padding: 6px 12px;
+  background-color: var(--text-color);
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.pagination-container-order button:hover {
+  background-color: #ffc107;
+}
+
+.pagination-container-order button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+.pagination-container-order .active-page-order {
+  background-color: #ffc107;
+  color: white;
+  font-weight: bold;
+}
+
+.pagination-dots-order {
+  padding: 6px 10px;
+  color: #555;
+  font-weight: bold;
 }
 
 /* Responsive Design for Stats */
@@ -550,7 +609,7 @@
     margin: auto;
     min-width: 150px;
   }
-  .filters {
+  .filters-order {
     flex-direction: column;
     align-items: stretch;
   }
