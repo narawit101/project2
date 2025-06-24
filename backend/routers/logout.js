@@ -2,10 +2,12 @@ const express = require("express");
 const router = express.Router();
 
 router.post("/", (req, res) => {
+  const isProd = process.env.NODE_ENV === "production";
+  const isHttps = req.protocol === "https"; // ตรวจ protocol ด้วย
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-     sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // ปรับค่า sameSite ให้เหมาะกับ env
+    secure: isProd && isHttps, // ใช้ secure แค่บน production
+    sameSite: isProd && isHttps ? "None" : "Lax", // ปรับค่า sameSite ให้เหมาะกับ env
   });
 
   res.status(200).json({ message: "ออกจากระบบสำเร็จ" });

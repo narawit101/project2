@@ -11,6 +11,8 @@ router.use(cookieParser());
 router.post("/", async (req, res) => {
   const { identifier, password } = req.body;
   console.log("Request protocol:", req.protocol);
+  console.log("NODE_ENV:", process.env.NODE_ENV);
+  console.log("Hostname:", req.hostname);
 
   try {
     const userQuery = `SELECT * FROM users WHERE user_name = $1 OR email = $1`;
@@ -43,12 +45,13 @@ router.post("/", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "5h" }
     );
-
+    const isProd = process.env.NODE_ENV === "production";
+    const isHttps = req.protocol === "https"; // ตรวจ protocol ด้วย
     // **ส่ง JWT ไปยัง Client ผ่าน Cookie**
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // ใช้ secure แค่บน production
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // ปรับค่า sameSite ให้เหมาะกับ env
+      secure: isProd && isHttps, // ใช้ secure แค่บน production
+      sameSite: isProd && isHttps ? "None" : "Lax", // ปรับค่า sameSite ให้เหมาะกับ env
       maxAge: expiresIn,
     });
 
