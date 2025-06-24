@@ -9,6 +9,8 @@ const http = require("http");
 const { Server } = require("socket.io"); // ดึง Server class จาก socket.io
 const app = express();
 const server = http.createServer(app);
+app.set("trust proxy", 1); // สำคัญมาก ทำให้ Express รู้ว่า client ใช้ HTTPS
+
 
 const allowedOrigins = [
   "http://localhost:3000",
