@@ -8,7 +8,7 @@ const cookieParser = require("cookie-parser");
 const http = require("http");
 const { Server } = require("socket.io"); // ดึง Server class จาก socket.io
 const app = express();
-app.set("trust proxy", 1); // ✅ สำคัญมาก ทำให้ Express รู้ว่า proxy เป็น HTTPS จริง
+app.set("trust proxy", 1); //  สำคัญมาก ทำให้ Express รู้ว่า proxy เป็น HTTPS จริง
 const server = http.createServer(app);
 
 const allowedOrigins = [
@@ -36,6 +36,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type"],
+    exposedHeaders: ["Set-Cookie"], //พิ่มเพื่อให้ browser มองเห็น cookie
   })
 );
 
