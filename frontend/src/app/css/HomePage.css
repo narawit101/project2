@@ -68,7 +68,7 @@
   border-radius: 25px;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
-  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   outline: none;
 }
 
@@ -131,7 +131,7 @@
   justify-content: center;
   text-align: center;
   width: 50%;
-  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.132);
   border-radius: 25px;
   border: none;
   margin: 0px auto 10px auto;
@@ -181,7 +181,7 @@
 }
 
 .section-title-home {
-  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.198);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.132);
   font-size: 28px;
   font-weight: 500;
   color: var(--text-color);

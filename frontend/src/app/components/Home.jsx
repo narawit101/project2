@@ -149,7 +149,7 @@ export default function HomePage() {
       <div className="homepage">
         <div className="news-section">
           <div className="title-notice">
-            <h1>ข่าวสาร</h1>
+            <h1>ประกาศ</h1>
           </div>
           {dataLoading && (
             <div className="loading-data">
