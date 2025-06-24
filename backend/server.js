@@ -8,14 +8,13 @@ const cookieParser = require("cookie-parser");
 const http = require("http");
 const { Server } = require("socket.io"); // ดึง Server class จาก socket.io
 const app = express();
+app.set("trust proxy", 1); // ✅ สำคัญมาก ทำให้ Express รู้ว่า proxy เป็น HTTPS จริง
 const server = http.createServer(app);
-app.set("trust proxy", 1); // สำคัญมาก ทำให้ Express รู้ว่า client ใช้ HTTPS
-
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://project-eight-jet-70.vercel.app", 
-  "https://sport-hub-70.vercel.app", 
+  "https://project-eight-jet-70.vercel.app",
+  "https://sport-hub-70.vercel.app",
   // เปลี่ยนให้ตรงกับของคุณจริงๆ
 ];
 
@@ -86,7 +85,7 @@ app.use("/profile", profile);
 app.use("/posts", posts);
 app.use("/booking", booking);
 app.use("/reviews", reviews);
-app.use("/statistics",statistics)
+app.use("/statistics", statistics);
 app.use("/search", search);
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
@@ -104,5 +103,5 @@ io.on("connection", (socket) => {
 
 const port = 5000;
 server.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on port ${port}`);
 });
