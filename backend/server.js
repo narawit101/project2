@@ -36,7 +36,6 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type"],
-    exposedHeaders: ["Set-Cookie"], //พิ่มเพื่อให้ browser มองเห็น cookie
   })
 );
 
