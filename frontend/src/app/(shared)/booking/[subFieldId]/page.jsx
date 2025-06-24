@@ -60,7 +60,7 @@ export default function Booking() {
   const [message, setMessage] = useState(""); // ข้อความแสดงผลผิดพลาด
   const [messageType, setMessageType] = useState("");
   const [bookTimeArr, setBookTimeArr] = useState([]);
-  const [bookingId, setBookingId] = useState("");
+  // const [bookingId, setBookingId] = useState("");
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
 
