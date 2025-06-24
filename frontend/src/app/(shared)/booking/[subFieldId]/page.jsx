@@ -42,7 +42,7 @@ export default function Booking() {
     "en-CA"
   );
   const { user, isLoading } = useAuth();
-  const [bookedSlots, setBookedSlots] = useState([]);
+  // const [bookedSlots, setBookedSlots] = useState([]);
   const [isBooked, setIsBooked] = useState(false); // ใช้ติดตามว่าเกิดการจองหรือยัง
   const [subFieldData, setSubFieldData] = useState([]);
   const field_id = sessionStorage.getItem("field_id");
@@ -108,7 +108,7 @@ export default function Booking() {
       const data = await res.json();
 
       if (!data.error) {
-        setBookedSlots(data.data);
+        // setBookedSlots(data.data);
         // setDataLoading(false);
 
         const timeRangesWithStatus = data.data.flatMap((item) =>
