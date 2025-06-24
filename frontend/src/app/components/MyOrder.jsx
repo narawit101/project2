@@ -114,11 +114,13 @@ export default function Myorder() {
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
+    setCurrentPage(1);
   };
 
   // เพิ่มฟังก์ชันสำหรับ Clear Filters
   const clearFilters = () => {
     setFilters({ startDate: "", endDate: "", status: "", bookingDate: "" });
+    setCurrentPage(1);
   };
 
   const formatDate = (isoString) => {

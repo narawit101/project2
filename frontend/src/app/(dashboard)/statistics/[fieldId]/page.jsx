@@ -169,7 +169,7 @@ export default function Statistics() {
     }
   }, [message]);
 
-  const bookingPerPage = 20;
+  const bookingPerPage = 10;
 
   const filteredBookings = booking.filter((item) => {
     if (!filters.status) return true;
