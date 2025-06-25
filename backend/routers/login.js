@@ -34,18 +34,25 @@ router.post("/", async (req, res) => {
     }
 
     const expiresIn = 60 * 60 * 5000;
-    
 
-const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "5h" });
-
+    const token = jwt.sign(
+      {
+        user_id: user.user_id,
+        user_name: user.user_name,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "5h" }
+    );
     const isProd = process.env.NODE_ENV === "production";
     const isHttps = req.headers["x-forwarded-proto"] === "https";
 
     res.cookie("token", token, {
       httpOnly: true,
       secure: isProd && isHttps,
-      sameSite: isProd && isHttps ? "None" : "Lax", 
+      sameSite: isProd && isHttps ? "None" : "Lax",
       maxAge: expiresIn,
+      domain: isProd ? undefined : undefined, // อย่าตั้ง domain ใน production
     });
 
     res.status(200).json({
