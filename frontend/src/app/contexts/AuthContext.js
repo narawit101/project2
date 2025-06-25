@@ -11,7 +11,8 @@ export function AuthProvider({ children }) {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
-    const token = localStorage.getItem("auth_mobile_token");
+    const isMobile = /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent);
+    const token = isMobile ? localStorage.getItem("auth_mobile_token") : null;
     const fetchUser = async () => {
       try {
         const res = await fetch(`${API_URL}/users/me`, {
