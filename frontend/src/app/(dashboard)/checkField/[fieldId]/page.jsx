@@ -18,7 +18,6 @@ export default function CheckFieldDetail() {
   const [facilities, setFacilities] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
-  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -41,6 +40,8 @@ export default function CheckFieldDetail() {
       if (!fieldId) return;
       try {
         await new Promise((resolve) => setTimeout(resolve, 200));
+        const token = localStorage.getItem("auth_mobile_token");
+
         const res = await fetch(`${API_URL}/field/${fieldId}`, {
           method: "GET",
           headers: {
@@ -110,6 +111,8 @@ export default function CheckFieldDetail() {
   const updateFieldStatus = async (fieldId, newStatus) => {
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const response = await fetch(`${API_URL}/field/${fieldId}`, {
         method: "PUT",
         headers: {

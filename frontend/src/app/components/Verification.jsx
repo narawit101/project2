@@ -14,7 +14,6 @@ export default function Verification() {
   const router = useRouter("");
   const { user, isLoading, setUser } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
-  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -48,6 +47,8 @@ export default function Verification() {
     e.preventDefault();
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       await new Promise((resolve) => setTimeout(resolve, 200));
       const res = await fetch(`${API_URL}/register/verify/${userId}`, {
         method: "POST",
@@ -90,6 +91,8 @@ export default function Verification() {
     SetstartProcessLoad(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 200));
+      const token = localStorage.getItem("auth_mobile_token");
+
       const res = await fetch(`${API_URL}/register/new-otp/${userId}`, {
         method: "PUT",
         headers: {

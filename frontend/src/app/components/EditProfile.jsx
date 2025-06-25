@@ -19,7 +19,6 @@ export default function EditProfile() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
-  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -85,6 +84,8 @@ export default function EditProfile() {
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 200));
+      const token = localStorage.getItem("auth_mobile_token");
+
       const response = await fetch(`${API_URL}/users/${currentUser.user_id}`, {
         method: "PUT",
         headers: {

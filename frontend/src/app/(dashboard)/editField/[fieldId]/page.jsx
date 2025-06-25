@@ -53,7 +53,6 @@ export default function CheckFieldDetail() {
   const { user, isLoading } = useAuth();
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
-  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -83,6 +82,8 @@ export default function CheckFieldDetail() {
     const fetchFieldData = async () => {
       try {
         await new Promise((resolve) => setTimeout(resolve, 200));
+        const token = localStorage.getItem("auth_mobile_token");
+
         const res = await fetch(`${API_URL}/field/${fieldId}`, {
           method: "GET",
           headers: {
@@ -118,6 +119,8 @@ export default function CheckFieldDetail() {
   useEffect(() => {
     const fetchSportsCategories = async () => {
       try {
+        const token = localStorage.getItem("auth_mobile_token");
+
         const response = await fetch(`${API_URL}/sports_types/preview/type`, {
           method: "GET",
           headers: {
@@ -151,6 +154,8 @@ export default function CheckFieldDetail() {
   useEffect(() => {
     const fetchFacilities = async () => {
       try {
+        const token = localStorage.getItem("auth_mobile_token");
+
         const response = await fetch(`${API_URL}/facilities`, {
           headers: {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -212,6 +217,8 @@ export default function CheckFieldDetail() {
     }
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const res = await fetch(`${API_URL}/field/facilities/${fieldId}`, {
         method: "POST",
         headers: {
@@ -250,6 +257,8 @@ export default function CheckFieldDetail() {
     const { field_id, field_fac_id } = selectedFacility;
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const res = await fetch(
         `${API_URL}/field/facilities/${field_id}/${field_fac_id}`,
         {
@@ -285,6 +294,8 @@ export default function CheckFieldDetail() {
     if (!newFacility.trim()) return;
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const res = await fetch(`${API_URL}/facilities/add`, {
         method: "POST",
         headers: {
@@ -351,6 +362,8 @@ export default function CheckFieldDetail() {
     }
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const response = await fetch(
         `${API_URL}/field/supfiled/${sub_field_id}`,
         {
@@ -490,6 +503,8 @@ export default function CheckFieldDetail() {
         setMessageType("error");
         return;
       }
+      const token = localStorage.getItem("auth_mobile_token");
+
       const formData = new FormData();
       formData.append("img_field", selectedFile);
       const response = await fetch(`${API_URL}/field/${fieldId}/upload-image`, {
@@ -534,6 +549,7 @@ export default function CheckFieldDetail() {
       for (let i = 0; i < selectedFile.length; i++) {
         formData.append("documents", selectedFile[i]); // ส่งไฟล์เอกสารหลายไฟล์
       }
+      const token = localStorage.getItem("auth_mobile_token");
 
       const response = await fetch(
         `${API_URL}/field/${fieldId}/upload-document`,
@@ -606,6 +622,8 @@ export default function CheckFieldDetail() {
     }
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const response = await fetch(`${API_URL}/field/edit/${fieldId}`, {
         method: "PUT",
         headers: {
@@ -650,6 +668,8 @@ export default function CheckFieldDetail() {
     }
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const response = await fetch(`${API_URL}/field/subfield/${fieldId}`, {
         method: "POST",
         headers: {
@@ -712,6 +732,8 @@ export default function CheckFieldDetail() {
     }
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const response = await fetch(
         `${API_URL}/field/delete/subfield/${sub_field_id}`,
         {
@@ -747,6 +769,8 @@ export default function CheckFieldDetail() {
   const addAddOn = async (subFieldId, content, price) => {
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const res = await fetch(`${API_URL}/field/addon`, {
         method: "POST",
         headers: {
@@ -798,6 +822,8 @@ export default function CheckFieldDetail() {
   const deleteAddOn = async (add_on_id) => {
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const response = await fetch(
         `${API_URL}/field/delete/addon/${add_on_id}`,
         {
@@ -837,6 +863,8 @@ export default function CheckFieldDetail() {
   const saveAddon = async () => {
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const response = await fetch(
         `${API_URL}/field/add_on/${editingAddon.addOnId}`,
         {
@@ -898,6 +926,8 @@ export default function CheckFieldDetail() {
   const upDateStatus = async () => {
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const res = await fetch(
         `${API_URL}/field/update-status/${field.field_id}`,
         {

@@ -25,7 +25,6 @@ export default function Myorder() {
   const [dataLoading, setDataLoading] = useState(true);
   const [useDateRange, setUseDateRange] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -42,6 +41,8 @@ export default function Myorder() {
   const fetchData = useCallback(async () => {
     if (!fieldId) return;
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const queryParams = new URLSearchParams();
       if (filters.bookingDate)
         queryParams.append("bookingDate", filters.bookingDate);

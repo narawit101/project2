@@ -6,7 +6,7 @@ import Search from "@/app/components/Search";
 export default function page() {
   return (
     <div>
-      <Suspense fallback={<div>กำลังโหลด...</div>}>
+      <Suspense fallback={<div></div>}>
         <Search />;
       </Suspense>
     </div>

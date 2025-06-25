@@ -18,7 +18,6 @@ export default function Mybooking() {
   const [bookingId, setBookingId] = useState("");
   const [dataLoading, setDataLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -37,6 +36,8 @@ export default function Mybooking() {
     if (!user?.user_id) return;
 
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const queryParams = new URLSearchParams();
       if (filters.date) queryParams.append("date", filters.date);
       if (filters.status) queryParams.append("status", filters.status);

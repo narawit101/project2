@@ -21,7 +21,6 @@ export default function MyFieldPage() {
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const fieldPerPage = 20;
-  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -43,6 +42,8 @@ export default function MyFieldPage() {
     const fetchMyFields = async () => {
       try {
         // await new Promise((resolve) => setTimeout(resolve, 2000));
+        const token = localStorage.getItem("auth_mobile_token");
+
         const res = await fetch(`${API_URL}/myfield/myfields`, {
           method: "GET",
           headers: {
@@ -105,6 +106,8 @@ export default function MyFieldPage() {
 
   const confirmDeleteSubField = async () => {
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       SetstartProcessLoad(true);
       const res = await fetch(
         `${API_URL}/field/delete/field/${fieldIdToDelete}`,

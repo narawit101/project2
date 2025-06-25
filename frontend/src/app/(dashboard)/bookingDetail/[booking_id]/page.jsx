@@ -40,7 +40,6 @@ export default function BookingDetail() {
     setComment("");
   };
   const [reviewData, setReviewData] = useState([]);
-  const token = localStorage.getItem("auth_mobile_token");
 
   const [fieldId, setFieldId] = useState("");
   useEffect(() => {
@@ -62,6 +61,7 @@ export default function BookingDetail() {
   const fetchData = useCallback(async () => {
     try {
       if (!booking_id) return;
+      const token = localStorage.getItem("auth_mobile_token");
 
       const res = await fetch(
         `${API_URL}/booking/bookings-detail/${booking_id}`,
@@ -203,6 +203,8 @@ export default function BookingDetail() {
     }
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const res = await fetch(
         `${API_URL}/booking/booking-status/${booking_id}`,
         {
@@ -337,6 +339,8 @@ export default function BookingDetail() {
     SetstartProcessLoad(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
+      const token = localStorage.getItem("auth_mobile_token");
+
       const res = await fetch(
         `${API_URL}/booking/cancel-bookings/${booking.booking_id}`,
         {
@@ -429,6 +433,8 @@ export default function BookingDetail() {
     const formData = new FormData();
     if (depositSlip) formData.append("deposit_slip", depositSlip);
     //if (totalSlip) formData.append("total_slip", totalSlip);
+    const token = localStorage.getItem("auth_mobile_token");
+
     SetstartProcessLoad(true);
     try {
       const res = await fetch(
@@ -476,6 +482,8 @@ export default function BookingDetail() {
     if (totalSlip) formData.append("total_slip", totalSlip);
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const res = await fetch(
         `${API_URL}/booking/upload-slip/${booking.booking_id}`,
         {
@@ -530,6 +538,8 @@ export default function BookingDetail() {
 
   const fetchReview = useCallback(async () => {
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const res = await fetch(`${API_URL}/reviews/get/${booking_id}`, {
         method: "GET",
         headers: {
@@ -574,6 +584,8 @@ export default function BookingDetail() {
     SetstartProcessLoad(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 250));
+      const token = localStorage.getItem("auth_mobile_token");
+
       const res = await fetch(`${API_URL}/reviews/post`, {
         method: "POST",
         headers: {
