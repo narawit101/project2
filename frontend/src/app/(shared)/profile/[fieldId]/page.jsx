@@ -43,7 +43,6 @@ export default function CheckFieldDetail() {
   const [selectedRating, setSelectedRating] = useState("ทั้งหมด");
   const [currentPage, setCurrentPage] = useState(1);
   const postPerPage = 5;
-  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -73,6 +72,8 @@ export default function CheckFieldDetail() {
 
     const fetchFieldData = async () => {
       try {
+        const token = localStorage.getItem("auth_mobile_token");
+
         sessionStorage.setItem("field_id", fieldId);
 
         const res = await fetch(`${API_URL}/profile/${fieldId}`, {
@@ -139,6 +140,8 @@ export default function CheckFieldDetail() {
 
     const fetchPosts = async () => {
       try {
+        const token = localStorage.getItem("auth_mobile_token");
+
         const res = await fetch(`${API_URL}/posts/${fieldId}`, {
           method: "GET",
           headers: {
@@ -314,6 +317,7 @@ export default function CheckFieldDetail() {
 
   const handleEditSubmit = async (e, postId) => {
     e.preventDefault();
+    const token = localStorage.getItem("auth_mobile_token");
 
     const formData = new FormData();
     formData.append("title", editTitle);
@@ -360,6 +364,7 @@ export default function CheckFieldDetail() {
     SetstartProcessLoad(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 200));
+      const token = localStorage.getItem("auth_mobile_token");
 
       const res = await fetch(`${API_URL}/posts/delete/${postToDelete}`, {
         method: "DELETE",

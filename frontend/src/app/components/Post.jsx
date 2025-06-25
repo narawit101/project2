@@ -12,7 +12,6 @@ const CreatePost = ({ fieldId, onPostSuccess }) => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
-  const token = localStorage.getItem("auth_mobile_token");
 
   const MAX_FILE_SIZE = 8 * 1024 * 1024;
   const MAX_FILES = 10;
@@ -82,6 +81,8 @@ const CreatePost = ({ fieldId, onPostSuccess }) => {
     });
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       await new Promise((resolve) => setTimeout(resolve, 200));
       const response = await fetch(`${API_URL}/posts/post`, {
         method: "POST",

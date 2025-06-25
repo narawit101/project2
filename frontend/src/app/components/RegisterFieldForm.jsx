@@ -18,7 +18,6 @@ export default function RegisterFieldForm() {
   const { user, isLoading } = useAuth();
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
-  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -54,6 +53,7 @@ export default function RegisterFieldForm() {
   useEffect(() => {
     const fetchSports = async () => {
       try {
+        const token = localStorage.getItem("auth_mobile_token");
         const res = await fetch(`${API_URL}/sports_types`, {
           credentials: "include",
           headers: {
@@ -86,6 +86,8 @@ export default function RegisterFieldForm() {
   useEffect(() => {
     const fetchFacilities = async () => {
       try {
+        const token = localStorage.getItem("auth_mobile_token");
+
         const res = await fetch(`${API_URL}/facilities`, {
           credentials: "include",
           headers: {
@@ -431,6 +433,8 @@ export default function RegisterFieldForm() {
     SetstartProcessLoad(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 300));
+      const token = localStorage.getItem("auth_mobile_token");
+
       const res = await fetch(`${API_URL}/field/register`, {
         method: "POST",
         credentials: "include",

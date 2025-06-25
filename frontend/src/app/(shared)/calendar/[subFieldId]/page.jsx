@@ -17,7 +17,6 @@ export default function MyCalendar() {
   const [messageType, setMessageType] = useState("");
   const { user, isLoading } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
-  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -66,6 +65,8 @@ export default function MyCalendar() {
 
     const fetchData = async () => {
       try {
+        const token = localStorage.getItem("auth_mobile_token");
+
         const res = await fetch(`${API_URL}/field/open-days/${subFieldId}`, {
           method: "GET",
           headers: {

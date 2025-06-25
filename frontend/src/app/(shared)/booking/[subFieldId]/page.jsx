@@ -63,7 +63,6 @@ export default function Booking() {
   // const [bookingId, setBookingId] = useState("");
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
-  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -83,6 +82,8 @@ export default function Booking() {
   // ดึง slot ที่มีสถานะ
   const fetchBookedSlots = useCallback(async () => {
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       const bookingDateRaw = sessionStorage.getItem("booking_date");
       const bookingDateFormatted = new Date(bookingDate).toLocaleDateString(
         "en-CA"
@@ -190,6 +191,8 @@ export default function Booking() {
     // console.log(`bookedSlots${bookedSlots}`);
     const fetchData = async () => {
       try {
+        const token = localStorage.getItem("auth_mobile_token");
+
         const res = await fetch(`${API_URL}/field/field-fac/${field_id}`, {
           method: "GET",
           headers: {
@@ -226,6 +229,8 @@ export default function Booking() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = localStorage.getItem("auth_mobile_token");
+
         const res = await fetch(`${API_URL}/field/field-data/${subFieldId}`, {
           method: "GET",
           headers: {
@@ -281,6 +286,8 @@ export default function Booking() {
 
     const fetchData = async () => {
       try {
+        const token = localStorage.getItem("auth_mobile_token");
+
         const res = await fetch(`${API_URL}/field/open-days/${subFieldId}`, {
           method: "GET",
           headers: {
