@@ -48,12 +48,9 @@ export default function Login() {
         setMessage({ text: data.message || "เกิดข้อผิดพลาด", type: "error" });
         return;
       }
-      if (data.token) {
-        localStorage.setItem("auth_token", data.token);
-      }
+
       const res = await fetch(`${API_URL}/users/me`, {
         credentials: "include",
-        Authorization: token ? `Bearer ${token}` : "",
       });
 
       if (res.ok) {

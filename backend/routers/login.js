@@ -14,7 +14,6 @@ router.post("/", async (req, res) => {
   console.log("NODE_ENV:", process.env.NODE_ENV);
   console.log("Hostname:", req.hostname);
   console.log("x-forwarded-proto:", req.headers["x-forwarded-proto"]);
-  console.log("User-Agent:", req.headers["user-agent"]); // เพิ่มเพื่อดู device
 
   try {
     const userQuery = `SELECT * FROM users WHERE user_name = $1 OR email = $1`;
@@ -34,7 +33,7 @@ router.post("/", async (req, res) => {
         .json({ message: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" });
     }
 
-    const expiresIn = 60 * 60 * 5000; // 5 ชั่วโมง
+    const expiresIn = 60 * 60 * 5000;
 
     const token = jwt.sign(
       {
@@ -45,47 +44,18 @@ router.post("/", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "5h" }
     );
-
     const isProd = process.env.NODE_ENV === "production";
     const isHttps = req.headers["x-forwarded-proto"] === "https";
 
-    // ตรวจจับ mobile device
-    const isMobile = /Mobile|Android|iPhone|iPad/.test(
-      req.headers["user-agent"]
-    );
-
-    console.log("Is Mobile:", isMobile);
-    console.log("Is Production:", isProd);
-    console.log("Is HTTPS:", isHttps);
-
-    // กำหนด cookie settings ที่แตกต่างกันสำหรับ mobile
-    const cookieOptions = {
+    res.cookie("token", token, {
       httpOnly: true,
       secure: isProd && isHttps,
+      sameSite: isProd && isHttps ? "None" : "Lax", 
       maxAge: expiresIn,
-    };
+    });
 
-    if (isProd && isHttps) {
-      // Production HTTPS
-      cookieOptions.sameSite = isMobile ? "Lax" : "None";
-    } else {
-      // Development
-      cookieOptions.sameSite = "Lax";
-    }
-
-    console.log("Cookie Options:", cookieOptions);
-
-    res.cookie("token", token, cookieOptions);
-
-    // ส่ง token กลับไปด้วยเผื่อ mobile ต้องการใช้ Authorization header
     res.status(200).json({
       message: "เข้าสู่ระบบสำเร็จ",
-      ...(isMobile && { token: token }), // ส่ง token เฉพาะ mobile
-      user: {
-        user_id: user.user_id,
-        user_name: user.user_name,
-        role: user.role,
-      },
     });
   } catch (error) {
     console.error("Error:", error);
