@@ -13,8 +13,12 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        const token = localStorage.getItem("auth_token"); // 👉 เอา token จาก localStorage
         const res = await fetch(`${API_URL}/users/me`, {
           credentials: "include",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         });
 
         if (res.ok) {
