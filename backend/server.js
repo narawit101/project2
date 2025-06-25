@@ -6,9 +6,9 @@ const path = require("path");
 const cloudinary = require("cloudinary").v2;
 const cookieParser = require("cookie-parser");
 const http = require("http");
-const { Server } = require("socket.io"); 
+const { Server } = require("socket.io");
 const app = express();
-app.set("trust proxy", 1); 
+app.set("trust proxy", 1);
 const server = http.createServer(app);
 
 const allowedOrigins = [
@@ -34,7 +34,7 @@ app.use(
     origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allowedHeaders: ["Content-Type"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
   })
 );
 

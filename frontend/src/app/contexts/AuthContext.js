@@ -20,8 +20,10 @@ export function AuthProvider({ children }) {
         if (res.ok) {
           const data = await res.json();
           setUser(data);
+          console.log("Request cookies:", req.cookies);
         } else {
           setUser(null);
+          console.log("Request cookies:", req.cookies);
         }
       } catch (error) {
         console.error("Error fetching user", error);
