@@ -33,10 +33,8 @@ router.post("/", async (req, res) => {
         .json({ message: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" });
     }
 
-    //session หมดอายุใน 5 ชั้วโมง ต้อง login ใหม่
     const expiresIn = 60 * 60 * 5000;
 
-    // **สร้าง JWT Token**
     const token = jwt.sign(
       {
         user_id: user.user_id,
@@ -48,11 +46,11 @@ router.post("/", async (req, res) => {
     );
     const isProd = process.env.NODE_ENV === "production";
     const isHttps = req.headers["x-forwarded-proto"] === "https";
-    // **ส่ง JWT ไปยัง Client ผ่าน Cookie**
+
     res.cookie("token", token, {
       httpOnly: true,
-      secure: isProd && isHttps, // ใช้ secure แค่บน production
-      sameSite: isProd && isHttps ? "None" : "Lax", // ปรับค่า sameSite ให้เหมาะกับ env
+      secure: isProd && isHttps,
+      sameSite: isProd && isHttps ? "None" : "Lax", 
       maxAge: expiresIn,
     });
 

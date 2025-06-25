@@ -6,16 +6,15 @@ const path = require("path");
 const cloudinary = require("cloudinary").v2;
 const cookieParser = require("cookie-parser");
 const http = require("http");
-const { Server } = require("socket.io"); // ดึง Server class จาก socket.io
+const { Server } = require("socket.io"); 
 const app = express();
-app.set("trust proxy", 1); //  สำคัญมาก ทำให้ Express รู้ว่า proxy เป็น HTTPS จริง
+app.set("trust proxy", 1); 
 const server = http.createServer(app);
 
 const allowedOrigins = [
   "http://localhost:3000",
   "https://project-eight-jet-70.vercel.app",
   "https://sport-hub-70.vercel.app",
-  // เปลี่ยนให้ตรงกับของคุณจริงๆ
 ];
 
 const io = new Server(server, {

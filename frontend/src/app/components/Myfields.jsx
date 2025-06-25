@@ -246,9 +246,9 @@ export default function MyFieldPage() {
             ))}
           </div>
         ) : (
-          <p className="custom-no-fields-message">
-            ไม่มีสนามที่ตรงกับสถานะที่เลือก
-          </p>
+          <div className="custom-no-fields-message-myfield">
+            <p>ไม่มีสนามที่ตรงกับสถานะที่เลือก</p>
+          </div>
         )}
         {showDeleteModal && (
           <div className="modal-overlay-myfield">
