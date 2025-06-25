@@ -8,6 +8,7 @@ const authMiddleware = (req, res, next) => {
   } else if (req.headers.authorization?.startsWith("Bearer ")) {
     token = req.headers.authorization.split(" ")[1];
   }
+  console.log("Token", token);
 
   if (!token) {
     return res.status(401).json({ message: "Unauthorized: กรุณาเข้าสู่ระบบ" });
@@ -16,6 +17,7 @@ const authMiddleware = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
+    console.log(req.user);
 
     next();
   } catch (err) {
