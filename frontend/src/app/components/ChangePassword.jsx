@@ -14,7 +14,6 @@ export default function ChangePassword() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
-  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -70,6 +69,8 @@ export default function ChangePassword() {
     }
     SetstartProcessLoad(true);
     try {
+      const token = localStorage.getItem("auth_mobile_token");
+
       await new Promise((resolve) => setTimeout(resolve, 200));
       // ส่ง request ไปตรวจสอบรหัสเดิม
       const response = await fetch(
@@ -88,6 +89,8 @@ export default function ChangePassword() {
       const data = await response.json();
 
       if (data.success) {
+        const token = localStorage.getItem("auth_mobile_token");
+
         // ถ้ารหัสเดิมถูกต้อง อัปเดตรหัสผ่านใหม่
         const updateResponse = await fetch(
           `${API_URL}/users/${user.user_id}/change-password`,
