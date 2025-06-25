@@ -48,7 +48,7 @@ export default function Login() {
         data.token &&
         /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent)
       ) {
-        localStorage.setItem("auth_token", data.token);
+        localStorage.setItem("auth_mobile_token", data.token);
       }
 
       if (!response.ok) {
