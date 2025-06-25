@@ -11,10 +11,14 @@ export function AuthProvider({ children }) {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
+    const token = localStorage.getItem("auth_token"); // เอาไว้สำหรับ mobile
     const fetchUser = async () => {
       try {
         const res = await fetch(`${API_URL}/users/me`, {
           credentials: "include",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         });
 
         if (res.ok) {

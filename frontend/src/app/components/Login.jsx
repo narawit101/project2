@@ -44,6 +44,13 @@ export default function Login() {
 
       const data = await response.json();
 
+      if (
+        data.token &&
+        /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent)
+      ) {
+        localStorage.setItem("auth_token", data.token);
+      }
+
       if (!response.ok) {
         setMessage({ text: data.message || "เกิดข้อผิดพลาด", type: "error" });
         return;
@@ -51,6 +58,9 @@ export default function Login() {
 
       const res = await fetch(`${API_URL}/users/me`, {
         credentials: "include",
+        headers: {
+          ...(data.token ? { Authorization: `Bearer ${data.token}` } : {}),
+        },
       });
 
       if (res.ok) {
