@@ -13,8 +13,8 @@ const server = http.createServer(app);
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://project-eight-jet-70.vercel.app",
-  "https://sport-hub-70.vercel.app",
+  "https://www.sporthub-online.me",
+  "https://sporthub-online.me",
 ];
 
 const io = new Server(server, {
