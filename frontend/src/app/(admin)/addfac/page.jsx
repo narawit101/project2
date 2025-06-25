@@ -40,7 +40,12 @@ export default function RegisterFieldForm() {
 
   useEffect(() => {
     const fetchFacilities = async () => {
-      const token = localStorage.getItem("auth_mobile_token");
+      useEffect(() => {
+        if (typeof window !== "undefined") {
+          const token = localStorage.getItem("auth_mobile_token");
+          console.log("Token:", token);
+        }
+      }, []);
       setDataLoading(true);
       try {
         await new Promise((resolve) => setTimeout(resolve, 200));
@@ -77,7 +82,7 @@ export default function RegisterFieldForm() {
   const currentFacilities = facilities.slice(indexOfFirst, indexOfLast);
 
   const addNewFacility = async () => {
-  const token = localStorage.getItem("auth_mobile_token");
+    const token = localStorage.getItem("auth_mobile_token");
 
     if (!newFacility.trim()) return;
     SetstartProcessLoad(true);
@@ -121,7 +126,7 @@ export default function RegisterFieldForm() {
   };
 
   const deleteFacility = async () => {
-  const token = localStorage.getItem("auth_mobile_token");
+    const token = localStorage.getItem("auth_mobile_token");
 
     if (!facilityToDelete) return;
     SetstartProcessLoad(true);
@@ -168,7 +173,7 @@ export default function RegisterFieldForm() {
 
   // ฟังก์ชันแก้ไขชื่อสิ่งอำนวยความสะดวก
   const editFacility = async () => {
-  const token = localStorage.getItem("auth_mobile_token");
+    const token = localStorage.getItem("auth_mobile_token");
 
     if (!newFacilityName.trim()) return;
     SetstartProcessLoad(true);

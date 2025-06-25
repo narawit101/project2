@@ -24,7 +24,6 @@ export default function AdminManager() {
   const [dataLoading, setDataLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [roleFilter, setRoleFilter] = useState("all");
-  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -43,6 +42,8 @@ export default function AdminManager() {
   }, [user, isLoading, router]);
 
   useEffect(() => {
+    const token = localStorage.getItem("auth_mobile_token");
+
     setDataLoading(true);
     const fetchUsers = async () => {
       await new Promise((resolve) => setTimeout(resolve, 200));
@@ -173,6 +174,8 @@ export default function AdminManager() {
   };
 
   const handleDelete = async (id) => {
+    const token = localStorage.getItem("auth_mobile_token");
+
     SetstartProcessLoad(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 200));
@@ -231,6 +234,8 @@ export default function AdminManager() {
   };
 
   const handleUpdateUser = async (e) => {
+    const token = localStorage.getItem("auth_mobile_token");
+
     e.preventDefault();
 
     if (isEmailDuplicate(selectedUser.email)) {

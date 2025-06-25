@@ -23,7 +23,6 @@ export default function RegisterFieldForm() {
   const [dataLoading, setDataLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const sportTypePerPage = 4;
-  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -43,6 +42,8 @@ export default function RegisterFieldForm() {
 
   useEffect(() => {
     const fetchSports = async () => {
+      const token = localStorage.getItem("auth_mobile_token");
+
       setDataLoading(true);
       try {
         await new Promise((resolve) => setTimeout(resolve, 200));
@@ -78,6 +79,8 @@ export default function RegisterFieldForm() {
 
   // ฟังก์ชันเพิ่มประเภทกีฬาใหม่
   const addType = async () => {
+    const token = localStorage.getItem("auth_mobile_token");
+
     if (!newSport.trim()) return;
     SetstartProcessLoad(true);
     try {
@@ -116,6 +119,8 @@ export default function RegisterFieldForm() {
 
   // ฟังก์ชันลบประเภทกีฬา
   const deleteSportType = async () => {
+    const token = localStorage.getItem("auth_mobile_token");
+
     if (!SportTypeToDelete) return;
     SetstartProcessLoad(true);
     try {
@@ -155,6 +160,8 @@ export default function RegisterFieldForm() {
 
   // ฟังก์ชันแก้ไขชื่อประเภทกีฬา
   const editSportType = async () => {
+    const token = localStorage.getItem("auth_mobile_token");
+
     if (!newSportName.trim()) return;
     SetstartProcessLoad(true);
     try {
