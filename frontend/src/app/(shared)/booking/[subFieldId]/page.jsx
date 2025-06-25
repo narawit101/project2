@@ -662,6 +662,8 @@ export default function Booking() {
   };
 
   const handleSubmit = async () => {
+    const token = localStorage.getItem("auth_mobile_token");
+
     const bookingData = new FormData();
     SetstartProcessLoad(true);
     const facilityList = Object.values(selectedFacilities).map((item) => ({
