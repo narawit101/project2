@@ -1,6 +1,6 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect } from "react";
 import "@/app/css/login.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import Link from "next/link";
@@ -35,7 +35,7 @@ export default function Login() {
     SetstartProcessLoad(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      const response = await fetch(`${API_URL}/login`, {
+      const response = await fetch(`/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
