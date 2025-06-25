@@ -21,6 +21,7 @@ export default function MyFieldPage() {
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const fieldPerPage = 20;
+  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -46,6 +47,7 @@ export default function MyFieldPage() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -110,6 +112,7 @@ export default function MyFieldPage() {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         }

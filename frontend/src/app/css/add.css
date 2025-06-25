@@ -76,7 +76,7 @@
 .editbtn-admin {
   background-color: var(--text-color);
   color: white;
-  margin: 0px 0px;
+  margin: 0px auto;
 }
 
 .editbtn-admin:hover {
@@ -93,7 +93,6 @@
   background-color: darkred;
 }
 
-.addfac-admin,
 .addsport-admin {
   width: 100%;
   display: flex;
@@ -103,9 +102,37 @@
   color: white;
   margin-top: 20px;
 }
-.addfaccon-admin,
+
+.addfac-admin {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--text-color);
+  color: white;
+  margin-top: 20px;
+}
+
+.add-fac-title {
+  text-align: center;
+  margin: 10 auto;
+}
+
+.add-sport-title {
+  text-align: center;
+  margin: 10 auto;
+}
+
+.addfaccon-admin {
+  margin: 10px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .addsportcon-admin {
-  margin-top: 10px;
+  margin: 10px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -261,6 +288,12 @@
   font-weight: bold;
 }
 
+.button-group-add {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Responsive Design //////////////////////////////////////////////////////////////////////////////////////*/
 @media screen and (max-width: 888px) {
   .facility-item-admin,
@@ -296,7 +329,6 @@
     width: 100%;
   }
 
-  .addfac-admin,
   .savebtn-admin,
   .canbtn-admin {
     width: 100px;

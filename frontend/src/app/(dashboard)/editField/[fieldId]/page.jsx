@@ -53,6 +53,7 @@ export default function CheckFieldDetail() {
   const { user, isLoading } = useAuth();
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -86,6 +87,7 @@ export default function CheckFieldDetail() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -120,6 +122,7 @@ export default function CheckFieldDetail() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -149,6 +152,9 @@ export default function CheckFieldDetail() {
     const fetchFacilities = async () => {
       try {
         const response = await fetch(`${API_URL}/facilities`, {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
           credentials: "include",
         });
 
@@ -210,6 +216,7 @@ export default function CheckFieldDetail() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({ selectedFacilities }),
@@ -248,6 +255,9 @@ export default function CheckFieldDetail() {
         {
           method: "DELETE",
           credentials: "include",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         }
       );
 
@@ -277,7 +287,10 @@ export default function CheckFieldDetail() {
     try {
       const res = await fetch(`${API_URL}/facilities/add`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         credentials: "include",
         body: JSON.stringify({ fac_name: newFacility }),
       });
@@ -344,6 +357,7 @@ export default function CheckFieldDetail() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
           body: JSON.stringify({
@@ -481,6 +495,9 @@ export default function CheckFieldDetail() {
       const response = await fetch(`${API_URL}/field/${fieldId}/upload-image`, {
         method: "POST",
         credentials: "include",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: formData,
       });
 
@@ -522,6 +539,9 @@ export default function CheckFieldDetail() {
         `${API_URL}/field/${fieldId}/upload-document`,
         {
           method: "POST",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
           credentials: "include",
           body: formData,
         }
@@ -590,6 +610,7 @@ export default function CheckFieldDetail() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({ [fieldName]: updatedValue }),
@@ -633,6 +654,7 @@ export default function CheckFieldDetail() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({
@@ -696,6 +718,7 @@ export default function CheckFieldDetail() {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         }
@@ -728,6 +751,7 @@ export default function CheckFieldDetail() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({
@@ -780,6 +804,7 @@ export default function CheckFieldDetail() {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         }
@@ -818,6 +843,7 @@ export default function CheckFieldDetail() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
           body: JSON.stringify({
@@ -878,6 +904,7 @@ export default function CheckFieldDetail() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
           body: JSON.stringify({

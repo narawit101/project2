@@ -43,6 +43,7 @@ export default function CheckFieldDetail() {
   const [selectedRating, setSelectedRating] = useState("ทั้งหมด");
   const [currentPage, setCurrentPage] = useState(1);
   const postPerPage = 5;
+  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -78,6 +79,7 @@ export default function CheckFieldDetail() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -141,6 +143,7 @@ export default function CheckFieldDetail() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -155,7 +158,7 @@ export default function CheckFieldDetail() {
           setMessageType("error");
         } else {
           setPostData(data);
-          console.log(data)
+          console.log(data);
         }
       } catch (error) {
         console.error("Error fetching post data:", error);
@@ -322,6 +325,9 @@ export default function CheckFieldDetail() {
       const res = await fetch(`${API_URL}/posts/update/${postId}`, {
         method: "PATCH",
         credentials: "include",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: formData,
       });
 
@@ -358,6 +364,9 @@ export default function CheckFieldDetail() {
       const res = await fetch(`${API_URL}/posts/delete/${postToDelete}`, {
         method: "DELETE",
         credentials: "include",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
 
       if (res.ok) {
@@ -804,7 +813,7 @@ export default function CheckFieldDetail() {
                   rel="noopener noreferrer"
                   style={{
                     display: "flex",
-                    width:"160px",
+                    width: "160px",
                     marginTop: "10px",
                     marginLeft: "auto",
                     marginRight: "auto",

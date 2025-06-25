@@ -18,6 +18,7 @@ export default function RegisterFieldForm() {
   const { user, isLoading } = useAuth();
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -55,6 +56,9 @@ export default function RegisterFieldForm() {
       try {
         const res = await fetch(`${API_URL}/sports_types`, {
           credentials: "include",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         });
 
         const data = await res.json();
@@ -84,6 +88,9 @@ export default function RegisterFieldForm() {
       try {
         const res = await fetch(`${API_URL}/facilities`, {
           credentials: "include",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         });
 
         const data = await res.json();
@@ -249,7 +256,10 @@ export default function RegisterFieldForm() {
 
       const res = await fetch(`${API_URL}/facilities/add`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         credentials: "include",
         body: JSON.stringify({ fac_name: newFacility }),
       });
@@ -424,6 +434,9 @@ export default function RegisterFieldForm() {
       const res = await fetch(`${API_URL}/field/register`, {
         method: "POST",
         credentials: "include",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: formData,
       });
 

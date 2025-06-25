@@ -18,6 +18,7 @@ export default function CheckFieldDetail() {
   const [facilities, setFacilities] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -44,6 +45,7 @@ export default function CheckFieldDetail() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -112,6 +114,7 @@ export default function CheckFieldDetail() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({ status: newStatus }),
@@ -243,7 +246,9 @@ export default function CheckFieldDetail() {
               </div>
             ) : (
               <p>
-                {fieldData?.open_days?.map((day) => daysInThai[day])?.join(", ")}
+                {fieldData?.open_days
+                  ?.map((day) => daysInThai[day])
+                  ?.join(", ")}
               </p>
             )}
             <p>

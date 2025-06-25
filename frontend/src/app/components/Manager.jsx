@@ -24,6 +24,7 @@ export default function AdminManager() {
   const [dataLoading, setDataLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [roleFilter, setRoleFilter] = useState("all");
+  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -50,6 +51,9 @@ export default function AdminManager() {
       try {
         const response = await fetch(`${API_URL}/users`, {
           credentials: "include",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         });
 
         if (response.status === 401) {
@@ -178,6 +182,9 @@ export default function AdminManager() {
           "Content-Type": "application/json",
         },
         credentials: "include",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
 
       if (!response.ok) {
@@ -237,6 +244,7 @@ export default function AdminManager() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify(selectedUser),

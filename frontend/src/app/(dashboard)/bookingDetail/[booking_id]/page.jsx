@@ -40,6 +40,7 @@ export default function BookingDetail() {
     setComment("");
   };
   const [reviewData, setReviewData] = useState([]);
+  const token = localStorage.getItem("auth_mobile_token");
 
   const [fieldId, setFieldId] = useState("");
   useEffect(() => {
@@ -66,6 +67,9 @@ export default function BookingDetail() {
         `${API_URL}/booking/bookings-detail/${booking_id}`,
         {
           credentials: "include",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         }
       );
 
@@ -203,7 +207,10 @@ export default function BookingDetail() {
         `${API_URL}/booking/booking-status/${booking_id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
           body: JSON.stringify({ booking_status: status }),
           credentials: "include",
         }
@@ -227,7 +234,12 @@ export default function BookingDetail() {
 
         const updatedRes = await fetch(
           `${API_URL}/booking/bookings-detail/${booking_id}`,
-          { credentials: "include" }
+          {
+            credentials: "include",
+            headers: {
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+          }
         );
         const updatedData = await updatedRes.json();
         if (updatedData.success) {
@@ -331,6 +343,7 @@ export default function BookingDetail() {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
             cancel_time: new Date().toISOString(),
@@ -424,6 +437,9 @@ export default function BookingDetail() {
           method: "POST",
           body: formData,
           credentials: "include",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         }
       );
 
@@ -466,6 +482,9 @@ export default function BookingDetail() {
           method: "PUT",
           body: formData,
           credentials: "include",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         }
       );
 
@@ -513,7 +532,10 @@ export default function BookingDetail() {
     try {
       const res = await fetch(`${API_URL}/reviews/get/${booking_id}`, {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         credentials: "include",
       });
 
@@ -554,7 +576,10 @@ export default function BookingDetail() {
       await new Promise((resolve) => setTimeout(resolve, 250));
       const res = await fetch(`${API_URL}/reviews/post`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           booking_id: booking.booking_id,
           field_id: booking.field_id,

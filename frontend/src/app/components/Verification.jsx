@@ -14,6 +14,7 @@ export default function Verification() {
   const router = useRouter("");
   const { user, isLoading, setUser } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -52,6 +53,7 @@ export default function Verification() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({ otp }),
@@ -92,6 +94,7 @@ export default function Verification() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({ email: userEmail }),

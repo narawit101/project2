@@ -26,6 +26,7 @@ export default function Statistics() {
   const [dataLoading, setDataLoading] = useState(true);
   const [useDateRange, setUseDateRange] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -52,6 +53,9 @@ export default function Statistics() {
         `${API_URL}/statistics/${fieldId}?${queryParams.toString()}`,
         {
           credentials: "include",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         }
       );
       const data = await res.json();
@@ -526,9 +530,7 @@ export default function Statistics() {
                     <button
                       key={index}
                       onClick={() => setCurrentPage(page)}
-                      className={
-                        page === currentPage ? "active-page-stat" : ""
-                      }
+                      className={page === currentPage ? "active-page-stat" : ""}
                     >
                       {page}
                     </button>

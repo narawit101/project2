@@ -63,6 +63,7 @@ export default function Booking() {
   // const [bookingId, setBookingId] = useState("");
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  const token = localStorage.getItem("auth_mobile_token");
 
   useEffect(() => {
     if (isLoading) return;
@@ -103,6 +104,9 @@ export default function Booking() {
         `${API_URL}/booking/booked-block/${subFieldId}/${start}/${end}`,
         {
           credentials: "include",
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         }
       );
       const data = await res.json();
@@ -188,7 +192,10 @@ export default function Booking() {
       try {
         const res = await fetch(`${API_URL}/field/field-fac/${field_id}`, {
           method: "GET",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
           credentials: "include",
         });
 
@@ -221,7 +228,10 @@ export default function Booking() {
       try {
         const res = await fetch(`${API_URL}/field/field-data/${subFieldId}`, {
           method: "GET",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
           credentials: "include",
         });
         const data = await res.json();
@@ -275,6 +285,7 @@ export default function Booking() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -681,6 +692,10 @@ export default function Booking() {
       const response = await fetch(`${API_URL}/booking`, {
         method: "POST",
         credentials: "include",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+
         body: bookingData,
       });
 
