@@ -393,7 +393,7 @@ export default function Register() {
         )}
         <div className="login-title">
           <Link href="/login" className="login-link">
-            หรือคุณมีบัญชีอยู่แล้ว Login เลย
+            หรือคุณมีบัญชีอยู่แล้ว เข้าสู่ระบบ
           </Link>
         </div>
 

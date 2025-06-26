@@ -119,8 +119,8 @@ nav ul li a.active {
 }
 
 .search-button:hover {
-  background-color: #0056b3;
-  transform: scale(1.1);
+  background-color: #17058b;
+  transform: scale(1.05);
 }
 
 .search-box {
@@ -246,22 +246,20 @@ nav ul li a.active {
 }
 
 .login {
-  background-color: #64fd9d;
+  background-color: rgb(24, 160, 0);
   transition: all 0.3s ease;
 }
 
 .login:hover {
-  background-color: #16dc5e;
   transform: scale(1.05);
 }
 
 .register {
-  background-color: #64c3fd;
+  background-color: var(--text-color);
   transition: all 0.3s ease;
 }
 
 .register:hover {
-  background-color: #1e9eee;
   transform: scale(1.05);
 }
 /* Media Queries for responsiveness */
@@ -941,7 +939,7 @@ nav ul li a.active {
     width: 100%;
     justify-content: center;
   }
-    .dropdown {
+  .dropdown {
     transform: translateX(-77%);
     display: none;
     position: absolute;

@@ -69,7 +69,8 @@ body {
 }
 
 body {
-  background: rgba(173, 216, 230, 0.514);
+  /* background: rgba(173, 216, 230, 0.514); */
+  background: rgba(187, 218, 176, 0.599);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
