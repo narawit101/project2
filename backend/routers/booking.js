@@ -319,6 +319,22 @@ module.exports = function (io) {
           [subFieldId, `${startDate} ${startTime}`, `${endDate} ${endTime}`]
         );
 
+        const timeNow = DateTime.now().setZone("Asia/Bangkok");
+        const timSubmit = `${startDate}T${startTime}`;
+        const timeSubmitDate = DateTime.fromISO(timSubmit, {
+          zone: "Asia/Bangkok",
+        });
+        console.log("timeNow", timeNow.toISO());
+        console.log("timeSubmitDate", timeSubmitDate.toISO());
+        if (timeSubmitDate < timeNow) {
+          return res
+            .status(400)
+            .json({
+              success: false,
+              message: "ไม่สามารถเลือกเวลาที่ผ่านไปแล้วได้",
+            });
+        }
+
         if (overlapResult.rows.length > 0) {
           if (depositSlip) {
             await deleteCloudinaryFile(depositSlip); // ลบไฟล์ที่ upload แล้ว
@@ -913,210 +929,213 @@ LIMIT 1;
     }
   );
 
-router.delete(
-  "/cancel-bookings/:booking_id",
-  authMiddleware,
-  async (req, res) => {
-    const { booking_id } = req.params;
-    const { cancel_time } = req.body;
+  router.delete(
+    "/cancel-bookings/:booking_id",
+    authMiddleware,
+    async (req, res) => {
+      const { booking_id } = req.params;
+      const { cancel_time } = req.body;
 
-    try {
-      // ✅ ตรวจ cancel_time
-      if (!cancel_time) {
-        return res.status(400).json({
-          status: 0,
-          message: "Missing cancel_time in request body.",
-        });
-      }
+      try {
+        // ✅ ตรวจ cancel_time
+        if (!cancel_time) {
+          return res.status(400).json({
+            status: 0,
+            message: "Missing cancel_time in request body.",
+          });
+        }
 
-      const now = DateTime.fromISO(cancel_time, { zone: "Asia/Bangkok" });
-      // 🔧 เปลี่ยนจาก isNaN(now.getTime()) เป็น !now.isValid
-      if (!now.isValid) {
-        return res.status(400).json({
-          status: 0,
-          message: "Invalid cancel_time format. Must be ISO string.",
-        });
-      }
+        const now = DateTime.fromISO(cancel_time, { zone: "Asia/Bangkok" });
+        // 🔧 เปลี่ยนจาก isNaN(now.getTime()) เป็น !now.isValid
+        if (!now.isValid) {
+          return res.status(400).json({
+            status: 0,
+            message: "Invalid cancel_time format. Must be ISO string.",
+          });
+        }
 
-      console.log(` ยกเลิก booking_id = ${booking_id}`);
-      console.log(` เวลาที่กดปุ่ม cancel: ${now.toISO()}`);
+        console.log(` ยกเลิก booking_id = ${booking_id}`);
+        console.log(` เวลาที่กดปุ่ม cancel: ${now.toISO()}`);
 
-      // ✅ ดึงข้อมูลการจอง
-      const fieldDataResult = await pool.query(
-        `
+        // ✅ ดึงข้อมูลการจอง
+        const fieldDataResult = await pool.query(
+          `
         SELECT f.cancel_hours, b.start_date, b.start_time, f.field_name
         FROM bookings b
         JOIN field f ON b.field_id = f.field_id
         WHERE b.booking_id = $1
       `,
-        [booking_id]
-      );
-
-      if (fieldDataResult.rowCount === 0) {
-        return res.status(404).json({
-          status: 0,
-          message: `Booking ID ${booking_id} not found.`,
-          timestamp: now.toISO(),
-        });
-      }
-
-      const { cancel_hours, start_date, start_time, field_name } =
-        fieldDataResult.rows[0];
-
-      // ✅ ตรวจและแปลง start_date
-      let startDateStr;
-      try {
-        const startDateObj = new Date(start_date);
-        if (isNaN(startDateObj.getTime()))
-          throw new Error("Invalid start_date");
-        const yyyy = startDateObj.getFullYear();
-        const mm = String(startDateObj.getMonth() + 1).padStart(2, "0");
-        const dd = String(startDateObj.getDate()).padStart(2, "0");
-        startDateStr = `${yyyy}-${mm}-${dd}`;
-      } catch (err) {
-        console.error(" start_date is invalid:", start_date);
-        return res.status(500).json({
-          status: 0,
-          message: "Invalid start_date format from database.",
-          booking_id,
-        });
-      }
-
-      // ✅ ตรวจและจัดการ start_time (รับ HH:mm หรือ HH:mm:ss)
-      if (
-        !start_time ||
-        typeof start_time !== "string" ||
-        !/^\d{2}:\d{2}(:\d{2})?$/.test(start_time)
-      ) {
-        console.error(" Invalid start_time:", start_time);
-        return res.status(500).json({
-          status: 0,
-          message: "Invalid start_time format from database.",
-          booking_id,
-        });
-      }
-
-      const trimmedStartTime = start_time.slice(0, 5); // เหลือแค่ HH:mm
-
-      // 🔧 รวมวันเวลา และแปลงเป็นเวลาประเทศไทย
-      const startDateTime = DateTime.fromISO(
-        `${startDateStr}T${trimmedStartTime}:00`,
-        { zone: "Asia/Bangkok" }
-      );
-      // 🔧 เปลี่ยนจาก isNaN(startDateTime.getTime()) เป็น !startDateTime.isValid
-      if (!startDateTime.isValid) {
-        console.error(" Invalid startDateTime:", `${startDateStr}T${trimmedStartTime}:00`);
-        return res.status(500).json({
-          status: 0,
-          message: "Cannot parse combined start date/time.",
-          booking_id,
-        });
-      }
-      
-      console.log("startDateStr:", startDateStr); // ควรเป็น 2025-06-02
-      console.log("start_time:", start_time); // ควรเป็น 19:00:00
-
-      // ถ้าไม่มีเวลายกเลิก → ยกเลิกได้ทันที
-      if (cancel_hours === null) {
-        const paymentResult = await pool.query(
-          `SELECT deposit_slip, total_slip FROM payment WHERE booking_id = $1`,
           [booking_id]
         );
 
-        if (paymentResult.rowCount > 0) {
-          const { deposit_slip, total_slip } = paymentResult.rows[0];
-
-          // ลบ deposit_slip ถ้ามี
-          if (deposit_slip) await deleteCloudinaryFile(deposit_slip);
-          if (total_slip) await deleteCloudinaryFile(total_slip);
-
-          // ลบ row จาก payment
-          await pool.query(`DELETE FROM payment WHERE booking_id = $1`, [
-            booking_id,
-          ]);
-        }
-        await pool.query(`DELETE FROM booking_fac WHERE booking_id = $1`, [
-          booking_id,
-        ]);
-        await pool.query(`DELETE FROM bookings WHERE booking_id = $1`, [
-          booking_id,
-        ]);
-
-        return res.status(200).json({
-          status: 1,
-          message: `การจองสนาม ${field_name} เวลา ${trimmedStartTime} วันที่ ${startDateStr} ถูกยกเลิกเรียบร้อย`,
-          cancelDeadline: null,
-          now: now.toISO(),
-        });
-      }
-
-      // ✅ คำนวณเส้นตายการยกเลิก
-      const cancelDeadline = startDateTime.minus({ hours: cancel_hours });
-
-      console.log("Frontend ส่งมา (cancel_time):", now.toISO());
-      console.log("เวลาเริ่ม:", startDateTime.toISO());
-      console.log("เส้นตายยกเลิก:", cancelDeadline.toISO());
-
-      // ✅ เปรียบเทียบเวลา
-      if (now < cancelDeadline) {
-        const paymentResult = await pool.query(
-          `SELECT deposit_slip, total_slip FROM payment WHERE booking_id = $1`,
-          [booking_id]
-        );
-
-        if (paymentResult.rowCount > 0) {
-          const { deposit_slip, total_slip } = paymentResult.rows[0];
-
-          if (deposit_slip) await deleteCloudinaryFile(deposit_slip);
-          if (total_slip) await deleteCloudinaryFile(total_slip);
-
-          // ลบ row จาก payment
-          await pool.query(`DELETE FROM payment WHERE booking_id = $1`, [
-            booking_id,
-          ]);
-        }
-        await pool.query(`DELETE FROM booking_fac WHERE booking_id = $1`, [
-          booking_id,
-        ]);
-        await pool.query(`DELETE FROM bookings WHERE booking_id = $1`, [
-          booking_id,
-        ]);
-
-        if (req.io) {
-          req.io.emit("slot_booked", {
-            bookingId: booking_id,
+        if (fieldDataResult.rowCount === 0) {
+          return res.status(404).json({
+            status: 0,
+            message: `Booking ID ${booking_id} not found.`,
+            timestamp: now.toISO(),
           });
         }
 
-        return res.status(200).json({
-          status: 1,
-          message: `การจองสนาม ${field_name} เวลา ${trimmedStartTime} วันที่ ${startDateStr} ถูกยกเลิกเรียบร้อย`,
-          cancelDeadline: cancelDeadline.toISO(),
-          now: now.toISO(),
-        });
-      } else {
-        return res.status(400).json({
+        const { cancel_hours, start_date, start_time, field_name } =
+          fieldDataResult.rows[0];
+
+        // ✅ ตรวจและแปลง start_date
+        let startDateStr;
+        try {
+          const startDateObj = new Date(start_date);
+          if (isNaN(startDateObj.getTime()))
+            throw new Error("Invalid start_date");
+          const yyyy = startDateObj.getFullYear();
+          const mm = String(startDateObj.getMonth() + 1).padStart(2, "0");
+          const dd = String(startDateObj.getDate()).padStart(2, "0");
+          startDateStr = `${yyyy}-${mm}-${dd}`;
+        } catch (err) {
+          console.error(" start_date is invalid:", start_date);
+          return res.status(500).json({
+            status: 0,
+            message: "Invalid start_date format from database.",
+            booking_id,
+          });
+        }
+
+        // ✅ ตรวจและจัดการ start_time (รับ HH:mm หรือ HH:mm:ss)
+        if (
+          !start_time ||
+          typeof start_time !== "string" ||
+          !/^\d{2}:\d{2}(:\d{2})?$/.test(start_time)
+        ) {
+          console.error(" Invalid start_time:", start_time);
+          return res.status(500).json({
+            status: 0,
+            message: "Invalid start_time format from database.",
+            booking_id,
+          });
+        }
+
+        const trimmedStartTime = start_time.slice(0, 5); // เหลือแค่ HH:mm
+
+        // 🔧 รวมวันเวลา และแปลงเป็นเวลาประเทศไทย
+        const startDateTime = DateTime.fromISO(
+          `${startDateStr}T${trimmedStartTime}:00`,
+          { zone: "Asia/Bangkok" }
+        );
+        // 🔧 เปลี่ยนจาก isNaN(startDateTime.getTime()) เป็น !startDateTime.isValid
+        if (!startDateTime.isValid) {
+          console.error(
+            " Invalid startDateTime:",
+            `${startDateStr}T${trimmedStartTime}:00`
+          );
+          return res.status(500).json({
+            status: 0,
+            message: "Cannot parse combined start date/time.",
+            booking_id,
+          });
+        }
+
+        console.log("startDateStr:", startDateStr); // ควรเป็น 2025-06-02
+        console.log("start_time:", start_time); // ควรเป็น 19:00:00
+
+        // ถ้าไม่มีเวลายกเลิก → ยกเลิกได้ทันที
+        if (cancel_hours === null) {
+          const paymentResult = await pool.query(
+            `SELECT deposit_slip, total_slip FROM payment WHERE booking_id = $1`,
+            [booking_id]
+          );
+
+          if (paymentResult.rowCount > 0) {
+            const { deposit_slip, total_slip } = paymentResult.rows[0];
+
+            // ลบ deposit_slip ถ้ามี
+            if (deposit_slip) await deleteCloudinaryFile(deposit_slip);
+            if (total_slip) await deleteCloudinaryFile(total_slip);
+
+            // ลบ row จาก payment
+            await pool.query(`DELETE FROM payment WHERE booking_id = $1`, [
+              booking_id,
+            ]);
+          }
+          await pool.query(`DELETE FROM booking_fac WHERE booking_id = $1`, [
+            booking_id,
+          ]);
+          await pool.query(`DELETE FROM bookings WHERE booking_id = $1`, [
+            booking_id,
+          ]);
+
+          return res.status(200).json({
+            status: 1,
+            message: `การจองสนาม ${field_name} เวลา ${trimmedStartTime} วันที่ ${startDateStr} ถูกยกเลิกเรียบร้อย`,
+            cancelDeadline: null,
+            now: now.toISO(),
+          });
+        }
+
+        // ✅ คำนวณเส้นตายการยกเลิก
+        const cancelDeadline = startDateTime.minus({ hours: cancel_hours });
+
+        console.log("Frontend ส่งมา (cancel_time):", now.toISO());
+        console.log("เวลาเริ่ม:", startDateTime.toISO());
+        console.log("เส้นตายยกเลิก:", cancelDeadline.toISO());
+
+        // ✅ เปรียบเทียบเวลา
+        if (now < cancelDeadline) {
+          const paymentResult = await pool.query(
+            `SELECT deposit_slip, total_slip FROM payment WHERE booking_id = $1`,
+            [booking_id]
+          );
+
+          if (paymentResult.rowCount > 0) {
+            const { deposit_slip, total_slip } = paymentResult.rows[0];
+
+            if (deposit_slip) await deleteCloudinaryFile(deposit_slip);
+            if (total_slip) await deleteCloudinaryFile(total_slip);
+
+            // ลบ row จาก payment
+            await pool.query(`DELETE FROM payment WHERE booking_id = $1`, [
+              booking_id,
+            ]);
+          }
+          await pool.query(`DELETE FROM booking_fac WHERE booking_id = $1`, [
+            booking_id,
+          ]);
+          await pool.query(`DELETE FROM bookings WHERE booking_id = $1`, [
+            booking_id,
+          ]);
+
+          if (req.io) {
+            req.io.emit("slot_booked", {
+              bookingId: booking_id,
+            });
+          }
+
+          return res.status(200).json({
+            status: 1,
+            message: `การจองสนาม ${field_name} เวลา ${trimmedStartTime} วันที่ ${startDateStr} ถูกยกเลิกเรียบร้อย`,
+            cancelDeadline: cancelDeadline.toISO(),
+            now: now.toISO(),
+          });
+        } else {
+          return res.status(400).json({
+            status: 0,
+            message: `ไม่สามารถยกเลิกได้ เลยเวลาการยกเลิกภายใน ${cancel_hours} ชม. ก่อนจะเริ่ม`,
+            field: field_name,
+            startDateTime: startDateTime.toISO(),
+            cancelDeadline: cancelDeadline.toISO(),
+            now: now.toISO(),
+          });
+        }
+      } catch (error) {
+        console.error(" Error while canceling booking:", error);
+
+        return res.status(500).json({
           status: 0,
-          message: `ไม่สามารถยกเลิกได้ เลยเวลาการยกเลิกภายใน ${cancel_hours} ชม. ก่อนจะเริ่ม`,
-          field: field_name,
-          startDateTime: startDateTime.toISO(),
-          cancelDeadline: cancelDeadline.toISO(),
-          now: now.toISO(),
+          message: "Internal Server Error",
+          error: error.message,
+          booking_id,
+          timestamp: new Date().toISOString(),
         });
       }
-    } catch (error) {
-      console.error(" Error while canceling booking:", error);
-
-      return res.status(500).json({
-        status: 0,
-        message: "Internal Server Error",
-        error: error.message,
-        booking_id,
-        timestamp: new Date().toISOString(),
-      });
     }
-  }
-);
+  );
 
   router.post(
     "/upload-slip/:booking_id",

@@ -712,6 +712,7 @@ export default function Booking() {
         const errorData = await response.json();
         setMessage(errorData.message);
         setMessageType("error");
+        setShowModal(false);
         setStartDate("");
         setEndDate("");
         setCanBook(false);
