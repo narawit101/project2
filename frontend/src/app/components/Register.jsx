@@ -85,7 +85,7 @@ export default function Register() {
       if (!allowDomain.some((domain) => value.endsWith(domain))) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          email: "*โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmail.com",
+          email: "*โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmail.com, @rmuti.ac.th",
         }));
       } else {
         setErrors((prevErrors) => ({
@@ -166,7 +166,7 @@ export default function Register() {
     // ตรวจสอบอีเมลและชื่อผู้ใช้
     const allowDomain = ["@gmail.com", "@hotmail.com", "@rmuti.ac.th"];
     if (!allowDomain.some((domain) => formData.email.endsWith(domain))) {
-      newErrors.email = "*โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmail.com";
+      newErrors.email = "*โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmail.com, @rmuti.ac.th";
     }
 
     if (!newErrors.user_name && !newErrors.email) {

@@ -279,16 +279,19 @@ router.post(
           to: userEmail, // ใช้ค่าที่ดึงมา
           subject: "การลงทะเบียนสนาม",
           html: `
-<div style="font-family: 'Kanit', sans-serif; max-width: 500px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
-  <div style="  display: flex;
-  justify-content: center;
-  align-items: center">
-  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
-</div>
+
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align:center;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td align="center">
+        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 300px; margin-bottom: 10px;" />
+      </td>
+    </tr>
+  </table>
   <h1 style="color: #03045e; margin-bottom: 16px; text-align: center">การลงทะเบียนสนาม</h1>
 
   <p style="font-size: 16px; text-align: center; color: #9ca3af;">
-    <strong>คุณ ${userfirstName} ได้ลงทะเบียนสามเรียบร้อยแล้ว กรุณารอผู้ดูแลระบบตรวจสอบ </br >ขอบคุณที่ใช้บริการ</strong>
+    <strong>คุณได้ลงทะเบียนสามเรียบร้อยแล้ว </br >กรุณารอผู้ดูแลระบบตรวจสอบ ขอบคุณที่ใช้บริการ</strong>
   </p>
   <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
 
@@ -527,13 +530,15 @@ router.put("/:field_id", authMiddleware, async (req, res) => {
           to: userData.rows[0].email,
           subject: "การอนุมัติสนามกีฬา",
           html: `
-<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
-  <div style="  display: flex;
-  justify-content: center;
-  align-items: center;">
-  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
-</div>
-<h1 style="color: #347433; margin-bottom: 16px; text-align: center">สนามกีฬาได้รับการอนุมัติ</h1>
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align:center;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td align="center">
+        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 300px; margin-bottom: 10px;" />
+      </td>
+    </tr>
+  </table>
+  <h1 style="color: #347433; margin-bottom: 16px; text-align: center">สนามกีฬาได้รับการอนุมัติ</h1>
 
   <p style="font-size: 16px; text-align: center; color: #9ca3af;">
     <strong> คุณ ${userfirstName} สนามกีฬาของคุณได้รับการอนุมัติเรียบร้อยแล้ว </br >ขอบคุณที่ใช้บริการ</strong>
@@ -567,12 +572,15 @@ router.put("/:field_id", authMiddleware, async (req, res) => {
           to: userData.rows[0].email,
           subject: "การอนุมัติสนามกีฬา",
           html: `
-<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
-  <div style="  display: flex;
-  justify-content: center;
-  align-items: center;">
-  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
-</div>
+
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align:center;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td align="center">
+        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 300px; margin-bottom: 10px;" />
+      </td>
+    </tr>
+  </table>
   <h1 style="color: #DC2525; margin-bottom: 16px; text-align: center">สนามกีฬาไม่ได้รับการอนุมัติ</h1>
 
   <p style="font-size: 16px; text-align: center; color: #9ca3af;">
