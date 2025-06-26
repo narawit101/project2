@@ -419,7 +419,7 @@
   }
 }
 
-@media screen and (max-width: 850px) {
+@media screen and (max-width: 880px) {
   .admin-manager-container {
     width: 90%;
     padding: 15px;
@@ -455,7 +455,7 @@
   .delete-btn,
   .ProveEdit-btn,
   .ProveDelete-btn {
-    padding: 8px 10px;
+    padding: 5px 8px;
   }
 
   .modal-content {
@@ -509,7 +509,7 @@
   }
 }
 
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 695px) {
   .admin-manager-container {
     width: 95%;
     padding: 15px;
@@ -555,11 +555,10 @@
   }
 }
 
-@media screen and (max-width: 550px) {
+@media screen and (max-width: 580px) {
   .admin-manager-container {
     margin-top: 80px;
-    width: 95%;
-    margin-top: 80px;
+    width: 100%;
   }
 
   .Title {
@@ -583,8 +582,8 @@
   }
 
   .admin-manager-container button {
-    padding: 5px 8px;
-    font-size: 12px;
+    padding: 4px 2px;
+    font-size: 8px;
   }
 
   .edit-btn,
@@ -599,7 +598,7 @@
     max-width: 350px;
   }
 }
-@media screen and (max-width: 350px) {
+@media screen and (max-width: 380px) {
   .admin-manager-container {
     margin-top: 80px;
     width: 95%;
@@ -607,7 +606,7 @@
   }
 
   .Title {
-    font-size: 12px;
+    font-size: 10px;
   }
 
   .Head {
@@ -622,20 +621,20 @@
 
   .admin-manager-container th,
   .admin-manager-container td {
-    font-size: 10px;
+    font-size: 7px;
     padding: 3px;
   }
 
   .admin-manager-container button {
-    padding: 5px 8px;
-    font-size: 10px;
+    padding: 2px 2px;
+    font-size: 8px;
   }
 
   .edit-btn,
   .delete-btn,
   .ProveEdit-btn,
   .ProveDelete-btn {
-    padding: 1px 4px;
+    padding: 1px 2px;
   }
 
   .modal-content {

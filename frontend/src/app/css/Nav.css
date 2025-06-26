@@ -614,9 +614,6 @@ nav ul li a.active {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: 0.3s;
   }
-  .user-profile:hover {
-    background-color: #f0f0f0;
-  }
 
   .dropdown {
     display: none;
@@ -798,7 +795,7 @@ nav ul li a.active {
   }
 }
 
-@media screen and (max-width: 670px) {
+@media screen and (max-width: 700px) {
   .login,
   .register {
     width: 90px;
@@ -818,7 +815,7 @@ nav ul li a.active {
   }
 }
 
-@media screen and (max-width: 590px) {
+@media screen and (max-width: 650px) {
   nav {
     flex-direction: row;
     padding: 0 20px 0 20px;
@@ -865,7 +862,7 @@ nav ul li a.active {
   }
 
   .user-profile {
-    /* width: 100%; */
+    width: 100%;
     justify-content: center;
   }
 
@@ -923,7 +920,7 @@ nav ul li a.active {
   }
 
   .user-profile {
-    /* width: 100%; */
+    width: 100%;
     justify-content: center;
   }
 
@@ -934,7 +931,7 @@ nav ul li a.active {
   }
 }
 
-@media screen and (max-width: 390px) {
+@media screen and (max-width: 430px) {
   .user-profile {
     width: 100%;
     justify-content: center;

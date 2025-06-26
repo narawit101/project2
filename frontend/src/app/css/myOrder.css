@@ -561,15 +561,18 @@
     font-size: 1.3rem;
   }
 
+  .swip-mode-order {
+    margin: 17px auto;
+  }
+
   .date-range-filter {
     flex-direction: column;
     gap: 10px;
   }
 
   .clear-filters-btn {
-    margin-left: 0;
-    margin-top: 10px;
-    width: 100%;
+    margin: 10px auto;
+    /* width: 100%; */
   }
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -603,8 +606,8 @@
 @media (max-width: 675px) {
   .myorder-container input[type="date"],
   .myorder-container select {
-    width: 100%;
-    max-width: 100%;
+    width: 85%;
+    max-width: 85%;
     box-sizing: border-box;
     margin: auto;
     min-width: 150px;
