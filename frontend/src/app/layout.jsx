@@ -14,7 +14,7 @@ export const metadata = {
   title: "แพลตฟอร์มจองสนามกีฬาออนไลน์",
   description: "แพลตฟอร์มจองสนามกีฬาออนไลน์",
   icons: {
-    icon: "./favicon.ico",
+    icon: "https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926494/logo2_jxtkqq.png",
   },
 };
 

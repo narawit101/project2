@@ -58,8 +58,15 @@ export default function Navbar() {
   return (
     <nav>
       <Link href="/" className="logo">
-        ⚽
+        <img
+          src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926494/logo2_jxtkqq.png"
+          alt="Sport-Hub Logo"
+          width="110"
+          height="110"
+          style={{ objectFit: "contain" }}
+        />
       </Link>
+
       <div className="ullist">
         <ul className={isMenuOpen ? "active" : ""}>
           <li>
@@ -96,7 +103,13 @@ export default function Navbar() {
             className="search-button"
             onClick={() => setIsSearchOpen(!isSearchOpen)}
           >
-            🔍
+            <img
+              src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750938907/pngtree-magnifying-glass-flat-icon-png-image_9150673_sgxpu1.png"
+              alt="Sport-Hub Logo"
+              width="30"
+              height="30"
+              style={{ objectFit: "contain" }}
+            />
           </button>
           <input
             type="text"
