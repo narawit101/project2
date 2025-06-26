@@ -533,10 +533,10 @@ router.put("/:field_id", authMiddleware, async (req, res) => {
   align-items: center;">
   <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
 </div>
-  <h1 style="color: #03045e; margin-bottom: 16px; text-align: center">สนามกีฬาได้รับการอนุมัติ</h1>
+<h1 style="color: #347433; margin-bottom: 16px; text-align: center">สนามกีฬาได้รับการอนุมัติ</h1>
 
   <p style="font-size: 16px; text-align: center; color: #9ca3af;">
-    <strong>คุณ ${userfirstName} สนามกีฬาของคุณได้รับการอนุมัติเรียบร้อยแล้ว </br >ขอบคุณที่ใช้บริการ</strong>
+    <strong> คุณ ${userfirstName} สนามกีฬาของคุณได้รับการอนุมัติเรียบร้อยแล้ว </br >ขอบคุณที่ใช้บริการ</strong>
   </p>
   <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
 

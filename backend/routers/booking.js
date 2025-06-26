@@ -14,6 +14,8 @@ module.exports = function (io) {
   const { CloudinaryStorage } = require("multer-storage-cloudinary");
   const cloudinary = require("../server");
   const { DateTime } = require("luxon");
+  const qrcode = require("qrcode");
+  const promptpay = require("promptpay-qr");
 
   const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
@@ -859,12 +861,40 @@ LIMIT 1;
       try {
         let result;
 
+        let qrDeposit = null;
+
+        const field = await pool.query(
+          `SELECT field_id FROM bookings WHERE booking_id = $1`,
+          [booking_id]
+        );
+
+        const filedData = await pool.query(
+          `SELECT number_bank, name_bank,price_deposit FROM field WHERE field_id = $1`,
+          [field.rows[0].field_id]
+        );
+
         // ✅ อัปเดตสถานะ และ updated_at ถ้า approved
         if (booking_status === "approved") {
           result = await pool.query(
             "UPDATE bookings SET status = $1, updated_at = $2 WHERE booking_id = $3 RETURNING *",
             [booking_status, updatedAtThai, booking_id]
           );
+
+          if (filedData.rows[0].price_deposit > 0) {
+            const qrCodeData = promptpay(filedData.rows[0].number_bank, {
+              amount: filedData.rows[0].price_deposit,
+            });
+            const qrBase64 = await qrcode.toDataURL(qrCodeData);
+
+            // upload ไป Cloudinary
+            const uploadRes = await cloudinary.uploader.upload(qrBase64, {
+              folder: "qr_codes",
+              public_id: `qr_${booking_id}_${Date.now()}`,
+              overwrite: true,
+              resource_type: "image",
+            });
+            qrDeposit = uploadRes.secure_url; // ใช้ url นี้ใน <img src="...">
+          }
         } else {
           result = await pool.query(
             "UPDATE bookings SET status = $1 WHERE booking_id = $2 RETURNING *",
@@ -896,7 +926,55 @@ LIMIT 1;
           let subject = "";
           let message = "";
 
-          if (booking_status === "approved") {
+          if (
+            booking_status === "approved" &&
+            filedData.rows[0].price_deposit > 0
+          ) {
+            subject = `การจองสนาม ${userInfo.field_name} ได้รับการอนุมัติแล้ว`;
+            message = `
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+    <div style="  display: flex;
+  justify-content: center;
+  align-items: center;
+">
+  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
+</div>
+  <h1 style="color: #347433; margin-bottom: 16px; text-align: center;">การจองของคุณได้รับการอนุมัติแล้ว</h1>
+
+  <p style="font-size: 16px; color: #111827; text-align: center;">
+    การจองสนาม <strong>${userInfo.field_name}</strong> ของคุณได้รับการอนุมัติแล้ว
+  </p>
+
+  <div style="margin: 20px auto;">
+    <a href="${process.env.FONT_END_URL}/login?redirect=/bookingDetail/${booking_id}" style="display: inline-block; background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; text-align: center;  justify-content: center;  display: flex; width: 200px; margin: 10px auto; 
+  align-items: center;
+" target="_blank">
+      ดูรายละเอียดการจอง #${booking_id}
+    </a>
+    
+  <p style="font-weight: bold;  color: #111827; text-align: center;">ยอดที่ต้องชำระ: ฿${filedData.rows[0].price_deposit}</p>
+
+    <div style="margin: 20px 0; text-align: center;">
+      <p>สแกนเพื่อชำระเงิน:</p>
+      <img src="${qrDeposit}" alt="QR Code" style="width: 200px; height: 200px;" />
+    </div>
+  </div>
+
+  <p style="font-size: 14px; color: #6b7280; text-align: center">
+    กรุณาแนบสลิปมัดจำ <strong>(ถ้ามี)</strong> ภายใน <strong>1 ชั่วโมง</strong> หลังจากได้รับการอนุมัติ มิฉะนั้นระบบจะยกเลิกการจองโดยอัตโนมัติ
+  </p>
+
+  <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 12px; color: #9ca3af;text-align: center">
+    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+  </p>
+</div>
+        `;
+          } else if (
+            booking_status === "approved" &&
+            filedData.rows[0].price_deposit == 0
+          ) {
             subject = `การจองสนาม ${userInfo.field_name} ได้รับการอนุมัติแล้ว`;
             message = `
 <div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px">

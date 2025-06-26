@@ -147,6 +147,15 @@ export default function EditProfile() {
       <div className="edit-profile-container">
         <h2 className="head-edit-profile">แก้ไขโปรไฟล์</h2>
         <form onSubmit={handleUpdateProfile} className="editprofile-form">
+          <label className="edit-profile-title">อีเมล:</label>
+          <input
+            type="email"
+            readOnly
+            value={updatedUser.email}
+            onChange={(e) =>
+              setUpdatedUser({ ...updatedUser, email: e.target.value })
+            }
+          />
           <label className="edit-profile-title">ชื่อ:</label>
           <input
             type="text"
@@ -165,14 +174,6 @@ export default function EditProfile() {
               setUpdatedUser({ ...updatedUser, last_name: e.target.value })
             }
           />
-          {/* <label className="edit-profile-title">อีเมล:</label>
-          <input
-            type="email"
-            value={updatedUser.email}
-            onChange={(e) =>
-              setUpdatedUser({ ...updatedUser, email: e.target.value })
-            }
-          /> */}
 
           <button
             type="submit"

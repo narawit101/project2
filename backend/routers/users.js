@@ -201,23 +201,28 @@ router.post("/reset-password", async (req, res) => {
         to: email,
         subject: "รีเซ็ตรหัสผ่าน",
         html: `
-<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
-  <div style="  display: flex;
-  justify-content: center;
-  align-items: center;">
-  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
-</div>
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td align="center">
+        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 200px; margin-bottom: 20px;" />
+      </td>
+    </tr>
+  </table>
+
   <h1 style="color: #03045e; margin-bottom: 16px; text-align: center">รีเซ็ตรหัสผ่าน</h1>
 
   <p style="font-size: 16px; text-align: center; color: #9ca3af;">
-    <strong> รหัส OTP ของคุณคือ ${otp} กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ</strong>
+    <strong>รหัส OTP ของคุณคือ ${otp} กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ</strong>
   </p>
+
   <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
 
-  <p style="font-size: 12px; color: #9ca3af;text-align: center ">
+  <p style="font-size: 12px; color: #9ca3af; text-align: center;">
     หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
   </p>
-</div>`,
+</div>
+`,
       });
     }
 
@@ -272,23 +277,28 @@ router.post("/resent-reset-password", async (req, res) => {
         to: email,
         subject: "รีเซ็ตรหัสผ่าน",
         html: `
-<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
-  <div style="  display: flex;
-  justify-content: center;
-  align-items: center;">
-  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
-</div>
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td align="center">
+        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 200px; margin-bottom: 20px;" />
+      </td>
+    </tr>
+  </table>
+
   <h1 style="color: #03045e; margin-bottom: 16px; text-align: center">รีเซ็ตรหัสผ่าน</h1>
 
   <p style="font-size: 16px; text-align: center; color: #9ca3af;">
-    <strong> รหัส OTP ใหม่ของคุณคือ ${otp} กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ</strong>
+    <strong>รหัส OTP ของคุณคือ ${otp} กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ</strong>
   </p>
+
   <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
 
-  <p style="font-size: 12px; color: #9ca3af;text-align: center ">
+  <p style="font-size: 12px; color: #9ca3af; text-align: center;">
     หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
   </p>
-</div>`,
+</div>
+`,
       });
     }
 
