@@ -81,8 +81,8 @@ export default function BookingDetail() {
         console.log(" Booking Data:", data.data);
       } else {
         console.log("Booking fetch error:", data.error);
-        setMessage(data.error);
-        setMessageType("error");
+        // setMessage(data.error);
+        // setMessageType("error");
       }
     } catch (error) {
       console.error("Fetch error:", error);
@@ -338,7 +338,7 @@ export default function BookingDetail() {
   const confirmCancelBooking = async () => {
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 250));
       const token = localStorage.getItem("auth_mobile_token");
 
       const res = await fetch(
@@ -363,7 +363,7 @@ export default function BookingDetail() {
         setMessageType("success");
         setTimeout(() => {
           window.location.reload();
-        }, 2000);
+        }, 3000);
       } else {
         setMessage(data.message || "ยกเลิกไม่สำเร็จ");
         setMessageType("error");

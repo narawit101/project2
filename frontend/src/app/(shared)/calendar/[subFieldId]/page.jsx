@@ -139,12 +139,12 @@ export default function MyCalendar() {
 
   const handleDateConfirm = async () => {
     try {
-      SetstartProcessLoad(true);
       if (!date) {
         setMessage("กรุณาเลือกวันที่");
         setMessageType("error");
         return;
       }
+      SetstartProcessLoad(true);
       await new Promise((resolve) => setTimeout(resolve, 150));
 
       const storedExpiry = sessionStorage.getItem("booking_date_expiry");
@@ -171,7 +171,7 @@ export default function MyCalendar() {
     } finally {
       setTimeout(() => {
         SetstartProcessLoad(false);
-      }, 500);
+      }, 1000);
     }
   };
 
