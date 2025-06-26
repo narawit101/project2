@@ -270,14 +270,32 @@ router.post(
 
       // สมมุติว่าในตาราง users มีคอลัมน์ชื่อ user_email
       const userEmail = userData.rows[0].email; // << ใช้ค่านี้ส่งอีเมล
+      const userfirstName = userData.rows[0].first_name; // << ใช้ค่านี้ส่งอีเมล
 
       // ส่งอีเมล
       try {
         const resultEmail = await resend.emails.send({
           from: process.env.Sender_Email,
           to: userEmail, // ใช้ค่าที่ดึงมา
-          subject: "ลงทะเบียนสนาม",
-          text: "คุณได้ลงทะเบียนสนามเรียบร้อยแล้ว รอผู้ดูแลตรวจสอบ",
+          subject: "การลงทะเบียนสนาม",
+          html: `
+<div style="font-family: 'Kanit', sans-serif; max-width: 500px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+  <div style="  display: flex;
+  justify-content: center;
+  align-items: center">
+  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
+</div>
+  <h1 style="color: #03045e; margin-bottom: 16px; text-align: center">การลงทะเบียนสนาม</h1>
+
+  <p style="font-size: 16px; text-align: center; color: #9ca3af;">
+    <strong>คุณ ${userfirstName} ได้ลงทะเบียนสามเรียบร้อยแล้ว กรุณารอผู้ดูแลระบบตรวจสอบ </br >ขอบคุณที่ใช้บริการ</strong>
+  </p>
+  <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 12px; color: #9ca3af;text-align: center ">
+    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+  </p>
+</div>`,
         });
         console.log("อีเมลส่งสำเร็จ:", resultEmail);
       } catch (error) {
@@ -491,6 +509,7 @@ router.put("/:field_id", authMiddleware, async (req, res) => {
       "SELECT * FROM users WHERE user_id = $1",
       [checkField.rows[0].user_id]
     );
+      const userfirstName = userData.rows[0].first_name; // << ใช้ค่านี้ส่งอีเมล
 
     if (status === "ผ่านการอนุมัติ") {
       const userId = checkField.rows[0].user_id;
@@ -501,12 +520,30 @@ router.put("/:field_id", authMiddleware, async (req, res) => {
           [userId]
         );
       }
+
       try {
         const resultEmail = await resend.emails.send({
           from: process.env.Sender_Email,
           to: userData.rows[0].email,
           subject: "การอนุมัติสนามกีฬา",
-          text: "สนามกีฬาได้รับการอนุมัติเรียบร้อยแล้ว",
+          html: `
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+  <div style="  display: flex;
+  justify-content: center;
+  align-items: center;">
+  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
+</div>
+  <h1 style="color: #03045e; margin-bottom: 16px; text-align: center">สนามกีฬาได้รับการอนุมัติ</h1>
+
+  <p style="font-size: 16px; text-align: center; color: #9ca3af;">
+    <strong>คุณ ${userfirstName} สนามกีฬาของคุณได้รับการอนุมัติเรียบร้อยแล้ว </br >ขอบคุณที่ใช้บริการ</strong>
+  </p>
+  <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 12px; color: #9ca3af;text-align: center ">
+    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+  </p>
+</div>`,
         });
         console.log("อีเมลส่งสำเร็จ:", resultEmail);
       } catch (error) {
@@ -529,7 +566,24 @@ router.put("/:field_id", authMiddleware, async (req, res) => {
           from: process.env.Sender_Email,
           to: userData.rows[0].email,
           subject: "การอนุมัติสนามกีฬา",
-          text: "สนามกีฬาไม่ได้รับการอนุมัติ",
+          html: `
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+  <div style="  display: flex;
+  justify-content: center;
+  align-items: center;">
+  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
+</div>
+  <h1 style="color: #DC2525; margin-bottom: 16px; text-align: center">สนามกีฬาไม่ได้รับการอนุมัติ</h1>
+
+  <p style="font-size: 16px; text-align: center; color: #9ca3af;">
+    <strong> คุณ ${userfirstName} สนามกีฬาของคุณไม่ได้รับการอนุมัติ </br >กรุณาตรวจสอบสนามกีฬาของคุณและส่งคำขอลงทะเบียนใหม่</strong>
+  </p>
+  <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 12px; color: #9ca3af;text-align: center ">
+    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+  </p>
+</div>`,
         });
         console.log("อีเมลส่งสำเร็จ:", resultEmail);
       } catch (error) {

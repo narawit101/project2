@@ -138,21 +138,32 @@ module.exports = function (io) {
               await resend.emails.send({
                 from: process.env.Sender_Email,
                 to: booking.email,
-                subject: "ใกล้ถึงเวลาจองสนามแล้ว!",
+                subject: "ใกล้ถึงเวลาจองสนามแล้ว",
                 html: `
-                    <div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb;">
-              <h2 style="color: #1f2937; margin-bottom: 16px;">แจ้งเตือนล่วงหน้า</h2>
-              <p style="font-size: 16px; color: #111827;">
-                คุณมีการจองสนาม <strong>${booking.field_name}</strong>
-              </p>
-              <p style="font-size: 16px; color: #111827;">
-                เวลาเริ่มต้น: <strong>${booking.start_time}</strong> <br/>
-                วันที่: <strong>${todayStr}</strong>
-              </p>
-              <p style="font-size: 14px; color: #6b7280;">
-                กรุณามาถึงสนามก่อนเวลาเพื่อเตรียมตัวล่วงหน้า
-              </p>
-            </div>
+<div style="font-family: 'Kanit', sans-serif; max-width: 500px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+    <div style="  display: flex;
+  justify-content: center;
+  align-items: center;
+">
+  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
+</div>
+  <h1 style="color: #03045e; margin-bottom: 16px; text-align: center">แจ้งเตือนล่วงหน้า</h1>
+  <p style="font-size: 16px; text-align: center; color: #111827;">
+    คุณมีการจองสนาม <strong>${booking.field_name}</strong>
+  </p>
+  <p style="font-size: 16px; text-align: center; color: #111827;">
+    เวลาเริ่มต้น: <strong>${booking.start_time}</strong> <br />
+    วันที่: <strong>${todayStr}</strong>
+  </p>
+  <p style="font-size: 14px; color: #6b7280;text-align: center">
+    กรุณามาถึงสนามก่อนเวลาเพื่อเตรียมตัวล่วงหน้า
+  </p>
+    <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 12px; color: #9ca3af;text-align: center ">
+    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+  </p>
+</div>
             `,
               });
 
@@ -161,21 +172,49 @@ module.exports = function (io) {
               await resend.emails.send({
                 from: process.env.Sender_Email,
                 to: booking.email,
-                subject: "ถึงเวลาจองสนามแล้ว!",
+                subject: "ถึงเวลาจองสนามแล้ว",
                 html: `
-                  <div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb;">
-          <h2 style="color: #1f2937; margin-bottom: 16px;">ถึงเวลาเริ่มต้นการจองแล้ว</h2>
-          <p style="font-size: 16px; color: #111827;">
-            สนามที่จอง: <strong>${booking.field_name}</strong>
-          </p>
-          <p style="font-size: 16px; color: #111827;">
-            เริ่มเวลา: <strong>${booking.start_time}</strong> <br/>
-            วันที่: <strong>${booking.start_date}</strong>
-          </p>
-          <p style="font-size: 14px; color: #6b7280;">
-            ขอให้คุณมีความสุขกับการใช้งานสนาม และขอขอบคุณที่ใช้บริการของเรา
-          </p>
-        </div>
+<div style="font-family: 'Kanit', sans-serif; max-width: 500px; text-align: center;margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+    <div style="  display: flex;
+  justify-content: center;
+  align-items: center;
+">
+  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
+</div>
+  <h1 style="color: #03045e; margin-bottom: 16px;">ถึงเวลาเริ่มการจองแล้ว</h1>
+  <p style="font-size: 16px; color: #111827;">
+    สนามที่จอง: <strong>${booking.field_name}</strong>
+  </p>
+  <p style="font-size: 16px; color: #111827;">
+    เริ่มเวลา: <strong>${booking.start_time}</strong> <br />
+    วันที่: <strong>${booking.start_date}</strong>
+  </p>
+  <p style="font-size: 14px; color: #6b7280;">
+    ขอให้คุณมีความสุขกับการใช้งานสนาม และขอขอบคุณที่ใช้บริการของเรา
+  </p>
+    <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 12px; color: #9ca3af;">
+    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+  </p>
+</div><div style="font-family: 'Kanit', sans-serif; max-width: 500px; text-align: center;margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;">
+  <h1 style="color: #03045e; margin-bottom: 16px;">ถึงเวลาเริ่มการจองแล้ว</h1>
+  <p style="font-size: 16px; color: #111827;">
+    สนามที่จอง: <strong>${booking.field_name}</strong>
+  </p>
+  <p style="font-size: 16px; color: #111827;">
+    เริ่มเวลา: <strong>${booking.start_time}</strong> <br />
+    วันที่: <strong>${booking.start_date}</strong>
+  </p>
+  <p style="font-size: 14px; color: #6b7280;">
+    ขอให้คุณมีความสุขกับการใช้งานสนาม และขอขอบคุณที่ใช้บริการของเรา
+  </p>
+    <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 12px; color: #9ca3af;">
+    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+  </p>
+</div>
             `,
               });
 
@@ -221,9 +260,33 @@ module.exports = function (io) {
               to: row.email,
               subject: "การจองสนามของคุณถูกยกเลิกอัตโนมัติ",
               html: `
-            <p>ระบบได้ยกเลิกการจองสนาม <strong>${row.field_name}</strong></p>
-            <p>เวลา: <strong>${row.start_time}</strong> วันที่ <strong>${row.start_date}</strong></p>
-            <p>เพราะไม่ได้แนบสลิปค่ามัดจำภายในเวลาที่กำหนด</p>
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; text-align: center;margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+    <div style="  display: flex;
+  justify-content: center;
+  align-items: center;
+">
+  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
+</div>
+  <h1 style="color: #DC2525; margin-bottom: 16px;">การจองสนามของคุณถูกยกเลิกอัตโนมัติ</h1>
+  <p style="font-size: 16px; color: #DC2525;">
+   <strong> เนื่องจากไม่ได้แนบสลิปค่ามัดจำภายในเวลาที่กำหนดหลังจากได้รับการอนุมัติ</strong>
+  </p>
+  <p style="font-size: 16px; color: #111827;">
+    สนามที่จอง: <strong>${row.field_name}</strong>
+  </p>
+  <p style="font-size: 16px; color: #111827;">
+    เริ่มเวลา: <strong>${row.start_time}</strong> <br />
+    วันที่: <strong>${row.start_date}</strong>
+  </p>
+  <p style="font-size: 14px; color: #6b7280;">
+   <strong> กรุณาแนบสลิปค่ามัดจำภายในเวลาที่กำหนด</strong>
+  </p>
+    <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 12px; color: #9ca3af;">
+    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+  </p>
+</div>
           `,
             });
             console.log(` ส่งแจ้งเตือนการลบไปยัง ${row.email}`);
@@ -327,12 +390,10 @@ module.exports = function (io) {
         console.log("timeNow", timeNow.toISO());
         console.log("timeSubmitDate", timeSubmitDate.toISO());
         if (timeSubmitDate < timeNow) {
-          return res
-            .status(400)
-            .json({
-              success: false,
-              message: "ไม่สามารถเลือกเวลาที่ผ่านไปแล้วได้",
-            });
+          return res.status(400).json({
+            success: false,
+            message: "ไม่สามารถเลือกเวลาที่ผ่านไปแล้วได้",
+          });
         }
 
         if (overlapResult.rows.length > 0) {
@@ -838,57 +899,64 @@ LIMIT 1;
           if (booking_status === "approved") {
             subject = `การจองสนาม ${userInfo.field_name} ได้รับการอนุมัติแล้ว`;
             message = `
-         <div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
-  <h2 style="color: #1d4ed8; margin-bottom: 16px;">การจองของคุณได้รับการอนุมัติแล้ว!</h2>
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px">
+    <div style="  display: flex;
+  justify-content: center;
+  align-items: center;
+">
+  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
+</div>
+  <h1 style="color: #347433; margin-bottom: 16px; text-align: center;">การจองของคุณได้รับการอนุมัติแล้ว</h1>
 
-  <p style="font-size: 16px; color: #111827;">
-    การจองสนาม <strong style="color: #0f172a;">${userInfo.field_name}</strong> ของคุณได้รับการอนุมัติแล้ว
+  <p style="font-size: 16px; color: #111827; text-align: center;">
+    การจองสนาม <strong>${userInfo.field_name}</strong> ของคุณได้รับการอนุมัติแล้ว
   </p>
 
-  <div style="margin: 20px 0;">
-    <a
-      href="${process.env.FONT_END_URL}/login?redirect=/bookingDetail/${booking_id}"
-      style="display: inline-block; background-color: #1d4ed8; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;"
-      target="_blank"
-    >
+  <div style="margin: 20px auto;">
+    <a href="${process.env.FONT_END_URL}/login?redirect=/bookingDetail/${booking_id}" style="display: inline-block; background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; text-align: center;  justify-content: center;  display: flex; width: 200px; margin: 10px auto; 
+  align-items: center;
+" target="_blank">
       ดูรายละเอียดการจอง #${booking_id}
     </a>
   </div>
 
-  <p style="font-size: 14px; color: #6b7280;">
+  <p style="font-size: 14px; color: #6b7280; text-align: center">
     กรุณาแนบสลิปมัดจำ <strong>(ถ้ามี)</strong> ภายใน <strong>1 ชั่วโมง</strong> หลังจากได้รับการอนุมัติ มิฉะนั้นระบบจะยกเลิกการจองโดยอัตโนมัติ
   </p>
 
   <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
 
-  <p style="font-size: 12px; color: #9ca3af;">
+  <p style="font-size: 12px; color: #9ca3af;text-align: center">
     หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
   </p>
 </div>
-
         `;
           } else if (booking_status === "rejected") {
             subject = `การจองสนาม ${userInfo.field_name} ไม่ได้รับการอนุมัติ`;
             message = `
-   <div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
-  <h2 style="color: #1d4ed8; margin-bottom: 16px;">การจองของคุณไม่ได้รับการอนุมัติ!</h2>
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px">
+    <div style="  display: flex;
+  justify-content: center;
+  align-items: center;
+">
+  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
+</div>
+  <h1 style="color: #03045e; margin-bottom: 16px; text-align: center;">การจองของคุณไม่ได้รับการอนุมัติ</h1>
 
-  <p style="font-size: 16px; color: #111827;">
-    การจองสนาม <strong style="color: #0f172a;">${userInfo.field_name}</strong> ของคุณไม่ได้รับการอนุมัติ
+  <p style="font-size: 16px; color: #111827; text-align: center;">
+    การจองสนาม <strong>${userInfo.field_name}</strong> ของคุณไม่ได้รับการอนุมัติ
   </p>
 
-  <div style="margin: 20px 0;">
-    <a
-      href="${process.env.FONT_END_URL}/login?redirect=/bookingDetail/${booking_id}"
-      style="display: inline-block; background-color: #1d4ed8; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;"
-      target="_blank"
-    >
+  <div style="margin: 20px auto;">
+    <a href="${process.env.FONT_END_URL}/login?redirect=/bookingDetail/${booking_id}" style="display: inline-block; background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; text-align: center;  justify-content: center;  display: flex; width: 200px; margin: 10px auto; 
+  align-items: center;
+" target="_blank">
       ดูรายละเอียดการจอง #${booking_id}
     </a>
   </div>
   <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
 
-  <p style="font-size: 12px; color: #9ca3af;">
+  <p style="font-size: 12px; color: #9ca3af;text-align: center">
     หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
   </p>
 </div>
@@ -903,13 +971,11 @@ LIMIT 1;
               html: message,
             });
 
-            console.log(
-              `📧 ส่งอีเมลแจ้งผลการอัปเดตสถานะไปยัง ${userInfo.email}`
-            );
+            console.log(`ส่งอีเมลแจ้งผลการอัปเดตสถานะไปยัง ${userInfo.email}`);
           }
         }
 
-        // ✅ ส่ง socket event แจ้งหน้าเว็บ
+        // ส่ง socket event แจ้งหน้าเว็บ
         req.io.emit("slot_booked", {
           bookingId: booking_id,
         });
@@ -1272,17 +1338,24 @@ LIMIT 1;
                 from: process.env.Sender_Email,
                 to: bookingData.field_owner_email,
                 subject: "ตรวจสอบสลิปและอัปเดตสถานะการจองให้เสร็จสิ้น",
-                html: ` <div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb;">
-      <h2 style="color: #1d4ed8; margin-bottom: 16px;">มีการอัปโหลดสลิปใหม่!</h2>
+                html: ` <div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; text-align:center; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+  <div style="  display: flex;
+  justify-content: center;
+  align-items: center;
+">
+  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
+</div>
+      <h1 style="color: #03045e; margin-bottom: 16px;">มีการอัปโหลดสลิปใหม่</h1>
 
       <p style="font-size: 16px; color: #111827;">
-        สำหรับสนาม <strong style="color: #0f172a;">${bookingData.field_name}</strong> ระบบได้รับสลิปใหม่แล้ว
+       <strong style="color: #0f172a;">${bookingData.field_name}</strong> ได้รับสลิปใหม่
       </p>
 
       <div style="margin: 20px 0;">
         <a
           href="${process.env.FONT_END_URL}/login?redirect=/bookingDetail/${bookingId}"
-          style="display: inline-block; background-color: #1d4ed8; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;"
+          style="display: inline-block; background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;
+                 width:160px;"
           target="_blank"
         >
           ตรวจสอบการจอง #${bookingId}

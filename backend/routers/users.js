@@ -4,9 +4,9 @@ const router = express.Router();
 const authMiddleware = require("../middlewares/auth");
 const cookieParser = require("cookie-parser");
 const pool = require("../db");
-const { Resend } = require('resend'); 
+const { Resend } = require("resend");
 const resend = new Resend(process.env.Resend_API);
-const crypto = require('crypto');
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 router.use(cookieParser());
 
@@ -25,7 +25,7 @@ router.get("/me", authMiddleware, async (req, res) => {
 
     const user = result.rows[0];
 
-    res.status(200).json( user );
+    res.status(200).json(user);
   } catch (error) {
     console.error("Error fetching user:", error);
     res.status(500).json({ message: "เกิดข้อผิดพลาดในการดึงข้อมูลผู้ใช้" });
@@ -39,7 +39,8 @@ router.get("/", authMiddleware, async (req, res) => {
       return res.status(403).json({ message: "คุณไม่มีสิทธิ์เข้าถึงหน้านี้!" });
     }
 
-    const result = await pool.query(`SELECT user_id, user_name, first_name, last_name, email, role, status
+    const result =
+      await pool.query(`SELECT user_id, user_name, first_name, last_name, email, role, status
             FROM users
             ORDER BY 
             CASE role
@@ -49,7 +50,7 @@ router.get("/", authMiddleware, async (req, res) => {
             ELSE 4
             END,
             user_id ASC;
-`)
+`);
     res.status(200).json(result.rows);
   } catch (error) {
     console.error("Error fetching manager data:", error);
@@ -61,14 +62,22 @@ router.get("/", authMiddleware, async (req, res) => {
 router.put("/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { first_name, last_name, role, status } = req.body;
-  const currentUser = req.user; 
+  const currentUser = req.user;
 
   console.log("user_id ที่ส่งมา:", id);
-  console.log("user_id ใน Token:", currentUser.user_id, "Role:", currentUser.role);
+  console.log(
+    "user_id ใน Token:",
+    currentUser.user_id,
+    "Role:",
+    currentUser.role
+  );
 
   try {
     //ตรวจสอบว่าเป็น Admin หรือเจ้าของบัญชี
-    if (!currentUser.user_id || (parseInt(id) !== currentUser.user_id && currentUser.role !== "admin")) {
+    if (
+      !currentUser.user_id ||
+      (parseInt(id) !== currentUser.user_id && currentUser.role !== "admin")
+    ) {
       return res.status(403).json({ message: "คุณไม่มีสิทธิ์แก้ไขข้อมูลนี้" });
     }
 
@@ -86,7 +95,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
 // ลบผู้ใช้ (เฉพาะ Admin เท่านั้น)
 router.delete("/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
-  const currentUser = req.user; 
+  const currentUser = req.user;
 
   try {
     if (currentUser.role !== "admin") {
@@ -106,10 +115,15 @@ router.post("/check-email", authMiddleware, async (req, res) => {
   const { email } = req.body;
 
   try {
-    const result = await pool.query("SELECT user_id FROM users WHERE email = $1", [email]);
+    const result = await pool.query(
+      "SELECT user_id FROM users WHERE email = $1",
+      [email]
+    );
 
     if (result.rows.length > 0) {
-      return res.status(200).json({ exists: true, user_id: result.rows[0].user_id });
+      return res
+        .status(200)
+        .json({ exists: true, user_id: result.rows[0].user_id });
     }
 
     res.status(200).json({ exists: false });
@@ -119,14 +133,16 @@ router.post("/check-email", authMiddleware, async (req, res) => {
   }
 });
 
-
 // ตรวจสอบรหัสเดิม
 router.post("/:id/check-password", authMiddleware, async (req, res) => {
   const { id } = req.params;
-  const { currentPassword } = req.body;  // รับค่ารหัสเดิมจาก body
+  const { currentPassword } = req.body; // รับค่ารหัสเดิมจาก body
 
   try {
-    const result = await pool.query("SELECT password FROM users WHERE user_id = $1", [id]);
+    const result = await pool.query(
+      "SELECT password FROM users WHERE user_id = $1",
+      [id]
+    );
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "ไม่พบผู้ใช้" });
@@ -134,13 +150,16 @@ router.post("/:id/check-password", authMiddleware, async (req, res) => {
 
     const storedPassword = result.rows[0].password;
 
-    const isPasswordMatch = await bcrypt.compare(currentPassword, storedPassword);
+    const isPasswordMatch = await bcrypt.compare(
+      currentPassword,
+      storedPassword
+    );
 
     if (!isPasswordMatch) {
       return res.status(400).json({ message: "รหัสเดิมไม่ถูกต้อง" });
     }
 
-    res.status(200).json({ success: true });  // ถ้ารหัสตรง
+    res.status(200).json({ success: true }); // ถ้ารหัสตรง
   } catch (error) {
     console.error("Error checking password:", error);
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
@@ -150,21 +169,25 @@ router.post("/:id/check-password", authMiddleware, async (req, res) => {
 router.post("/reset-password", async (req, res) => {
   const { email } = req.body;
   try {
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "ไม่พบผู้ใช้" });
     }
     const user = result.rows[0];
     const user_id = user.user_id;
 
-    await pool.query("DELETE FROM password_reset WHERE user_id = $1", [user_id]);
+    await pool.query("DELETE FROM password_reset WHERE user_id = $1", [
+      user_id,
+    ]);
 
     function generateNumericOtp(length) {
       const otp = crypto.randomBytes(length).toString("hex").slice(0, length);
       return otp;
     }
 
-    const otp = generateNumericOtp(6); 
+    const otp = generateNumericOtp(6);
     const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
 
     const otp_reset = await pool.query(
@@ -176,14 +199,31 @@ router.post("/reset-password", async (req, res) => {
       resend.emails.send({
         from: process.env.Sender_Email,
         to: email,
-        subject: "OTP Reset Password",
-        text: `รหัส OTP ของคุณคือ ${otp} กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ`,
+        subject: "รีเซ็ตรหัสผ่าน",
+        html: `
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+  <div style="  display: flex;
+  justify-content: center;
+  align-items: center;">
+  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
+</div>
+  <h1 style="color: #03045e; margin-bottom: 16px; text-align: center">รีเซ็ตรหัสผ่าน</h1>
+
+  <p style="font-size: 16px; text-align: center; color: #9ca3af;">
+    <strong> รหัส OTP ของคุณคือ ${otp} กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ</strong>
+  </p>
+  <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 12px; color: #9ca3af;text-align: center ">
+    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+  </p>
+</div>`,
       });
     }
-  
+
     res.status(200).json({
       message: "ข้อมูล",
-      expiresAt: Date.now() + 60 * 1000 * 10, 
+      expiresAt: Date.now() + 60 * 1000 * 10,
       user: {
         user_id: user.user_id,
         email: user.email,
@@ -199,7 +239,9 @@ router.post("/reset-password", async (req, res) => {
 router.post("/resent-reset-password", async (req, res) => {
   const { email } = req.body;
   try {
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "ไม่พบผู้ใช้" });
     }
@@ -207,7 +249,9 @@ router.post("/resent-reset-password", async (req, res) => {
     const user = result.rows[0];
     const user_id = user.user_id;
 
-    await pool.query("DELETE FROM password_reset WHERE user_id = $1", [user_id]);
+    await pool.query("DELETE FROM password_reset WHERE user_id = $1", [
+      user_id,
+    ]);
 
     function generateNumericOtp(length) {
       const otp = crypto.randomBytes(length).toString("hex").slice(0, length);
@@ -215,7 +259,7 @@ router.post("/resent-reset-password", async (req, res) => {
     }
 
     const otp = generateNumericOtp(6);
-    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); 
+    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
 
     const otp_reset = await pool.query(
       "INSERT INTO password_reset (user_id, token, expires_at) VALUES ($1, $2, $3)",
@@ -226,31 +270,50 @@ router.post("/resent-reset-password", async (req, res) => {
       resend.emails.send({
         from: process.env.Sender_Email,
         to: email,
-        subject: "OTP Reset Password",
-        text: `รหัส OTP ของคุณคือ ${otp} กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ`,
+        subject: "รีเซ็ตรหัสผ่าน",
+        html: `
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+  <div style="  display: flex;
+  justify-content: center;
+  align-items: center;">
+  <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" />
+</div>
+  <h1 style="color: #03045e; margin-bottom: 16px; text-align: center">รีเซ็ตรหัสผ่าน</h1>
+
+  <p style="font-size: 16px; text-align: center; color: #9ca3af;">
+    <strong> รหัส OTP ใหม่ของคุณคือ ${otp} กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ</strong>
+  </p>
+  <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 12px; color: #9ca3af;text-align: center ">
+    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+  </p>
+</div>`,
       });
     }
 
     res.status(200).json({
       message: "ข้อมูล",
-      expiresAt: Date.now() + 60 * 1000 * 10, 
+      expiresAt: Date.now() + 60 * 1000 * 10,
       user: {
         user_id: user.user_id,
         email: user.email,
         status: user.status,
       },
     });
-    } catch (error) {
+  } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
-    }
-    });
+  }
+});
 
 router.post("/verify-otp", async (req, res) => {
   const { email, otp } = req.body; // รับ email และ otp จาก frontend
   try {
     // ตรวจสอบผู้ใช้จากอีเมล
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "ไม่พบผู้ใช้" });
     }
@@ -282,17 +345,19 @@ router.post("/verify-otp", async (req, res) => {
 // อัปเดตรหัสผ่าน
 router.put("/:id/change-password", authMiddleware, async (req, res) => {
   const { id } = req.params;
-  const { password } = req.body; 
+  const { password } = req.body;
 
   try {
     if (!password) {
-      return res.status(400).json({ message: "รหัสผ่านใหม่ไม่สามารถเป็นค่าว่าง" });
+      return res
+        .status(400)
+        .json({ message: "รหัสผ่านใหม่ไม่สามารถเป็นค่าว่าง" });
     }
-    
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const updateResult = await pool.query(
-      "UPDATE users SET password = $1 WHERE user_id = $2", 
+      "UPDATE users SET password = $1 WHERE user_id = $2",
       [hashedPassword, id]
     );
 
@@ -313,13 +378,15 @@ router.put("/:id/change-password-reset", async (req, res) => {
 
   try {
     if (!password) {
-      return res.status(400).json({ message: "รหัสผ่านใหม่ไม่สามารถเป็นค่าว่าง" });
+      return res
+        .status(400)
+        .json({ message: "รหัสผ่านใหม่ไม่สามารถเป็นค่าว่าง" });
     }
-    
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const updateResult = await pool.query(
-      "UPDATE users SET password = $1 WHERE user_id = $2", 
+      "UPDATE users SET password = $1 WHERE user_id = $2",
       [hashedPassword, id]
     );
 
