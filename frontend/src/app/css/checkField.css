@@ -8,7 +8,7 @@
 }
 
 .sub-field-card-check-field p {
-  font-weight: 300;
+  font-weight: 500;
   font-size: 22px;
   color: #333;
 }
@@ -18,17 +18,18 @@
 }
 
 .check-field-under p {
-  font-weight: 300;
-  font-size: 22px;
-  color: #333;
+  font-weight: 500;
+  font-size: 20px;
+  color: var(--text-color);
+  text-align: center;
 }
 
 .detail-checkfield {
-  border-radius: 10px;
+  border-radius: 8px;
   max-height: 150px;
   overflow-y: auto;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
+  background: #f9f9f9;
+  border: 1px solid #dcdcdc;
 }
 
 .newstatus {
@@ -39,12 +40,14 @@
 }
 
 .check-field-detail-container {
-  max-width: 800px;
+  width: 100%;
+  max-width: 1000px;
   margin: 100px auto;
-  padding: 20px;
-  background-color: #fff;
+  padding: 20px 100px 30px 100px;
+  background: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  border-radius: 10px;
+  text-align: center;
 }
 
 .image-container {
@@ -76,32 +79,27 @@
   color: var(--text-color);
 }
 
-ul {
+.check-field-detail-container ul {
   list-style-type: none;
   padding-left: 0;
 }
 
-ul li {
+.check-field-detail-container ul li {
   margin: 5px 0;
   color: #333;
 }
 
 /* Document Section */
 .document-container {
-  height: 50px;
-  margin: 15px;
+  background: #f9f9f9;
   display: flex;
-  text-align: center;
-  justify-content: center;
   align-items: center;
-  margin-top: 0px;
+  margin: 20px auto 30px auto;
+  text-align: center;
+  border: #333 solid 2px;
   padding: 5px;
   border-radius: 8px;
-}
-
-.document-container:hover {
-  border: #13bf03 solid 2px;
-  color: #22dfcf;
+  height: 60px;
 }
 
 .doc {
@@ -113,8 +111,9 @@ ul li {
   border-radius: 20px;
 }
 .document-link {
+  margin: 10px auto;
+  text-decoration: none;
   background-color: #ffffff;
-  border: 1px solid #ddd;
   font-weight: bold;
   text-align: center;
 }
@@ -132,13 +131,11 @@ ul li {
 }
 
 .sub-field-card-check-field {
-  background-color: #f8f8f8;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #ffffff;
-  border: 1px solid #ddd;
+  background: #f9f9f9;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 30px;
 }
 
 .sub-field-card-check-field h2 {
@@ -150,7 +147,7 @@ ul li {
 .sub-field-card-check-field p {
   margin: 10px;
   font-size: 22px;
-  font-weight: 300;
+  font-weight: 500;
 }
 
 .sub-field-card-check-field strong {
@@ -278,11 +275,6 @@ ul li {
   width: 100px;
 }
 
-.check-field-detail-container {
-  padding: 20px;
-  background-color: #f4f7fa;
-}
-
 .status-buttons button {
   padding: 10px 20px;
   font-size: 14px;
@@ -314,8 +306,8 @@ ul li {
   overflow-y: auto;
   margin-top: 15px;
   border-radius: 10px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
+  background: #f9f9f9;
+  border: 1px solid #dcdcdc;
 }
 .field-facilities-check-field h1 {
   margin: 0px 0px 5px 0px;
@@ -335,13 +327,13 @@ ul li {
 
 .facitem-checkfield strong {
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--text-color);
 }
 
 .facitem-checkfield p {
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 500;
   color: #333;
   display: inline-block;
 }
@@ -359,7 +351,7 @@ ul li {
   }
   .check-field-detail-container p {
     font-size: 24px;
-    font-weight: 300;
+    font-weight: 500;
   }
 
   .sub-field-card-check-field strong {
@@ -390,12 +382,11 @@ ul li {
     width: 100%;
     height: auto;
     max-width: 300px;
-    border-radius: 18px;
   }
 
   .check-field-detail-containe p {
     font-size: 22px;
-    font-weight: 300;
+    font-weight: 500;
   }
 
   .sub-field-card-check-field strong {
@@ -421,12 +412,11 @@ ul li {
     width: 100%;
     height: auto;
     max-width: 200px;
-    border-radius: 18px;
   }
 
   .check-field-detail-containe p {
     font-size: 22px;
-    font-weight: 300;
+    font-weight: 500;
   }
 
   .sub-field-card-check-field strong {
@@ -448,12 +438,11 @@ ul li {
     width: 100%;
     height: auto;
     max-width: 200px;
-    border-radius: 18px;
   }
 
   .check-field-detail-containe p {
     font-size: 20px;
-    font-weight: 300;
+    font-weight: 500;
   }
 
   .check-field-info strong {

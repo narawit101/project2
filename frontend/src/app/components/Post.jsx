@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import "@/app/css/postField.css";
 
-const CreatePost = ({ fieldId, onPostSuccess }) => {
+const CreatePost = ({ fieldId, onPostSuccess,setCurrentPage }) => {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -97,6 +97,7 @@ const CreatePost = ({ fieldId, onPostSuccess }) => {
       if (response.ok) {
         const data = await response.json();
         onPostSuccess(data.post);
+        setCurrentPage(1); // Reset to the first page after posting
         setMessage("โพสต์เรียบร้อย");
         setMessageType("success");
         setTitle("");

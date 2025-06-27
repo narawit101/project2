@@ -990,13 +990,55 @@ export default function CheckFieldDetail() {
         </div>
       )}
       <div className="editfield-container">
-        <h1>รายละเอียดสนามกีฬา</h1>
+        <h1>แก้ไขสนามกีฬา</h1>
         {startProcessLoad && (
           <div className="loading-overlay">
             <div className="loading-spinner"></div>
           </div>
         )}
         <div className="field-details-editfield">
+          {editingField === "img_field" ? (
+            <div className="preview-container-editfield">
+              <input type="file" onChange={handleImgChange} accept="image/*" />
+              {previewUrl && <img src={previewUrl} alt="preview" />}
+              <button
+                className="savebtn-editfield"
+                style={{
+                  cursor: startProcessLoad ? "not-allowed" : "pointer",
+                }}
+                disabled={startProcessLoad}
+                onClick={saveImageField}
+              >
+                บันทึก
+              </button>
+              <button
+                className="canbtn-editfield"
+                style={{
+                  cursor: startProcessLoad ? "not-allowed" : "pointer",
+                }}
+                disabled={startProcessLoad}
+                onClick={cancelEditing}
+              >
+                ยกเลิก
+              </button>
+            </div>
+          ) : (
+            <>
+              <img
+                src={`${field?.img_field}`}
+                alt="รูปสนามกีฬา"
+                className="preview-container-editfield"
+              />
+              <div className="input-group-editfield">
+                <button
+                  className="editbtn-editfield-center"
+                  onClick={() => startEditing("img_field", field?.img_field)}
+                >
+                  แก้ไข
+                </button>
+              </div>
+            </>
+          )}
           <div className="input-group-editfield">
             <label>ชื่อสนาม: </label>
             {editingField === "field_name" ? (
@@ -1378,91 +1420,48 @@ export default function CheckFieldDetail() {
           </div>
           <div className="input-group-editfield">
             <label>รายละเอียดสนาม: </label>
-            {editingField === "field_description" ? (
-              <>
-                <textarea
-                  maxLength={256}
-                  className="textarea"
-                  type="text"
-                  value={updatedValue}
-                  onChange={(e) => setUpdatedValue(e.target.value)}
-                />
-                <button
-                  className="savebtn-editfield"
-                  onClick={() => saveField("field_description")}
-                >
-                  บันทึก
-                </button>
-                <button className="canbtn-editfield" onClick={cancelEditing}>
-                  ยกเลิก
-                </button>
-              </>
-            ) : (
-              <>
-                <p>{field?.field_description || "ไม่มีข้อมูล"}</p>
-                <div>
+            <div className="detail-editfield">
+              {editingField === "field_description" ? (
+                <>
+                  <textarea
+                    maxLength={256}
+                    className="textarea"
+                    type="text"
+                    value={updatedValue}
+                    onChange={(e) => setUpdatedValue(e.target.value)}
+                  />
                   <button
-                    className="editbtn-editfield"
-                    onClick={() =>
-                      startEditing(
-                        "field_description",
-                        field?.field_description
-                      )
-                    }
+                    className="savebtn-editfield"
+                    onClick={() => saveField("field_description")}
                   >
-                    แก้ไข
+                    บันทึก
                   </button>
-                </div>
-              </>
-            )}
-          </div>
-          <div className="input-group-editfield">
-            <label>รูปโปรไฟล์</label>
-          </div>
-          {editingField === "img_field" ? (
-            <div className="preview-container-editfield">
-              <input type="file" onChange={handleImgChange} accept="image/*" />
-              {previewUrl && <img src={previewUrl} alt="preview" />}
-              <button
-                className="savebtn-editfield"
-                style={{
-                  cursor: startProcessLoad ? "not-allowed" : "pointer",
-                }}
-                disabled={startProcessLoad}
-                onClick={saveImageField}
-              >
-                บันทึก
-              </button>
-              <button
-                className="canbtn-editfield"
-                style={{
-                  cursor: startProcessLoad ? "not-allowed" : "pointer",
-                }}
-                disabled={startProcessLoad}
-                onClick={cancelEditing}
-              >
-                ยกเลิก
-              </button>
+                  <button className="canbtn-editfield" onClick={cancelEditing}>
+                    ยกเลิก
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p>{field?.field_description || "ไม่มีข้อมูล"}</p>
+                  <div>
+                    <button
+                      className="editbtn-editfield"
+                      onClick={() =>
+                        startEditing(
+                          "field_description",
+                          field?.field_description
+                        )
+                      }
+                    >
+                      แก้ไข
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
-          ) : (
-            <>
-              <img
-                src={`${field?.img_field}`}
-                alt="รูปสนามกีฬา"
-                className="preview-container-editfield"
-              />
-              <div className="input-group-editfield">
-                <button
-                  className="editbtn-editfield"
-                  onClick={() => startEditing("img_field", field?.img_field)}
-                >
-                  แก้ไข
-                </button>
-              </div>
-            </>
-          )}
-          <div className="input-group-editfield">
-            <label>เอกสาร (ถ้าแก้ไขเอกสารเดิมจะหาย)</label>
+          </div>
+
+          <div className="input-group-editfield-center">
             {startProcessLoad && (
               <div className="loading-overlay">
                 <div className="loading-spinner"></div>
@@ -1524,7 +1523,7 @@ export default function CheckFieldDetail() {
                   className="editbtn-editfield"
                   onClick={() => startEditing("documents", field.documents)}
                 >
-                  แก้ไข
+                  (ถ้าแก้ไขเอกสารเดิมจะหาย)
                 </button>
               </>
             )}

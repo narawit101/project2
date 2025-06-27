@@ -42,7 +42,6 @@ export default function CheckFieldDetail() {
   const [reviewData, setReviewData] = useState([]);
   const [selectedRating, setSelectedRating] = useState("ทั้งหมด");
   const [currentPage, setCurrentPage] = useState(1);
-  const postPerPage = 5;
 
   useEffect(() => {
     if (isLoading) return;
@@ -175,9 +174,48 @@ export default function CheckFieldDetail() {
     fetchPosts();
   }, [fieldId, router]);
 
+  // useEffect(() => {
+  //   window.scrollTo({ top: 900, behavior: "smooth" });
+  // }, [currentPage]);
+
+  const postPerPage = 5;
+
   const indexOfLast = currentPage * postPerPage;
   const indexOfFirst = indexOfLast - postPerPage;
   const currentPostProfile = postData.slice(indexOfFirst, indexOfLast);
+
+  const totalPages = Math.ceil(postData.length / postPerPage);
+
+  const getPaginationRange = (current, total) => {
+    const delta = 2; // จำนวนหน้าที่แสดงก่อน/หลังหน้าปัจจุบัน
+    const range = [];
+    const rangeWithDots = [];
+    let l;
+
+    for (let i = 1; i <= total; i++) {
+      if (
+        i === 1 ||
+        i === total ||
+        (i >= current - delta && i <= current + delta)
+      ) {
+        range.push(i);
+      }
+    }
+
+    for (let i of range) {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l > 2) {
+          rangeWithDots.push("...");
+        }
+      }
+      rangeWithDots.push(i);
+      l = i;
+    }
+
+    return rangeWithDots;
+  };
 
   useEffect(() => {
     const fetchFacilities = async () => {
@@ -571,6 +609,7 @@ export default function CheckFieldDetail() {
           )}
           {canPost && (
             <Post
+              setCurrentPage={setCurrentPage}
               fieldId={fieldId}
               onPostSuccess={(newPost) => {
                 setPostData((prev) => [newPost, ...prev]);
@@ -768,20 +807,45 @@ export default function CheckFieldDetail() {
               )}
             </div>
           ))}
-          <div className="pagination-post-profile">
-            {Array.from(
-              { length: Math.ceil(postData.length / postPerPage) },
-              (_, i) => (
-                <button
-                  key={i}
-                  className={currentPage === i + 1 ? "active" : ""}
-                  onClick={() => setCurrentPage(i + 1)}
-                >
-                  {i + 1}
-                </button>
-              )
-            )}
-          </div>
+          {totalPages > 1 && (
+            <div className="pagination-container-profile">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                «
+              </button>
+
+              {getPaginationRange(currentPage, totalPages).map((page, index) =>
+                page === "..." ? (
+                  <span key={index} className="pagination-dots-profile">
+                    ...
+                  </span>
+                ) : (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentPage(page)}
+                    className={
+                      page === currentPage ? "active-page-profile" : ""
+                    }
+                  >
+                    {page}
+                  </button>
+                )
+              )}
+
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) =>
+                    prev < totalPages ? prev + 1 : prev
+                  )
+                }
+                disabled={currentPage >= totalPages}
+              >
+                »
+              </button>
+            </div>
+          )}
         </div>
 
         {/* ข้อมูลสนามย่อย (sub_fields) */}

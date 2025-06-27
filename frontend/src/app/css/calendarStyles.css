@@ -12,42 +12,68 @@
   cursor: not-allowed;
 }
 
+.forcast-calendar {
+  text-align: center;
+  position: relative;
+  width: 100%;
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 24px 32px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  color: #333;
+  transition: box-shadow 0.3s ease;
+}
+
+.forcast-calendar .sub-name {
+  margin-bottom: 10px;
+  font-size: 22px;
+  text-align: center;
+  color: #333;
+}
+
+.forcast-calendar .price {
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 20px;
+  text-align: center;
+}
+.forcast-calendar .type {
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 18px;
+  text-align: center;
+}
+
+.select-day {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.select-day p {
+  text-align: center;
+  font-weight: 500;
+  color: #444;
+}
+
+.select-day div {
+  text-align: center;
+  margin-top: 4px;
+  font-size: 14px;
+  color: #999;
+  font-style: italic;
+}
 
 .sub-field-detail-container-calendar {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 80px auto 10px auto;
-  p {
-    color: var(--text-color);
-    display: inline-block;
-    margin-left: 10px;
-  }
-  .sub-name {
-    font-size: 24px;
-  }
-  .price {
-    font-size: 22px;
-  }
-  .type {
-    font-size: 22px;
-  }
+  margin: 10px auto 10px auto;
 }
 
-.select-day {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 10px auto 20px auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  p {
-    color: var(--text-color);
-    font-weight: bold;
-    font-size: 22px;
-  }
-}
 .calendar-container {
   margin: 10px auto 20px auto;
 }
@@ -108,10 +134,14 @@
   font-size: 16px;
 }
 
+.calendar-wrapper {
+  margin-top: 100px;
+}
+
 .react-calendar {
   padding: 20px;
   width: 100%;
-  max-width: 1000px;
+  max-width: 900px;
   margin: 10px auto;
   background-color: #f5f5f5;
   border-radius: 18px;
@@ -123,7 +153,7 @@
   border: none;
   border-radius: 10px;
   font-size: 26px;
-  padding: 18px;
+  padding: 28px;
 }
 
 /* ปรับพื้นหลังและสไตล์ของวันที่อนุญาต */
@@ -136,8 +166,8 @@
 /* เปลี่ยนสีพื้นหลังเมื่อ hover วันที่อนุญาต */
 .react-calendar__tile.allowed-day:hover {
   background-color: #4caf50;
-  color: white; 
-  font-weight: bold; 
+  color: white;
+  font-weight: bold;
 }
 
 /* ปรับขนาดวันที่ที่ถูกเลือก */
@@ -145,7 +175,7 @@
   border-radius: 30px;
   border: none;
   font-weight: bold;
-  background-color: #52ca56; 
+  background-color: #52ca56;
   color: white;
 }
 
@@ -153,11 +183,11 @@
 .react-calendar__tile--now {
   border-radius: 30px;
   background-color: none;
-  border: solid rgba(102, 51, 153, 0.691) 3px;
+  border: solid rgba(0, 0, 0, 0.691) 3px;
   font-weight: bold;
 }
 .react-calendar__tile--now:hover {
-  background-color: #4caf50; 
+  background-color: #4caf50;
   color: white;
   font-weight: bold;
   cursor: pointer;
@@ -173,7 +203,7 @@
 } */
 
 .save-btn-calendar button {
-  width: 40%;
+  width: auto;
   height: 50px;
   text-align: center;
   align-items: center;
@@ -214,13 +244,5 @@
   .react-calendar__tile {
     font-size: 22px;
     padding: 5px;
-  }
-  .sub-field-detail-container-calendar {
-    .detail-calendar{
-      justify-content: left;
-      text-align: left;
-      display: flex;
-      flex-direction: column;
-    }
   }
 }

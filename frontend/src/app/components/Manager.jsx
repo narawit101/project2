@@ -285,7 +285,7 @@ export default function AdminManager() {
     setEmailError("");
   };
 
-  const usersPerPage = 30;
+  const usersPerPage = 20;
 
   const filteredUsers = users.filter((user) => {
     if (roleFilter === "all")
@@ -343,29 +343,115 @@ export default function AdminManager() {
         </div>
       )}
       <div className="admin-manager-container">
-        <h2 className="Title">รายชื่อผู้ใช้งาน</h2>
         <h3 className="Head">ผู้ดูแลระบบ</h3>
         {dataLoading && (
           <div className="loading-data">
             <div className="loading-data-spinner"></div>
           </div>
         )}
-        <table className="manager-table">
-          <thead>
-            <tr>
-              <th>id</th>
-              <th>ชื่อ</th>
-              <th>อีเมล</th>
-              <th>สถานะบัญชี</th>
-              <th>บทบาท</th>
-              <th>แก้ไข</th>
-              <th>จัดการ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users
-              .filter((user) => user.role === "admin")
-              .map((user) => (
+        <div className="table-wrapper">
+          <table className="manager-table">
+            <thead>
+              <tr>
+                <th>id</th>
+                <th>ชื่อ</th>
+                <th>อีเมล</th>
+                <th>สถานะบัญชี</th>
+                <th>บทบาท</th>
+                <th>แก้ไข</th>
+                <th>จัดการ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users
+                .filter((user) => user.role === "admin")
+                .map((user) => (
+                  <tr key={user.user_id}>
+                    <td>{user.user_id}</td>
+                    <td>
+                      {user.first_name} - {user.last_name}
+                    </td>
+                    <td>{user.email}</td>
+                    <td>
+                      <span
+                        className={`status-text-manager ${
+                          user.status === "รอยืนยัน"
+                            ? "pending"
+                            : user.status === "ตรวจสอบแล้ว"
+                            ? "approved"
+                            : "unknown"
+                        }`}
+                      >
+                        {user.status || "ไม่ทราบสถานะ"}
+                      </span>
+                    </td>
+
+                    <td>
+                      {user.role === "customer"
+                        ? "ลูกค้า"
+                        : user.role === "field_owner"
+                        ? "เจ้าของสนาม"
+                        : user.role === "admin"
+                        ? "ผู้ดูแลระบบ"
+                        : user.role}
+                    </td>
+                    <td>
+                      {" "}
+                      <button
+                        className="edit-btn"
+                        onClick={() => setSelectedUser(user)}
+                      >
+                        แก้ไข
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        className="delete-btn"
+                        onClick={() => openDeleteUserModal(user.user_id)}
+                      >
+                        ลบ
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+        {/* ตารางสำหรับลูกค้า */}
+        <h3 className="Head">ผู้ใช้ทั้งหมด</h3>
+        <div className="filter-role-container">
+          <select
+            value={roleFilter}
+            onChange={(e) => {
+              setRoleFilter(e.target.value);
+              setCurrentPage(1);
+            }}
+          >
+            <option value="all">ทั้งหมด</option>
+            <option value="customer">ลูกค้า</option>
+            <option value="field_owner">เจ้าของสนาม</option>
+          </select>
+        </div>
+        {dataLoading && (
+          <div className="loading-data">
+            <div className="loading-data-spinner"></div>
+          </div>
+        )}
+        <div className="table-wrapper">
+          <table className="manager-table-user">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>ชื่อ-สกุล</th>
+                <th>อีเมล</th>
+                <th>สถานะบัญชี</th>
+                <th>บทบาท</th>
+                <th>แก้ไขข้อมูล</th>
+                <th>จัดการ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentUsers.map((user) => (
                 <tr key={user.user_id}>
                   <td>{user.user_id}</td>
                   <td>
@@ -385,18 +471,14 @@ export default function AdminManager() {
                       {user.status || "ไม่ทราบสถานะ"}
                     </span>
                   </td>
-
                   <td>
                     {user.role === "customer"
                       ? "ลูกค้า"
                       : user.role === "field_owner"
                       ? "เจ้าของสนาม"
-                      : user.role === "admin"
-                      ? "ผู้ดูแลระบบ"
                       : user.role}
                   </td>
                   <td>
-                    {" "}
                     <button
                       className="edit-btn"
                       onClick={() => setSelectedUser(user)}
@@ -414,91 +496,9 @@ export default function AdminManager() {
                   </td>
                 </tr>
               ))}
-          </tbody>
-        </table>
-
-        {/* ตารางสำหรับลูกค้า */}
-        <h3 className="Head">ผู้ใช้ทั้งหมด</h3>
-        <div className="filter-role-container">
-          <select
-            value={roleFilter}
-            onChange={(e) => {
-              setRoleFilter(e.target.value);
-              setCurrentPage(1);
-            }}
-          >
-            <option value="all">ทั้งหมด</option>
-            <option value="customer">ลูกค้า</option>
-            <option value="field_owner">เจ้าของสนาม</option>
-          </select>
+            </tbody>
+          </table>
         </div>
-
-        {dataLoading && (
-          <div className="loading-data">
-            <div className="loading-data-spinner"></div>
-          </div>
-        )}
-        <table className="manager-table-user">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>ชื่อ-สกุล</th>
-              <th>อีเมล</th>
-              <th>สถานะบัญชี</th>
-              <th>บทบาท</th>
-              <th>แก้ไขข้อมูล</th>
-              <th>จัดการ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentUsers.map((user) => (
-              <tr key={user.user_id}>
-                <td>{user.user_id}</td>
-                <td>
-                  {user.first_name} - {user.last_name}
-                </td>
-                <td>{user.email}</td>
-                <td>
-                  <span
-                    className={`status-text-manager ${
-                      user.status === "รอยืนยัน"
-                        ? "pending"
-                        : user.status === "ตรวจสอบแล้ว"
-                        ? "approved"
-                        : "unknown"
-                    }`}
-                  >
-                    {user.status || "ไม่ทราบสถานะ"}
-                  </span>
-                </td>
-                <td>
-                  {user.role === "customer"
-                    ? "ลูกค้า"
-                    : user.role === "field_owner"
-                    ? "เจ้าของสนาม"
-                    : user.role}
-                </td>
-                <td>
-                  <button
-                    className="edit-btn"
-                    onClick={() => setSelectedUser(user)}
-                  >
-                    แก้ไข
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className="delete-btn"
-                    onClick={() => openDeleteUserModal(user.user_id)}
-                  >
-                    ลบ
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
         {filteredUsers.length > usersPerPage && (
           <div className="pagination-container-manager">
             <button

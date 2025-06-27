@@ -198,7 +198,7 @@
 }
 
 .pagination-container-stat button:hover {
-  background-color: #ffc107;
+  background: #2778ae;
 }
 
 .pagination-container-stat button:disabled {
@@ -207,7 +207,8 @@
 }
 
 .pagination-container-stat .active-page-stat {
-  background-color: #ffc107;
+  background: #3498db;
+
   color: white;
   font-weight: bold;
 }

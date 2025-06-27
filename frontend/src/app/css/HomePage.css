@@ -108,25 +108,23 @@
 }
 
 .title-notice {
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  width: 50%;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.132);
-  border-radius: 25px;
-  border: none;
-  margin: 0px auto 10px auto;
-  padding: 0.95rem;
+  border-bottom: 3px solid #000000;
+
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
 }
+
 .title-notice h1 {
-  font-size: 35px;
-  font-weight: 500;
-  color: var(--text-color);
+  font-size: 42px;
+  font-weight: 700;
+  color: #333;
 }
+
 .news-section {
-  min-height: 80vh;
+  min-height: 40vh;
   width: 100%;
-  background: rgba(255, 255, 255, 0.822);
+  max-width: 1000px;
+  background: rgba(204, 220, 223, 0.376);
   border-radius: 20px;
   padding: 40px 20px;
   margin-bottom: 30px;
@@ -162,9 +160,10 @@
 }
 
 .section-title-home {
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.132);
+  /* box-shadow: 0 5px 15px rgba(0, 0, 0, 0.132); */
   font-size: 28px;
-  font-weight: 500;
+  font-weight: 600;
+
   color: var(--text-color);
   border-radius: 25px;
   border: none;
@@ -270,57 +269,56 @@
 /* card */
 
 .post-card-home {
-  min-height: 20vh;
-  margin: 20px auto 20px auto;
-  justify-content: center;
-  text-align: center;
-  align-items: center;
-  max-width: 1200px;
-  width: 100%;
-  padding: 20px;
-  border-radius: 8px;
+  position: relative;
   background-color: #fff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  margin: 20px auto;
+  max-width: 900px;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.post-card-home:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
 }
 
 .post-title-home {
-  max-height: 150px;
-  overflow-y: auto;
-  box-sizing: border-box;
-  padding: 10px;
+  font-size: 24px;
+  font-weight: 600;
   color: var(--text-color);
-  text-align: left;
-  justify-content: center;
-  font-size: 22px;
-  font-weight: 500;
-  margin: 10px 0px;
+  margin-bottom: 6px;
 }
 
 .post-text-home {
-  max-height: 150px;
-  overflow-y: auto;
-  box-sizing: border-box;
-  padding: 10px;
-  text-align: left;
-  font-size: 20px;
-  color: #555;
-  margin: 10px auto 20px auto;
+  font-size: 18px;
+  color: #444;
+  line-height: 1.6;
+  overflow: hidden;
+  display: -webkit-box;
 }
 
 .see-more-button-home {
-  color: var(--text-color);
-  font-weight: 400;
-  font-size: 18px;
+  color: #562c75;
+  font-weight: 500;
+  font-size: 16px;
   cursor: pointer;
   margin-left: 4px;
+  text-decoration: underline;
 }
 
 .time-home {
-  margin: 5px 0px 3px 0px;
+  font-size: 14px;
+  color: #999;
   text-align: right;
-  font-size: 1rem;
-  color: #8a8989;
 }
+
 .post-card-home {
   position: relative;
 }
@@ -335,8 +333,9 @@
 .ig-carousel-track-wrapper-home {
   overflow: hidden;
   position: relative;
-  border-radius: 10px;
-  height: 500px;
+  border-radius: 12px;
+  height: 350px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
 .ig-carousel-track-home {
@@ -349,7 +348,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  flex-shrink: 0;
+  border-radius: 12px;
 }
 
 .arrow-btn {
@@ -393,20 +392,19 @@
 }
 
 .view-post-btn-home {
-  background-color: #d0d0d09a;
-  color: #555;
+  align-self: flex-end;
   padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: 500;
+  background-color: #2f2a2a9a;
+  color: #fff;
   border: none;
+  border-radius: 8px;
+  font-size: 16px;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
 }
 
 .view-post-btn-home:hover {
-  transform: scale(1.04);
+  background-color: #4c4444;
 }
 
 .reviwe-container-home {
@@ -824,23 +822,20 @@
   }
 }
 @media screen and (max-width: 500px) {
-  .title-notice h1 {
-    font-size: 20px;
-  }
   .post-title-home {
-    text-align: center;
-    font-size: 18px;
+    /* text-align: center; */
+    font-size: 20px;
   }
   .time-home {
     margin: 5px 0px 3px 0px;
-    text-align: center;
+    /* text-align: center; */
     font-size: 1rem;
   }
   .post-text-home {
-    font-size: 16px;
-    text-align: center;
+    /* font-size: 16px; */
+    /* text-align: center; */
     color: #555;
-    margin: 20px auto 30px auto;
+    /* margin: 20px auto 30px auto; */
   }
 }
 @media screen and (max-width: 489px) {
@@ -870,6 +865,7 @@
     width: 100%;
     margin-top: 10px;
   }
+
   .ig-carousel-track-wrapper-home {
     overflow: hidden;
     position: relative;
@@ -963,7 +959,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    text-align: center;
+    /* text-align: center; */
     align-items: center;
     width: 100%;
     max-width: 280px;

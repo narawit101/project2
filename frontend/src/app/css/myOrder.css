@@ -52,7 +52,7 @@
 .booking-list {
   list-style: none;
   min-height: 500px;
-  background: rgba(255, 255, 255, 0.715);
+  background: rgba(255, 255, 255, 0.442);
   border-radius: 20px;
   margin: 0px auto 10px auto;
   padding: 1.5rem;
@@ -534,7 +534,7 @@
 }
 
 .pagination-container-order button:hover {
-  background-color: #ffc107;
+  background: #2778ae;
 }
 
 .pagination-container-order button:disabled {
@@ -543,7 +543,7 @@
 }
 
 .pagination-container-order .active-page-order {
-  background-color: #ffc107;
+  background: #3498db;
   color: white;
   font-weight: bold;
 }
