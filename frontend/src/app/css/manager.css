@@ -282,6 +282,37 @@
   color: white;
 }
 
+.status-text-manager {
+  font-weight: 500;
+}
+
+.status-text-manager.pending {
+  display: inline-block;
+  color: #856404;
+  background-color: #fff4ce;
+  padding: 2px 6px;
+  border-radius: 30px;
+  font-weight: 500;
+}
+
+.status-text-manager.approved {
+  display: inline-block;
+  color: #155724;
+  background-color: #d4f4dd;
+  padding: 2px 6px;
+  border-radius: 30px;
+  font-weight: 500;
+}
+
+.status-text-manager.unknown {
+  display: inline-block;
+  color: gray;
+  background-color: #dadfdc;
+  padding: 4px 8px;
+  border-radius: 30px;
+  font-weight: 500;
+}
+
 /* /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */
 @media screen and (max-width: 1240px) {
   .admin-manager-container {

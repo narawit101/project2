@@ -372,7 +372,20 @@ export default function AdminManager() {
                     {user.first_name} - {user.last_name}
                   </td>
                   <td>{user.email}</td>
-                  <td>{user.status}</td>
+                  <td>
+                    <span
+                      className={`status-text-manager ${
+                        user.status === "รอยืนยัน"
+                          ? "pending"
+                          : user.status === "ตรวจสอบแล้ว"
+                          ? "approved"
+                          : "unknown"
+                      }`}
+                    >
+                      {user.status || "ไม่ทราบสถานะ"}
+                    </span>
+                  </td>
+
                   <td>
                     {user.role === "customer"
                       ? "ลูกค้า"
@@ -445,7 +458,19 @@ export default function AdminManager() {
                   {user.first_name} - {user.last_name}
                 </td>
                 <td>{user.email}</td>
-                <td>{user.status}</td>
+                <td>
+                  <span
+                    className={`status-text-manager ${
+                      user.status === "รอยืนยัน"
+                        ? "pending"
+                        : user.status === "ตรวจสอบแล้ว"
+                        ? "approved"
+                        : "unknown"
+                    }`}
+                  >
+                    {user.status || "ไม่ทราบสถานะ"}
+                  </span>
+                </td>
                 <td>
                   {user.role === "customer"
                     ? "ลูกค้า"

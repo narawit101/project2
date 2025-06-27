@@ -27,7 +27,7 @@ const storage = new CloudinaryStorage({
         resourceType = "image"; // รูปภาพ - ดูได้ใน Cloudinary
         format = undefined; // ปล่อยให้ Cloudinary optimize
       } else if (file.mimetype === "application/pdf") {
-        resourceType = "raw"; // PDF - แปลงเป็น image เพื่อดู preview ได้
+        resourceType = "raw";
         format = "pdf"; // แปลง PDF page แรกเป็น JPG
       } else {
         resourceType = "raw"; // ไฟล์อื่นๆ เช่น doc, docx
@@ -48,6 +48,7 @@ const storage = new CloudinaryStorage({
     // เพิ่ม format เฉพาะเมื่อจำเป็น
     if (format) {
       config.format = format;
+      console.log(`กำหนด format เป็น: ${format}`);
     }
 
     // เพิ่มการ optimize สำหรับรูปภาพ
@@ -512,7 +513,7 @@ router.put("/:field_id", authMiddleware, async (req, res) => {
       "SELECT * FROM users WHERE user_id = $1",
       [checkField.rows[0].user_id]
     );
-      const userfirstName = userData.rows[0].first_name; // << ใช้ค่านี้ส่งอีเมล
+    const userfirstName = userData.rows[0].first_name; // << ใช้ค่านี้ส่งอีเมล
 
     if (status === "ผ่านการอนุมัติ") {
       const userId = checkField.rows[0].user_id;
@@ -622,8 +623,6 @@ router.put("/:field_id", authMiddleware, async (req, res) => {
     });
   }
 });
-
-
 
 // DELETE ลบสนามหลัก พร้อมลบ sub_field, add_on, โพส, รูป, เอกสาร
 router.delete("/delete/field/:id", authMiddleware, async (req, res) => {
@@ -960,6 +959,7 @@ router.post(
       );
 
       res.json({ message: "อัปโหลดเอกสารสำเร็จ", paths: filePaths });
+      console.log("filepayh",filePaths);
     } catch (error) {
       console.error("Upload document error:", error);
       res
