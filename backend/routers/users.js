@@ -210,10 +210,12 @@ router.post("/reset-password", async (req, res) => {
     </tr>
   </table>
   <h1 style="color: #03045e; margin-bottom: 16px; text-align: center">รีเซ็ตรหัสผ่าน</h1>
-    <h2 style="color: #03045e; margin-bottom: 16px; text-align: center">รหัส OTP ของคุณคือ ${otp}</h2>
+  <h2 style="color: #03045e; margin-bottom: 16px; text-align: center"> OTP ของคุณคือ  <strong style="display: inline-block; font-weight: bold; font-size: 35px; color: #80D8C3;">
+    ${otp}
+  </strong> </h2>
 
   <p style="font-size: 16px; text-align: center; color: #9ca3af;">
-    <strong>   กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ</strong>
+    <strong> กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ</strong>
   </p>
   <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
 
@@ -285,10 +287,12 @@ router.post("/resent-reset-password", async (req, res) => {
     </tr>
   </table>
   <h1 style="color: #03045e; margin-bottom: 16px; text-align: center">รีเซ็ตรหัสผ่าน</h1>
-    <h2 style="color: #03045e; margin-bottom: 16px; text-align: center">รหัส OTP ของคุณคือ ${otp}</h2>
+  <h2 style="color: #03045e; margin-bottom: 16px; text-align: center"> OTP ของคุณคือ  <strong style="display: inline-block; font-weight: bold; font-size: 35px; color: #80D8C3;">
+    ${otp}
+  </strong> </h2>
 
   <p style="font-size: 16px; text-align: center; color: #9ca3af;">
-    <strong>   กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ</strong>
+    <strong> กรุณาใช้รหัสนี้เพื่อรีเซ็ตรหัสผ่านของคุณ</strong>
   </p>
   <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
 
