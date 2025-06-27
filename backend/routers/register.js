@@ -89,10 +89,8 @@ router.post("/", async (req, res) => {
     </tr>
   </table>
   <h1 style="color: #347433; margin-bottom: 16px; text-align: center">ยืนยันการลงทะเบียนบัญชี</h1>
+    <h2 style="color: #347433; margin-bottom: 16px; text-align: center">OTP ของคุณคือ: ${otp}</h2>
 
-  <p style="font-size: 16px; text-align: center; color: #9ca3af;">
-    <strong> OTP ของคุณคือ: ${otp}</strong>
-  </p>
     <p style="font-size: 12px; color: #9ca3af;text-align: center ">
   ใช้ OTP เพื่อยืนยันบัญีของคุณ มีเวลา 5 นาที ในการยืนยัน OTP ถ้าหมดอายุต้องกดขอใหม่
   </p>
@@ -101,7 +99,8 @@ router.post("/", async (req, res) => {
   <p style="font-size: 12px; color: #9ca3af;text-align: center ">
     หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
   </p>
-</div>`,
+</div>
+`,
       });
 
       console.log("อีเมลส่งสำเร็จ:", resultEmail);
@@ -188,7 +187,6 @@ router.put("/new-otp/:user_id", async (req, res) => {
         to: email,
         subject: "ยืนยันการลงทะเบียน",
         html: `
-
 <div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align:center;">
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
@@ -198,10 +196,8 @@ router.put("/new-otp/:user_id", async (req, res) => {
     </tr>
   </table>
   <h1 style="color: #347433; margin-bottom: 16px; text-align: center">ยืนยันการลงทะเบียนบัญชี</h1>
+    <h2 style="color: #347433; margin-bottom: 16px; text-align: center">OTP ของคุณคือ: ${newOtp}</h2>
 
-  <p style="font-size: 16px; text-align: center; color: #9ca3af;">
-    <strong> OTP ของคุณคือ: ${newOtp}</strong>
-  </p>
     <p style="font-size: 12px; color: #9ca3af;text-align: center ">
   ใช้ OTP เพื่อยืนยันบัญีของคุณ มีเวลา 5 นาที ในการยืนยัน OTP ถ้าหมดอายุต้องกดขอใหม่
   </p>

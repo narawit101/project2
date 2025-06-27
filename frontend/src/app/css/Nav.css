@@ -352,7 +352,6 @@ nav ul li a.active {
   }
 
   .search-button {
-    background-color: #023e8a;
     color: white;
     border: none;
     border-radius: 50%;
@@ -361,11 +360,6 @@ nav ul li a.active {
     font-size: 18px;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.3s ease;
-  }
-
-  .search-button:hover {
-    background-color: #0056b3;
-    transform: scale(1.1);
   }
 
   .search-box {
@@ -559,7 +553,6 @@ nav ul li a.active {
   }
 
   .search-button {
-    background-color: #023e8a;
     color: white;
     border: none;
     border-radius: 50%;
@@ -568,11 +561,6 @@ nav ul li a.active {
     font-size: 18px;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.3s ease;
-  }
-
-  .search-button:hover {
-    background-color: #0056b3;
-    transform: scale(1.1);
   }
 
   .search-box {
