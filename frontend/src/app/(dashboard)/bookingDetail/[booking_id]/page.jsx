@@ -768,146 +768,150 @@ export default function BookingDetail() {
               startDate.setHours(0, 0, 0, 0);
 
               if (startDate >= today) {
-                return (
-                  <div className="deposit-slip-container-order-detail">
-                    {/*กรณีมี deposit_slip */}
-                    {booking.deposit_slip || booking.total_slip ? (
-                      <div>
-                        {booking.deposit_slip ? (
-                          <>
-                            <strong>สลิปมัดจำ</strong>
-                            <img
-                              src={`${booking.deposit_slip}`}
-                              alt="สลิปมัดจำ"
-                              className="deposit-slip-order-detail"
-                            />
-                          </>
-                        ) : (
-                          <p>ไม่มีสลิปมัดจำ</p>
-                        )}
-
-                        {booking.total_slip ? (
-                          <div>
-                            <strong>สลิปยอดที่โอนส่วนที่เหลือ</strong>
-                            <img
-                              src={`${booking.total_slip}`}
-                              alt="สลิปยอดคคงเหลือ"
-                              className="deposit-slip-order-detail"
-                            />
-                          </div>
-                        ) : (
-                          booking?.user_id === user?.user_id && (
-                            <div>
-                              <label className="file-label-order-detail">
-                                <input
-                                  type="file"
-                                  onChange={handleTotalSlip}
-                                  accept="image/*"
-                                  className="file-input-hidden-order-detail"
-                                />
-                                อัปโหลดสลิปยอดทั้งหมด
-                              </label>
-                              {imgPreviewTotal && (
-                                <div className="preview-container-order-detail">
-                                  <img
-                                    src={imgPreviewTotal}
-                                    alt="preview"
-                                    className="deposit-slip-order-detail"
-                                  />
-                                </div>
-                              )}
-                              <div className="confirm-upload-slip">
-                                <button onClick={uploadTotalSlip}>
-                                  อัพโหลด
-                                </button>
-                              </div>
-                            </div>
-                          )
-                        )}
-                      </div>
-                    ) : booking?.price_deposit !== 0 ? (
-                      booking?.user_id === user?.user_id ? (
+                if (booking?.status === "approved") {
+                  return (
+                    <div className="deposit-slip-container-order-detail">
+                      {/*กรณีมี deposit_slip */}
+                      {booking.deposit_slip || booking.total_slip ? (
                         <div>
-                          <p className="no-slip-message">
-                            ยังไม่ได้อัปโหลดสลิปมัดจำ
-                          </p>
-                          <p>จ่ายมัดจำ</p>
-                          <label className="file-label-order-detail">
-                            <input
-                              type="file"
-                              onChange={handleDepositSlip}
-                              accept="image/*"
-                              className="file-input-hidden-order-detail"
-                            />
-                            อัปโหลดสลิปมัดจำ
-                          </label>
-                          {imgPreviewDeposit && (
-                            <div className="preview-container-order-detail">
+                          {booking.deposit_slip ? (
+                            <>
+                              <strong>สลิปมัดจำ</strong>
                               <img
-                                src={imgPreviewDeposit}
-                                alt="preview"
+                                src={`${booking.deposit_slip}`}
+                                alt="สลิปมัดจำ"
+                                className="deposit-slip-order-detail"
+                              />
+                            </>
+                          ) : (
+                            <p>ไม่มีสลิปมัดจำ</p>
+                          )}
+
+                          {booking.total_slip ? (
+                            <div>
+                              <strong>สลิปยอดที่โอนส่วนที่เหลือ</strong>
+                              <img
+                                src={`${booking.total_slip}`}
+                                alt="สลิปยอดคคงเหลือ"
                                 className="deposit-slip-order-detail"
                               />
                             </div>
+                          ) : (
+                            booking?.user_id === user?.user_id && booking?.pay_method != "เงินสด" &&(
+                              <div>
+                                <label className="file-label-order-detail">
+                                  <input
+                                    type="file"
+                                    onChange={handleTotalSlip}
+                                    accept="image/*"
+                                    className="file-input-hidden-order-detail"
+                                  />
+                                  อัปโหลดสลิปยอดทั้งหมด
+                                </label>
+                                {imgPreviewTotal && (
+                                  <div className="preview-container-order-detail">
+                                    <img
+                                      src={imgPreviewTotal}
+                                      alt="preview"
+                                      className="deposit-slip-order-detail"
+                                    />
+                                  </div>
+                                )}
+                                <div className="confirm-upload-slip">
+                                  <button onClick={uploadTotalSlip}>
+                                    อัพโหลด
+                                  </button>
+                                </div>
+                              </div>
+                            )
                           )}
-                          {/* <div className="total-remaining-detail">
+                        </div>
+                      ) : booking?.price_deposit !== 0 ? (
+                        booking?.user_id === user?.user_id ? (
+                          <div>
+                            <p className="no-slip-message">
+                              ยังไม่ได้อัปโหลดสลิปมัดจำ
+                            </p>
+                            <p>จ่ายมัดจำ</p>
+                            <label className="file-label-order-detail">
+                              <input
+                                type="file"
+                                onChange={handleDepositSlip}
+                                accept="image/*"
+                                className="file-input-hidden-order-detail"
+                              />
+                              อัปโหลดสลิปมัดจำ
+                            </label>
+                            {imgPreviewDeposit && (
+                              <div className="preview-container-order-detail">
+                                <img
+                                  src={imgPreviewDeposit}
+                                  alt="preview"
+                                  className="deposit-slip-order-detail"
+                                />
+                              </div>
+                            )}
+                            {/* <div className="total-remaining-detail">
                             <p>
                               <strong>ราคาสุทธิ:</strong> {booking.total_price}{" "}
                               บาท
                             </p>
                           </div> */}
-                          <p>
-                            <strong>ชื่อเจ้าของบัญชี</strong>{" "}
-                            {booking.account_holder}
+                            <p>
+                              <strong>ชื่อเจ้าของบัญชี</strong>{" "}
+                              {booking.account_holder}
+                            </p>
+                            <p>
+                              <strong>ชื่อธนาคาร</strong> {booking.name_bank}
+                            </p>
+                            <p>
+                              <strong>เลขบัญชี</strong> {booking.number_bank}
+                            </p>
+                            {canUploadslip && (
+                              <div className="confirm-upload-slip">
+                                <button onClick={uploadSlip}>อัพโหลด</button>
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="no-slip-message">
+                            ยังไม่ได้อัปโหลดสลิป
                           </p>
-                          <p>
-                            <strong>ชื่อธนาคาร</strong> {booking.name_bank}
-                          </p>
-                          <p>
-                            <strong>เลขบัญชี</strong> {booking.number_bank}
-                          </p>
+                        )
+                      ) : booking.pay_method === "โอนจ่าย" &&
+                        booking.total_price > 0 &&
+                        booking.user_id === user?.user_id ? (
+                        <div>
+                          <label className="file-label-order-detail">
+                            <input
+                              type="file"
+                              onChange={handleTotalSlip}
+                              accept="image/*"
+                              className="file-input-hidden-order-detail"
+                            />
+                            อัปโหลดสลิปยอดทั้งหมด
+                          </label>
+                          {imgPreviewTotal && (
+                            <div className="preview-container-order-detail">
+                              <img
+                                src={imgPreviewTotal}
+                                alt="preview"
+                                className="deposit-slip-order-detail"
+                              />
+                            </div>
+                          )}
                           {canUploadslip && (
                             <div className="confirm-upload-slip">
-                              <button onClick={uploadSlip}>อัพโหลด</button>
+                              <button onClick={uploadTotalSlip}>อัพโหลด</button>
                             </div>
                           )}
                         </div>
                       ) : (
-                        <p className="no-slip-message">ยังไม่ได้อัปโหลดสลิป</p>
-                      )
-                    ) : booking.pay_method === "โอนจ่าย" &&
-                      booking.total_price > 0 &&
-                      booking.user_id === user?.user_id ? (
-                      <div>
-                        <label className="file-label-order-detail">
-                          <input
-                            type="file"
-                            onChange={handleTotalSlip}
-                            accept="image/*"
-                            className="file-input-hidden-order-detail"
-                          />
-                          อัปโหลดสลิปยอดทั้งหมด
-                        </label>
-                        {imgPreviewTotal && (
-                          <div className="preview-container-order-detail">
-                            <img
-                              src={imgPreviewTotal}
-                              alt="preview"
-                              className="deposit-slip-order-detail"
-                            />
-                          </div>
-                        )}
-                        {canUploadslip && (
-                          <div className="confirm-upload-slip">
-                            <button onClick={uploadTotalSlip}>อัพโหลด</button>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <p className="no-slip-message">ไม่ต้องจ่ายค่ามัดจำ</p>
-                    )}
-                  </div>
-                );
+                        <p className="no-slip-message">ไม่ต้องจ่ายค่ามัดจำ</p>
+                      )}
+                    </div>
+                  );
+                }
               }
 
               return null;
