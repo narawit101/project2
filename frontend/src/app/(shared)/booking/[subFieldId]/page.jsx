@@ -529,31 +529,31 @@ export default function Booking() {
     setPayMethod(e.target.value);
   };
 
-  const MAX_FILE_SIZE = 5 * 1024 * 1024;
-  const handleimgChange = (e) => {
-    const file = e.target.files[0];
+  // const MAX_FILE_SIZE = 5 * 1024 * 1024;
+  // const handleimgChange = (e) => {
+  //   const file = e.target.files[0];
 
-    // ตรวจสอบขนาดไฟล์
-    if (file.size > MAX_FILE_SIZE) {
-      setMessage("ไฟล์รูปภาพมีขนาดใหญ่เกินไป (สูงสุด 5MB)");
-      setMessageType("error");
-      e.target.value = null;
-      return;
-    }
+  //   // ตรวจสอบขนาดไฟล์
+  //   if (file.size > MAX_FILE_SIZE) {
+  //     setMessage("ไฟล์รูปภาพมีขนาดใหญ่เกินไป (สูงสุด 5MB)");
+  //     setMessageType("error");
+  //     e.target.value = null;
+  //     return;
+  //   }
 
-    // ตรวจสอบว่าไฟล์ที่เลือกเป็นรูปภาพหรือไม่
-    if (file) {
-      if (file.type.startsWith("image/")) {
-        // ถ้าเป็นไฟล์รูปภาพ, เก็บข้อมูลลงในสถานะ
-        setDepositSlip(file);
-        setImgPreview(URL.createObjectURL(file)); // สร้าง URL สำหรับแสดงตัวอย่าง
-      } else {
-        e.target.value = null;
-        setMessage("โปรดเลือกเฉพาะไฟล์รูปภาพเท่านั้น");
-        setMessageType("error");
-      }
-    }
-  };
+  //   // ตรวจสอบว่าไฟล์ที่เลือกเป็นรูปภาพหรือไม่
+  //   if (file) {
+  //     if (file.type.startsWith("image/")) {
+  //       // ถ้าเป็นไฟล์รูปภาพ, เก็บข้อมูลลงในสถานะ
+  //       setDepositSlip(file);
+  //       setImgPreview(URL.createObjectURL(file)); // สร้าง URL สำหรับแสดงตัวอย่าง
+  //     } else {
+  //       e.target.value = null;
+  //       setMessage("โปรดเลือกเฉพาะไฟล์รูปภาพเท่านั้น");
+  //       setMessageType("error");
+  //     }
+  //   }
+  // };
 
   function isPastSlot(slot) {
     const [startTime] = slot.split(" - ");
@@ -1110,7 +1110,7 @@ export default function Booking() {
                   </div>
                 )}
               </div>
-              <div className="book-owner-info">
+              {/* <div className="book-owner-info">
                 <h2 className="payment-book">การชำระเงิน</h2>
                 <strong>ธนาคาร: {nameBank}</strong>
                 <strong>
@@ -1137,24 +1137,7 @@ export default function Booking() {
                     </div>
                   )}
                 </div>
-                {/* <div className="file-container-book">
-                  <label className="file-label-book">
-                    <input
-                      type="file"
-                      onChange={handleimgChange}
-                      accept="image/*"
-                      className="file-input-hidden-book"
-                    />
-                    เลือกรูปภาพยอดคงเหลือ
-                  </label>
-                  {imgPreview && (
-                    <div className="preview-container">
-                      <p>ตัวอย่างรูป:</p>
-                      <img src={imgPreview} alt="Preview" />
-                    </div>
-                  )}
-                </div> */}
-              </div>
+              </div> */}
               <div className={`total-box ${canBook ? "show" : ""}`}>
                 <div className="summary">
                   <strong className="price-deposit">
