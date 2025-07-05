@@ -1,4 +1,5 @@
 import "@/app/css/RateLimited.css";
+import Link from "next/link";
 export default function RateLimitedPage() {
   return (
     <div className="rate-limited-container">
@@ -10,7 +11,7 @@ export default function RateLimitedPage() {
       />
       <h1>คุณส่งคำขอจำนวนมากเกินไปในระยะเวลาที่กำหนด</h1>
       <p>กรุณารอสักครู่แล้วลองใหม่อีกครั้ง</p>
-      <a href="http:/">กลับไปหน้าหลัก</a>
+      <Link href="http:/">กลับไปหน้าหลัก</Link>
     </div>
   );
 }
