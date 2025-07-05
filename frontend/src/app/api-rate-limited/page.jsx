@@ -11,7 +11,9 @@ export default function RateLimitedPage() {
       />
       <h1>คุณส่งคำขอจำนวนมากเกินไปในระยะเวลาที่กำหนด</h1>
       <p>กรุณารอสักครู่แล้วลองใหม่อีกครั้ง</p>
-      <Link href="http:/">กลับไปหน้าหลัก</Link>
+      <Link href="/" legacyBehavior>
+        <a>← กลับไปหน้าหลัก</a>
+      </Link>
     </div>
   );
 }
