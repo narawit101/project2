@@ -1,0 +1,41 @@
+.rate-limited-container {
+  position: fixed; /* ติดหน้าจอ ไม่เลื่อนตาม scroll */
+  top: 0;
+  left: 0;
+  width: 100vw; /* เต็มความกว้าง viewport */
+  height: 100vh; /* เต็มความสูง viewport */
+  padding: 2rem;
+  border: none; /* ปิดเส้นขอบถ้าต้องการ */
+  border-radius: 0;
+  background-color: rgb(254, 226, 226); /* สีพื้นใสๆ สีแดงอ่อน */
+  color: #b91c1c;
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.3);
+  text-align: center;
+  z-index: 9999; /* ต้องมากกว่า navbar, modal อื่นๆ */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  user-select: none; /* ปิดการเลือกข้อความ */
+  pointer-events: auto; /* เปิด interaction กับ overlay นี้ */
+}
+
+/* ปรับข้อความให้ใหญ่ขึ้น */
+.rate-limited-container h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.rate-limited-container p {
+  font-size: 1.25rem;
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+.rate-limited-container a {
+  color: #7f2727;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}

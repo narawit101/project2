@@ -100,6 +100,22 @@
   text-align: left;
 }
 
+.exapmle-gps a {
+  display: inline-block;
+  margin: 6px 0;
+  font-size: 16px;
+  color: #1a73e8; /* สีฟ้าแบบ Google */
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+  border-bottom: 1px dashed transparent;
+}
+
+.exapmle-gps a:hover {
+  color: #0b5ed7; /* สี hover */
+  border-bottom: 1px dashed #0b5ed7;
+  transform: translateX(2px);
+}
+
 .preview-container-regis-field {
   margin: 0px auto 25px auto;
   text-align: center;
@@ -175,14 +191,14 @@
   background: #21cd49;
 }
 .delbtn-regisfield {
-  background-color: red;
+  background-color: #dc3545;
   margin: 0px 0px 10px 10px;
 }
 .delbtn-regisfield:hover {
   background-color: rgba(255, 0, 0, 0.774);
 }
 .delevn {
-  background-color: red;
+  background-color: #dc3545;
   margin: 0px 0px 10px 0px;
 }
 .delevn:hover {
@@ -210,7 +226,7 @@
   background: #21cd49;
 }
 .canbtn-regisfield {
-  background-color: red;
+  background-color: #dc3545;
   margin: 10px 0px 20px 10px;
 }
 .canbtn-regisfield:hover {

@@ -195,7 +195,7 @@ export default function HomePage() {
                     {post.images.map((_, dotIdx) => (
                       <span
                         key={dotIdx}
-                        className={`dot ${
+                        className={`dot-home ${
                           (imageIndexes[post.post_id] || 0) === dotIdx
                             ? "active-home"
                             : ""

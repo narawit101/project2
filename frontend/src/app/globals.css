@@ -178,7 +178,7 @@ footer {
   align-items: center;
   gap: 12px;
   z-index: 10000;
-  animation: fadeIn 0.4s ease-out;
+  animation: fadeIn-message 0.4s ease-out;
 }
 
 .message-box i {
@@ -210,13 +210,50 @@ footer {
   line-height: 1.4;
 }
 
-@keyframes fadeIn {
+@keyframes fadeIn-message {
   from {
     opacity: 0;
-   transform: translateX(-50%) translateY(-20px); 
+    transform: translateX(-50%) translateY(-20px);
   }
   to {
     opacity: 1;
-        transform: translateX(-50%) translateY(0);
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.dot-loading {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px; /* ระยะห่างจุด */
+  height: 1em;
+}
+
+.dot {
+  font-size: 1.2em;
+  line-height: 0.4;
+  animation: blink 1.4s infinite;
+}
+
+.dot:nth-child(1) {
+  animation-delay: 0s;
+}
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0%,
+  80%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.9);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.2);
   }
 }

@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import "@/app/css/resetPassword.css";
 import Link from "next/link";
+import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function ResetPassword() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -17,6 +18,7 @@ export default function ResetPassword() {
   const [timer, setTimer] = useState(60); // เริ่มต้นจาก 60 วินาที
   const [canRequestOTP, setCanRequestOTP] = useState(true); // ใช้สำหรับการอนุญาตให้ผู้ใช้ขอ OTP ใหม่
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  usePreventLeave(startProcessLoad);
 
   useEffect(() => {
     const expiresAt = sessionStorage.getItem("expiresAt");
@@ -209,7 +211,15 @@ export default function ResetPassword() {
                   }}
                   disabled={startProcessLoad}
                 >
-                  ยืนยัน
+                  {startProcessLoad ? (
+                    <span className="dot-loading">
+                      <span className="dot one">●</span>
+                      <span className="dot two">●</span>
+                      <span className="dot three">●</span>
+                    </span>
+                  ) : (
+                    "ยืนยัน "
+                  )}
                 </button>
               </div>
             )}
@@ -261,7 +271,15 @@ export default function ResetPassword() {
               disabled={startProcessLoad}
               onClick={verifyOTP}
             >
-              ยืนยัน OTP
+              {startProcessLoad ? (
+                <span className="dot-loading">
+                  <span className="dot one">●</span>
+                  <span className="dot two">●</span>
+                  <span className="dot three">●</span>
+                </span>
+              ) : (
+                "ยืนยัน OTP"
+              )}
             </button>
           </div>
         )}
@@ -269,11 +287,6 @@ export default function ResetPassword() {
         <Link href="/login" className="login-reset-password">
           กลับหน้า Login
         </Link>
-        {startProcessLoad && (
-          <div className="loading-overlay">
-            <div className="loading-spinner"></div>
-          </div>
-        )}
       </div>
     </div>
   );

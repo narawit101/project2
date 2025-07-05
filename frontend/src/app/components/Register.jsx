@@ -4,10 +4,12 @@ import React, { useState, useEffect } from "react";
 import "@/app/css/register.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import Link from "next/link";
+import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function Register() {
   const { user, isLoading } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  usePreventLeave(startProcessLoad);
 
   useEffect(() => {
     if (isLoading) return;
@@ -85,7 +87,8 @@ export default function Register() {
       if (!allowDomain.some((domain) => value.endsWith(domain))) {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          email: "*โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmail.com, @rmuti.ac.th",
+          email:
+            "*โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmail.com, @rmuti.ac.th",
         }));
       } else {
         setErrors((prevErrors) => ({
@@ -166,7 +169,8 @@ export default function Register() {
     // ตรวจสอบอีเมลและชื่อผู้ใช้
     const allowDomain = ["@gmail.com", "@hotmail.com", "@rmuti.ac.th"];
     if (!allowDomain.some((domain) => formData.email.endsWith(domain))) {
-      newErrors.email = "*โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmail.com, @rmuti.ac.th";
+      newErrors.email =
+        "*โดเมนที่ใช้ได้ ได้แก่ @gmail.com, @hotmail.com, @rmuti.ac.th";
     }
 
     if (!newErrors.user_name && !newErrors.email) {
@@ -379,13 +383,16 @@ export default function Register() {
           disabled={startProcessLoad}
           type="submit"
         >
-          ลงทะเบียน
+          {startProcessLoad ? (
+            <span className="dot-loading">
+              <span className="dot one">●</span>
+              <span className="dot two">●</span>
+              <span className="dot three">●</span>
+            </span>
+          ) : (
+            "ลงทะเบียน"
+          )}
         </button>
-        {startProcessLoad && (
-          <div className="loading-overlay">
-            <div className="loading-spinner"></div>
-          </div>
-        )}
         {successMessage && (
           <div className="success-message">
             <i className="fas fa-check-circle"></i> {successMessage}

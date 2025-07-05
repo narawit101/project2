@@ -119,7 +119,6 @@
 }
 
 .login-title a:hover {
-  background-color: var(--text-color);
-  color: white;
+  background-color: #cdcccc;
   cursor: pointer;
 }

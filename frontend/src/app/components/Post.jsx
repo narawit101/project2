@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import "@/app/css/postField.css";
+import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
-const CreatePost = ({ fieldId, onPostSuccess,setCurrentPage }) => {
+const CreatePost = ({ fieldId, onPostSuccess, setCurrentPage }) => {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -12,6 +13,7 @@ const CreatePost = ({ fieldId, onPostSuccess,setCurrentPage }) => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  usePreventLeave(startProcessLoad); 
 
   const MAX_FILE_SIZE = 8 * 1024 * 1024;
   const MAX_FILES = 10;
@@ -215,7 +217,15 @@ const CreatePost = ({ fieldId, onPostSuccess,setCurrentPage }) => {
               disabled={startProcessLoad}
               className="submit-btn-post"
             >
-              สร้างโพส
+              {startProcessLoad ? (
+                <span className="dot-loading">
+                  <span className="dot one">●</span>
+                  <span className="dot two">●</span>
+                  <span className="dot three">● </span>
+                </span>
+              ) : (
+                "สร้างโพสต์"
+              )}
             </button>
             <button
               type="button"
@@ -224,15 +234,15 @@ const CreatePost = ({ fieldId, onPostSuccess,setCurrentPage }) => {
                 cursor: startProcessLoad ? "not-allowed" : "pointer",
               }}
               disabled={startProcessLoad}
-              onClick={() => setShowPostForm(false)}
+              onClick={() => {
+                setShowPostForm(false);
+                setTitle("");
+                setContent("");
+                setImages([]);
+              }}
             >
               ยกเลิก
             </button>
-            {startProcessLoad && (
-              <div className="loading-overlay">
-                <div className="loading-spinner"></div>
-              </div>
-            )}
           </form>
         )}
       </div>

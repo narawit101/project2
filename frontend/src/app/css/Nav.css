@@ -36,7 +36,7 @@ nav {
 .ullist {
   justify-content: center;
   align-items: center;
-  margin: 100px 100px 100px 180px;
+  margin: 100px 100px 100px 100px;
 }
 
 .logo {
@@ -184,7 +184,7 @@ nav ul li a.active {
   position: absolute;
   top: 100%;
   margin-top: 5px;
-  transform: translateX(-45%);
+  transform: translateX(-50%);
   background: white;
   border-radius: 18px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -281,7 +281,7 @@ nav ul li a.active {
   .ullist {
     justify-content: center;
     align-items: center;
-    margin: 100px 30px 100px 120px;
+    /* margin: 100px 30px 100px 120px; */
   }
 
   .logo {
@@ -483,7 +483,7 @@ nav ul li a.active {
   .ullist {
     justify-content: center;
     align-items: center;
-    margin: 100px 100px 100px 120px;
+    /* margin: 100px 100px 100px 120px; */
   }
 
   .logo {
@@ -707,7 +707,7 @@ nav ul li a.active {
     display: flex;
     flex-direction: column;
     cursor: pointer;
-    margin-left: 29px;
+    /* margin-left: 29px; */
   }
 
   .bar {
@@ -831,7 +831,7 @@ nav ul li a.active {
     display: flex;
     flex-direction: column;
     cursor: pointer;
-    margin-left: 50px;
+    /* margin-left: 50px; */
   }
 
   .bar {
@@ -889,7 +889,7 @@ nav ul li a.active {
     display: flex;
     flex-direction: column;
     cursor: pointer;
-    margin-left: 50px;
+    /* margin-left: 50px; */
   }
 
   .bar {
@@ -962,7 +962,7 @@ nav ul li a.active {
     display: flex;
     flex-direction: column;
     cursor: pointer;
-    margin-left: 50px;
+    /* margin-left: 50px; */
   }
 
   .bar {
@@ -1020,7 +1020,7 @@ nav ul li a.active {
     display: flex;
     flex-direction: column;
     cursor: pointer;
-    margin-right: 50px;
+    /* margin-right: 50px; */
   }
 
   .bar {

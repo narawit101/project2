@@ -16,13 +16,12 @@
   text-align: center;
   font-size: 1.8rem;
   margin-bottom: 2rem;
-  color: var(--text-color);
+
 }
 
 .order-detail-empty {
   font-size: 1.3rem;
   margin-bottom: 1.5rem;
-  color: var(--text-color);
   text-align: center;
   margin-top: 300px;
   /* align-items: center; */
@@ -32,7 +31,7 @@
 
 .booking-card-order-detail {
   list-style-type: none;
-  padding: 1.2rem;
+  padding: 0px 35px;
   /* border: 1px solid #ddd; */
   border-radius: 12px;
   /* background-color: #fafafa; */
@@ -44,12 +43,6 @@
   margin: 0.6rem 0;
   font-size: 1.2rem;
   line-height: 1.6;
-  color: #333;
-}
-.booking-card-order-detail p {
-  color: var(--text-color);
-}
-.booking-card-order-detail strong {
   color: #333;
 }
 
@@ -66,7 +59,7 @@
 .cancel-booking-btn-order-detail {
   width: 200px;
   padding: 0.6rem 1.2rem;
-  border-radius: 4px;
+  border-radius: 12px;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
@@ -80,7 +73,7 @@
   margin: 10px auto;
   width: 200px;
   padding: 0.6rem 1.2rem;
-  border-radius: 4px;
+  border-radius: 12px;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
@@ -121,7 +114,7 @@
   width: 100%;
   padding: 10px;
   margin-top: 10px;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid #ccc;
   resize: vertical;
   font-size: 15px;
@@ -138,7 +131,7 @@
 .review-cancel-btn {
   padding: 8px 16px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 14px;
 }
@@ -150,7 +143,7 @@
   justify-content: center;
   padding: 8px 16px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 14px;
   background-color: #e0e0e0;
@@ -183,7 +176,7 @@
   margin-top: 20px;
   background-color: #f9f9f9;
   padding: 16px;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid #ddd;
 }
 
@@ -333,7 +326,6 @@
   margin-bottom: 6px;
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-color);
 }
 
 .line-item-hours-detail.cancel-info {
@@ -343,7 +335,7 @@
   font-weight: 600;
 }
 
-.line-item-hours-detail.cancel-info span:last-child{
+.line-item-hours-detail.cancel-info span:last-child {
   font-size: 1rem;
   color: #d84315;
   font-weight: 600;
@@ -356,7 +348,6 @@
   max-width: 60%;
   font-weight: 600;
 }
-
 
 .divider-hours-detail {
   border: none;
@@ -382,15 +373,14 @@
 }
 
 .booking-detail-box ul.facility-list-detail {
-  list-style: none;
   padding-left: 1rem;
-  margin: 0.5rem 0;
+  margin: 0.5rem 50px;
 }
 
 .booking-detail-box ul.facility-list-detail li {
-  display: flex;
+  /* display: flex; */
   justify-content: space-between;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .line-item-detail.plus span:last-child {
@@ -422,7 +412,6 @@
 .all-price-detail {
   font-weight: 600;
   font-size: 1rem;
-  color: var(--text-color);
 }
 
 .line-item-detail.highlight span:last-child {
@@ -444,7 +433,7 @@
 .deposit-slip-order-detail {
   display: block;
   max-width: 100%;
-  width: auto;
+  width: 400px;
   height: auto;
   margin: 1rem auto;
   margin-bottom: 1rem;
@@ -491,6 +480,7 @@
 }
 
 .file-label-order-detail {
+  width: auto;
   display: inline-block;
   padding: 8px 16px;
   color: #000;
@@ -530,15 +520,51 @@
 }
 
 .confirm-upload-slip button {
-  width: 80%;
+  width: auto;
   background-color: #28a745;
   color: white;
   padding: 8px 16px;
   font-size: 16px;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
+
+.create-qr-slip {
+  margin-top: 10px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.create-qr-slip button {
+  width: auto;
+  background-color: var(--text-color);
+  color: white;
+  padding: 8px 16px;
+  font-size: 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.qr-code-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+}
+
+.qr-code-container span {
+  color: var(--text-color);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.qr-code-detail {
+  display: flex;
+  margin: 10px auto;
 }
 
 .confirm-upload-slip button:hover {
@@ -576,6 +602,7 @@
 
 /* พื้นหลังเทาโปร่ง */
 .modal-overlay-order-detail {
+  backdrop-filter: blur(3px);
   position: fixed;
   top: 0;
   left: 0;
@@ -647,7 +674,6 @@
 .modal-cancel-btn-order-detail:hover {
   background-color: #c82333;
 }
-
 
 @media (max-width: 600px) {
   .order-detail {

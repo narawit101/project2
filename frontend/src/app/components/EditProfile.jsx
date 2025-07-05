@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import "@/app/css/editProfile.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import Link from "next/link";
+import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function EditProfile() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -19,6 +20,7 @@ export default function EditProfile() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  usePreventLeave(startProcessLoad);
 
   useEffect(() => {
     if (isLoading) return;
@@ -183,17 +185,20 @@ export default function EditProfile() {
             }}
             disabled={startProcessLoad}
           >
-            บันทึก
+            {startProcessLoad ? (
+              <span className="dot-loading">
+                <span className="dot one">●</span>
+                <span className="dot two">●</span>
+                <span className="dot three">●</span>
+              </span>
+            ) : (
+              "บันทึก"
+            )}
           </button>
           <label className="edit-profile-title">เปลี่ยนรหัสผ่าน</label>
           <Link href="/change-password" className="change-password-link">
             เปลี่ยนรหัสผ่าน
           </Link>
-          {startProcessLoad && (
-            <div className="loading-overlay">
-              <div className="loading-spinner"></div>
-            </div>
-          )}
         </form>
       </div>
     </>

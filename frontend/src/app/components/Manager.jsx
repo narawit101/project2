@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import "@/app/css/manager.css";
 import { useAuth } from "@/app/contexts/AuthContext";
-import { data } from "autoprefixer";
+import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function AdminManager() {
   const [allowFields, setAllowFields] = useState([]);
@@ -24,6 +24,7 @@ export default function AdminManager() {
   const [dataLoading, setDataLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [roleFilter, setRoleFilter] = useState("all");
+  usePreventLeave(startProcessLoad);
 
   useEffect(() => {
     if (isLoading) return;
@@ -127,7 +128,15 @@ export default function AdminManager() {
             disabled={startProcessLoad}
             onClick={() => onDelete(userId)}
           >
-            ยืนยัน
+            {startProcessLoad ? (
+              <span className="dot-loading">
+                <span className="dot one">●</span>
+                <span className="dot two">●</span>
+                <span className="dot three">●</span>
+              </span>
+            ) : (
+              "บันทึก"
+            )}
           </button>
           <button
             className="cancelbtn-user"
@@ -139,11 +148,6 @@ export default function AdminManager() {
           >
             ยกเลิก
           </button>
-          {startProcessLoad && (
-            <div className="loading-overlay">
-              <div className="loading-spinner"></div>
-            </div>
-          )}
         </div>
       </div>
     </div>
@@ -238,10 +242,10 @@ export default function AdminManager() {
 
     e.preventDefault();
 
-    if (isEmailDuplicate(selectedUser.email)) {
-      setEmailError("อีเมลนี้มีการใช้งานแล้ว");
-      return;
-    }
+    // if (isEmailDuplicate(selectedUser.email)) {
+    //   setEmailError("อีเมลนี้มีการใช้งานแล้ว");
+    //   return;
+    // }
     SetstartProcessLoad(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 200));
@@ -418,20 +422,23 @@ export default function AdminManager() {
           </table>
         </div>
         {/* ตารางสำหรับลูกค้า */}
-        <h3 className="Head">ผู้ใช้ทั้งหมด</h3>
-        <div className="filter-role-container">
-          <select
-            value={roleFilter}
-            onChange={(e) => {
-              setRoleFilter(e.target.value);
-              setCurrentPage(1);
-            }}
-          >
-            <option value="all">ทั้งหมด</option>
-            <option value="customer">ลูกค้า</option>
-            <option value="field_owner">เจ้าของสนาม</option>
-          </select>
+        <div className="head-select-manager">
+          <h3 className="Head">ผู้ใช้ทั้งหมด</h3>
+          <div className="filter-role-container">
+            <select
+              value={roleFilter}
+              onChange={(e) => {
+                setRoleFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+            >
+              <option value="all">ทั้งหมด</option>
+              <option value="customer">ลูกค้า</option>
+              <option value="field_owner">เจ้าของสนาม</option>
+            </select>
+          </div>
         </div>
+
         {dataLoading && (
           <div className="loading-data">
             <div className="loading-data-spinner"></div>
@@ -620,7 +627,15 @@ export default function AdminManager() {
                     }}
                     disabled={startProcessLoad}
                   >
-                    บันทึก
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
                   </button>
                   <button
                     type="button"
@@ -634,11 +649,6 @@ export default function AdminManager() {
                     ยกเลิก
                   </button>
                 </div>
-                {startProcessLoad && (
-                  <div className="loading-overlay">
-                    <div className="loading-spinner"></div>
-                  </div>
-                )}
               </form>
             </div>
           </div>

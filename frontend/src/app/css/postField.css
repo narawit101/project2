@@ -51,7 +51,8 @@
 .submit-btn-post {
   width: 100%;
   padding: 12px;
-  background: #007bff;
+  background: var(--text-color);
+
   color: white;
   font-size: 16px;
   border: none;
@@ -61,7 +62,7 @@
 }
 
 .submit-btn-psot:hover {
-  background: #0056b3;
+  background: #061996;
 }
 
 .add-post-button {
@@ -129,7 +130,7 @@
   position: absolute;
   top: 5px;
   right: 5px;
-  background-color: #f44336;
+  background-color: #e23125;
   color: white;
   border: none;
   padding: 5px;

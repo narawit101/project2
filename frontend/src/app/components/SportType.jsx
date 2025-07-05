@@ -197,17 +197,20 @@ export default function HomePage() {
                   <h3>{field.field_name}</h3>
                   <div className="reviwe-container-home">
                     <strong className="reviwe-star-home">
-                      <p>คะแนนรีวิว {field.avg_rating}</p>
+                      <p>
+                        {field.avg_rating && field.avg_rating > 0
+                          ? `คะแนนรีวิว ${field.avg_rating}`
+                          : "ยังไม่มีคะแนนรีวิว"}
+                      </p>
+
                       {[1, 2, 3, 4, 5].map((num) => {
+                        const rating = field.avg_rating || 0;
                         const roundedRating =
-                          Math.floor(field.avg_rating) +
-                          (field.avg_rating % 1 >= 0.8 ? 1 : 0);
+                          Math.floor(rating) + (rating % 1 >= 0.8 ? 1 : 0);
 
                         const isFull = num <= roundedRating;
                         const isHalf =
-                          !isFull &&
-                          num - 0.5 <= field.avg_rating &&
-                          field.avg_rating % 1 < 0.8;
+                          !isFull && num - 0.5 <= rating && rating % 1 < 0.8;
 
                         return (
                           <FontAwesomeIcon
@@ -229,6 +232,7 @@ export default function HomePage() {
                       })}
                     </strong>
                   </div>
+
                   <div className="firsttime-home">
                     <p className="filedname">
                       <span className="first-label-time">เปิดเวลา: </span>

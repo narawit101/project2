@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import "@/app/css/myfield.css";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function MyFieldPage() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -21,6 +22,7 @@ export default function MyFieldPage() {
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const fieldPerPage = 20;
+  usePreventLeave(startProcessLoad); 
 
   useEffect(() => {
     if (isLoading) return;
@@ -270,7 +272,15 @@ export default function MyFieldPage() {
                   className="savebtn-myfield"
                   onClick={confirmDeleteSubField}
                 >
-                  ยืนยัน
+                  {startProcessLoad ? (
+                    <span className="dot-loading">
+                      <span className="dot one">●</span>
+                      <span className="dot two">●</span>
+                      <span className="dot three">●</span>
+                    </span>
+                  ) : (
+                    "ยืนยัน"
+                  )}
                 </button>
                 <button
                   style={{
@@ -283,11 +293,6 @@ export default function MyFieldPage() {
                   ยกเลิก
                 </button>
               </div>
-              {startProcessLoad && (
-                <div className="loading-overlay">
-                  <div className="loading-spinner"></div>
-                </div>
-              )}
             </div>
           </div>
         )}

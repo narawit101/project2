@@ -6,9 +6,9 @@ module.exports = function (io) {
   const { Resend } = require("resend");
   const resend = new Resend(process.env.Resend_API);
   const multer = require("multer");
-  const path = require("path");
-  const fs = require("fs");
-  const { error } = require("console");
+  // const path = require("path");
+  // const fs = require("fs");
+  // const { error } = require("console");
   const cron = require("node-cron");
   const authMiddleware = require("../middlewares/auth");
   const { CloudinaryStorage } = require("multer-storage-cloudinary");
@@ -16,6 +16,33 @@ module.exports = function (io) {
   const { DateTime } = require("luxon");
   const qrcode = require("qrcode");
   const promptpay = require("promptpay-qr");
+  const rateLimit = require("express-rate-limit");
+
+  const LimiterBookingsRequest = rateLimit({
+    windowMs: 1 * 60 * 1000, 
+    max: 5, // จำกัดสูงสุด 5 ครั้งใน 1 นาที
+    standardHeaders: true,
+    legacyHeaders: false,
+
+    keyGenerator: (req) => {
+      return req.user?.user_id
+    },
+
+    handler: (req, res, next, options) => {
+      console.warn("Rate limit Bookings:", {
+        email: req.body?.email || req.user?.email,
+        ip: req.ip,
+        path: req.originalUrl,
+        time: DateTime.now()
+          .setZone("Asia/Bangkok")
+          .toFormat("dd/MM/yyyy HH:mm:ss"),
+      });
+      res.status(429).json({
+        code: "RATE_LIMIT",
+        message: "API LIMITED",
+      });
+    },
+  });
 
   const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
@@ -320,6 +347,7 @@ module.exports = function (io) {
   router.post(
     "/",
     authMiddleware,
+    LimiterBookingsRequest,
     upload.fields([{ name: "deposit_slip" }]),
     async (req, res) => {
       let depositSlip = null;
@@ -883,21 +911,21 @@ LIMIT 1;
             [booking_status, updatedAtThai, booking_id]
           );
 
-          if (filedData.rows[0].price_deposit > 0) {
-            const qrCodeData = promptpay(filedData.rows[0].number_bank, {
-              amount: filedData.rows[0].price_deposit,
-            });
-            const qrBase64 = await qrcode.toDataURL(qrCodeData);
+          // if (filedData.rows[0].price_deposit > 0) {
+          //   const qrCodeData = promptpay(filedData.rows[0].number_bank, {
+          //     amount: filedData.rows[0].price_deposit,
+          //   });
+          //   const qrBase64 = await qrcode.toDataURL(qrCodeData);
 
-            // upload ไป Cloudinary
-            const uploadRes = await cloudinary.uploader.upload(qrBase64, {
-              folder: "qr_codes",
-              public_id: `qr_${booking_id}_${Date.now()}`,
-              overwrite: true,
-              resource_type: "image",
-            });
-            qrDeposit = uploadRes.secure_url; // ใช้ url นี้ใน <img src="...">
-          }
+          //   // upload ไป Cloudinary
+          //   const uploadRes = await cloudinary.uploader.upload(qrBase64, {
+          //     folder: "qr_codes",
+          //     public_id: `qr_${booking_id}_${Date.now()}`,
+          //     overwrite: true,
+          //     resource_type: "image",
+          //   });
+          //   qrDeposit = uploadRes.secure_url; // ใช้ url นี้ใน <img src="...">
+          // }
         } else {
           result = await pool.query(
             "UPDATE bookings SET status = $1 WHERE booking_id = $2 RETURNING *",
@@ -955,13 +983,6 @@ LIMIT 1;
 "target="_blank">
       ดูรายละเอียดการจอง #${booking_id}
     </a>
-    
-  <p style="font-weight: bold;  color: #111827; text-align: center;">มัดจำที่ต้องชำระ: ฿${filedData.rows[0].price_deposit}</p>
-
-    <div style="margin: 20px 0; text-align: center;">
-      <p>สแกนเพื่อชำระเงิน:</p>
-      <img src="${qrDeposit}" alt="QR Code" style="width: 200px; height: 200px;" />
-    </div>
   </div>
 
   <p style="font-size: 14px; color: #6b7280; text-align: center">
@@ -1485,6 +1506,67 @@ LIMIT 1;
       }
     }
   );
+
+  router.post("/gen-qr", async (req, res) => {
+    const { bookingId, amount } = req.body;
+    if (!bookingId || !amount) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing bookingId or amount" });
+    }
+    try {
+      const fieldIdResult = await pool.query(
+        `SELECT field_id FROM bookings WHERE booking_id = $1`,
+        [bookingId]
+      );
+
+      if (fieldIdResult.rowCount === 0) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Booking not found" });
+      }
+
+      const fieldId = fieldIdResult.rows[0].field_id;
+
+      const fieldData = await pool.query(
+        `SELECT number_bank FROM field WHERE field_id = $1`,
+        [fieldId]
+      );
+      if (fieldData.rowCount === 0) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Field not found" });
+      }
+
+      const number_bank = fieldData.rows[0].number_bank;
+
+      if (!number_bank) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Missing bank number" });
+      }
+
+      const qrCodeData = promptpay(number_bank, {
+        amount: Number(amount),
+      });
+
+      const qr = await qrcode.toDataURL(qrCodeData);
+      console.log("QR Code generated:", qr);
+
+      // Optional: Save QR code to database or perform other actions here
+
+      // Respond with the QR code
+
+      res.status(200).json({
+        status: true,
+        message: "QR code generated successfully",
+        qrCode: qr,
+      });
+    } catch (error) {
+      console.error("Error generating QR code:", error);
+      return res.status(500).json({ status: false, message: "Server error" });
+    }
+  });
 
   return router;
 };

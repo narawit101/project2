@@ -4,9 +4,7 @@ import "@/app/css/register.css";
 export default function page() {
   return (
     <>
-    
       <Register></Register>
-     
     </>
   );
 }

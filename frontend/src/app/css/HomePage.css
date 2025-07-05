@@ -39,7 +39,7 @@
 }
 
 .home-btn button {
-  width: 190px;
+  width: auto;
   background: linear-gradient(135deg, #1b0ed4, #055199); /* ไล่สี */
   color: white;
   font-size: 18px;
@@ -76,15 +76,15 @@
 
 .banner-text h1 {
   color: var(--text-color);
-  font-size: 54px;
-  font-weight: 500;
+  font-size: 48px;
+  font-weight: 600;
   margin-bottom: 20px;
   margin-left: 0;
 }
 
 .banner-text h2 {
-  font-weight: 500;
-  font-size: 40px;
+  font-weight: 600;
+  font-size: 35px;
   color: #333;
   margin-left: 0;
   margin-bottom: 20px;
@@ -222,12 +222,13 @@
   font-weight: 500;
   margin: 10px 0;
   min-height: 70px;
+  font-weight: 600;
 }
 
 .card-body-home p {
   font-size: 18px;
   color: #6b7280;
-  font-weight: 400;
+  font-weight: 600;
   margin: 10px 0;
   min-height: 20px;
 }
@@ -235,7 +236,7 @@
 .first-label-time {
   font-size: 18px;
   color: var(--text-color);
-  font-weight: 400;
+  font-weight: 600;
   margin: 10px 0;
   min-height: 20px;
 }
@@ -247,17 +248,6 @@
   margin: 10px 0;
   min-height: 20px;
 }
-
-.firstopen-home {
-  text-align: left;
-  align-items: center;
-  justify-content: center;
-  margin: 10px 0;
-  min-height: 20px;
-}
-/* .homepage .load {
-  display: none;
-} */
 
 .no-fields-message {
   display: flex;
@@ -360,7 +350,7 @@
   font-size: 35px;
   color: rgb(167, 167, 167);
   cursor: pointer;
-  z-index: 10;
+  z-index: 9;
 }
 
 .arrow-btn.left-home {
@@ -376,7 +366,7 @@
   text-align: center;
 }
 
-.dot {
+.dot-home {
   width: 10px;
   height: 10px;
   margin: 0 4px;
@@ -387,7 +377,7 @@
   transition: background-color 0.3s ease;
 }
 
-.dot.active-home {
+.dot-home.active-home {
   background-color: var(--text-color);
 }
 
@@ -940,7 +930,7 @@
   }
   .banner-video {
     object-fit: cover;
-    height: auto;
+    height: 450px;
   }
 
   .banner-text {

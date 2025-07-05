@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import "@/app/css/add.css";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function RegisterFieldForm() {
   const router = useRouter("");
@@ -21,6 +22,7 @@ export default function RegisterFieldForm() {
   const [dataLoading, setDataLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const facilitiesPerPage = 12;
+  usePreventLeave(startProcessLoad);
 
   useEffect(() => {
     if (isLoading) return;
@@ -77,7 +79,7 @@ export default function RegisterFieldForm() {
   const currentFacilities = facilities.slice(indexOfFirst, indexOfLast);
 
   const addNewFacility = async () => {
-  const token = localStorage.getItem("auth_mobile_token");
+    const token = localStorage.getItem("auth_mobile_token");
 
     if (!newFacility.trim()) return;
     SetstartProcessLoad(true);
@@ -121,7 +123,7 @@ export default function RegisterFieldForm() {
   };
 
   const deleteFacility = async () => {
-  const token = localStorage.getItem("auth_mobile_token");
+    const token = localStorage.getItem("auth_mobile_token");
 
     if (!facilityToDelete) return;
     SetstartProcessLoad(true);
@@ -168,7 +170,7 @@ export default function RegisterFieldForm() {
 
   // ฟังก์ชันแก้ไขชื่อสิ่งอำนวยความสะดวก
   const editFacility = async () => {
-  const token = localStorage.getItem("auth_mobile_token");
+    const token = localStorage.getItem("auth_mobile_token");
 
     if (!newFacilityName.trim()) return;
     SetstartProcessLoad(true);
@@ -272,7 +274,15 @@ export default function RegisterFieldForm() {
                     }}
                     disabled={startProcessLoad}
                   >
-                    บันทึก
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
                   </button>
                   <button
                     className="canbtn-admin"
@@ -294,6 +304,50 @@ export default function RegisterFieldForm() {
               <div className="loading-data-spinner"></div>
             </div>
           )}
+             {editingFacility && (
+          <div className="edit-form-fac">
+            <input
+              type="text"
+              maxLength={50}
+              placeholder="ชื่อสิ่งอำนวยความสะดวก"
+              value={newFacilityName}
+              onChange={(e) => setNewFacilityName(e.target.value)}
+            />
+            <div className="form-actions-admin">
+              <button
+                className="savebtn-admin"
+                style={{
+                  cursor: startProcessLoad ? "not-allowed" : "pointer",
+                }}
+                disabled={startProcessLoad}
+                onClick={editFacility}
+              >
+                {startProcessLoad ? (
+                  <span className="dot-loading">
+                    <span className="dot one">●</span>
+                    <span className="dot two">●</span>
+                    <span className="dot three">●</span>
+                  </span>
+                ) : (
+                  "บันทึก"
+                )}
+              </button>
+              <button
+                className="cancelbtn-admin"
+                style={{
+                  cursor: startProcessLoad ? "not-allowed" : "pointer",
+                }}
+                disabled={startProcessLoad}
+                onClick={() => {
+                  setEditingFacility(null);
+                  setNewFacilityName("");
+                }}
+              >
+                ยกเลิก
+              </button>
+            </div>
+          </div>
+        )}
         </div>
         <div className="factcon-admin">
           {currentFacilities.length > 0 ? (
@@ -342,42 +396,7 @@ export default function RegisterFieldForm() {
           )}
         </div>
 
-        {editingFacility && (
-          <div className="edit-form-fac">
-            <input
-              type="text"
-              maxLength={50}
-              placeholder="ชื่อสิ่งอำนวยความสะดวก"
-              value={newFacilityName}
-              onChange={(e) => setNewFacilityName(e.target.value)}
-            />
-            <div className="form-actions-admin">
-              <button
-                className="savebtn-admin"
-                style={{
-                  cursor: startProcessLoad ? "not-allowed" : "pointer",
-                }}
-                disabled={startProcessLoad}
-                onClick={editFacility}
-              >
-                บันทึก
-              </button>
-              <button
-                className="cancelbtn-admin"
-                style={{
-                  cursor: startProcessLoad ? "not-allowed" : "pointer",
-                }}
-                disabled={startProcessLoad}
-                onClick={() => {
-                  setEditingFacility(null);
-                  setNewFacilityName("");
-                }}
-              >
-                ยกเลิก
-              </button>
-            </div>
-          </div>
-        )}
+     
 
         {showConfirmModal && (
           <div className="confirm-modal-type">
@@ -392,7 +411,15 @@ export default function RegisterFieldForm() {
                   disabled={startProcessLoad}
                   onClick={deleteFacility}
                 >
-                  ยืนยัน
+                  {startProcessLoad ? (
+                    <span className="dot-loading">
+                      <span className="dot one">●</span>
+                      <span className="dot two">●</span>
+                      <span className="dot three">●</span>
+                    </span>
+                  ) : (
+                    "ยืนยัน"
+                  )}
                 </button>
                 <button
                   className="cancelbtn-type"
@@ -406,11 +433,6 @@ export default function RegisterFieldForm() {
                 </button>
               </div>
             </div>
-          </div>
-        )}
-        {startProcessLoad && (
-          <div className="loading-overlay">
-            <div className="loading-spinner"></div>
           </div>
         )}
       </div>

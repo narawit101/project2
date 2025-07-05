@@ -127,9 +127,11 @@ export default function Navbar() {
         </div>
 
         {isLoading ? (
-          <div className="loading-overlay">
-            <div className="loading-spinner"></div>
-          </div>
+          <span className="dot-loading">
+            <span className="dot one">●</span>
+            <span className="dot two">●</span>
+            <span className="dot three">● </span>
+          </span>
         ) : user ? (
           <div
             className={`user-profile ${isDropdownOpen ? "active" : ""}`}

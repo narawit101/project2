@@ -9,7 +9,6 @@
   padding: 20px;
 }
 
-
 .table-wrapper {
   overflow-x: auto;
   margin: 20px 0;
@@ -66,6 +65,11 @@
   margin: 20px 0;
   display: flex;
   justify-content: flex-end;
+}
+
+.head-select-manager {
+  justify-content: space-between;
+  display: flex;
 }
 
 .filter-role-container select {
@@ -137,7 +141,7 @@
   color: var(--text-color);
   margin: 30px 0 20px 0;
   font-weight: 600;
-  border-bottom: 3px solid #000000;
+  /* border-bottom: 3px solid #000000; */
   padding-bottom: 10px;
 }
 
@@ -179,7 +183,7 @@
   padding: 8px 12px;
   border: none;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 12px;
   transition: all 0.3s ease-in-out;
 }
 
@@ -188,7 +192,7 @@
   width: 80px;
   padding: 8px 16px;
   border: none;
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
   font-size: 0.9rem;
   font-weight: 600;
@@ -246,7 +250,7 @@
   animation: modalSlideIn 0.3s ease;
   background: white;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 12px;
   width: 90%;
   max-width: 400px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
@@ -290,6 +294,7 @@
 
 .confirm-modal-field,
 .confirm-modal-user {
+  backdrop-filter: blur(3px);
   z-index: 999;
   position: fixed;
   top: 0;

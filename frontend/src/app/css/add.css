@@ -84,7 +84,7 @@
 }
 
 .deletebtn-admin {
-  background-color: red;
+  background-color: #dc3545;
   color: white;
   margin: 0px 10px;
 }
@@ -145,7 +145,8 @@
 }
 
 .confirm-modal-type {
-  z-index: 2;
+  backdrop-filter: blur(3px);
+  z-index: 10;
   position: fixed;
   top: 0;
   left: 0;
@@ -163,8 +164,12 @@
   padding: 20px;
   border-radius: 8px;
   text-align: center;
-  max-width: 90%;
+  max-width: 100%;
   width: 400px;
+}
+.modal-content-type input {
+  border-radius: 8px;
+  padding: 8px;
 }
 
 .confirmbtn-type,
@@ -186,7 +191,7 @@
 }
 
 .cancelbtn-type {
-  background-color: red;
+  background-color: #dc3545;
   color: white;
 }
 
@@ -195,21 +200,29 @@
 }
 
 .edit-form-fac {
-  margin-top: 10px;
+  z-index: 2;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 90%;
+  width: 400px;
 }
 
 .edit-form-fac input {
+  display: flex;
   padding: 8px;
-  margin-right: 10px;
+  margin: 10px auto;
   border-radius: 4px;
-  width: 20%;
+  width: auto;
   box-sizing: border-box;
 }
 
 .form-actions-admin {
+  justify-content: center;
   display: flex;
   gap: 10px;
-  margin-top: 10px;
+  margin: 10px auto;
 }
 
 .savebtn-admin {
@@ -238,21 +251,39 @@
 }
 
 .add-facility-form-admin {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 90%;
+  width: 400px;
   justify-content: center;
   align-items: center;
   margin: 20px 0px 10px 10px;
 }
 .add-facility-form-admin input {
   height: 30px;
-  border-radius: 0px;
+  border-radius: 8px;
+  padding: 8px;
   max-width: 100%;
   width: 200px;
 }
+.add-sport-form {
+  z-index: 2;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 100%;
+}
 
 .add-sport-form input {
+  border-radius: 8px;
+  padding: 8px;
+
   margin: 20px 10px;
   height: 30px;
-  border-radius: 0px;
+  /* border-radius: 0px; */
   max-width: 100%;
   width: 200px;
 }
@@ -302,6 +333,18 @@
   }
 }
 @media screen and (max-width: 768px) {
+  .modal-actions-tpye {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+  }
+  .cancelbtn-admin,
+  .canbtn-admin {
+    width: 100%;
+  }
   .facility-item-admin,
   .typename {
     align-items: center;
@@ -310,7 +353,7 @@
   }
 
   .modal-content-type {
-    width: 90%;
+    width: 100%;
   }
 
   .edit-form-fac input {
@@ -321,6 +364,19 @@
     flex-direction: column;
     align-items: flex-start;
   }
+  .form-actions-admin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+  }
+  .confirmbtn-type,
+  .cancelbtn-type,
+  .savebtn-admin,
+  .cancelbtn-admin {
+    width: 100%;
+  }
 }
 
 @media screen and (max-width: 480px) {
@@ -328,17 +384,10 @@
   .typename-admin {
     width: 100%;
   }
-
-  .savebtn-admin,
-  .canbtn-admin {
-    width: 100px;
-  }
-
-  .edit-form-fac input {
+  .fac-container-admin {
     width: 100%;
   }
-
   .modal-content-type {
-    width: 90%;
+    width: 100%;
   }
 }

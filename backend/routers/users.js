@@ -9,6 +9,36 @@ const resend = new Resend(process.env.Resend_API);
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 router.use(cookieParser());
+const { DateTime } = require("luxon");
+const rateLimit = require("express-rate-limit");
+
+const LimiterRequestContact = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 ชั่วโมง
+  max: 5, // ขอได้ 5 ครั้ง/ชั่วโมง ต่อ email
+  keyGenerator: (req, res) => {
+    try {
+      return req.body.email?.toLowerCase().trim() || req.ip;
+    } catch {
+      return req.ip;
+    }
+  },
+  handler: (req, res, next, options) => {
+    console.warn("Rate limit email เกิน:", {
+      email: req.body?.email,
+      ip: req.ip,
+      path: req.originalUrl,
+      time: DateTime.now()
+        .setZone("Asia/Bangkok")
+        .toFormat("dd/MM/yyyy HH:mm:ss"),
+    });
+
+    res.status(429).json({
+      code: "RATE_LIMIT",
+      message:
+        "Email ของคุณส่งคำขอเกินกำหนด (5ครั้ง/ชั่วโมง) กรุณารอสักครู่แล้วลองใหม่อีกครั้ง",
+    });
+  },
+});
 
 router.get("/me", authMiddleware, async (req, res) => {
   try {
@@ -410,6 +440,54 @@ router.put("/:id/change-password-reset", async (req, res) => {
   } catch (error) {
     console.error("Error updating password:", error);
     res.status(500).json({ message: "เกิดข้อผิดพลาดในการอัปเดต" });
+  }
+});
+
+router.post("/contact-admin", LimiterRequestContact, async (req, res) => {
+  const { email, subJect, conTent } = req.body;
+
+  try {
+    const data = await resend.emails.send({
+      from: process.env.Sender_Email,
+      to: process.env.Owner_Email,
+      subject: subJect,
+      html: `
+       <div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td align="center">
+        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 300px; margin-bottom: 10px;" />
+      </td>
+    </tr>
+  </table>
+  <h1 style="color: #03045e; margin-bottom: 16px; text-align: center">
+    <p><strong>เรื่อง:</strong> ${subJect}</p>
+  </h1>
+  <h2 style="color: #03045e; margin-bottom: 16px; text-align: center">
+    <p><strong>จาก:</strong> ${email}
+</p><strong style="  font-weight: bold;
+ ;  font-size: 24px;color: #333;
+">
+      <p>${conTent}</p>
+    </strong>
+  </h2>
+  <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 12px; color: #9ca3af;text-align: center ">
+    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+  </p>
+</div>
+      `,
+      reply_to: email,
+    });
+
+    console.log("Email sent successfully:", data);
+    res.status(200).json({
+      message: `ส่งคำขอเรียบร้อย กรุณารอข้อความตอบกลับจากผู้ดูแลระบบที่ ${email}`,
+    });
+  } catch (error) {
+    console.error("Resend Error:", error);
+    res.status(500).json({ message: "เกิดข้อผิดพลาดในการส่ง email" });
   }
 });
 

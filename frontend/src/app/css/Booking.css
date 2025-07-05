@@ -169,26 +169,29 @@
 }
 
 .detail-total-hour {
-  border: 2px solid #ddd;
+  border: 1px solid #ddd;
   padding: 12px;
   border-radius: 12px;
-  background-color: #f9f9f9;
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
 }
 
 .field-title-book {
-  margin: 0px auto;
-  font-size: 24px;
+  margin: 10px auto;
+  font-size: 28px;
   font-weight: 600;
   color: var(--text-color);
 }
 
 .sub-field-title {
-  font-size: 18px;
+  font-size: 22px;
   color: var(--text-color);
   margin-bottom: 10px;
 }
+
 .sub-field-title-modal {
-  font-size: 18px;
+  font-size: 22px;
   color: var(--text-color);
   margin-bottom: 2px;
 }
@@ -214,7 +217,7 @@
 .book-owner-info strong {
   color: #333;
   display: block;
-  margin: 4px 0;
+  margin: 10px 0;
   font-size: 18px;
 }
 
@@ -322,7 +325,7 @@
 .total-box strong {
   text-align: center;
   display: block;
-  margin: 4px 0;
+  margin: 10px 0;
   font-size: 20px;
 }
 
@@ -332,19 +335,6 @@
   color: #d32f2f;
   margin: 12px 0;
   display: block;
-}
-
-.summary {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  /* min-height: 280px; */
-  overflow-y: auto;
-  border: 2px solid #ddd;
-  padding: 12px;
-  border-radius: 12px;
-  background-color: #f9f9f9;
 }
 
 .total-per-hour {
@@ -358,6 +348,21 @@
   font-weight: 700;
   color: #2e7d32;
   margin-top: 10px;
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* min-height: 280px; */
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 12px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
 }
 
 .btn-submit-book {
@@ -463,24 +468,39 @@
 }
 
 .facilities-list-book {
-  border: 2px solid #ddd;
-  border-radius: 12px;
-  background-color: #f9f9f9;
-  max-height: 150px;
+  border: 1px solid #e0e0e0;
+  border-radius: 14px;
+  background: #ffffff;
+  max-height: 180px;
   overflow-y: auto;
-  margin-top: 12px;
-  margin-bottom: 12px;
-  padding: 20px;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  margin: 16px 0;
+  padding: 16px 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
 }
 
 .facility-item-book {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 10px;
 }
 
+.facility-item-book input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #0d1f87;
+}
+
 .facility-item-book label {
-  margin-left: 6px;
   font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.facility-item-book label:hover {
+  color: #0d1f87;
 }
 
 .modal-overlay-confirmbooking {
@@ -539,6 +559,16 @@
   border-radius: 8px;
   box-shadow: 0 0 0 2px white;
   z-index: 10;
+}
+
+.qr-code-detail {
+  display: flex;
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  margin: 10px auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .modal-buttons-confirmbooking {
@@ -666,7 +696,7 @@
     align-items: center;
     justify-content: center;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(70px,2fr));
+    grid-template-columns: repeat(auto-fit, minmax(70px, 2fr));
     gap: 1rem;
     width: 100%;
     padding: 0.5rem;

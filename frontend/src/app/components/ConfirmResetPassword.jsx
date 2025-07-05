@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import "@/app/css/confirmResetPassword.css";
+import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function ConfirmResetPassword() {
   const [newPassword, setNewPassword] = useState("");
@@ -11,7 +12,8 @@ export default function ConfirmResetPassword() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter("");
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
-
+  usePreventLeave(startProcessLoad);
+  
   useEffect(() => {
     const expiresAt = JSON.parse(sessionStorage.getItem("expiresAt"));
     if (Date.now() < expiresAt) {
@@ -169,14 +171,17 @@ export default function ConfirmResetPassword() {
               }}
               disabled={startProcessLoad}
             >
-              ยืนยัน
+              {startProcessLoad ? (
+                <span className="dot-loading">
+                  <span className="dot one">●</span>
+                  <span className="dot two">●</span>
+                  <span className="dot three">●</span>
+                </span>
+              ) : (
+                "บันทึก"
+              )}
             </button>
           </div>
-          {startProcessLoad && (
-            <div className="loading-overlay">
-              <div className="loading-spinner"></div>
-            </div>
-          )}
         </form>
       </div>
     </div>

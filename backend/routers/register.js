@@ -5,6 +5,34 @@ const router = express.Router();
 const { Resend } = require("resend");
 const resend = new Resend(process.env.Resend_API);
 const crypto = require("crypto");
+const { DateTime } = require("luxon");
+const rateLimit = require("express-rate-limit");
+
+
+const LimiterRegister = rateLimit({
+  windowMs: 30 * 60 * 1000,
+  max: 10, // จำกัด 10 ครั้งต่อ IP /30 นาที
+  message: {
+    message: "คุณส่งคำขอมากเกินไป กรุณารอสักครู่แล้วลองใหม่อีกครั้ง",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+
+  keyGenerator: (req) => req.ip,
+
+  handler: (req, res, next, options) => {
+    console.warn("Rate limit สมัครเกิน:", {
+      email: req.body?.email,
+      ip: req.ip,
+      path: req.originalUrl,
+      time: DateTime.now()
+        .setZone("Asia/Bangkok")
+        .toFormat("dd/MM/yyyy HH:mm:ss"),
+    });
+
+    res.status(options.statusCode).json(options.message);
+  },
+});
 
 router.get("/check-duplicate", async (req, res) => {
   const { field, value } = req.query;
@@ -28,7 +56,7 @@ router.get("/check-duplicate", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", LimiterRegister, async (req, res) => {
   const { first_name, last_name, email, password, role, user_name } = req.body;
   console.log("Received registration request:", {
     first_name,

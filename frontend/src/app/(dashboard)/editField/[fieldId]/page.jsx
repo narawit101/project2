@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import "@/app/css/editField.css";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function CheckFieldDetail() {
   const { fieldId } = useParams();
@@ -13,6 +14,11 @@ export default function CheckFieldDetail() {
   const [newSportId, setNewSportId] = useState("");
   const [sportsCategories, setSportsCategories] = useState([]);
   const [updatedSubFieldName, setUpdatedSubFieldName] = useState("");
+  const [updatedSubFieldPlayer, setUpdatedSubFieldPlayer] = useState("");
+  const [updatedSubFieldWid, setUpdatedSubFieldWid] = useState("");
+  const [updatedSubFieldLength, setUpdatedSubFieldLength] = useState("");
+  const [updatedSubFieldFieldSurface, setUpdatedSubFieldFieldSurface] =
+    useState("");
   const [updatedPrice, setUpdatedPrice] = useState("");
   const [updatedSportId, setUpdatedSportId] = useState("");
   const [field, setField] = useState(null);
@@ -33,6 +39,10 @@ export default function CheckFieldDetail() {
     sub_field_name: "",
     price: "",
     sport_id: "",
+    players_per_team: "",
+    wid_field: "",
+    length_field: "",
+    field_surface: "",
   });
   const [editingAddon, setEditingAddon] = useState({
     addOnId: null,
@@ -53,6 +63,7 @@ export default function CheckFieldDetail() {
   const { user, isLoading } = useAuth();
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  usePreventLeave(startProcessLoad);
 
   useEffect(() => {
     if (isLoading) return;
@@ -278,6 +289,7 @@ export default function CheckFieldDetail() {
         );
         setMessage(result.message);
         setMessageType("success");
+        setShowModal(false);
       } else {
         setMessage(result.message || "เกิดข้อผิดพลาด");
         setMessageType("error");
@@ -375,6 +387,10 @@ export default function CheckFieldDetail() {
           credentials: "include",
           body: JSON.stringify({
             sub_field_name: updatedSubFieldName,
+            players_per_team: updatedSubFieldPlayer,
+            wid_field: updatedSubFieldWid,
+            length_field: updatedSubFieldLength,
+            field_surface: updatedSubFieldFieldSurface,
             price: updatedPrice,
             sport_id: updatedSportId,
           }),
@@ -391,6 +407,10 @@ export default function CheckFieldDetail() {
               ? {
                   ...sub,
                   sub_field_name: updatedSubFieldName,
+                  players_per_team: updatedSubFieldPlayer,
+                  wid_field: updatedSubFieldWid,
+                  length_field: updatedSubFieldLength,
+                  field_surface: updatedSubFieldFieldSurface,
                   price: updatedPrice,
                   sport_id: updatedSportId,
                 }
@@ -414,6 +434,10 @@ export default function CheckFieldDetail() {
   const startEditingSubField = (sub) => {
     setEditingField(sub.sub_field_id);
     setUpdatedSubFieldName(sub.sub_field_name);
+    setUpdatedSubFieldPlayer(sub.players_per_team);
+    setUpdatedSubFieldWid(sub.wid_field);
+    setUpdatedSubFieldLength(sub.length_field);
+    setUpdatedSubFieldFieldSurface(sub.field_surface);
     setUpdatedPrice(sub.price);
     setUpdatedSportId(sub.sport_id);
   };
@@ -427,8 +451,16 @@ export default function CheckFieldDetail() {
   };
 
   const cancelEditing = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl); // ล้าง blob จาก memory
+      setPreviewUrl(null); // ล้างค่าพรีวิว
+    }
     setEditingField(null);
     setUpdatedSubFieldName("");
+    setUpdatedSubFieldPlayer("");
+    setUpdatedSubFieldWid("");
+    setUpdatedSubFieldLength("");
+    setUpdatedSubFieldFieldSurface("");
     setUpdatedPrice("");
     setUpdatedSportId("");
   };
@@ -679,6 +711,10 @@ export default function CheckFieldDetail() {
         credentials: "include",
         body: JSON.stringify({
           sub_field_name: newSubField.sub_field_name,
+          players_per_team: newSubField.players_per_team,
+          wid_field: newSubField.wid_field,
+          length_field: newSubField.length_field,
+          field_surface: newSubField.field_surface,
           price: newSubField.price,
           user_id: userId,
           sport_id: newSportId,
@@ -963,6 +999,7 @@ export default function CheckFieldDetail() {
       SetstartProcessLoad(false);
     }
   };
+  const formatPrice = (value) => new Intl.NumberFormat("th-TH").format(value);
 
   useEffect(() => {
     if (message) {
@@ -991,37 +1028,50 @@ export default function CheckFieldDetail() {
       )}
       <div className="editfield-container">
         <h1>แก้ไขสนามกีฬา</h1>
-        {startProcessLoad && (
-          <div className="loading-overlay">
-            <div className="loading-spinner"></div>
-          </div>
-        )}
         <div className="field-details-editfield">
           {editingField === "img_field" ? (
-            <div className="preview-container-editfield">
-              <input type="file" onChange={handleImgChange} accept="image/*" />
-              {previewUrl && <img src={previewUrl} alt="preview" />}
-              <button
-                className="savebtn-editfield"
-                style={{
-                  cursor: startProcessLoad ? "not-allowed" : "pointer",
-                }}
-                disabled={startProcessLoad}
-                onClick={saveImageField}
-              >
-                บันทึก
-              </button>
-              <button
-                className="canbtn-editfield"
-                style={{
-                  cursor: startProcessLoad ? "not-allowed" : "pointer",
-                }}
-                disabled={startProcessLoad}
-                onClick={cancelEditing}
-              >
-                ยกเลิก
-              </button>
-            </div>
+            <>
+              <div className="preview-container-editfield">
+                {previewUrl && <img src={previewUrl} alt="preview" />}
+              </div>
+              <div>
+                <input
+                  type="file"
+                  onChange={handleImgChange}
+                  accept="image/*"
+                />
+                <div className="btn-group-editfield">
+                  <button
+                    className="savebtn-editfield"
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    onClick={saveImageField}
+                  >
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
+                  </button>
+                  <button
+                    className="canbtn-editfield"
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    onClick={cancelEditing}
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
+              </div>
+            </>
           ) : (
             <>
               <img
@@ -1029,8 +1079,12 @@ export default function CheckFieldDetail() {
                 alt="รูปสนามกีฬา"
                 className="preview-container-editfield"
               />
-              <div className="input-group-editfield">
+              <div className="btn-group-editfield">
                 <button
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
                   className="editbtn-editfield-center"
                   onClick={() => startEditing("img_field", field?.img_field)}
                 >
@@ -1039,6 +1093,7 @@ export default function CheckFieldDetail() {
               </div>
             </>
           )}
+
           <div className="input-group-editfield">
             <label>ชื่อสนาม: </label>
             {editingField === "field_name" ? (
@@ -1049,21 +1104,46 @@ export default function CheckFieldDetail() {
                   value={updatedValue}
                   onChange={(e) => setUpdatedValue(e.target.value)}
                 />
-                <button
-                  className="savebtn-editfield"
-                  onClick={() => saveField("field_name")}
-                >
-                  บันทึก
-                </button>
-                <button className="canbtn-editfield" onClick={cancelEditing}>
-                  ยกเลิก
-                </button>
+                <div className="btn-group-editfield">
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="savebtn-editfield"
+                    onClick={() => saveField("field_name")}
+                  >
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
+                  </button>
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="canbtn-editfield"
+                    onClick={cancelEditing}
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
               </>
             ) : (
               <>
                 <p>{field?.field_name || "ไม่มีข้อมูล"}</p>
-                <div>
+                <div className="btn-group-editfield">
                   <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
                     className="editbtn-editfield"
                     onClick={() =>
                       startEditing("field_name", field?.field_name)
@@ -1085,21 +1165,46 @@ export default function CheckFieldDetail() {
                   value={updatedValue}
                   onChange={(e) => setUpdatedValue(e.target.value)}
                 />
-                <button
-                  className="savebtn-editfield"
-                  onClick={() => saveField("address")}
-                >
-                  บันทึก
-                </button>
-                <button className="canbtn-editfield" onClick={cancelEditing}>
-                  ยกเลิก
-                </button>
+                <div className="btn-group-editfield">
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="savebtn-editfield"
+                    onClick={() => saveField("address")}
+                  >
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
+                  </button>
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="canbtn-editfield"
+                    onClick={cancelEditing}
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
               </>
             ) : (
               <>
                 <p>{field?.address || "ไม่มีข้อมูล"}</p>
-                <div>
+                <div className="btn-group-editfield">
                   <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
                     className="editbtn-editfield"
                     onClick={() => startEditing("address", field?.address)}
                   >
@@ -1120,15 +1225,36 @@ export default function CheckFieldDetail() {
                   value={updatedValue}
                   onChange={(e) => setUpdatedValue(e.target.value)}
                 />
-                <button
-                  className="savebtn-editfield"
-                  onClick={() => saveField("gps_location")}
-                >
-                  บันทึก
-                </button>
-                <button className="canbtn-editfield" onClick={cancelEditing}>
-                  ยกเลิก
-                </button>
+                <div className="btn-group-editfield">
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="savebtn-editfield"
+                    onClick={() => saveField("gps_location")}
+                  >
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
+                  </button>
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="canbtn-editfield"
+                    onClick={cancelEditing}
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
               </>
             ) : (
               <>
@@ -1141,8 +1267,12 @@ export default function CheckFieldDetail() {
                     {field?.gps_location || "ไม่มีข้อมูล"}
                   </a>
                 </p>
-                <div>
+                <div className="btn-group-editfield">
                   <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
                     className="editbtn-editfield"
                     onClick={() =>
                       startEditing("gps_location", field?.gps_location)
@@ -1163,21 +1293,46 @@ export default function CheckFieldDetail() {
                   value={updatedValue}
                   onChange={(e) => setUpdatedValue(e.target.value)}
                 />
-                <button
-                  className="savebtn-editfield"
-                  onClick={() => saveField("open_hours")}
-                >
-                  บันทึก
-                </button>
-                <button className="canbtn-editfield" onClick={cancelEditing}>
-                  ยกเลิก
-                </button>
+                <div className="btn-group-editfield">
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="savebtn-editfield"
+                    onClick={() => saveField("open_hours")}
+                  >
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
+                  </button>
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="canbtn-editfield"
+                    onClick={cancelEditing}
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
               </>
             ) : (
               <>
                 <p>{field?.open_hours || "ไม่มีข้อมูล"}</p>
-                <div>
+                <div className="btn-group-editfield">
                   <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
                     className="editbtn-editfield"
                     onClick={() =>
                       startEditing("open_hours", field?.open_hours)
@@ -1198,21 +1353,46 @@ export default function CheckFieldDetail() {
                   value={updatedValue}
                   onChange={(e) => setUpdatedValue(e.target.value)}
                 />
-                <button
-                  className="savebtn-editfield"
-                  onClick={() => saveField("close_hours")}
-                >
-                  บันทึก
-                </button>
-                <button className="canbtn-editfield" onClick={cancelEditing}>
-                  ยกเลิก
-                </button>
+                <div className="btn-group-editfield">
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="savebtn-editfield"
+                    onClick={() => saveField("close_hours")}
+                  >
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
+                  </button>
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="canbtn-editfield"
+                    onClick={cancelEditing}
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
               </>
             ) : (
               <>
                 <p>{field?.close_hours || "ไม่มีข้อมูล"}</p>
-                <div>
+                <div className="btn-group-editfield">
                   <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
                     className="editbtn-editfield"
                     onClick={() =>
                       startEditing("close_hours", field?.close_hours)
@@ -1239,22 +1419,46 @@ export default function CheckFieldDetail() {
                   }}
                   placeholder="ใส่ได้ไม่เกิน 99 ชม."
                 />
-
-                <button
-                  className="savebtn-editfield"
-                  onClick={() => saveField("cancel_hours")}
-                >
-                  บันทึก
-                </button>
-                <button className="canbtn-editfield" onClick={cancelEditing}>
-                  ยกเลิก
-                </button>
+                <div className="btn-group-editfield">
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="savebtn-editfield"
+                    onClick={() => saveField("cancel_hours")}
+                  >
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
+                  </button>
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="canbtn-editfield"
+                    onClick={cancelEditing}
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
               </>
             ) : (
               <>
-                <p>{field?.cancel_hours || "ไม่มีข้อมูล"}</p>
-                <div>
+                <p>{field?.cancel_hours || "0"}</p>
+                <div className="btn-group-editfield">
                   <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
                     className="editbtn-editfield"
                     onClick={() =>
                       startEditing("cancel_hours", field?.cancel_hours)
@@ -1276,15 +1480,36 @@ export default function CheckFieldDetail() {
                   value={updatedValue}
                   onChange={(e) => setUpdatedValue(Math.abs(e.target.value))}
                 />
-                <button
-                  className="savebtn-editfield"
-                  onClick={() => saveField("price_deposit")}
-                >
-                  บันทึก
-                </button>
-                <button className="canbtn-editfield" onClick={cancelEditing}>
-                  ยกเลิก
-                </button>
+                <div className="btn-group-editfield">
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="savebtn-editfield"
+                    onClick={() => saveField("price_deposit")}
+                  >
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
+                  </button>
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="canbtn-editfield"
+                    onClick={cancelEditing}
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
               </>
             ) : (
               <>
@@ -1293,8 +1518,12 @@ export default function CheckFieldDetail() {
                     ? "ไม่มีค่ามัดจำ"
                     : field?.price_deposit || "ไม่มีข้อมูล"}
                 </p>
-                <div>
+                <div className="btn-group-editfield">
                   <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
                     className="editbtn-editfield"
                     onClick={() =>
                       startEditing("price_deposit", field?.price_deposit)
@@ -1316,21 +1545,46 @@ export default function CheckFieldDetail() {
                   value={updatedValue}
                   onChange={(e) => setUpdatedValue(e.target.value)}
                 />
-                <button
-                  className="savebtn-editfield"
-                  onClick={() => saveField("name_bank")}
-                >
-                  บันทึก
-                </button>
-                <button className="canbtn-editfield" onClick={cancelEditing}>
-                  ยกเลิก
-                </button>
+                <div className="btn-group-editfield">
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="savebtn-editfield"
+                    onClick={() => saveField("name_bank")}
+                  >
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
+                  </button>
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="canbtn-editfield"
+                    onClick={cancelEditing}
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
               </>
             ) : (
               <>
                 <p>{field?.name_bank || "ไม่มีข้อมูล"}</p>
-                <div>
+                <div className="btn-group-editfield">
                   <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
                     className="editbtn-editfield"
                     onClick={() => startEditing("name_bank", field?.name_bank)}
                   >
@@ -1350,21 +1604,46 @@ export default function CheckFieldDetail() {
                   value={updatedValue}
                   onChange={(e) => setUpdatedValue(e.target.value)}
                 />
-                <button
-                  className="savebtn-editfield"
-                  onClick={() => saveField("account_holder")}
-                >
-                  บันทึก
-                </button>
-                <button className="canbtn-editfield" onClick={cancelEditing}>
-                  ยกเลิก
-                </button>
+                <div className="btn-group-editfield">
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="savebtn-editfield"
+                    onClick={() => saveField("account_holder")}
+                  >
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
+                  </button>
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="canbtn-editfield"
+                    onClick={cancelEditing}
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
               </>
             ) : (
               <>
                 <p>{field?.account_holder || "ไม่มีข้อมูล"}</p>
-                <div>
+                <div className="btn-group-editfield">
                   <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
                     className="editbtn-editfield"
                     onClick={() =>
                       startEditing("account_holder", field?.account_holder)
@@ -1391,22 +1670,46 @@ export default function CheckFieldDetail() {
                   }}
                   placeholder="ใส่เลขบัญชีไม่เกิน 13 หลัก"
                 />
-
-                <button
-                  className="savebtn-editfield"
-                  onClick={() => saveField("number_bank")}
-                >
-                  บันทึก
-                </button>
-                <button className="canbtn-editfield" onClick={cancelEditing}>
-                  ยกเลิก
-                </button>
+                <div className="btn-group-editfield">
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="savebtn-editfield"
+                    onClick={() => saveField("number_bank")}
+                  >
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
+                  </button>
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="canbtn-editfield"
+                    onClick={cancelEditing}
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
               </>
             ) : (
               <>
                 <p>{field?.number_bank || "ไม่มีข้อมูล"}</p>
-                <div>
+                <div className="btn-group-editfield">
                   <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
                     className="editbtn-editfield"
                     onClick={() =>
                       startEditing("number_bank", field?.number_bank)
@@ -1430,21 +1733,46 @@ export default function CheckFieldDetail() {
                     value={updatedValue}
                     onChange={(e) => setUpdatedValue(e.target.value)}
                   />
-                  <button
-                    className="savebtn-editfield"
-                    onClick={() => saveField("field_description")}
-                  >
-                    บันทึก
-                  </button>
-                  <button className="canbtn-editfield" onClick={cancelEditing}>
-                    ยกเลิก
-                  </button>
+                  <div className="btn-group-editfield">
+                    <button
+                      style={{
+                        cursor: startProcessLoad ? "not-allowed" : "pointer",
+                      }}
+                      disabled={startProcessLoad}
+                      className="savebtn-editfield"
+                      onClick={() => saveField("field_description")}
+                    >
+                      {startProcessLoad ? (
+                        <span className="dot-loading">
+                          <span className="dot one">●</span>
+                          <span className="dot two">●</span>
+                          <span className="dot three">●</span>
+                        </span>
+                      ) : (
+                        "บันทึก"
+                      )}
+                    </button>
+                    <button
+                      style={{
+                        cursor: startProcessLoad ? "not-allowed" : "pointer",
+                      }}
+                      disabled={startProcessLoad}
+                      className="canbtn-editfield"
+                      onClick={cancelEditing}
+                    >
+                      ยกเลิก
+                    </button>
+                  </div>
                 </>
               ) : (
                 <>
                   <p>{field?.field_description || "ไม่มีข้อมูล"}</p>
-                  <div>
+                  <div className="btn-group-editfield">
                     <button
+                      style={{
+                        cursor: startProcessLoad ? "not-allowed" : "pointer",
+                      }}
+                      disabled={startProcessLoad}
                       className="editbtn-editfield"
                       onClick={() =>
                         startEditing(
@@ -1462,11 +1790,6 @@ export default function CheckFieldDetail() {
           </div>
 
           <div className="input-group-editfield-center">
-            {startProcessLoad && (
-              <div className="loading-overlay">
-                <div className="loading-spinner"></div>
-              </div>
-            )}
             {editingField === "documents" ? (
               <>
                 <input
@@ -1475,26 +1798,36 @@ export default function CheckFieldDetail() {
                   multiple
                   accept="image/*,.pdf"
                 />
-                <button
-                  style={{
-                    cursor: startProcessLoad ? "not-allowed" : "pointer",
-                  }}
-                  disabled={startProcessLoad}
-                  className="savebtn-editfield"
-                  onClick={saveDocumentField}
-                >
-                  บันทึก
-                </button>
-                <button
-                  className="canbtn-editfield"
-                  style={{
-                    cursor: startProcessLoad ? "not-allowed" : "pointer",
-                  }}
-                  disabled={startProcessLoad}
-                  onClick={cancelEditing}
-                >
-                  ยกเลิก
-                </button>
+                <div className="btn-group-editfield">
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="savebtn-editfield"
+                    onClick={saveDocumentField}
+                  >
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
+                  </button>
+                  <button
+                    className="canbtn-editfield"
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    onClick={cancelEditing}
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
               </>
             ) : (
               <>
@@ -1519,12 +1852,18 @@ export default function CheckFieldDetail() {
                     <p>ไม่มีเอกสารแนบ</p>
                   )}
                 </div>
-                <button
-                  className="editbtn-editfield"
-                  onClick={() => startEditing("documents", field.documents)}
-                >
-                  (ถ้าแก้ไขเอกสารเดิมจะหาย)
-                </button>
+                <div className="btn-group-editfield">
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="editbtn-editfield"
+                    onClick={() => startEditing("documents", field.documents)}
+                  >
+                    (ถ้าแก้ไขเอกสารเดิมจะหาย)
+                  </button>
+                </div>
               </>
             )}
           </div>
@@ -1539,9 +1878,13 @@ export default function CheckFieldDetail() {
                     className="facitem-editfield"
                     key={facility.field_fac_id}
                   >
-                    <strong>{facility.fac_name}</strong>:{" "}
-                    <span>{facility.fac_price} บาท</span>
+                    <strong>{facility.fac_name}</strong>{" "}
+                    <span>{formatPrice(facility.fac_price)} บาท</span>
                     <button
+                      style={{
+                        cursor: startProcessLoad ? "not-allowed" : "pointer",
+                      }}
+                      disabled={startProcessLoad}
                       className="del-myfac-btn-editfield"
                       onClick={() =>
                         handleConfirmDelete(fieldId, facility.field_fac_id)
@@ -1592,20 +1935,34 @@ export default function CheckFieldDetail() {
                   </div>
                 )}
                 <div className="add-fac-editfield-btn">
-                  <button onClick={handleSaveFacilities}>+ เพิ่ม</button>
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    onClick={handleSaveFacilities}
+                  >
+                    + เพิ่ม
+                  </button>
                 </div>
               </div>
             ))}
           </div>
 
           {!showNewFacilityInput ? (
-            <button
-              className="addfac-editfield"
-              type="button"
-              onClick={() => setShowNewFacilityInput(true)}
-            >
-              + เพิ่มสิ่งอำนวยความสะดวกใหม่
-            </button>
+            <div className="btn-group-editfield">
+              <button
+                style={{
+                  cursor: startProcessLoad ? "not-allowed" : "pointer",
+                }}
+                disabled={startProcessLoad}
+                className="addfac-editfield"
+                type="button"
+                onClick={() => setShowNewFacilityInput(true)}
+              >
+                + เพิ่มสิ่งอำนวยความสะดวกใหม่
+              </button>
+            </div>
           ) : (
             <div>
               <input
@@ -1615,20 +1972,38 @@ export default function CheckFieldDetail() {
                 value={newFacility}
                 onChange={(e) => setNewFacility(e.target.value)}
               />
-              <button
-                className="savebtn-editfield"
-                type="button"
-                onClick={addNewFacility}
-              >
-                บันทึก
-              </button>
-              <button
-                className="canbtn-editfield"
-                type="button"
-                onClick={() => setShowNewFacilityInput(false)}
-              >
-                ยกเลิก
-              </button>
+              <div className="btn-group-editfield">
+                <button
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
+                  className="savebtn-editfield"
+                  type="button"
+                  onClick={addNewFacility}
+                >
+                  {startProcessLoad ? (
+                    <span className="dot-loading">
+                      <span className="dot one">●</span>
+                      <span className="dot two">●</span>
+                      <span className="dot three">●</span>
+                    </span>
+                  ) : (
+                    "บันทึก"
+                  )}
+                </button>
+                <button
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
+                  className="canbtn-editfield"
+                  type="button"
+                  onClick={() => setShowNewFacilityInput(false)}
+                >
+                  ยกเลิก
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -1637,18 +2012,55 @@ export default function CheckFieldDetail() {
           {subFields.map((sub, index) => (
             <div key={sub.sub_field_id} className="sub-field-card-editfield">
               {editingField === sub.sub_field_id ? (
-                <>
+                <div className="btn-group-editfield">
+                  <strong>ชื่อสนามย่อย</strong>
                   <input
                     maxLength={50}
                     type="text"
                     value={updatedSubFieldName}
                     onChange={(e) => setUpdatedSubFieldName(e.target.value)}
                   />
+                  <strong>ราคา</strong>
                   <input
                     type="number"
                     value={updatedPrice}
                     onChange={(e) => setUpdatedPrice(Math.abs(e.target.value))}
                   />
+                  <strong>ผู้เล่นต่อทีม</strong>
+                  <input
+                    type="number"
+                    value={updatedSubFieldPlayer}
+                    onChange={(e) =>
+                      setUpdatedSubFieldPlayer(Math.abs(e.target.value))
+                    }
+                  />
+                  <strong>ความกว้างของสนาม</strong>
+                  <input
+                    type="number"
+                    value={updatedSubFieldWid}
+                    onChange={(e) =>
+                      setUpdatedSubFieldWid(Math.abs(e.target.value))
+                    }
+                  />
+                  <strong>ความยาวของสนาม</strong>
+                  <input
+                    type="number"
+                    value={updatedSubFieldLength}
+                    onChange={(e) =>
+                      setUpdatedSubFieldLength(Math.abs(e.target.value))
+                    }
+                  />
+                  <strong>ประพื้นเภทสนาม</strong>
+                  <input
+                    maxLength={20}
+                    type="text"
+                    value={updatedSubFieldFieldSurface}
+                    onChange={(e) =>
+                      setUpdatedSubFieldFieldSurface(e.target.value)
+                    }
+                  />
+                  <strong>ประเภทกีฬา</strong>
+
                   <select
                     value={updatedSportId}
                     onChange={(e) => setUpdatedSportId(e.target.value)}
@@ -1661,47 +2073,85 @@ export default function CheckFieldDetail() {
                       </option>
                     ))}
                   </select>
+
                   <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
                     className="savebtn-editfield"
                     onClick={() => saveSubField(sub.sub_field_id)}
                   >
-                    บันทึก
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
                   </button>
                   <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
                     className="canbtn-editfield"
                     onClick={() => cancelEditing()}
                   >
                     ยกเลิก
                   </button>
-                </>
+                </div>
               ) : (
-                <div>
+                <div className="btn-group-editfield">
                   <div className="input-group-editfield">
+                    <p>
+                      <strong>ชื่อสนามย่อย: </strong>
+                      {sub.sub_field_name}
+                    </p>
+
+                    <p>
+                      <strong>ราคา: </strong>
+                      {formatPrice(sub.price)}บาท
+                    </p>
+
+                    <p>
+                      <strong> ประเภทกีฬา: </strong>
+
+                      {sub.sport_name}
+                    </p>
+
+                    <p>
+                      <strong>ผู้เล่นต่อฝั่ง: </strong> {sub?.players_per_team}{" "}
+                      คน
+                    </p>
+                    <p>
+                      <strong>ความกว้างของสนาม: </strong>{" "}
+                      {formatPrice(sub?.wid_field)} เมตร
+                    </p>
+                    <p>
+                      <strong>ความยาวของสนาม: </strong>{" "}
+                      {formatPrice(sub?.length_field)} เมตร
+                    </p>
+                    <p>
+                      <strong>ประเภทของพื้นสนาม: </strong> {sub?.field_surface}
+                    </p>
                     <div>
-                      <label>ชื่อสนามย่อย: </label>
-                      <p>{sub.sub_field_name}</p>
-                    </div>
-                    <div>
-                      <label>ราคา: </label>
-                      <p>{sub.price} บาท</p>
-                    </div>
-                    <div>
-                      <label>ประเภทกีฬา: </label>
-                      <p>{sub.sport_name}</p>
-                    </div>
-                    <div>
-                      <button
-                        className="editbtn-editfield"
-                        onClick={() => startEditingSubField(sub)}
-                      >
-                        แก้ไข
-                      </button>
-                      <button
-                        className="delsub-editfield"
-                        onClick={() => handleDeleteClick(sub)}
-                      >
-                        ลบสนามย่อย
-                      </button>
+                      <div className="btn-group-editfield">
+                        <button
+                          className="editbtn-editfield"
+                          onClick={() => startEditingSubField(sub)}
+                        >
+                          แก้ไข
+                        </button>
+                        <button
+                          className="delsub-editfield"
+                          onClick={() => handleDeleteClick(sub)}
+                        >
+                          ลบสนามย่อย
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1714,9 +2164,9 @@ export default function CheckFieldDetail() {
                     <label>ราคากิจกรรมพิเศษของสนามย่อย</label>
                     <div>
                       {sub.add_ons.map((addon) => (
-                        <p key={`${sub.sub_field_id}-${addon.add_on_id}`}>
+                        <div key={`${sub.sub_field_id}-${addon.add_on_id}`}>
                           {editingAddon.addOnId === addon.add_on_id ? (
-                            <>
+                            <div className="btn-group-editfield">
                               <input
                                 maxLength={50}
                                 type="text"
@@ -1738,13 +2188,34 @@ export default function CheckFieldDetail() {
                                   })
                                 }
                               />
+
                               <button
+                                style={{
+                                  cursor: startProcessLoad
+                                    ? "not-allowed"
+                                    : "pointer",
+                                }}
+                                disabled={startProcessLoad}
                                 className="savebtn-editfield"
                                 onClick={saveAddon}
                               >
-                                บันทึก
+                                {startProcessLoad ? (
+                                  <span className="dot-loading">
+                                    <span className="dot one">●</span>
+                                    <span className="dot two">●</span>
+                                    <span className="dot three">●</span>
+                                  </span>
+                                ) : (
+                                  "บันทึก"
+                                )}
                               </button>
                               <button
+                                style={{
+                                  cursor: startProcessLoad
+                                    ? "not-allowed"
+                                    : "pointer",
+                                }}
+                                disabled={startProcessLoad}
                                 className="canbtn-editfield"
                                 onClick={() =>
                                   setEditingAddon({
@@ -1756,10 +2227,10 @@ export default function CheckFieldDetail() {
                               >
                                 ยกเลิก
                               </button>
-                            </>
+                            </div>
                           ) : (
-                            <>
-                              {addon.content} - {addon.price} บาท
+                            <div className="btn-group-editfield">
+                              {addon.content} - {formatPrice(addon.price)} บาท
                               <button
                                 className="editbtn-editfield"
                                 onClick={() => startEditingAddon(addon)}
@@ -1767,6 +2238,12 @@ export default function CheckFieldDetail() {
                                 แก้ไข
                               </button>
                               <button
+                                style={{
+                                  cursor: startProcessLoad
+                                    ? "not-allowed"
+                                    : "pointer",
+                                }}
+                                disabled={startProcessLoad}
                                 className="canbtn-editfield"
                                 onClick={() => {
                                   setSelectedAddOn(addon);
@@ -1775,9 +2252,9 @@ export default function CheckFieldDetail() {
                               >
                                 ลบกิจกรรมพิเศษ
                               </button>
-                            </>
+                            </div>
                           )}
-                        </p>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -1789,20 +2266,26 @@ export default function CheckFieldDetail() {
               )}
 
               {/* ปุ่ม toggle แสดง/ซ่อนฟอร์ม Add-on */}
-              <div className="input-group-editfield">
-                <button
-                  className="savebtn-editfield"
-                  onClick={() =>
-                    setShowAddOnForm((prev) => ({
-                      ...prev,
-                      [sub.sub_field_id]: !prev[sub.sub_field_id],
-                    }))
-                  }
-                >
-                  {showAddOnForm[sub.sub_field_id]
-                    ? "ยกเลิกกิจกรรมพิเศษ"
-                    : "เพิ่มกิจกรรมพิเศษ"}
-                </button>
+              <div className="btn-group-editfield">
+                <div className="input-group-editfield">
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    className="savebtn-editfield"
+                    onClick={() =>
+                      setShowAddOnForm((prev) => ({
+                        ...prev,
+                        [sub.sub_field_id]: !prev[sub.sub_field_id],
+                      }))
+                    }
+                  >
+                    {showAddOnForm[sub.sub_field_id]
+                      ? "ยกเลิก"
+                      : "เพิ่มกิจกรรมพิเศษ"}
+                  </button>
+                </div>
               </div>
               {/* เงื่อนไขแสดงฟอร์มเพิ่ม Add-on */}
               {showAddOnForm[sub.sub_field_id] && (
@@ -1833,12 +2316,16 @@ export default function CheckFieldDetail() {
                     }
                   />
                   <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
                     className="savebtn-editfield"
                     onClick={async () => {
                       const content = addOnInputs[sub.sub_field_id]?.content;
                       const price = addOnInputs[sub.sub_field_id]?.price;
                       if (!content || !price) {
-                        setMessage("กรุณากรอกชื่อและราคาของ Add-on");
+                        setMessage("กรุณากรอกชื่อและราคาของกิจกรรมพิเศษ");
                         setMessageType("error");
                         return;
                       }
@@ -1853,7 +2340,15 @@ export default function CheckFieldDetail() {
                       }));
                     }}
                   >
-                    บันทึกกิจกรรมพิเศษ
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึกกิจกรรมพิเศษ"
+                    )}
                   </button>
                 </div>
               )}
@@ -1872,7 +2367,7 @@ export default function CheckFieldDetail() {
               <div className="subfield-form-editfield">
                 <input
                   type="text"
-                  maxLength={50}
+                  maxLength={30}
                   placeholder="ชื่อสนามย่อย"
                   value={newSubField.sub_field_name}
                   onChange={(e) =>
@@ -1893,6 +2388,51 @@ export default function CheckFieldDetail() {
                     })
                   }
                 />
+                <input
+                  type="number"
+                  placeholder="ผู้เล่น"
+                  value={newSubField.players_per_team}
+                  onChange={(e) =>
+                    setNewSubField({
+                      ...newSubField,
+                      players_per_team: Math.abs(e.target.value),
+                    })
+                  }
+                />
+                <input
+                  type="number"
+                  placeholder="กว้าง"
+                  value={newSubField.wid_field}
+                  onChange={(e) =>
+                    setNewSubField({
+                      ...newSubField,
+                      wid_field: Math.abs(e.target.value),
+                    })
+                  }
+                />
+                <input
+                  type="number"
+                  placeholder="ยาว"
+                  value={newSubField.length_field}
+                  onChange={(e) =>
+                    setNewSubField({
+                      ...newSubField,
+                      length_field: Math.abs(e.target.value),
+                    })
+                  }
+                />
+                <input
+                  type="text"
+                  maxLength={20}
+                  placeholder="ประเภทของพื้นสนาม"
+                  value={newSubField.field_surface}
+                  onChange={(e) =>
+                    setNewSubField({
+                      ...newSubField,
+                      field_surface: e.target.value,
+                    })
+                  }
+                />
                 <select
                   value={newSportId}
                   onChange={(e) => setNewSportId(e.target.value)}
@@ -1906,6 +2446,10 @@ export default function CheckFieldDetail() {
                   ))}
                 </select>
                 <button
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
                   className="savebtn-editfield"
                   onClick={async () => {
                     if (!userId) {
@@ -1918,15 +2462,31 @@ export default function CheckFieldDetail() {
                       sub_field_name: "",
                       price: "",
                       sport_id: "",
+                      players_per_team: "",
+                      wid_field: "",
+                      length_field: "",
+                      field_surface: "",
                     });
                     setShowAddSubFieldForm(false);
                   }}
                 >
-                  บันทึกสนามย่อย
+                  {startProcessLoad ? (
+                    <span className="dot-loading">
+                      <span className="dot one">●</span>
+                      <span className="dot two">●</span>
+                      <span className="dot three">●</span>
+                    </span>
+                  ) : (
+                    "บันทึกสนามย่อย"
+                  )}
                 </button>
 
                 <button
                   className="canbtn-editfield"
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
                   onClick={() => setShowAddSubFieldForm(false)}
                 >
                   ยกเลิก
@@ -1936,7 +2496,14 @@ export default function CheckFieldDetail() {
           </div>
         </div>
         {field?.status == "ไม่ผ่านการอนุมัติ" && (
-          <button onClick={upDateStatus} className="editbtn-editfield">
+          <button
+            onClick={upDateStatus}
+            style={{
+              cursor: startProcessLoad ? "not-allowed" : "pointer",
+            }}
+            disabled={startProcessLoad}
+            className="editbtn-editfield"
+          >
             ส่งคำขอลงทะเบียนอีกครั้ง
           </button>
         )}
@@ -1949,6 +2516,10 @@ export default function CheckFieldDetail() {
               <p>คุณต้องการลบสนามย่อยนี้และกิจกรรมพิเศษทั้งหมดหรือไม่?</p>
               <div className="modal-actions-editfield">
                 <button
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
                   className="savebtn-editfield"
                   onClick={confirmDeleteSubField}
                 >
@@ -1956,6 +2527,10 @@ export default function CheckFieldDetail() {
                 </button>
                 <button
                   className="canbtn-editfield"
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
                   onClick={() => setShowDeleteModal(false)}
                 >
                   ยกเลิก
@@ -1971,12 +2546,20 @@ export default function CheckFieldDetail() {
               <p>คุณต้องการลบกิจกรรม "{selectedAddOn?.content}" หรือไม่?</p>
               <div className="modal-actions-editfield">
                 <button
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
                   className="savebtn-editfield"
                   onClick={confirmDeleteAddOn}
                 >
                   ยืนยัน
                 </button>
                 <button
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
                   className="canbtn-editfield"
                   onClick={() => {
                     setShowDeleteAddOnModal(false);
@@ -2001,12 +2584,20 @@ export default function CheckFieldDetail() {
               <p>คุณแน่ใจหรือไม่ว่าต้องการลบสิ่งอำนวยความสะดวกนี้</p>
               <div className="modal-actions-editfield">
                 <button
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
                   className="savebtn-editfield"
                   onClick={() => setShowModal(false)}
                 >
                   ยกเลิก
                 </button>
                 <button
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
                   className="canbtn-editfield"
                   onClick={handleDeleteFacility}
                 >

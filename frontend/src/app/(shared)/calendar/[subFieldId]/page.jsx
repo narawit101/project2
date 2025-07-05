@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "@/app/css/calendarStyles.css";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function MyCalendar() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -17,6 +18,7 @@ export default function MyCalendar() {
   const [messageType, setMessageType] = useState("");
   const { user, isLoading } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  usePreventLeave(startProcessLoad); 
 
   useEffect(() => {
     if (isLoading) return;
@@ -136,6 +138,7 @@ export default function MyCalendar() {
     const options = { day: "numeric", month: "long", year: "numeric" };
     return new Intl.DateTimeFormat("th-TH", options).format(date);
   };
+  const formatPrice = (value) => new Intl.NumberFormat("th-TH").format(value);
 
   const handleDateConfirm = async () => {
     try {
@@ -242,7 +245,7 @@ export default function MyCalendar() {
               <strong>สนาม</strong> {fieldData.sub_field_name}
             </p>
             <p className="price">
-              <strong>ราคา/ชม.</strong> {fieldData.price} บาท
+              <strong>ราคา/ชม.</strong> {formatPrice(fieldData.price)} บาท
             </p>
             <p className="type">
               <strong>กีฬา</strong> {fieldData.sport_name}
@@ -261,11 +264,14 @@ export default function MyCalendar() {
                 }}
                 disabled={startProcessLoad}
               >
-                เลือกวันที่
-                {startProcessLoad && (
-                  <div className="loading-overlay">
-                    <div className="loading-spinner"></div>
-                  </div>
+                {startProcessLoad ? (
+                  <span className="dot-loading">
+                    <span className="dot one">●</span>
+                    <span className="dot two">●</span>
+                    <span className="dot three">●</span>
+                  </span>
+                ) : (
+                  "ยืนยันการเลือกวันที่"
                 )}
               </button>
             </div>

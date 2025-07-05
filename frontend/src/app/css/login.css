@@ -8,7 +8,7 @@
 
 .password-wrapper-login input {
   width: 100%;
-  padding-right: 60px; 
+  padding-right: 60px;
 }
 
 .toggle-password-btn-login {
@@ -131,19 +131,16 @@
   gap: 20px;
   padding: 10px 0px 0px 0px;
   margin: 10px auto 0 auto;
-  a{
+  a {
     text-decoration: none;
   }
 }
-.reset-link, .register-link {
+.reset-link,
+.register-link {
   font-size: 14px;
-  color: #007BFF;
+  color: #007bff;
   font-weight: 500;
   transition: all 0.3s ease;
-}
-
-.reset-link:hover, .register-link:hover {
-  color: #0056b3;
 }
 
 .reset-password a {
@@ -159,8 +156,8 @@
 }
 
 .reset-password a:hover {
-  background-color: var(--text-color);
-  color: white;
+  background-color: #cdcccc;
+  /* color: white; */
   cursor: pointer;
 }
 

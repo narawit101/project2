@@ -1,0 +1,75 @@
+:root {
+  --text-color: #03045e;
+}
+
+.contact-container {
+  padding: 20px;
+  text-align: center;
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  margin: 95px auto 20px auto;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.head-titel-contact {
+  margin: 10px;
+}
+.contact-container p {
+  font-size: 14px;
+}
+
+.contact-container h1 {
+  color: var(--text-color);
+  text-align: center;
+  font-size: 24px;
+}
+
+.input-contact input {
+  display: flex;
+  margin: 15px auto;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input-contact textarea {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.input-contact textarea {
+  height: 300px;
+  resize: none;
+}
+
+
+.btn-send-contact {
+  margin: 20px auto 0px auto;
+}
+
+.btn-send-contact button {
+  width: 50%;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  background-color: var(--text-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.btn-send-contact button:hover {
+  background-color: #041f6b;
+}

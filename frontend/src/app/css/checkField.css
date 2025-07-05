@@ -1,121 +1,143 @@
 :root {
   --text-color: #03045e;
+  --primary-bg: #ffffff;
+  --secondary-bg: #f8f9fa;
+  --border-color: #e9ecef;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --border-radius: 12px;
+  --spacing: 1.5rem;
+}
+
+
+.check-field-detail-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 2rem;
+  background: var(--primary-bg);
+  box-shadow: var(--shadow);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
 }
 
 .check-field-detail-container h1 {
   text-align: center;
   color: var(--text-color);
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 600;
 }
 
-.sub-field-card-check-field p {
-  font-weight: 500;
-  font-size: 22px;
-  color: #333;
+/* Form Grid Layout */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing);
+  margin-bottom: 2rem;
 }
 
-.sub-field-card-check-field h2 {
-  text-align: center;
+.form-section {
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
 }
 
-.check-field-under p {
-  font-weight: 500;
-  font-size: 20px;
+.form-section:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+.form-section h2 {
   color: var(--text-color);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
   text-align: center;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.5rem;
 }
 
-.detail-checkfield {
-  border-radius: 8px;
-  max-height: 150px;
-  overflow-y: auto;
-  background: #f9f9f9;
-  border: 1px solid #dcdcdc;
-}
-
-.newstatus {
-  font-size: 18px;
+.form-section p {
+  font-size: 1rem;
   color: #333;
-  font-weight: bold;
-  margin-bottom: 10px;
+  margin: 0.5rem 0;
+  line-height: 1.5;
 }
 
-.check-field-detail-container {
-  width: 100%;
-  max-width: 1000px;
-  margin: 100px auto;
-  padding: 20px 100px 30px 100px;
-  background: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  text-align: center;
+.form-section strong {
+  color: var(--text-color);
+  font-weight: 600;
+  font-size: 1.1rem;
 }
 
+/* Image Section */
 .image-container {
+  grid-column: 1 / -1;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing);
 }
 
 .check-field-image {
-  width: 450px;
-  height: 450px;
+  width: 300px;
+  height: 300px;
   max-width: 100%;
   border-radius: 50%;
   object-fit: cover;
+  border: 4px solid var(--border-color);
+  box-shadow: var(--shadow);
 }
 
-/* Information Section */
-.check-field-info {
-  margin-bottom: 20px;
+/* Information Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing);
+  margin-bottom: 2rem;
 }
 
-.check-field-info p {
-  padding: 10px;
-  margin: 8px 0;
+.info-card {
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  text-align: center;
 }
 
-.check-field-info strong {
-  font-size: 24px;
-  font-weight: 400;
+.info-card h3 {
   color: var(--text-color);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
 }
 
-.check-field-detail-container ul {
-  list-style-type: none;
-  padding-left: 0;
-}
-
-.check-field-detail-container ul li {
-  margin: 5px 0;
+.info-card .value {
+  font-size: 1.2rem;
+  font-weight: 500;
   color: #333;
 }
 
 /* Document Section */
 .document-container {
-  background: #f9f9f9;
-  display: flex;
-  align-items: center;
-  margin: 20px auto 30px auto;
+  background: var(--secondary-bg);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin: 1rem 0;
   text-align: center;
-  border: #333 solid 2px;
-  padding: 5px;
-  border-radius: 8px;
-  height: 60px;
+  transition: all 0.3s ease;
 }
 
-.doc {
-  margin: 20px 0px 0px;
-  width: 100%;
-  /* height: 100px; */
-  align-items: center;
-  justify-content: center;
-  border-radius: 20px;
+.document-container:hover {
+  border-color: var(--text-color);
 }
+
 .document-link {
-  margin: 10px auto;
   text-decoration: none;
-  background-color: #ffffff;
-  font-weight: bold;
-  text-align: center;
+  color: var(--text-color);
+  font-weight: 600;
+  font-size: 1.1rem;
 }
 
 .document-link:hover {
@@ -124,65 +146,134 @@
 
 /* Sub Fields Section */
 .sub-fields-container-check-field {
-  max-height: 400px;
-  overflow-y: auto;
-  margin-top: 30px;
-  border-radius: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--spacing);
+  margin-top: 2rem;
 }
 
 .sub-field-card-check-field {
-  background: #f9f9f9;
-  border: 1px solid #dcdcdc;
-  border-radius: 10px;
-  padding: 20px;
-  margin-bottom: 30px;
+  text-align: center;
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.sub-field-card-check-field:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
 }
 
 .sub-field-card-check-field h2 {
-  background: none;
-  margin-bottom: 10px;
   color: var(--text-color);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 0.5rem;
 }
 
 .sub-field-card-check-field p {
-  margin: 10px;
-  font-size: 22px;
-  font-weight: 500;
+  font-size: 1rem;
+  color: #333;
+  margin: 0.5rem 0;
+  line-height: 1.5;
 }
 
 .sub-field-card-check-field strong {
-  margin: 5px 0;
-  font-size: 26px;
-  font-weight: 500;
   color: var(--text-color);
+  font-weight: 600;
+  font-size: 1.1rem;
 }
 
-.add-ons-container-check-field {
-  margin-top: 10px;
-  padding: 10px;
-  background-color: #e9ecef;
+/* Field Facilities */
+.field-facilities-check-field {
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin-top: 1rem;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.field-facilities-check-field h1 {
+  color: var(--text-color);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.facbox-checkfield {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.facitem-checkfield {
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
+  padding: 1rem;
+}
+
+.facitem-checkfield strong {
+  color: var(--text-color);
+  font-size: 1rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.facitem-checkfield p {
+  color: #333;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Add-ons Section */
+.add-ons-container-check-field {
+  background: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  margin-top: 1rem;
 }
 
 .add-ons-container-check-field h3 {
-  text-align: center;
   color: var(--text-color);
-  font-size: 20px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 0.5rem;
 }
 
+/* Status Buttons */
 .status-buttons {
   display: flex;
-  gap: 20px;
+  gap: 1rem;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 2rem;
+  flex-wrap: wrap;
 }
 
 .status-buttons button {
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: transform 0.2s ease;
+  min-width: 120px;
+}
+
+.status-buttons button:active {
+  transform: scale(0.98);
 }
 
 .approve-btn {
@@ -190,17 +281,9 @@
   color: white;
 }
 
-.approve-btn:hover {
-  background-color: #218838;
-}
-
 .reject-btn {
   background-color: #dc3545;
   color: white;
-}
-
-.reject-btn:hover {
-  background-color: #c82333;
 }
 
 .status-approved {
@@ -212,252 +295,175 @@
   color: #dc3545;
   font-weight: bold;
 }
-/* โมดอล */
 
+.newstatus {
+  font-size: 1.1rem;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.detail-checkfield {
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.check-field-under p {
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: var(--text-color);
+  text-align: center;
+  margin: 1rem 0;
+}
+
+/* Modal Styles */
 .confirm-modal-check-field {
+  backdrop-filter: blur(3px);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5); /* พื้นหลังมืด */
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: center; /* จัดกลางหน้าจอ */
-  align-items: center; /* จัดกลางตามแกน Y */
-  z-index: 9999; /* ให้โมดอลอยู่เหนือคอนเทนต์อื่น */
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
 }
 
 .modal-content-check-field {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
+  background: var(--primary-bg);
+  padding: 2rem;
+  border-radius: var(--border-radius);
   text-align: center;
-  width: 300px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เงาให้ดูมีมิติ */
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
 }
 
 .modal-content-check-field p {
-  font-size: 16px;
+  font-size: 1.1rem;
   color: #333;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.modal-actions-check-field {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
 }
 
 .modal-actions-check-field button {
-  margin: 10px;
-  padding: 10px 20px;
-  font-size: 14px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
+  border: none;
+  border-radius: 8px;
+  min-width: 100px;
 }
 
 .confirmbtn {
-  background-color: #28a745; /* สีเขียว */
-  color: white;
-  border: none;
-}
-
-.confirmbtn:hover {
-  background-color: #45a049; /* สีเขียวเข้มขึ้นเมื่อ hover */
-}
-
-.cancelbtn {
-  background-color: #dc3545; /* สีแดง */
-  color: white;
-  border: none;
-}
-
-.cancelbtn:hover {
-  background-color: #e53935; /* สีแดงเข้มขึ้นเมื่อ hover */
-}
-
-.modal-actions button {
-  width: 100px;
-}
-
-.status-buttons button {
-  padding: 10px 20px;
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
-.approve-btn {
   background-color: #28a745;
   color: white;
 }
 
-.approve-btn:hover {
-  background-color: #45a049;
-}
-
-.reject-btn {
+.cancelbtn {
   background-color: #dc3545;
   color: white;
 }
 
-.reject-btn:hover {
-  background-color: #e53935;
-}
-
-.field-facilities-check-field {
-  max-height: 200px;
-  overflow-y: auto;
-  margin-top: 15px;
-  border-radius: 10px;
-  background: #f9f9f9;
-  border: 1px solid #dcdcdc;
-}
-.field-facilities-check-field h1 {
-  margin: 0px 0px 5px 0px;
-  color: var(--text-color);
-  font-size: 32px;
-  font-weight: 600;
-}
-
-.facbox-checkfield {
-  margin: 0 0 0px 10px;
-  padding: 8px;
-}
-
-.facitem-checkfield {
-  padding: 10px 10px 10px 0px;
-}
-
-.facitem-checkfield strong {
-  font-size: 20px;
-  font-weight: 500;
-  color: var(--text-color);
-}
-
-.facitem-checkfield p {
-  font-size: 20px;
-  font-weight: 500;
-  color: #333;
-  display: inline-block;
-}
-
-.facitem-checkfield span {
-  color: #333;
-}
-/* โมดอล */
-
-/* Responsiveness /////////////////////////////////////////////////////////////////////////////////////////////////*/
-@media (max-width: 810px) {
+/* Responsive Design */
+@media (max-width: 768px) {
   .check-field-detail-container {
-    max-width: 600px;
-    padding: 15px;
+    margin: 1rem;
+    padding: 1.5rem;
   }
-  .check-field-detail-container p {
-    font-size: 24px;
-    font-weight: 500;
+  
+  .form-grid {
+    grid-template-columns: 1fr;
   }
-
-  .sub-field-card-check-field strong {
-    font-size: 22px;
+  
+  .info-grid {
+    grid-template-columns: 1fr;
   }
-  .sub-field-card-check-field p {
-    font-size: 20px;
+  
+  .sub-fields-container-check-field {
+    grid-template-columns: 1fr;
   }
-
-  .check-field-image {
-    max-width: 100%;
-    width: 450px;
+  
+  .facbox-checkfield {
+    grid-template-columns: 1fr;
   }
-
-  .status-buttons button {
-    width: 100%;
+  
+  .status-buttons {
+    flex-direction: column;
     align-items: center;
   }
-}
-
-@media (max-width: 650px) {
-  .check-field-detail-container {
-    max-width: 450px;
-    padding: 10px;
-  }
-
-  .check-field-image {
+  
+  .status-buttons button {
     width: 100%;
-    height: auto;
     max-width: 300px;
   }
-
-  .check-field-detail-containe p {
-    font-size: 22px;
-    font-weight: 500;
+  
+  .modal-actions-check-field {
+    flex-direction: column;
   }
-
-  .sub-field-card-check-field strong {
-    font-size: 24px;
-  }
-  .sub-field-card-check-field p {
-    font-size: 20px;
-  }
-
-  .status-buttons button {
+  
+  .modal-actions-check-field button {
     width: 100%;
-    margin-bottom: 10px;
   }
 }
 
-@media (max-width: 450px) {
+@media (max-width: 480px) {
   .check-field-detail-container {
-    max-width: 340px;
-    padding: 10px;
+    margin: 0.5rem;
+    padding: 1rem;
   }
-
+  
   .check-field-image {
-    width: 100%;
-    height: auto;
-    max-width: 200px;
+    width: 200px;
+    height: 200px;
   }
-
-  .check-field-detail-containe p {
-    font-size: 22px;
-    font-weight: 500;
+  
+  .form-section {
+    padding: 1rem;
   }
-
-  .sub-field-card-check-field strong {
-    font-size: 20px;
+  
+  .info-card {
+    padding: 1rem;
   }
-
-  .status-buttons button {
-    width: 100%;
-    margin-bottom: 10px;
+  
+  .sub-field-card-check-field {
+    padding: 1rem;
+  }
+  
+  .modal-content-check-field {
+    padding: 1.5rem;
+    margin: 1rem;
   }
 }
-@media (max-width: 350px) {
+
+@media (max-width: 360px) {
   .check-field-detail-container {
-    max-width: 250px;
-    padding: 10px;
+    padding: 0.75rem;
   }
-
+  
   .check-field-image {
-    width: 100%;
-    height: auto;
-    max-width: 200px;
+    width: 150px;
+    height: 150px;
   }
-
-  .check-field-detail-containe p {
-    font-size: 20px;
-    font-weight: 500;
-  }
-
-  .check-field-info strong {
-    font-size: 22px;
-  }
-
-  .sub-field-card-check-field strong {
-    font-size: 20px;
-  }
-  .sub-field-card-check-field p {
-    font-size: 18px;
-  }
-
-  .status-buttons button {
-    width: 100%;
-    margin-bottom: 10px;
+  
+  .form-section,
+  .info-card,
+  .sub-field-card-check-field {
+    padding: 0.75rem;
   }
 }

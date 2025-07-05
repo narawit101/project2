@@ -241,9 +241,19 @@ router.post(
       // INSERT ข้อมูลสนามย่อย
       for (const sub of subFields) {
         const subFieldResult = await pool.query(
-          `INSERT INTO sub_field (field_id, sub_field_name, price, sport_id, user_id) 
-         VALUES ($1, $2, $3, $4, $5) RETURNING sub_field_id`,
-          [field_id, sub.name, sub.price, sub.sport_id, user_id]
+          `INSERT INTO sub_field (field_id, sub_field_name, price, sport_id, user_id,wid_field,length_field,players_per_team,field_surface) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7 ,$8, $9) RETURNING sub_field_id`,
+          [
+            field_id,
+            sub.name,
+            sub.price,
+            sub.sport_id,
+            user_id,
+            sub.wid_field,
+            sub.length_field,
+            sub.players_per_team,
+            sub.field_surface,
+          ]
         );
         const sub_field_id = subFieldResult.rows[0].sub_field_id;
         // เพิ่ม add_on ที่เกี่ยวข้องกับ sub_field
@@ -397,6 +407,10 @@ router.get("/:field_id", authMiddleware, async (req, res) => {
             DISTINCT jsonb_build_object(
               'sub_field_id', s.sub_field_id,
               'sub_field_name', s.sub_field_name,
+              'players_per_team', s.players_per_team,
+              'wid_field', s.wid_field,
+              'length_field', s.length_field,
+              'field_surface', s.field_surface,
               'price', s.price,
               'sport_name', sp.sport_name,
               'add_ons', (
@@ -438,6 +452,10 @@ router.get("/:field_id", authMiddleware, async (req, res) => {
             DISTINCT jsonb_build_object(
               'sub_field_id', s.sub_field_id,
               'sub_field_name', s.sub_field_name,
+              'players_per_team', s.players_per_team,
+              'wid_field', s.wid_field,
+              'length_field', s.length_field,
+              'field_surface', s.field_surface,
               'price', s.price,
               'sport_name', sp.sport_name,
               'add_ons', (
@@ -713,7 +731,7 @@ router.delete("/delete/field/:id", authMiddleware, async (req, res) => {
             }
           }
 
-          console.log("📋 เอกสารที่จะลบ:", docPaths);
+          console.log("เอกสารที่จะลบ:", docPaths);
           await deleteMultipleCloudinaryFiles(docPaths);
         } catch (parseError) {
           console.error("แยกเอกสารไม่สำเร็จ:", parseError);
@@ -959,7 +977,7 @@ router.post(
       );
 
       res.json({ message: "อัปโหลดเอกสารสำเร็จ", paths: filePaths });
-      console.log("filepayh",filePaths);
+      console.log("filepayh", filePaths);
     } catch (error) {
       console.error("Upload document error:", error);
       res
@@ -971,7 +989,16 @@ router.post(
 
 router.post("/subfield/:field_id", authMiddleware, async (req, res) => {
   const { field_id } = req.params;
-  const { sub_field_name, price, sport_id, user_id } = req.body;
+  const {
+    sub_field_name,
+    price,
+    sport_id,
+    players_per_team,
+    wid_field,
+    length_field,
+    field_surface,
+    user_id,
+  } = req.body;
 
   if (!sport_id || isNaN(sport_id)) {
     return res.status(400).json({ error: "กรุณาเลือกประเภทกีฬาก่อนเพิ่มสนาม" });
@@ -979,8 +1006,18 @@ router.post("/subfield/:field_id", authMiddleware, async (req, res) => {
 
   try {
     const result = await pool.query(
-      `INSERT INTO sub_field (field_id, sub_field_name, price, sport_id, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [field_id, sub_field_name, price, sport_id, user_id]
+      `INSERT INTO sub_field (field_id, sub_field_name, price, sport_id, players_per_team ,wid_field ,length_field, field_surface, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+      [
+        field_id,
+        sub_field_name,
+        price,
+        sport_id,
+        players_per_team,
+        wid_field,
+        length_field,
+        field_surface,
+        user_id,
+      ]
     );
 
     res.json(result.rows[0]);
@@ -1041,14 +1078,31 @@ router.delete("/delete/addon/:id", authMiddleware, async (req, res) => {
 
 router.put("/supfiled/:sub_field_id", authMiddleware, async (req, res) => {
   const { sub_field_id } = req.params;
-  const { sub_field_name, price, sport_id } = req.body;
+  const {
+    sub_field_name,
+    price,
+    sport_id,
+    players_per_team,
+    wid_field,
+    length_field,
+    field_surface,
+  } = req.body;
 
   try {
     if (!sub_field_id) return res.status(400).json({ error: "sub_field_id" });
 
     await pool.query(
-      `UPDATE sub_field SET sub_field_name = $1, price = $2, sport_id = $3 WHERE sub_field_id = $4`,
-      [sub_field_name, price, sport_id, sub_field_id]
+      `UPDATE sub_field SET sub_field_name = $1, price = $2, sport_id = $3 , players_per_team = $4, wid_field = $5, length_field = $6, field_surface = $7 WHERE sub_field_id = $8`,
+      [
+        sub_field_name,
+        price,
+        sport_id,
+        players_per_team,
+        wid_field,
+        length_field,
+        field_surface,
+        sub_field_id,
+      ]
     );
     res.json({ message: "สำเร็จ" });
   } catch (error) {
@@ -1182,6 +1236,10 @@ router.get("/open-days/:sub_field_id", authMiddleware, async (req, res) => {
             DISTINCT jsonb_build_object(
               'sub_field_id', s.sub_field_id,
               'sub_field_name', s.sub_field_name,
+              'players_per_team', s.players_per_team,
+              'wid_field', s.wid_field,
+              'length_field', s.length_field,
+              'field_surface', s.field_surface,
               'price', s.price,
               'sport_name', sp.sport_name,
               'add_ons', (
@@ -1242,6 +1300,10 @@ router.get("/field-data/:sub_field_id", authMiddleware, async (req, res) => {
         DISTINCT jsonb_build_object(
           'sub_field_id', s.sub_field_id,
           'sub_field_name', s.sub_field_name,
+          'players_per_team', s.players_per_team,
+          'wid_field', s.wid_field,
+          'length_field', s.length_field,
+          'field_surface', s.field_surface,
           'price', s.price,
           'sport_name', sp.sport_name,
           'add_ons', (

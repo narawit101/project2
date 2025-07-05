@@ -33,12 +33,31 @@ export default function Search() {
   }, [user, isLoading, router]);
 
   useEffect(() => {
+    if (!query) {
+      setApprovedFields([]);
+      setDataLoading(false);
+      return;
+    }
+    
+    const dayMapThaiToEng = {
+      จันทร์: "Mon",
+      อังคาร: "Tue",
+      พุธ: "Wed",
+      พฤหัสบดี: "Thu",
+      ศุกร์: "Fri",
+      เสาร์: "Sat",
+      อาทิตย์: "Sun",
+    };
+
+   const translatedQuery = dayMapThaiToEng[query?.trim()] || query;
+
     const fetchApprovedFields = async () => {
       setDataLoading(true);
       try {
         console.log("query", query);
+        console.log("query days", translatedQuery);
         const res = await fetch(
-          `${API_URL}/search?query=${encodeURIComponent(query)}`,
+          `${API_URL}/search?query=${encodeURIComponent(translatedQuery)}`,
           {
             method: "GET",
             headers: {
@@ -147,37 +166,22 @@ export default function Search() {
                 />
                 <div className="card-body-search">
                   <h3>{field.field_name}</h3>
-                  <div className="firsttime-search">
-                    <p className="filedname">
-                      <span className="first-label-time">เปิดเวลา: </span>
-                      {field.open_hours} น. - {field.close_hours} น.
-                    </p>
-                  </div>
-                  <div className="firstopen-search">
-                    <p>
-                      <span className="first-label-time">วันทำการ: </span>
-                      {convertToThaiDays(field.open_days)}
-                    </p>
-                  </div>
-                  <div className="firstopen-search">
-                    <p>
-                      <span className="first-label-time">กีฬา: </span>
-                      {field.sport_names?.join(" / ")}
-                    </p>
-                  </div>
                   <div className="reviwe-container-search">
                     <strong className="reviwe-star-search">
-                      <p>คะแนนรีวิว {field.avg_rating}</p>
+                      <p>
+                        {field.avg_rating && field.avg_rating > 0
+                          ? `คะแนนรีวิว ${field.avg_rating}`
+                          : "ยังไม่มีคะแนนรีวิว"}
+                      </p>
+
                       {[1, 2, 3, 4, 5].map((num) => {
+                        const rating = field.avg_rating || 0;
                         const roundedRating =
-                          Math.floor(field.avg_rating) +
-                          (field.avg_rating % 1 >= 0.8 ? 1 : 0);
+                          Math.floor(rating) + (rating % 1 >= 0.8 ? 1 : 0);
 
                         const isFull = num <= roundedRating;
                         const isHalf =
-                          !isFull &&
-                          num - 0.5 <= field.avg_rating &&
-                          field.avg_rating % 1 < 0.8;
+                          !isFull && num - 0.5 <= rating && rating % 1 < 0.8;
 
                         return (
                           <FontAwesomeIcon
@@ -198,6 +202,25 @@ export default function Search() {
                         );
                       })}
                     </strong>
+                  </div>
+
+                  <div className="firsttime-search">
+                    <p className="filedname">
+                      <span className="first-label-time">เปิดเวลา: </span>
+                      {field.open_hours} น. - {field.close_hours} น.
+                    </p>
+                  </div>
+                  <div className="firstopen-search">
+                    <p>
+                      <span className="first-label-time">วันทำการ: </span>
+                      {convertToThaiDays(field.open_days)}
+                    </p>
+                  </div>
+                  <div className="firstopen-search">
+                    <p>
+                      <span className="first-label-time">กีฬา: </span>
+                      {field.sport_names?.join(" / ")}
+                    </p>
                   </div>
                 </div>
               </div>

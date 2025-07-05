@@ -4,7 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import "@/app/css/Booking.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { io } from "socket.io-client";
-import { data } from "autoprefixer";
+import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function Booking() {
   const { subFieldId } = useParams();
@@ -63,6 +63,7 @@ export default function Booking() {
   // const [bookingId, setBookingId] = useState("");
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  usePreventLeave(startProcessLoad);
 
   useEffect(() => {
     if (isLoading) return;
@@ -707,7 +708,12 @@ export default function Booking() {
 
         body: bookingData,
       });
+      const data = await response.json();
 
+      if (response.status === 429 && data.code === "RATE_LIMIT") {
+        router.push("/api-rate-limited");
+        return;
+      }
       if (!response.ok) {
         const errorData = await response.json();
         setMessage(errorData.message);
@@ -730,7 +736,6 @@ export default function Booking() {
         setTotalHoursFormat(0);
         setSumFac(0);
       } else {
-        const data = await response.json();
         if (data.success) {
           setMessage("บันทึกการจองสำเร็จ");
           setMessageType("success");
@@ -858,6 +863,18 @@ export default function Booking() {
     }
   }
 
+  const formatDateToThai = (date) => {
+    if (!date) return "ไม่ทราบวันที่"; // กัน null/undefined
+
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate)) return "ไม่สามารถแปลงวันที่ได้"; // กัน Invalid Date
+
+    const options = { day: "numeric", month: "long", year: "numeric" };
+    return new Intl.DateTimeFormat("th-TH", options).format(parsedDate);
+  };
+
+  const formatPrice = (value) => new Intl.NumberFormat("th-TH").format(value);
+
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
@@ -968,7 +985,9 @@ export default function Booking() {
                   }
                 >
                   <p className="addon-content-book">ปกติ</p>
-                  <p className="addon-price-book">{price} บาท/ชม.</p>
+                  <p className="addon-price-book">
+                    {formatPrice(price)} บาท/ชม.
+                  </p>
                 </div>
 
                 {addOns.map((addOn) => (
@@ -984,7 +1003,9 @@ export default function Booking() {
                     }
                   >
                     <p className="addon-content-book">{addOn.content}</p>
-                    <p className="addon-price-book">{addOn.price} บาท/ชม.</p>
+                    <p className="addon-price-book">
+                      {formatPrice(addOn.price)} บาท/ชม.
+                    </p>
                   </div>
                 ))}
               </div>
@@ -1005,7 +1026,8 @@ export default function Booking() {
             )}
 
             <div className="time-info">
-              <p>{bookingDate}</p> เปิด: {openHours} - {closeHours} น
+              <p>{formatDateToThai(bookingDate)}</p> เปิด: {openHours} -{" "}
+              {closeHours} น
             </div>
 
             <div className="time-info-book">
@@ -1064,7 +1086,7 @@ export default function Booking() {
                     {totalHoursFormat ? `${totalHoursFormat} ชั่วโมง` : "-"}
                   </strong>
                   <strong className="total-per-hour">
-                    ราคา: {totalPrice} บาท
+                    ราคา: {formatPrice(totalPrice)} บาท
                   </strong>
                 </div>
               </div>
@@ -1103,7 +1125,7 @@ export default function Booking() {
                           }
                         />
                         <label>
-                          {fac.fac_name} - {fac.fac_price} บาท
+                          {fac.fac_name} - {formatPrice(fac.fac_price)} บาท
                         </label>
                       </div>
                     ))}
@@ -1141,14 +1163,14 @@ export default function Booking() {
               <div className={`total-box ${canBook ? "show" : ""}`}>
                 <div className="summary">
                   <strong className="price-deposit">
-                    มัดจำที่ต้องจ่าย: {priceDeposit} บาท
+                    มัดจำที่ต้องจ่าย: {formatPrice(priceDeposit)} บาท
                   </strong>
 
                   <strong className="total-per-hour">
-                    ราคาหลังหักค่ามัดจำ: {totalRemaining} บาท
+                    ราคาหลังหักค่ามัดจำ: {formatPrice(totalRemaining)} บาท
                   </strong>
                   <strong className="total-remaining">
-                    ยอดรวมสุทธิ: {totalPrice} บาท
+                    ยอดรวมสุทธิ: {formatPrice(totalPrice)} บาท
                   </strong>
                 </div>
                 {totalPrice > 0 && (
@@ -1173,11 +1195,6 @@ export default function Booking() {
                         เงินสด
                       </label>
                     </div>
-                    {startProcessLoad && (
-                      <div className="loading-overlay">
-                        <div className="loading-spinner"></div>
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
@@ -1190,7 +1207,15 @@ export default function Booking() {
                   onClick={handleConfirm}
                   className="btn-confirm-confirmbooking"
                 >
-                  ยืนยัน
+                  {startProcessLoad ? (
+                    <span className="dot-loading">
+                      <span className="dot one"></span>
+                      <span className="dot two"></span>
+                      <span className="dot three"></span>
+                    </span>
+                  ) : (
+                    "ยืนยันการจอง"
+                  )}
                 </button>
                 <button
                   style={{

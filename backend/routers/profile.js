@@ -18,6 +18,10 @@ router.get("/:field_id", async (req, res) => {
               DISTINCT jsonb_build_object(
                 'sub_field_id', s.sub_field_id,
                 'sub_field_name', s.sub_field_name,
+                'players_per_team', s.players_per_team,
+                'wid_field', s.wid_field,
+                'length_field', s.length_field,
+                'field_surface', s.field_surface,
                 'price', s.price,
                 'sport_name', sp.sport_name,
                 'add_ons', (
@@ -49,6 +53,5 @@ router.get("/:field_id", async (req, res) => {
     res.status(500).json({ error: "เกิดข้อผิดพลาดในการดึงข้อมูลสนามกีฬา" });
   }
 });
-
 
 module.exports = router;

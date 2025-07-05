@@ -11,7 +11,12 @@
 .field-info-profile p {
   color: #333;
   font-size: 18px;
-  font-weight: 400;
+  font-weight: 600;
+}
+
+.field-info-profile strong {
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .head-title-profile {
@@ -75,7 +80,8 @@
 }
 
 .opendays {
-  color: #333;
+  font-weight: 600;
+  color: #5b5858;
   padding: 10px;
   margin: 5px;
   display: inline-block;
@@ -96,6 +102,7 @@
 }
 
 .facitem-profile span {
+  font-weight: 600;
   color: #333;
 }
 
@@ -108,6 +115,7 @@
 }
 
 .detail-profile {
+  font-weight: 600;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   max-height: 200px;
   overflow-y: auto;
@@ -167,20 +175,19 @@
 
 .field-info-profile strong {
   font-size: 18px;
-  font-weight: 500;
   color: var(--text-color);
 }
-.field-info-profile h1 {
+.field-info-profile ul h1 {
   text-align: center;
   margin-top: 0px;
 }
 
-ul {
+.field-info-profile ul {
   list-style-type: none;
   padding-left: 0;
 }
 
-ul li {
+.field-info-profile ul li {
   margin: 5px 0;
   color: #333;
 }
@@ -209,63 +216,90 @@ ul li {
 }
 
 .sub-field-card-profile {
-  background: rgba(204, 220, 223, 0.376);
-  padding: 15px;
+  background: #f9f9fb;
+  padding: 16px 20px;
   margin-bottom: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: 0.3s;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
+
+.add-ons-container-profile {
+  margin-top: 12px;
+  padding: 12px 16px;
+  background: #e7edf7;
+  border-radius: 12px;
+  color: #333;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* ขยายเงาตอน hover */
+}
+
 .sub-field-card-profile:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* ขยายเงาตอน hover */
   cursor: pointer;
 }
 
 .sub-field-card-profile h2 {
-  background: none;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
+  font-size: 24px;
   color: var(--text-color);
+  font-weight: 600;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 6px;
 }
 
 .sub-field-card-profile p {
-  margin: 10px;
-  color: #333;
-  font-size: 18px;
-  font-weight: 400;
+  margin: 8px 0;
+  font-size: 17px;
+  color: #403e7d;
+  font-weight: 600;
+  line-height: 1.6;
 }
 
 .sub-field-card-profile strong {
-  margin: 5px 0;
-  font-size: 20px;
-  font-weight: 500;
+  display: inline-block;
+  margin-right: 6px;
+  font-size: 18px;
+  font-weight: 600;
   color: var(--text-color);
-}
-.add-ons-container-profile {
-  margin-top: 10px;
-  padding: 10px;
-  background-color: #d6d6d6a9;
-  border-radius: 8px;
 }
 
 .add-ons-container-profile h3 {
   text-align: center;
-  color: var(--text-color);
+  color: #333;
+  font-size: 20px;
+  margin-bottom: 12px;
+  border-bottom: 1px dashed #bbb;
+  padding-bottom: 6px;
 }
+
 .no-addon-profile p {
   text-align: center;
-  color: #007bff;
+  color: #707070;
+  font-style: italic;
+  font-size: 15px;
 }
 
 .add-ons-container-profile ul {
   padding-left: 0;
   list-style-type: none;
+  margin: 0;
 }
 
 .add-ons-container-profile ul li {
-  margin: 5px 0;
-  font-size: 12px;
-  color: #333;
+  margin: 6px 0;
+  font-size: 15px;
+  color: #444;
+  padding-left: 1.2rem;
+  position: relative;
+}
+
+.add-ons-container-profile ul li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #684b7d;
+  font-weight: bold;
 }
 
 .custom-no-fields-message {
@@ -403,7 +437,7 @@ ul li {
   font-size: 40px;
   color: #bbb;
   cursor: pointer;
-  z-index: 10;
+  z-index: 9;
 }
 
 .arrow-btn.left {
@@ -419,7 +453,7 @@ ul li {
   text-align: center;
 }
 
-.dot {
+.dot-post {
   width: 10px;
   height: 10px;
   margin: 0 4px;
@@ -430,11 +464,12 @@ ul li {
   transition: background-color 0.3s ease;
 }
 
-.dot.active {
+.dot-post.active {
   background-color: var(--text-color);
 }
 
 .lightbox-overlay {
+  backdrop-filter: blur(3px);
   position: fixed;
   top: 0;
   left: 0;
@@ -449,10 +484,20 @@ ul li {
 }
 
 .lightbox-image {
-  max-width: 85%;
-  max-height: 85%;
+  max-width: 95%;
+  max-height: 95%;
   object-fit: contain;
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn-post 0.5s ease;
+}
+
+@keyframes fadeIn-post {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+
+  }
 }
 
 /* css edit del */
@@ -518,7 +563,7 @@ ul li {
 .edit-form-post button {
   width: 100%;
   padding: 12px;
-  background: #007bff;
+  background: var(--text-color);
   color: white;
   font-size: 16px;
   border: none;
@@ -528,7 +573,7 @@ ul li {
 }
 
 .edit-form-post button:hover {
-  background: #0056b3;
+  background: #061996;
 }
 
 .canbtn-post {
@@ -566,11 +611,11 @@ ul li {
 }
 
 .post-actions-profile .btn-profile:first-child {
-  background-color: #d0d0d09a;
-  color: #555;
+  background-color: #2f2a2a9a;
+  color: #fff;
 }
 .post-actions-profile .btn-profiles:first-child:hover {
-  background-color: #9e9a9a;
+  background-color: #4c4444;
 }
 
 .post-actions-profile .btn-profile:last-child {
@@ -624,6 +669,7 @@ ul li {
 }
 
 .modal-overlay-profile {
+  backdrop-filter: blur(3px);
   position: fixed;
   top: 0;
   left: 0;
@@ -668,7 +714,7 @@ ul li {
   border-radius: 10px;
   height: 40px;
   width: 80px;
-  background-color: #3564dc;
+  background-color: var(--text-color);
   color: white;
 }
 

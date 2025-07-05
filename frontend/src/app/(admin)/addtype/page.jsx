@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import "@/app/css/add.css";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function RegisterFieldForm() {
   const router = useRouter("");
@@ -23,6 +24,7 @@ export default function RegisterFieldForm() {
   const [dataLoading, setDataLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const sportTypePerPage = 4;
+  usePreventLeave(startProcessLoad);
 
   useEffect(() => {
     if (isLoading) return;
@@ -264,7 +266,15 @@ export default function RegisterFieldForm() {
                     type="button"
                     onClick={addType}
                   >
-                    บันทึก
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึก"
+                    )}
                   </button>
                   <button
                     className="cancelbtn-admin"
@@ -284,6 +294,49 @@ export default function RegisterFieldForm() {
           {dataLoading && (
             <div className="loading-data">
               <div className="loading-data-spinner"></div>
+            </div>
+          )}
+          {showEditModal && (
+            <div className="edit-modal-type">
+              <div className="modal-content-type">
+                <input
+                  type="text"
+                  maxLength={50}
+                  value={newSportName}
+                  onChange={(e) => setNewSportName(e.target.value)}
+                  placeholder="แก้ไขชื่อประเภทกีฬา"
+                />
+                <div className="modal-actions-tpye">
+                  <button
+                    className="confirmbtn-type"
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    onClick={editSportType}
+                  >
+                    {startProcessLoad ? (
+                      <span className="dot-loading">
+                        <span className="dot one">●</span>
+                        <span className="dot two">●</span>
+                        <span className="dot three">●</span>
+                      </span>
+                    ) : (
+                      "บันทึกการแก้ไข"
+                    )}
+                  </button>
+                  <button
+                    className="cancelbtn-type"
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    onClick={() => setShowEditModal(false)}
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -356,7 +409,15 @@ export default function RegisterFieldForm() {
                   disabled={startProcessLoad}
                   onClick={deleteSportType}
                 >
-                  ยืนยัน
+                  {startProcessLoad ? (
+                    <span className="dot-loading">
+                      <span className="dot one">●</span>
+                      <span className="dot two">●</span>
+                      <span className="dot three">●</span>
+                    </span>
+                  ) : (
+                    "ยืนยัน"
+                  )}
                 </button>
                 <button
                   className="cancelbtn-type"
@@ -370,48 +431,6 @@ export default function RegisterFieldForm() {
                 </button>
               </div>
             </div>
-          </div>
-        )}
-
-        {showEditModal && (
-          <div className="edit-modal-type">
-            <div className="modal-content-type">
-              <input
-                type="text"
-                maxLength={50}
-                value={newSportName}
-                onChange={(e) => setNewSportName(e.target.value)}
-                placeholder="แก้ไขชื่อประเภทกีฬา"
-              />
-              <div className="modal-actions-tpye">
-                <button
-                  className="confirmbtn-type"
-                  style={{
-                    cursor: startProcessLoad ? "not-allowed" : "pointer",
-                  }}
-                  disabled={startProcessLoad}
-                  onClick={editSportType}
-                >
-                  บันทึกการแก้ไข
-                </button>
-                <button
-                  className="cancelbtn-type"
-                  style={{
-                    cursor: startProcessLoad ? "not-allowed" : "pointer",
-                  }}
-                  disabled={startProcessLoad}
-                  onClick={() => setShowEditModal(false)}
-                >
-                  ยกเลิก
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {startProcessLoad && (
-          <div className="loading-overlay">
-            <div className="loading-spinner"></div>
           </div>
         )}
       </div>

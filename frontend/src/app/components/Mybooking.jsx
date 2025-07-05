@@ -288,27 +288,32 @@ export default function Mybooking() {
                           <strong> เวลา: </strong>
                           {item.start_time} - {item.end_time}
                         </p>
-                        <p>
-                          <strong> สามารถยกเลิกก่อนเวลาเริ่ม: </strong>
-                          {item.cancel_hours} ชม.
-                        </p>
-                        <hr className="divider-order" />
-                      </div>
-                      <div className="total-date-order">
-                        <p>
-                          ยกเลิกได้ถึง <strong>วันที่:</strong>{" "}
-                          {formatDate(item.start_date)} <br />
-                          <strong> ** เวลา:</strong>{" "}
-                          {getCancelDeadlineTime(
-                            item.start_date,
-                            item.start_time,
-                            item.cancel_hours
-                          )}{" "}
-                          น. **
-                        </p>
-                      </div>
-                    </div>
+                        {item.cancel_hours > 0 && (
+                          <p>
+                            <strong> สามารถยกเลิกก่อนเวลาเริ่ม: </strong>
+                            {item.cancel_hours} ชม.
+                          </p>
+                        )}
 
+                      </div>
+                      {item.cancel_hours > 0 && (
+                        <div className="total-date-order">
+                        <hr className="divider-order" />
+
+                          <p>
+                            ยกเลิกได้ถึง <strong>วันที่:</strong>{" "}
+                            {formatDate(item.start_date)} <br />
+                            <strong> ** เวลา:</strong>{" "}
+                            {getCancelDeadlineTime(
+                              item.start_date,
+                              item.start_time,
+                              item.cancel_hours
+                            )}{" "}
+                            น. **
+                          </p>
+                        </div>
+                      )}
+                    </div>
                     <div className="compact-price-box-order">
                       {/* กิจกรรม */}
                       <div className="line-item-order">
