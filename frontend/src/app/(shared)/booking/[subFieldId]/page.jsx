@@ -1209,9 +1209,9 @@ export default function Booking() {
                 >
                   {startProcessLoad ? (
                     <span className="dot-loading">
-                      <span className="dot one"></span>
-                      <span className="dot two"></span>
-                      <span className="dot three"></span>
+                      <span className="dot one">●</span>
+                      <span className="dot two">●</span>
+                      <span className="dot three">●</span>
                     </span>
                   ) : (
                     "ยืนยันการจอง"

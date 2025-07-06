@@ -19,18 +19,18 @@ module.exports = function (io) {
   const rateLimit = require("express-rate-limit");
 
   const LimiterBookingsRequest = rateLimit({
-    windowMs: 1 * 60 * 1000, 
-    max: 5, // จำกัดสูงสุด 5 ครั้งใน 1 นาที
+    windowMs: 10 * 60 * 1000,
+    max: 10, // จำกัดสูงสุด 10 ครั้งใน 10 นาที
     standardHeaders: true,
     legacyHeaders: false,
 
     keyGenerator: (req) => {
-      return req.user?.user_id
+      return req.user?.user_id;
     },
 
     handler: (req, res, next, options) => {
       console.warn("Rate limit Bookings:", {
-        email: req.body?.email || req.user?.email,
+        // email: req.body?.email || req.user?.email,
         ip: req.ip,
         path: req.originalUrl,
         time: DateTime.now()
@@ -479,6 +479,84 @@ module.exports = function (io) {
             `INSERT INTO payment (booking_id, deposit_slip) VALUES ($1, $2) RETURNING payment_id`,
             [bookingId, depositSlip]
           );
+        }
+
+        if (bookingResult.rows.length > 0) {
+          const data = await client.query(
+            `SELECT 
+              ub.first_name AS booker_first_name,
+              ub.last_name AS booker_last_name,
+              ub.email AS booker_email,
+              uf.email AS field_owner_email,
+              f.field_name, 
+              sf.sub_field_name,
+              b.booking_date,
+              b.start_time,
+              b.end_time  
+            FROM bookings b 
+            LEFT JOIN field f ON b.field_id = f.field_id
+            LEFT JOIN sub_field sf ON b.sub_field_id = sf.sub_field_id
+            LEFT JOIN users ub ON ub.user_id = b.user_id         -- ผู้จอง
+            LEFT JOIN users uf ON uf.user_id = f.user_id         -- เจ้าของสนาม
+            WHERE b.booking_id = $1`,
+            [bookingId]
+          );
+
+          if (data.rows.length === 0) {
+            return res
+              .status(404)
+              .json({ success: false, message: "ไม่พบข้อมูลการจอง" });
+          }
+          const bookingData = data.rows[0];
+          console.log("bookingData:", bookingData);
+
+          if (!bookingData.field_owner_email) {
+            console.error("ไม่พบอีเมลเจ้าของสนาม");
+          } else {
+            try {
+              const emailRes = await resend.emails.send({
+                from: process.env.Sender_Email,
+                to: bookingData.field_owner_email,
+                subject: "มีการจองสนามของคุณ",
+                html: `
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align:center;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td align="center">
+        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 300px; margin-bottom: 10px;" />
+      </td>
+    </tr>
+  </table>
+  <h1 style="color: #03045e; margin-bottom: 16px;">การจองสนาม</h1>
+
+  <p style="font-size: 16px; color: #111827;">
+    <strong style="color: #0f172a;"><h3>${bookingData.field_name}</h3></strong> มีรายการจองใหม่ 1 รายการ
+  </p>
+
+  <div style="margin: 20px 0;">
+    <a href="${process.env.FONT_END_URL}/login?redirect=/bookingDetail/${bookingId}" style="display: inline-block; background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;
+                 width:160px;" target="_blank">
+      ตรวจสอบการจอง #${bookingId}
+    </a>
+  </div>
+
+  <p style="font-size: 14px; color: #6b7280;">
+    กรุณาตรวจสอบและอัปเดตสถานะการจองให้เสร็จสิ้น
+  </p>
+
+  <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 12px; color: #9ca3af;">
+    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+  </p>
+</div>
+    `,
+              });
+              console.log("Email sent:", emailRes);
+            } catch (emailErr) {
+              console.error("Email send error:", emailErr);
+            }
+          }
         }
 
         await client.query("COMMIT");
