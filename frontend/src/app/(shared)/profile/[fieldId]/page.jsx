@@ -44,6 +44,7 @@ export default function CheckFieldDetail() {
   const [selectedRating, setSelectedRating] = useState("ทั้งหมด");
   const [currentPage, setCurrentPage] = useState(1);
   usePreventLeave(startProcessLoad);
+  const [showSubfieldModal, setShowSubfieldModal] = useState(false);
 
   useEffect(() => {
     if (isLoading) return;
@@ -271,9 +272,7 @@ export default function CheckFieldDetail() {
   };
 
   const scrollToBookingSection = () => {
-    document
-      .querySelector(".sub-fields-profile")
-      ?.scrollIntoView({ behavior: "smooth" });
+    setShowSubfieldModal(true);
   };
 
   const toggleExpanded = (postId) => {
@@ -512,6 +511,10 @@ export default function CheckFieldDetail() {
     return review.rating === parseInt(selectedRating);
   });
 
+  const handleCancel = () => {
+    setShowSubfieldModal(false);
+  };
+
   return (
     <>
       {message && (
@@ -539,9 +542,6 @@ export default function CheckFieldDetail() {
           <div className="head-title-profile">
             <strong> {fieldData?.field_name}</strong>
           </div>
-          <div className="profile-btn">
-            <button onClick={scrollToBookingSection}>เลือกสนาม</button>
-          </div>
         </div>
       ) : (
         <div>
@@ -556,14 +556,14 @@ export default function CheckFieldDetail() {
       )}
       <div className="field-detail-container-profile">
         <div className="undercontainer-proflie">
-          <h1 className="sub-fields-profile">สนามย่อย</h1>
+          <h1 className="sub-fields-profile">รายละเอียดสนามย่อย</h1>
           <div className="sub-fields-container-profile">
             {fieldData?.sub_fields && fieldData.sub_fields.length > 0 ? (
               fieldData.sub_fields.map((sub) => (
                 <div
                   key={sub.sub_field_id}
                   className="sub-field-card-profile"
-                  onClick={() => router.push(`/calendar/${sub.sub_field_id}`)}
+                  // onClick={() => {setShowSubfieldModal(true);} }
                 >
                   <p>
                     <strong>ชื่อสนาม:</strong> {sub.sub_field_name}
@@ -614,6 +614,9 @@ export default function CheckFieldDetail() {
                 )}
               </div>
             )}
+          </div>
+          <div className="profile-btn">
+            <button onClick={scrollToBookingSection}>เลือกสนาม</button>
           </div>
         </div>
         <div className="post-profile">
@@ -1081,6 +1084,58 @@ export default function CheckFieldDetail() {
               >
                 ยกเลิก
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showSubfieldModal && (
+        <div className="modal-overlay-subfield">
+          <div className="modal-box-subfield">
+            <button
+              style={{
+                cursor: startProcessLoad ? "not-allowed" : "pointer",
+              }}
+              disabled={startProcessLoad}
+              onClick={handleCancel}
+              className="btn-cancel-subfield-profile"
+            >
+              Xปิด
+            </button>
+            <div className="undercontainer-proflie-overlay">
+              <h1 className="sub-fields-profile">เลือกสนามย่อย</h1>
+              <div className="sub-fields-container-profile-overlay">
+                {fieldData?.sub_fields && fieldData.sub_fields.length > 0 ? (
+                  fieldData.sub_fields.map((sub) => (
+                    <div
+                      key={sub.sub_field_id}
+                      className="sub-field-card-profile-overlay"
+                      onClick={() =>
+                        router.push(`/calendar/${sub.sub_field_id}`)
+                      }
+                    >
+                      <p>
+                        <strong>ชื่อสนาม:</strong> {sub.sub_field_name}
+                      </p>
+                      <p>
+                        <strong>ราคา:</strong> {formatPrice(sub.price)} บาท
+                      </p>
+                      <p>
+                        <strong>กีฬา:</strong> {sub.sport_name}
+                      </p>
+                      {/*  แสดง Add-ons ถ้ามี */}
+                    </div>
+                  ))
+                ) : (
+                  <div className="sub-fields-container-profile">
+                    {" "}
+                    {dataLoading && (
+                      <div className="loading-data">
+                        <div className="loading-data-spinner"></div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
