@@ -17,13 +17,13 @@ export const usePreventLeave = (startProcessLoad) => {
           "กำลังโหลดอยู่ ออกจากหน้านี้จริงหรือ?"
         );
         if (!confirmed) {
-          window.history.pushState(null, "", window.location.pathname); // push กลับหน้าเดิม
+          window.history.pushState(null, "", window.location.pathname); 
         }
       }
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
-    window.addEventListener("popstate", handlePopState); // กด back
+    window.addEventListener("popstate", handlePopState); 
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);

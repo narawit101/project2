@@ -22,7 +22,7 @@ const LimiterRegister = rateLimit({
 
   handler: (req, res, next, options) => {
     console.warn("Rate limit สมัครเกิน:", {
-      email: req.body?.email,
+      // email: req.body?.email,
       ip: req.ip,
       path: req.originalUrl,
       time: DateTime.now()
