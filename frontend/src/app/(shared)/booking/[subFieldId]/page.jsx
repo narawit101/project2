@@ -22,7 +22,6 @@ export default function Booking() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [totalHours, setTotalHours] = useState(0);
-  const [totalHoursFormat, setTotalHoursFormat] = useState(0);
   const [price, setPrice] = useState(0);
   const [newPrice, setNewPrice] = useState(0);
   const [addOns, setAddOns] = useState([]);
@@ -431,22 +430,20 @@ export default function Booking() {
     let minutes = endInMinutes - startInMinutes;
 
     if (minutes < 0) minutes += 24 * 60; // คำนวณกรณีข้ามวัน
-    let totalHoursFormat;
     let hours = minutes / 60;
-    if (hours % 1 === 0.5) {
-      hours = Math.floor(hours) + 0.5;
-      setTotalHoursFormat(totalHoursFormat);
-    }
-
-    if (hours % 1 != 0) {
-      totalHoursFormat = Math.floor(hours) + 0.5;
-      setTotalHoursFormat(totalHoursFormat);
-    } else {
-      setTotalHoursFormat(hours);
-    }
 
     setTotalHours(hours);
   }
+
+  const formatTotalHours = (totalHours) => {
+  if (totalHours  === 0.5) {
+    return '30 นาที';
+  } else if (totalHours % 1 === 0.5) {
+    return `${Math.floor(totalHours)} ชั่วโมง 30 นาที`;
+  } else {
+    return `${totalHours} ชั่วโมง`;
+  }
+};
 
   useEffect(() => {
     calculateSelectedTimes();
@@ -602,7 +599,6 @@ export default function Booking() {
     setTotalHours(0);
     setTotalPrice(0);
     setTotalRemaining(0);
-    setTotalHoursFormat(0);
     setSumFac(0);
   }
 
@@ -685,7 +681,7 @@ export default function Booking() {
         endTime: timeEnd,
         endDate: endDate,
         selectedSlots: selectedSlotsArr,
-        totalHours: totalHoursFormat,
+        totalHours: totalHours,
         totalPrice: totalPrice,
         payMethod: payMethod,
         totalRemaining: totalRemaining,
@@ -733,7 +729,6 @@ export default function Booking() {
         setTotalPrice(0);
         setTotalRemaining(0);
         setShowFacilities(false);
-        setTotalHoursFormat(0);
         setSumFac(0);
       } else {
         if (data.success) {
@@ -761,7 +756,6 @@ export default function Booking() {
           setTotalPrice(0);
           setTotalRemaining(0);
           setShowFacilities(false);
-          setTotalHoursFormat(0);
           setSumFac(0);
 
           //router.replace("");
@@ -1035,7 +1029,7 @@ export default function Booking() {
               <strong>เวลาสิ้นสุด: {timeEnd || "-"}</strong>
               <strong>
                 รวมเวลา:{" "}
-                {totalHoursFormat ? `${totalHoursFormat} ชั่วโมง` : "-"}
+                {totalHours ? formatTotalHours(totalHours): "-"}
               </strong>
             </div>
 
@@ -1083,7 +1077,7 @@ export default function Booking() {
                   <strong>เวลาสิ้นสุด: {timeEnd || "-"}</strong>
                   <strong>
                     รวมเวลา:{" "}
-                    {totalHoursFormat ? `${totalHoursFormat} ชั่วโมง` : "-"}
+                    {totalHours ? formatTotalHours(totalHours) : "-"}
                   </strong>
                   <strong className="total-per-hour">
                     ราคา: {formatPrice(totalPrice)} บาท

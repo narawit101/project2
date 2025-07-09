@@ -244,7 +244,14 @@
 .firsttime-home {
   align-items: center;
   justify-content: center;
-  text-align: left;
+  text-align: center;
+  margin: 10px 0;
+  min-height: 20px;
+}
+.firstopen-home {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   margin: 10px 0;
   min-height: 20px;
 }

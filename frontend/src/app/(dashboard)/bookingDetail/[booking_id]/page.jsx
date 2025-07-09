@@ -181,10 +181,15 @@ export default function BookingDetail() {
     });
   };
 
-  const calTotalHours = (total_hours) => {
-    const hour = Math.floor(total_hours);
-    const minutes = Math.round((total_hours % 1) * 60);
-    return `${hour} ชั่วโมง ${minutes} นาที`;
+
+    const calTotalHours = (totalHours) => {
+   if (totalHours  === 0.5) {
+    return '30 นาที';
+  } else if (totalHours % 1 === 0.5) {
+    return `${Math.floor(totalHours)} ชั่วโมง 30 นาที`;
+  } else {
+    return `${totalHours} ชั่วโมง`;
+  }
   };
 
   const openConfirmModal = (status) => {
