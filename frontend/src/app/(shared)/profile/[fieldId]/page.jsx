@@ -169,7 +169,7 @@ export default function CheckFieldDetail() {
         setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
         setMessageType("error");
       } finally {
-        setDataLoading(false);
+        // setDataLoading(false);
       }
     };
 
@@ -235,7 +235,7 @@ export default function CheckFieldDetail() {
         setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", err);
         setMessageType("error");
       } finally {
-        setDataLoading(false);
+        // setDataLoading(false);
       }
     };
 
@@ -254,7 +254,7 @@ export default function CheckFieldDetail() {
       } catch (error) {
         console.error("Error fetching review:", error);
       } finally {
-        setDataLoading(false);
+        // setDataLoading(false);
       }
     };
     fetchReviews();

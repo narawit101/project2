@@ -483,21 +483,11 @@ module.exports = function (io) {
 
         if (bookingResult.rows.length > 0) {
           const data = await client.query(
-            `SELECT 
-              ub.first_name AS booker_first_name,
-              ub.last_name AS booker_last_name,
-              ub.email AS booker_email,
-              uf.email AS field_owner_email,
-              f.field_name, 
-              sf.sub_field_name,
-              b.booking_date,
-              b.start_time,
-              b.end_time  
-            FROM bookings b 
-            LEFT JOIN field f ON b.field_id = f.field_id
-            LEFT JOIN sub_field sf ON b.sub_field_id = sf.sub_field_id
-            LEFT JOIN users ub ON ub.user_id = b.user_id         -- ผู้จอง
-            LEFT JOIN users uf ON uf.user_id = f.user_id         -- เจ้าของสนาม
+                      ` uf.email AS field_owner_email,
+              f.field_name
+            FROM bookings b
+            JOIN field f ON b.field_id = f.field_id
+            JOIN users uf ON uf.user_id = f.user_id
             WHERE b.booking_id = $1`,
             [bookingId]
           );
