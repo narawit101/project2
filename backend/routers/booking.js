@@ -483,8 +483,9 @@ module.exports = function (io) {
 
         if (bookingResult.rows.length > 0) {
           const data = await client.query(
-                      ` uf.email AS field_owner_email,
-              f.field_name
+            `SELECT 
+            uf.email AS field_owner_email,
+            f.field_name
             FROM bookings b
             JOIN field f ON b.field_id = f.field_id
             JOIN users uf ON uf.user_id = f.user_id
