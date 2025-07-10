@@ -2355,145 +2355,145 @@ export default function CheckFieldDetail() {
             </div>
           ))}
           {/* ปุ่มเดียวสำหรับเพิ่มสนามย่อย */}
-          <div className="input-group-editfield">
-            {!showAddSubFieldForm ? (
-              <button
-                className="editbtn-editfield"
-                onClick={() => setShowAddSubFieldForm(true)}
+        </div>
+        <div className="input-group-editfield-addsubfield">
+          {!showAddSubFieldForm ? (
+            <button
+              className="editbtn-editfield"
+              onClick={() => setShowAddSubFieldForm(true)}
+            >
+              เพิ่มสนามย่อย
+            </button>
+          ) : (
+            <div className="subfield-form-editfield">
+              <input
+                type="text"
+                maxLength={30}
+                placeholder="ชื่อสนามย่อย"
+                value={newSubField.sub_field_name}
+                onChange={(e) =>
+                  setNewSubField({
+                    ...newSubField,
+                    sub_field_name: e.target.value,
+                  })
+                }
+              />
+              <input
+                type="number"
+                placeholder="ราคา"
+                value={newSubField.price}
+                onChange={(e) =>
+                  setNewSubField({
+                    ...newSubField,
+                    price: Math.abs(e.target.value),
+                  })
+                }
+              />
+              <input
+                type="number"
+                placeholder="ผู้เล่น"
+                value={newSubField.players_per_team}
+                onChange={(e) =>
+                  setNewSubField({
+                    ...newSubField,
+                    players_per_team: Math.abs(e.target.value),
+                  })
+                }
+              />
+              <input
+                type="number"
+                placeholder="กว้าง"
+                value={newSubField.wid_field}
+                onChange={(e) =>
+                  setNewSubField({
+                    ...newSubField,
+                    wid_field: Math.abs(e.target.value),
+                  })
+                }
+              />
+              <input
+                type="number"
+                placeholder="ยาว"
+                value={newSubField.length_field}
+                onChange={(e) =>
+                  setNewSubField({
+                    ...newSubField,
+                    length_field: Math.abs(e.target.value),
+                  })
+                }
+              />
+              <input
+                type="text"
+                maxLength={20}
+                placeholder="ประเภทของพื้นสนาม"
+                value={newSubField.field_surface}
+                onChange={(e) =>
+                  setNewSubField({
+                    ...newSubField,
+                    field_surface: e.target.value,
+                  })
+                }
+              />
+              <select
+                value={newSportId}
+                onChange={(e) => setNewSportId(e.target.value)}
+                className="sport-select-editfield"
               >
-                เพิ่มสนามย่อย
+                <option value="">เลือกประเภทกีฬา</option>
+                {sportsCategories.map((category) => (
+                  <option key={category.sport_id} value={category.sport_id}>
+                    {category.sport_name}
+                  </option>
+                ))}
+              </select>
+              <button
+                style={{
+                  cursor: startProcessLoad ? "not-allowed" : "pointer",
+                }}
+                disabled={startProcessLoad}
+                className="savebtn-editfield"
+                onClick={async () => {
+                  if (!userId) {
+                    setMessage("ยังไม่ได้โหลด user_id ");
+                    setMessageType("error");
+                    return;
+                  }
+                  await addSubField(userId);
+                  setNewSubField({
+                    sub_field_name: "",
+                    price: "",
+                    sport_id: "",
+                    players_per_team: "",
+                    wid_field: "",
+                    length_field: "",
+                    field_surface: "",
+                  });
+                  setShowAddSubFieldForm(false);
+                }}
+              >
+                {startProcessLoad ? (
+                  <span className="dot-loading">
+                    <span className="dot one">●</span>
+                    <span className="dot two">●</span>
+                    <span className="dot three">●</span>
+                  </span>
+                ) : (
+                  "บันทึกสนามย่อย"
+                )}
               </button>
-            ) : (
-              <div className="subfield-form-editfield">
-                <input
-                  type="text"
-                  maxLength={30}
-                  placeholder="ชื่อสนามย่อย"
-                  value={newSubField.sub_field_name}
-                  onChange={(e) =>
-                    setNewSubField({
-                      ...newSubField,
-                      sub_field_name: e.target.value,
-                    })
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="ราคา"
-                  value={newSubField.price}
-                  onChange={(e) =>
-                    setNewSubField({
-                      ...newSubField,
-                      price: Math.abs(e.target.value),
-                    })
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="ผู้เล่น"
-                  value={newSubField.players_per_team}
-                  onChange={(e) =>
-                    setNewSubField({
-                      ...newSubField,
-                      players_per_team: Math.abs(e.target.value),
-                    })
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="กว้าง"
-                  value={newSubField.wid_field}
-                  onChange={(e) =>
-                    setNewSubField({
-                      ...newSubField,
-                      wid_field: Math.abs(e.target.value),
-                    })
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="ยาว"
-                  value={newSubField.length_field}
-                  onChange={(e) =>
-                    setNewSubField({
-                      ...newSubField,
-                      length_field: Math.abs(e.target.value),
-                    })
-                  }
-                />
-                <input
-                  type="text"
-                  maxLength={20}
-                  placeholder="ประเภทของพื้นสนาม"
-                  value={newSubField.field_surface}
-                  onChange={(e) =>
-                    setNewSubField({
-                      ...newSubField,
-                      field_surface: e.target.value,
-                    })
-                  }
-                />
-                <select
-                  value={newSportId}
-                  onChange={(e) => setNewSportId(e.target.value)}
-                  className="sport-select-editfield"
-                >
-                  <option value="">เลือกประเภทกีฬา</option>
-                  {sportsCategories.map((category) => (
-                    <option key={category.sport_id} value={category.sport_id}>
-                      {category.sport_name}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  style={{
-                    cursor: startProcessLoad ? "not-allowed" : "pointer",
-                  }}
-                  disabled={startProcessLoad}
-                  className="savebtn-editfield"
-                  onClick={async () => {
-                    if (!userId) {
-                      setMessage("ยังไม่ได้โหลด user_id ");
-                      setMessageType("error");
-                      return;
-                    }
-                    await addSubField(userId);
-                    setNewSubField({
-                      sub_field_name: "",
-                      price: "",
-                      sport_id: "",
-                      players_per_team: "",
-                      wid_field: "",
-                      length_field: "",
-                      field_surface: "",
-                    });
-                    setShowAddSubFieldForm(false);
-                  }}
-                >
-                  {startProcessLoad ? (
-                    <span className="dot-loading">
-                      <span className="dot one">●</span>
-                      <span className="dot two">●</span>
-                      <span className="dot three">●</span>
-                    </span>
-                  ) : (
-                    "บันทึกสนามย่อย"
-                  )}
-                </button>
 
-                <button
-                  className="canbtn-editfield"
-                  style={{
-                    cursor: startProcessLoad ? "not-allowed" : "pointer",
-                  }}
-                  disabled={startProcessLoad}
-                  onClick={() => setShowAddSubFieldForm(false)}
-                >
-                  ยกเลิก
-                </button>
-              </div>
-            )}
-          </div>
+              <button
+                className="canbtn-editfield"
+                style={{
+                  cursor: startProcessLoad ? "not-allowed" : "pointer",
+                }}
+                disabled={startProcessLoad}
+                onClick={() => setShowAddSubFieldForm(false)}
+              >
+                ยกเลิก
+              </button>
+            </div>
+          )}
         </div>
         {field?.status == "ไม่ผ่านการอนุมัติ" && (
           <button

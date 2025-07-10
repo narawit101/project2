@@ -92,10 +92,11 @@
   margin-bottom: 17px;
   font-size: 0.8rem;
 }
+
 .custom-button-view-stat-myfield {
   cursor: pointer;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   flex: 1;
   background-color: var(--text-color);
   color: #fff;
@@ -111,12 +112,13 @@
 .custom-button-view-order-myfield {
   cursor: pointer;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   flex: 1;
   /* background-color: #007bff; */
   color: #fff;
   margin-bottom: 20px;
 }
+
 .custom-button-view-order-myfield {
   font-size: 1rem;
   background-color: #008000;
@@ -129,7 +131,7 @@
   color: #fff;
   margin-top: 2px;
   padding: 10px 10px;
-  border-radius: 15px;
+  /* border-radius: 15px; */
   font-weight: 00;
   border: none;
 }
@@ -153,7 +155,6 @@
 
 .custom-button-view-myfield:hover {
   background-color: #10127c;
-  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
 }
 
 .custom-button-edit-myfield {
@@ -265,6 +266,14 @@
 }
 
 @media screen and (max-width: 980px) {
+    .custom-button-group-myfield {
+    flex-direction: column;
+  }
+  .custom-button-view-myfield,
+  .custom-button-edit-myfield,
+  .custom-button-delete-myfield {
+    margin-bottom: 0px;
+  }
 }
 
 @media screen and (max-width: 820px) {
@@ -272,6 +281,7 @@
     max-width: 540px;
     width: 100%;
   }
+
 }
 
 @media screen and (max-width: 674px) {

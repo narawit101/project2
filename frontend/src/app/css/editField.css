@@ -34,6 +34,17 @@
   margin: 10px auto;
 }
 
+.input-group-editfield-addsubfield {
+  display: flex;
+  text-align: center;
+  color: var(--text-color);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 10px auto;
+  justify-content: center;
+  border-radius: var(--border-radius);
+}
+
 .input-group-editfield label {
   /* display: inline-block; */
   color: var(--text-color);
@@ -149,8 +160,6 @@
   height: 100%;
   object-fit: cover;
 }
-
-
 
 /* Document Container */
 .document-container-editfield {

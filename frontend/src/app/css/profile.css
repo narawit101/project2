@@ -91,7 +91,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 5px 20px;
   background-color: #ffffff;
-  border: 1px solid #ddd;
+   border: 3px solid #6d919f7d;
   border-radius: 12px;
   margin: 20px 30px;
 }
@@ -117,10 +117,10 @@
 .detail-profile {
   font-weight: 600;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border: 3px solid #6d919f7d;
   max-height: 200px;
   overflow-y: auto;
   background-color: #ffffff;
-  border: 1px solid #ddd;
   border-radius: 12px;
   padding: 10px 20px;
   margin: 20px 30px;
@@ -163,6 +163,7 @@
   max-width: 100%;
   width: 450px;
   padding: 15px;
+   border: 3px solid #6d919f7d;
   border-radius: 8px;
   background-color: #fff;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -201,6 +202,7 @@
   width: 100%;
   max-width: 380px;
   height: 100%;
+   border: 3px solid #6d919f7d;
 }
 
 .undercontainer-proflie h1 {
@@ -825,7 +827,7 @@
 
 .reviwe-content-profile {
   background-color: #ffffff;
-  border: 1px solid #e5e7eb;
+   border: 3px solid #6d919f7d;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);

@@ -363,7 +363,7 @@ export default function AdminManager() {
                 <th>สถานะบัญชี</th>
                 <th>บทบาท</th>
                 <th>แก้ไข</th>
-                <th>จัดการ</th>
+                <th>ลบ</th>
               </tr>
             </thead>
             <tbody>
@@ -405,7 +405,7 @@ export default function AdminManager() {
                         className="edit-btn"
                         onClick={() => setSelectedUser(user)}
                       >
-                        แก้ไข
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAANlJREFUSEu1ldENgzAMBd+brO0kLZu0k5ROUtiETVxZIlVIILKT4B8kBHdxbNnEycGT+WgSiMgTwAXAAuBFUp+bqBaIyBfANaIp/ENSpf+oEuzAA1AlA8kpvHALCvDAHEkOVQIDXLl1AiNcBXpFoysDB3wieXMVuQWuomKRW+FFQQ/4oaAXfFcgIg8Ab8OMygq6909WAxFRuEpKYYIfZZDOmFRkhtcIXHCvwA0vFfke3cu8zpds1hsaoW3huAVri8antzDSb+Z46WzatJNAt5pvmtak4RrXLYIfx95jGZW5DL4AAAAASUVORK5CYII=" alt="" />
                       </button>
                     </td>
                     <td>
@@ -413,7 +413,7 @@ export default function AdminManager() {
                         className="delete-btn"
                         onClick={() => openDeleteUserModal(user.user_id)}
                       >
-                        ลบ
+                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAR1JREFUSEvNlusRwiAQhG870U5MJ6YStRLTiXZiOjmzGXAQjofJMCO/HDzug7tlCaQwVPUgIhcRORths5sbAPjfSRgqgIeInEoxC3wGcMzF1ADKhQCSOHe6VzcAwaqa3YA/0bozVW0pRaVSyd9r6Tzgnmnkr0nD+CeAodiDPdm/ShQmUlVKkvLcMliWKVxoqYPK2ApIFGcB9jQ8uROtAN7U+FTW3NrYWoliRa2LIilbc8w7ARhrgKvzHx/3V4Db4irc4GdYPaBMWaYtJxhbZEr3pJK6AagW3oUtgGP8NpRsuA+AWb0NO0Kziqx3wzQ7VQ3togsgtAsPsKDhnPl05k4Q+1GLVSQ2wRLnAPFdaLHu5JKVAKXPFQuWeJAPegM03+AZ7kVVEgAAAABJRU5ErkJggg==" alt="" />
                       </button>
                     </td>
                   </tr>
@@ -453,8 +453,8 @@ export default function AdminManager() {
                 <th>อีเมล</th>
                 <th>สถานะบัญชี</th>
                 <th>บทบาท</th>
-                <th>แก้ไขข้อมูล</th>
-                <th>จัดการ</th>
+                <th>แก้ไข</th>
+                <th>ลบ</th>
               </tr>
             </thead>
             <tbody>
@@ -490,7 +490,7 @@ export default function AdminManager() {
                       className="edit-btn"
                       onClick={() => setSelectedUser(user)}
                     >
-                      แก้ไข
+                      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAANlJREFUSEu1ldENgzAMBd+brO0kLZu0k5ROUtiETVxZIlVIILKT4B8kBHdxbNnEycGT+WgSiMgTwAXAAuBFUp+bqBaIyBfANaIp/ENSpf+oEuzAA1AlA8kpvHALCvDAHEkOVQIDXLl1AiNcBXpFoysDB3wieXMVuQWuomKRW+FFQQ/4oaAXfFcgIg8Ab8OMygq6909WAxFRuEpKYYIfZZDOmFRkhtcIXHCvwA0vFfke3cu8zpds1hsaoW3huAVri8antzDSb+Z46WzatJNAt5pvmtak4RrXLYIfx95jGZW5DL4AAAAASUVORK5CYII=" alt="" />
                     </button>
                   </td>
                   <td>
@@ -498,7 +498,7 @@ export default function AdminManager() {
                       className="delete-btn"
                       onClick={() => openDeleteUserModal(user.user_id)}
                     >
-                      ลบ
+                      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAR1JREFUSEvNlusRwiAQhG870U5MJ6YStRLTiXZiOjmzGXAQjofJMCO/HDzug7tlCaQwVPUgIhcRORths5sbAPjfSRgqgIeInEoxC3wGcMzF1ADKhQCSOHe6VzcAwaqa3YA/0bozVW0pRaVSyd9r6Tzgnmnkr0nD+CeAodiDPdm/ShQmUlVKkvLcMliWKVxoqYPK2ApIFGcB9jQ8uROtAN7U+FTW3NrYWoliRa2LIilbc8w7ARhrgKvzHx/3V4Db4irc4GdYPaBMWaYtJxhbZEr3pJK6AagW3oUtgGP8NpRsuA+AWb0NO0Kziqx3wzQ7VQ3togsgtAsPsKDhnPl05k4Q+1GLVSQ2wRLnAPFdaLHu5JKVAKXPFQuWeJAPegM03+AZ7kVVEgAAAABJRU5ErkJggg==" alt="" />
                     </button>
                   </td>
                 </tr>
