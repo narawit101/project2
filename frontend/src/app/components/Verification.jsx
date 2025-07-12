@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, use } from "react";
-import "@/app/css/verification.css";
+import "@/app/css/user-verification.css";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
