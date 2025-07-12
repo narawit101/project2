@@ -1,5 +1,5 @@
 import React from 'react'
-import MyBooking from "@/app/components/MyBookingPage";
+import MyBooking from "@/app/components/ManageBooking";
 function page() {
   return (
     <div>
