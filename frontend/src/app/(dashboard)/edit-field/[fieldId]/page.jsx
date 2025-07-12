@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import "@/app/css/editField.css";
+import "@/app/css/edit-field.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
@@ -964,27 +964,24 @@ export default function CheckFieldDetail() {
     try {
       const token = localStorage.getItem("auth_mobile_token");
 
-      const res = await fetch(
-        `${API_URL}/field/update-status/${field.field_id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            status: "รอตรวจสอบ",
-          }),
-        }
-      );
+      const res = await fetch(`${API_URL}/field/appeal/${field.field_id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          status: "รอตรวจสอบ",
+        }),
+      });
 
       if (res.ok) {
         setMessage("ส่งคำขอสำเร็จ");
         setMessageType("success");
         const updatedField = await res.json();
         setTimeout(() => {
-          router.push("/myfield");
+          router.push("/my-field");
         }, 2000);
       } else {
         setMessage("เกิดข้อผิดพลาดในการอัปเดต");
@@ -2496,16 +2493,26 @@ export default function CheckFieldDetail() {
           )}
         </div>
         {field?.status == "ไม่ผ่านการอนุมัติ" && (
-          <button
-            onClick={upDateStatus}
-            style={{
-              cursor: startProcessLoad ? "not-allowed" : "pointer",
-            }}
-            disabled={startProcessLoad}
-            className="editbtn-editfield"
-          >
-            ส่งคำขอลงทะเบียนอีกครั้ง
-          </button>
+          <div className="editbtn-editfield-request">
+            <button
+              onClick={upDateStatus}
+              style={{
+                cursor: startProcessLoad ? "not-allowed" : "pointer",
+              }}
+              disabled={startProcessLoad}
+              className="editbtn-editfield"
+            >
+              {startProcessLoad ? (
+                <span className="dot-loading">
+                  <span className="dot one">●</span>
+                  <span className="dot two">●</span>
+                  <span className="dot three">●</span>
+                </span>
+              ) : (
+                "ส่งคำขอลงทะเบียนสนามอีกครั้ง"
+              )}
+            </button>
+          </div>
         )}
 
         {/* โมดอล */}

@@ -525,7 +525,7 @@ module.exports = function (io) {
   </p>
 
   <div style="margin: 20px 0;">
-    <a href="${process.env.FONT_END_URL}/login?redirect=/bookingDetail/${bookingId}" style="display: inline-block; background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;
+    <a href="${process.env.FONT_END_URL}/login?redirect=/booking-detail/${bookingId}" style="display: inline-block; background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;
                  width:160px;" target="_blank">
       ตรวจสอบการจอง #${bookingId}
     </a>
@@ -955,7 +955,7 @@ LIMIT 1;
     authMiddleware,
     async (req, res) => {
       const { booking_id } = req.params;
-      const { booking_status } = req.body;
+      const { booking_status, reasoning } = req.body;
       const updatedAtThai = DateTime.now().setZone("Asia/Bangkok").toISO();
 
       try {
@@ -1047,7 +1047,7 @@ LIMIT 1;
   </p>
 
   <div style="margin: 20px auto;">
-    <a href="${process.env.FONT_END_URL}/login?redirect=/bookingDetail/${booking_id}" style=" background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; text-align: center;  justify-content: center;  display: flex; width: 200px; margin: 10px auto; 
+    <a href="${process.env.FONT_END_URL}/login?redirect=/booking-detail/${booking_id}" style=" background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; text-align: center;  justify-content: center;  display: flex; width: 200px; margin: 10px auto; 
   align-items: center;
 "target="_blank">
       ดูรายละเอียดการจอง #${booking_id}
@@ -1086,7 +1086,7 @@ LIMIT 1;
   </p>
 
   <div style="margin: 20px auto;">
-    <a href="${process.env.FONT_END_URL}/login?redirect=/bookingDetail/${booking_id}" style="background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; text-align: center;  justify-content: center;  display: flex; width: 200px; margin: 10px auto; 
+    <a href="${process.env.FONT_END_URL}/login?redirect=/booking-detail/${booking_id}" style="background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; text-align: center;  justify-content: center;  display: flex; width: 200px; margin: 10px auto; 
   align-items: center;
 "target="_blank">
       ดูรายละเอียดการจอง #${booking_id}
@@ -1121,13 +1121,29 @@ LIMIT 1;
     การจองสนาม <strong>${userInfo.field_name}</strong> ของคุณไม่ได้รับการอนุมัติ
   </p>
 
-  <div style="margin: 20px auto;">
-    <a href="${process.env.FONT_END_URL}/login?redirect=/bookingDetail/${booking_id}" style=" background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; text-align: center;  justify-content: center;  display: flex; width: 200px; margin: 10px auto; 
-  align-items: center;
-"target="_blank">
-      ดูรายละเอียดการจอง #${booking_id}
-    </a>
+  <div style="margin: 16px 0; text-align:center;font-size: 18px;">
+    <strong>เหตุผลที่ไม่ผ่านการอนุมัติ:</strong><br />
+    <p style="font-size: 18px; color: #111827; text-align: center;">
+    ${reasoning ? reasoning : "ไม่มีการระบุเหตุผล"}
+  </p>
   </div>
+
+  <a href="${process.env.FONT_END_URL}/login?redirect=/booking-detail/${booking_id}" target="_blank" style="
+     background-color: #03045e;
+     color: white;
+     padding: 10px 20px;
+     text-decoration: none;
+     border-radius: 6px;
+     font-weight: bold;
+     width: 200px;
+     margin: 10px auto;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     text-align: center;
+   ">
+    ดูรายละเอียดการจอง #${booking_id}
+  </a>
   <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
 
   <p style="font-size: 12px; color: #9ca3af;text-align: center">
@@ -1528,7 +1544,7 @@ LIMIT 1;
 
       <div style="margin: 20px 0;">
         <a
-          href="${process.env.FONT_END_URL}/login?redirect=/bookingDetail/${bookingId}"
+          href="${process.env.FONT_END_URL}/login?redirect=/booking-detail/${bookingId}"
           style="display: inline-block; background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;
                  width:160px;"
           target="_blank"

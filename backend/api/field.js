@@ -285,7 +285,7 @@ router.post(
 
       // ส่งอีเมล
       try {
-        const resultEmail = await resend.emails.send({
+        const userEmailResult = await resend.emails.send({
           from: process.env.Sender_Email,
           to: userEmail, // ใช้ค่าที่ดึงมา
           subject: "การลงทะเบียนสนาม",
@@ -311,7 +311,53 @@ router.post(
   </p>
 </div>`,
         });
-        console.log("อีเมลส่งสำเร็จ:", resultEmail);
+        const adminEmailResult = await resend.emails.send({
+          from: process.env.Sender_Email,
+          to: process.env.Owner_Email,
+          subject: "มีการลงทะเบียนสนามกีฬาใหม่",
+          html: `
+      <div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align:center;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td align="center">
+        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 300px; margin-bottom: 10px;" />
+      </td>
+    </tr>
+  </table>
+  <h1 style="color: #03045e; margin-bottom: 16px;">การลงทะเบียนสนาม</h1>
+
+  <p style="font-size: 16px; color: #111827;">
+    <strong style="color: #0f172a;">
+
+    </strong>
+  <p style="font-size: 20px;">
+  <h3>${userfirstName}</h3>
+  ได้ลงทะเบียนสนามกีฬา
+  </p>
+  </p>
+
+  <div style="margin: 20px 0;">
+    <a href="${process.env.FONT_END_URL}/login?redirect=/check-field/${field_id}" style="display: inline-block; background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;
+                 width:160px;" target="_blank">
+      ตรวจสอบสนามกีฬา #${field_id}
+    </a>
+  </div>
+
+  <p style="font-size: 14px; color: #6b7280;">
+    กรุณาตรวจสอบและอัปเดตสถานะให้เสร็จสิ้น
+  </p>
+
+  <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 12px; color: #9ca3af;">
+    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+  </p>
+</div>
+      `,
+        });
+
+        console.log("Email to user:", userEmailResult);
+        console.log("Email to admin:", adminEmailResult);
       } catch (error) {
         console.log("ส่งอีเมลไม่สำเร็จ:", error);
         return res
@@ -326,7 +372,7 @@ router.post(
   }
 );
 
-router.put("/update-status/:field_id", authMiddleware, async (req, res) => {
+router.put("/appeal/:field_id", authMiddleware, async (req, res) => {
   try {
     const { field_id } = req.params; // รับ field_id จาก URL params
     const { status } = req.body; // รับ status ที่จะอัปเดตจาก body
@@ -359,6 +405,7 @@ router.put("/update-status/:field_id", authMiddleware, async (req, res) => {
     }
 
     const fieldOwnerId = checkField.rows[0].user_id; // user_id ของเจ้าของสนาม
+    const fieldName = checkField.rows[0].field_name; // ชื่อสนาม
 
     // ถ้าผู้ใช้ไม่ใช่ admin และไม่ใช่เจ้าของสนาม จะไม่อนุญาตให้เปลี่ยนแปลง
     if (role !== "admin" && user_id !== fieldOwnerId) {
@@ -378,10 +425,99 @@ router.put("/update-status/:field_id", authMiddleware, async (req, res) => {
 
     console.log("ข้อมูลอัปเดตสำเร็จ:", result.rows[0]);
 
-    res.json({ message: "อัปเดตสถานะสำเร็จ", data: result.rows[0] });
+    try {
+      const data = await resend.emails.send({
+        from: process.env.Sender_Email,
+        to: process.env.Owner_Email,
+        subject: "มีการส่งลงทะเบียนสนามกีฬาอีกครั้ง",
+        html: `
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align:center;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td align="center">
+        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 300px; margin-bottom: 10px;" />
+      </td>
+    </tr>
+  </table>
+  <h1 style="color: #03045e; margin-bottom: 16px;">คำขอลงทะเบียนสนามกีฬาอีกครั้ง</h1>
+
+  <p style="font-size: 16px; color: #111827;">
+    <strong style="color: #0f172a;">
+      <h3>สนาม ${fieldName}</h3>
+    </strong>
+  <p style="font-size: 18px;">ได้ส่งคำขอลงทะเบียนสนามกีฬาอีกครั้ง</p>
+  </p>
+
+  <div style="margin: 20px 0;">
+    <a href="${process.env.FONT_END_URL}/login?redirect=/check-field/${field_id}" style="display: inline-block; background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;
+                 width:160px;" target="_blank">
+      ตรวจสอบสนามกีฬา #${field_id}
+    </a>
+  </div>
+
+  <p style="font-size: 14px; color: #6b7280;">
+    กรุณาตรวจสอบและอัปเดตสถานะให้เสร็จสิ้น
+  </p>
+
+  <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 12px; color: #9ca3af;">
+    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+  </p>
+</div><div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align:center;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td align="center">
+        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 300px; margin-bottom: 10px;" />
+      </td>
+    </tr>
+  </table>
+  <h1 style="color: #03045e; margin-bottom: 16px;">คำขอแก้ไขสนามกีฬา</h1>
+
+  <p style="font-size: 16px; color: #111827;">
+    <strong style="color: #0f172a;">
+      <h3>${fieldName}</h3>
+    </strong>
+  <p style="font-size: 18px;">ได้ส่งคำขอแก้ไขสนามกีฬา</p>
+  </p>
+
+  <div style="margin: 20px 0;">
+    <a href="${process.env.FONT_END_URL}/login?redirect=/check-field/${field_id}" style="display: inline-block; background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;
+                 width:160px;" target="_blank">
+      ตรวจสอบสนามกีฬา #${field_id}
+    </a>
+  </div>
+
+  <p style="font-size: 14px; color: #6b7280;">
+    กรุณาตรวจสอบและอัปเดตสถานะให้เสร็จสิ้น
+  </p>
+
+  <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+
+  <p style="font-size: 12px; color: #9ca3af;">
+    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+  </p>
+</div>
+      `,
+      });
+
+      console.log("Email sent successfully:", data);
+
+      return res.status(200).json({
+        message: "อัปเดตสถานะสำเร็จและส่งคำขอแก้ไขไปยังผู้ดูแลระบบ",
+        data: result.rows[0],
+      });
+    } catch (error) {
+      console.error("Resend Error:", error);
+      return res.status(500).json({
+        message: "อัปเดตสำเร็จแต่ส่ง email ไม่สำเร็จ",
+        data: result.rows[0],
+        emailError: error.message,
+      });
+    }
   } catch (error) {
     console.error("Database Error:", error);
-    res.status(500).json({
+    return res.status(500).json({
       error: "เกิดข้อผิดพลาดในการอัปเดตสนามกีฬา",
       details: error.message,
     });
@@ -494,10 +630,10 @@ router.get("/:field_id", authMiddleware, async (req, res) => {
   }
 });
 
-router.put("/:field_id", authMiddleware, async (req, res) => {
+router.put("/update-status/:field_id", authMiddleware, async (req, res) => {
   try {
     const { field_id } = req.params;
-    const { status } = req.body;
+    const { status, reasoning } = req.body;
     const { user_id, role } = req.user; // ดึงข้อมูลจาก token เพื่อเช็ค role ของผู้ใช้
 
     console.log("field_id ที่ได้รับ:", field_id);
@@ -559,8 +695,8 @@ router.put("/:field_id", authMiddleware, async (req, res) => {
   </table>
   <h1 style="color: #347433; margin-bottom: 16px; text-align: center">สนามกีฬาได้รับการอนุมัติ</h1>
 
-  <p style="font-size: 16px; text-align: center; color: #9ca3af;">
-    <strong> คุณ ${userfirstName} สนามกีฬาของคุณได้รับการอนุมัติเรียบร้อยแล้ว </br >ขอบคุณที่ใช้บริการ</strong>
+  <p style="font-size: 16px; text-align: center; color: #333538ff;">
+    <strong> สนามกีฬาของคุณ ${userfirstName} ได้รับการอนุมัติเรียบร้อยแล้ว </br >ขอบคุณที่ใช้บริการ</strong>
   </p>
   <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
 
@@ -585,13 +721,13 @@ router.put("/:field_id", authMiddleware, async (req, res) => {
           [userId]
         );
       }
+
       try {
         const resultEmail = await resend.emails.send({
           from: process.env.Sender_Email,
           to: userData.rows[0].email,
           subject: "การอนุมัติสนามกีฬา",
           html: `
-
 <div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align:center;">
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
@@ -602,15 +738,26 @@ router.put("/:field_id", authMiddleware, async (req, res) => {
   </table>
   <h1 style="color: #DC2525; margin-bottom: 16px; text-align: center">สนามกีฬาไม่ได้รับการอนุมัติ</h1>
 
-  <p style="font-size: 16px; text-align: center; color: #9ca3af;">
-    <strong> คุณ ${userfirstName} สนามกีฬาของคุณไม่ได้รับการอนุมัติ </br >กรุณาตรวจสอบสนามกีฬาของคุณและส่งคำขอลงทะเบียนใหม่</strong>
-  </p>
+  <p style="font-size: 16px; text-align: center; color: #333538ff;">
+  <strong>สนามกีฬาของคุณ ${userfirstName} ไม่ได้รับการอนุมัติ</strong><br/><br/>
+</p>
+
+<div style="margin: 16px 0; text-align:center;font-size: 18px;">
+  <strong>เหตุผลที่ไม่ผ่านการอนุมัติ:</strong><br/>
+  ${reasoning ? reasoning : "ไม่มีการระบุเหตุผล"}
+</div>
+
+<p style="font-size: 16px; text-align: center; color: #333538ff;">
+  กรุณาตรวจสอบสนามกีฬาของคุณและส่งคำขอลงทะเบียนใหม่
+</p>
+
   <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
 
   <p style="font-size: 12px; color: #9ca3af;text-align: center ">
     หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
   </p>
-</div>`,
+</div>
+          `,
         });
         console.log("อีเมลส่งสำเร็จ:", resultEmail);
       } catch (error) {

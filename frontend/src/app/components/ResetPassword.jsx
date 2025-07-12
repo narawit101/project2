@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import "@/app/css/resetPassword.css";
+import "@/app/css/reset-password.css";
 import Link from "next/link";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
@@ -28,7 +28,7 @@ export default function ResetPassword() {
     } else {
       sessionStorage.removeItem("expiresAt");
       sessionStorage.removeItem("user");
-      router.replace("/resetPassword");
+      router.replace("/reset-password");
     }
   }, []);
 
@@ -109,7 +109,7 @@ export default function ResetPassword() {
       } else {
         sessionStorage.removeItem("user", JSON.stringify(result));
         sessionStorage.removeItem("expiresAt", result);
-        router.replace("/resetPassword");
+        router.replace("/reset-password");
         setMessage(result.message);
         setMessageType("error");
       }
@@ -147,7 +147,7 @@ export default function ResetPassword() {
         setMessage("ยืนยัน OTP สำเร็จ กำลังเข้าสู่การรีเซ็ตรหัสผ่าน");
         setMessageType("success");
         setTimeout(() => {
-          router.replace("/confirmResetPassword");
+          router.replace("/confirm-reset-password");
         }, 1500);
       } else {
         setMessage(result.message);

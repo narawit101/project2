@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import "@/app/css/Booking.css";
+import "@/app/css/booking.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { io } from "socket.io-client";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";

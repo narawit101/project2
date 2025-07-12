@@ -8,7 +8,6 @@
   --spacing: 1.5rem;
 }
 
-
 .check-field-detail-container {
   width: 100%;
   max-width: 1200px;
@@ -380,43 +379,73 @@
   color: white;
 }
 
+.status-approve {
+  color: #28a745;
+}
+.status-reject {
+  color: #dc3545;
+}
+
+.resoning-check-field {
+  display: flex;
+  flex-direction: column;
+  margin: 20px auto;
+}
+
+.resoning-check-field textarea {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.resoning-check-field textarea {
+  height: 200px;
+  resize: none;
+}
+.newstatus-text{
+  margin: 10px auto;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .check-field-detail-container {
     margin: 1rem;
     padding: 1.5rem;
   }
-  
+
   .form-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .info-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .sub-fields-container-check-field {
     grid-template-columns: 1fr;
   }
-  
+
   .facbox-checkfield {
     grid-template-columns: 1fr;
   }
-  
+
   .status-buttons {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .status-buttons button {
     width: 100%;
     max-width: 300px;
   }
-  
+
   .modal-actions-check-field {
     flex-direction: column;
   }
-  
+
   .modal-actions-check-field button {
     width: 100%;
   }
@@ -427,24 +456,24 @@
     margin: 0.5rem;
     padding: 1rem;
   }
-  
+
   .check-field-image {
     width: 200px;
     height: 200px;
   }
-  
+
   .form-section {
     padding: 1rem;
   }
-  
+
   .info-card {
     padding: 1rem;
   }
-  
+
   .sub-field-card-check-field {
     padding: 1rem;
   }
-  
+
   .modal-content-check-field {
     padding: 1.5rem;
     margin: 1rem;
@@ -455,12 +484,12 @@
   .check-field-detail-container {
     padding: 0.75rem;
   }
-  
+
   .check-field-image {
     width: 150px;
     height: 150px;
   }
-  
+
   .form-section,
   .info-card,
   .sub-field-card-check-field {

@@ -1,4 +1,4 @@
-import "@/app/css/RateLimited.css";
+import "@/app/css/rate-limited.css";
 import Link from "next/link";
 export default function RateLimitedPage() {
   return (

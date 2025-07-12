@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import "@/app/css/editProfile.css";
+import "@/app/css/edit-profile.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import Link from "next/link";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
@@ -54,36 +54,7 @@ export default function EditProfile() {
       setMessageType("error");
       return;
     }
-    // try {
-    //   const checkResponse = await fetch(`${API_URL}/users/check-email`, {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     credentials: "include",
-    //     body: JSON.stringify({ email: updatedUser.email }),
-    //   });
-
-    //   const checkData = await checkResponse.json();
-
-    //   if (!checkResponse.ok) {
-    //     setMessage({
-    //       text: checkData.message || "เกิดข้อผิดพลาดในการตรวจสอบอีเมล",
-    //       type: "error",
-    //     });
-    //     return;
-    //   }
-
-    //   if (checkData.exists && checkData.user_id !== currentUser.user_id) {
-    //     setMessage({ text: "อีเมลนี้ถูกใช้งานแล้ว", type: "error" });
-    //     return;
-    //   }
-    // } catch (error) {
-    //   console.error("Error checking email:", error);
-    //   setMessage({ text: "เกิดข้อผิดพลาดในการตรวจสอบอีเมล", type: "error" });
-    //   return;
-    // }
-
+  
     try {
       await new Promise((resolve) => setTimeout(resolve, 200));
       const token = localStorage.getItem("auth_mobile_token");

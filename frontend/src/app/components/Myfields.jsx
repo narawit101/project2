@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import "@/app/css/myfield.css";
+import "@/app/css/my-field.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
@@ -22,7 +22,7 @@ export default function MyFieldPage() {
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const fieldPerPage = 20;
-  usePreventLeave(startProcessLoad); 
+  usePreventLeave(startProcessLoad);
 
   useEffect(() => {
     if (isLoading) return;
@@ -216,7 +216,9 @@ export default function MyFieldPage() {
                 </div>
                 <div className="custom-button-group-myfield">
                   <button
-                    onClick={() => router.push(`/checkField/${field.field_id}`)}
+                    onClick={() =>
+                      router.push(`/check-field/${field.field_id}`)
+                    }
                     className="custom-button-view-myfield"
                   >
                     ดูรายละเอียด
@@ -224,7 +226,7 @@ export default function MyFieldPage() {
                   {field.status !== "รอตรวจสอบ" && (
                     <button
                       onClick={() =>
-                        router.push(`/editField/${field.field_id}`)
+                        router.push(`/edit-field/${field.field_id}`)
                       }
                       className="custom-button-edit-myfield"
                     >
@@ -238,18 +240,24 @@ export default function MyFieldPage() {
                     ลบ
                   </button>
                 </div>
-                <button
-                  onClick={() => router.push(`/myOrder/${field.field_id}`)}
-                  className="custom-button-view-order-myfield"
-                >
-                  รายการจองของสนาม
-                </button>
-                <button
-                  onClick={() => router.push(`/statistics/${field.field_id}`)}
-                  className="custom-button-view-stat-myfield"
-                >
-                  สถิติการจองสนาม
-                </button>
+                {field.status == "ผ่านการอนุมัติ" && (
+                  <>
+                    <button
+                      onClick={() => router.push(`/my-order/${field.field_id}`)}
+                      className="custom-button-view-order-myfield"
+                    >
+                      รายการจองของสนาม
+                    </button>
+                    <button
+                      onClick={() =>
+                        router.push(`/statistics/${field.field_id}`)
+                      }
+                      className="custom-button-view-stat-myfield"
+                    >
+                      สถิติการจองสนาม
+                    </button>
+                  </>
+                )}
               </div>
             ))}
           </div>

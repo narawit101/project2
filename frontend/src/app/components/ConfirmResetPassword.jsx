@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import "@/app/css/confirmResetPassword.css";
+import "@/app/css/confirm-reset-password.css";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function ConfirmResetPassword() {
@@ -21,7 +21,7 @@ export default function ConfirmResetPassword() {
     } else {
       sessionStorage.removeItem("expiresAt");
       sessionStorage.removeItem("user");
-      router.replace("/resetPassword");
+      router.replace("/reset-password");
     }
   }, []);
 
@@ -32,7 +32,7 @@ export default function ConfirmResetPassword() {
       setMessage("session หมดอายุกรุณาทำรายการใหม่");
       setMessageType("error");
       setTimeout(() => {
-        router.replace("/resetPassword");
+        router.replace("/reset-password");
       }, 2000);
       return;
     }

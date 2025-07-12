@@ -141,7 +141,7 @@ export default function Login() {
         </button>
 
         <div className="reset-password">
-          <Link href="/resetPassword" className="reset-link">
+          <Link href="/reset-password" className="reset-link">
             ลืมรหัสผ่าน
           </Link>
           <Link href="/register" className="register-link">

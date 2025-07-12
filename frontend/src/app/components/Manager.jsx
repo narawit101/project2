@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import "@/app/css/manager.css";
+import "@/app/css/manager-user.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
@@ -281,7 +281,7 @@ export default function AdminManager() {
   };
 
   const handleViewDetails = (fieldId) => {
-    router.push(`/checkField/${fieldId}`);
+    router.push(`/check-field/${fieldId}`);
   };
 
   const closeModal = () => {

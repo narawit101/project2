@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import LogoutButton from "@/app/components/LogoutButton";
-import "@/app/css/Nav.css";
+import LogoutButton from "@/app/components/Logout";
+import "@/app/css/navbar.css";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/app/contexts/AuthContext";
 import Link from "next/link";
@@ -144,61 +144,61 @@ export default function Navbar() {
               <ul>
                 {user?.role === "customer" && (
                   <li>
-                    <Link href="/editprofile">แก้ไขโปรไฟล์</Link>
+                    <Link href="/edit-profile">แก้ไขโปรไฟล์</Link>
                   </li>
                 )}
                 {user?.role === "customer" && (
                   <li>
-                    <Link href="/registerField">ลงทะเบียนสนาม</Link>
+                    <Link href="/register-field">ลงทะเบียนสนาม</Link>
                   </li>
                 )}
                 {user?.role === "field_owner" && (
                   <li>
-                    <Link href="/editprofile">แก้ไขโปรไฟล์</Link>
+                    <Link href="/edit-profile">แก้ไขโปรไฟล์</Link>
                   </li>
                 )}
                 {user?.role === "field_owner" && (
                   <li>
-                    <Link href="/registerField">ลงทะเบียนสนาม</Link>
+                    <Link href="/register-field">ลงทะเบียนสนาม</Link>
                   </li>
                 )}
                 {user?.role === "field_owner" && (
                   <li>
-                    <Link href="/myfield">สนามของฉัน</Link>
+                    <Link href="/my-field">สนามของฉัน</Link>
                   </li>
                 )}
                 {/* {user?.role === "field_owner" && <li><Link href="/bookingOrder">คำสั่งจองสนามของฉัน</Link></li>}
                 {user?.role === "admin" && <li><Link href="/bookingOrder">คำสั่งจองสนามของฉัน</Link></li>} */}
                 {user?.role === "admin" && (
                   <li>
-                    <Link href="/editprofile">แก้ไขโปรไฟล์</Link>
+                    <Link href="/edit-profile">แก้ไขโปรไฟล์</Link>
                   </li>
                 )}
                 {user?.role === "admin" && (
                   <li>
-                    <Link href="/manager">จัดการผู้ใช้</Link>
+                    <Link href="/manage-user">จัดการผู้ใช้</Link>
                   </li>
                 )}
                 {user?.role === "admin" && (
                   <li>
-                    <Link href="/myfield">จัดการสนามกีฬา</Link>
+                    <Link href="/my-field">จัดการสนามกีฬา</Link>
                   </li>
                 )}
                 {user?.role === "admin" && (
                   <li>
-                    <Link href="/addfac">จัดการสิ่งอำนวยความสะดวก</Link>
+                    <Link href="/manage-facility">จัดการสิ่งอำนวยความสะดวก</Link>
                   </li>
                 )}
                 {user?.role === "admin" && (
                   <li>
-                    <Link href="/addtype">จัดการประเภทกีฬา</Link>
+                    <Link href="/manage-sport-type">จัดการประเภทกีฬา</Link>
                   </li>
                 )}
                 {(user?.role === "customer" ||
                   user?.role === "admin" ||
                   user?.role === "field_owner") && (
                   <li>
-                    <Link href="/mybooking">รายการจองของฉัน</Link>
+                    <Link href="/my-booking">รายการจองของฉัน</Link>
                   </li>
                 )}
                 <LogoutButton />

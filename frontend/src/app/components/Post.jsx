@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import "@/app/css/postField.css";
+import "@/app/css/field-post.css";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 const CreatePost = ({ fieldId, onPostSuccess, setCurrentPage }) => {

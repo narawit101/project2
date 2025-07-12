@@ -53,20 +53,20 @@ cloudinary.config({
 });
 module.exports = cloudinary;
 
-const registerRoute = require("./routers/register");
-const loginRoute = require("./routers/login");
-const usersRoute = require("./routers/users");
-const logoutRoute = require("./routers/logout");
-const fieldRoute = require("./routers/field");
-const facilitiesRoutes = require("./routers/facilities");
-const sportsTypesRoutes = require("./routers/sportsTypes");
-const myfieldRoute = require("./routers/myfield");
-const profile = require("./routers/profile");
-const posts = require("./routers/posts");
-const booking = require("./routers/booking")(io);
-const reviews = require("./routers/reviews");
-const statistics = require("./routers/statistics");
-const search = require("./routers/search");
+const registerRoute = require("./api/register");
+const loginRoute = require("./api/login");
+const usersRoute = require("./api/users");
+const logoutRoute = require("./api/logout");
+const fieldRoute = require("./api/field");
+const facilitiesRoutes = require("./api/facilities");
+const sportsTypesRoutes = require("./api/sports-types");
+const myfieldRoute = require("./api/my-field");
+const profile = require("./api/profile");
+const posts = require("./api/posts");
+const booking = require("./api/booking")(io);
+const reviews = require("./api/reviews");
+const statistics = require("./api/statistics");
+const search = require("./api/search");
 
 app.get("/", (req, res) => {
   res.send("Welcome to the API");

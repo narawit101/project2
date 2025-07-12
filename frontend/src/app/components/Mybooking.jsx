@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import "@/app/css/myOrder.css";
+import "@/app/css/my-order.css";
 import { io } from "socket.io-client";
 export default function Mybooking() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -396,7 +396,7 @@ export default function Mybooking() {
                   <button
                     className="detail-button"
                     onClick={() =>
-                      window.open(`/bookingDetail/${item.booking_id}`, "_blank")
+                      window.open(`/booking-detail/${item.booking_id}`, "_blank")
                     }
                   >
                     ดูรายละเอียด

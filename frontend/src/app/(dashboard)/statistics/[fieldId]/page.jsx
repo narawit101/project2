@@ -3,8 +3,8 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter, useParams } from "next/navigation";
 import { io } from "socket.io-client";
-import "@/app/css/myOrder.css";
-import "@/app/css/Statistics.css";
+import "@/app/css/my-order.css";
+import "@/app/css/statistics.css";
 
 export default function Statistics() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -76,7 +76,7 @@ export default function Statistics() {
           );
           setMessageType("error");
           setTimeout(() => {
-            router.replace("/myfield");
+            router.replace("/my-field");
           }, 2000);
         }
         console.log("Booking fetch error:", data.error);

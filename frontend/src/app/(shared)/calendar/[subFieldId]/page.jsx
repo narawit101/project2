@@ -2,7 +2,7 @@
 import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import Calendar from "react-calendar";
-import "@/app/css/calendarStyles.css";
+import "@/app/css/calendar-styles.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 

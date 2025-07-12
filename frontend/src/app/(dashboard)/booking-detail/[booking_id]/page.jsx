@@ -4,8 +4,77 @@ import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter, useParams } from "next/navigation";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
-import "@/app/css/orderDetail.css";
+import "@/app/css/order-detail.css";
 import { io } from "socket.io-client";
+
+const getStatusLabel = (status) => {
+  switch (status) {
+    case "approved":
+      return { text: "อนุมัติ", className: "status-approved" };
+    case "rejected":
+      return { text: "ไม่อนุมัติ", className: "status-rejected" };
+    case "pending":
+      return { text: "รอตรวจสอบ", className: "status-pending" };
+    case "complete":
+      return { text: "การจองสำเร็จ", className: "status-complete" };
+    default:
+      return { text: "ไม่ทราบสถานะ", className: "status-unknown" };
+  }
+};
+
+const StatusChangeModal = ({
+  newStatus,
+  onConfirm,
+  onClose,
+  reasoning,
+  setReasoning,
+}) => {
+  const { text, className } = getStatusLabel(newStatus);
+
+  return (
+    <div className="modal-overlay-order-detail">
+      <div className="modal-content-order-detail">
+        <div className="modal-header-order-detail">
+          <h2>เปลี่ยนสถานะการจอง</h2>
+          <div className={`status-label-order-detail ${className}`}>
+            <strong>{text}</strong>
+          </div>
+          {newStatus === "rejected" && (
+            <div className="resoning-booking-detail">
+              <textarea
+                placeholder="กรุณาใส่เหตุผลที่ไม่ผ่านการอนุมัติ"
+                required
+                maxLength={300}
+                value={reasoning}
+                onChange={(e) => {
+                  setReasoning(e.target.value);
+                }}
+              />
+            </div>
+          )}
+        </div>
+        <div className="modal-actions-order-detail">
+          <button
+            style={
+              reasoning.length === 0 && newStatus === "rejected"
+                ? { cursor: "not-allowed" }
+                : { cursor: "pointer" }
+            }
+            disabled={reasoning.length === 0 && newStatus === "rejected"}
+            className="modal-confirm-btn-order-detail"
+            onClick={onConfirm}
+          >
+            ยืนยัน
+          </button>
+          <button className="modal-cancel-btn-order-detail" onClick={onClose}>
+            ยกเลิก
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function BookingDetail() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const { user, isLoading } = useAuth();
@@ -42,6 +111,8 @@ export default function BookingDetail() {
   };
   const [reviewData, setReviewData] = useState([]);
   const [qrCode, setQrCode] = useState(null);
+  const [reasoning, setReasoning] = useState("");
+
   usePreventLeave(startProcessLoad);
 
   const [fieldId, setFieldId] = useState("");
@@ -181,15 +252,14 @@ export default function BookingDetail() {
     });
   };
 
-
-    const calTotalHours = (totalHours) => {
-   if (totalHours  === 0.5) {
-    return '30 นาที';
-  } else if (totalHours % 1 === 0.5) {
-    return `${Math.floor(totalHours)} ชั่วโมง 30 นาที`;
-  } else {
-    return `${totalHours} ชั่วโมง`;
-  }
+  const calTotalHours = (totalHours) => {
+    if (totalHours === 0.5) {
+      return "30 นาที";
+    } else if (totalHours % 1 === 0.5) {
+      return `${Math.floor(totalHours)} ชั่วโมง 30 นาที`;
+    } else {
+      return `${totalHours} ชั่วโมง`;
+    }
   };
 
   const openConfirmModal = (status) => {
@@ -199,13 +269,19 @@ export default function BookingDetail() {
 
   const closeConfirmModal = () => {
     setShowConfirmModal(false); // ปิดโมดอล
+    setReasoning("");
   };
 
-  const updateStatus = async (status, booking_id) => {
+  const updateStatus = async (status, booking_id, reasoning) => {
     console.log("Booking:", booking);
 
     if (!booking_id || isNaN(Number(booking_id))) {
       setMessage("booking_id ไม่ถูกต้อง");
+      setMessageType("error");
+      return;
+    }
+    if (status === "rejected" && reasoning.length === 0) {
+      setMessage("กรุณาใส่เหตุผลที่ไม่อนุมัติ");
       setMessageType("error");
       return;
     }
@@ -221,7 +297,10 @@ export default function BookingDetail() {
             "Content-Type": "application/json",
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
-          body: JSON.stringify({ booking_status: status }),
+          body: JSON.stringify({
+            booking_status: status,
+            reasoning: reasoning,
+          }),
           credentials: "include",
         }
       );
@@ -229,7 +308,6 @@ export default function BookingDetail() {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        setMessageType("success");
         setMessage(
           `อัปเดตสถานะเป็น ${
             status === "approved"
@@ -241,6 +319,7 @@ export default function BookingDetail() {
               : status
           }`
         );
+        setMessageType(status === "approved" ? "success" : "error");
 
         const updatedRes = await fetch(
           `${API_URL}/booking/bookings-detail/${booking_id}`,
@@ -265,50 +344,8 @@ export default function BookingDetail() {
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
+      setReasoning("");
     }
-  };
-
-  const getStatusLabel = (status) => {
-    switch (status) {
-      case "approved":
-        return { text: "อนุมัติ", className: "status-approved" };
-      case "rejected":
-        return { text: "ไม่อนุมัติ", className: "status-rejected" };
-      case "pending":
-        return { text: "รอตรวจสอบ", className: "status-pending" };
-      case "complete":
-        return { text: "การจองสำเร็จ", className: "status-complete" };
-      default:
-        return { text: "ไม่ทราบสถานะ", className: "status-unknown" };
-    }
-  };
-
-  const StatusChangeModal = ({ newStatus, onConfirm, onClose }) => {
-    const { text, className } = getStatusLabel(newStatus);
-
-    return (
-      <div className="modal-overlay-order-detail">
-        <div className="modal-content-order-detail">
-          <div className="modal-header-order-detail">
-            <h2>เปลี่ยนสถานะการจอง</h2>
-            <div className={`status-label-order-detail ${className}`}>
-              <strong>{text}</strong>
-            </div>
-          </div>
-          <div className="modal-actions-order-detail">
-            <button
-              className="modal-confirm-btn-order-detail"
-              onClick={onConfirm}
-            >
-              ยืนยัน
-            </button>
-            <button className="modal-cancel-btn-order-detail" onClick={onClose}>
-              ยกเลิก
-            </button>
-          </div>
-        </div>
-      </div>
-    );
   };
 
   const CancelBookingModal = ({ onConfirm, onClose }) => (
@@ -1262,9 +1299,11 @@ export default function BookingDetail() {
               <StatusChangeModal
                 newStatus={newStatus}
                 onConfirm={() => {
-                  updateStatus(newStatus, booking.booking_id);
+                  updateStatus(newStatus, booking.booking_id, reasoning);
                   closeConfirmModal();
                 }}
+                reasoning={reasoning}
+                setReasoning={setReasoning}
                 onClose={closeConfirmModal}
               />
             )}

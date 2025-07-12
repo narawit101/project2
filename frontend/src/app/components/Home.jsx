@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import "@/app/css/HomePage.css";
+import "@/app/css/home-page.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import Category from "@/app/components/SportType";
 import dayjs from "dayjs";

@@ -16,7 +16,6 @@
   text-align: center;
   font-size: 1.8rem;
   margin-bottom: 2rem;
-
 }
 
 .order-detail-empty {
@@ -673,6 +672,26 @@
 }
 .modal-cancel-btn-order-detail:hover {
   background-color: #c82333;
+}
+
+.resoning-booking-detail {
+  display: flex;
+  flex-direction: column;
+  margin: 20px auto;
+}
+
+.resoning-booking-detail textarea {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.resoning-booking-detail textarea {
+  height: 100px;
+  resize: none;
 }
 
 @media (max-width: 600px) {

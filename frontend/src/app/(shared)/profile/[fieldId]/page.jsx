@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import "@/app/css/profile.css";
+import "@/app/css/field-profile.css";
 import Post from "@/app/components/Post";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -122,7 +122,7 @@ export default function CheckFieldDetail() {
           setMessage(`สนามคุณ ${data.status}`);
           setMessageType("error");
           setTimeout(() => {
-            router.replace("/myfield");
+            router.replace("/my-field");
           }, 1500);
         }
       } catch (error) {

@@ -1,9 +1,81 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import "@/app/css/checkField.css";
+import "@/app/css/check-field.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
+
+const StatusChangeModal = ({
+  newStatus,
+  onConfirm,
+  onClose,
+  reasoning,
+  setReasoning,
+  startProcessLoad,
+}) => (
+  <div className="confirm-modal-check-field">
+    <div className="modal-content-check-field">
+      <div className="newstatus">
+        คุณแน่ใจว่าจะเปลี่ยนสถานะเป็น:
+        <h2
+          className={`newstatus-text ${
+            newStatus === "ผ่านการอนุมัติ"
+              ? "status-approve"
+              : newStatus === "ไม่ผ่านการอนุมัติ"
+              ? "status-reject"
+              : "status-pending"
+          }`}
+        >
+          {newStatus} ?
+        </h2>
+      </div>
+      {newStatus === "ไม่ผ่านการอนุมัติ" && (
+        <div className="resoning-check-field">
+          <textarea
+            placeholder="กรุณาใส่เหตุผลที่ไม่ผ่านการอนุมัติ"
+            required
+            disabled={startProcessLoad}
+            maxLength={500}
+            value={reasoning}
+            onChange={(e) => {
+              setReasoning(e.target.value);
+            }}
+          />
+        </div>
+      )}
+      <div className="modal-actions-check-field">
+        <button
+          style={{
+            cursor: startProcessLoad ? "not-allowed" : "pointer",
+          }}
+          disabled={startProcessLoad}
+          className="confirmbtn"
+          onClick={onConfirm}
+        >
+          {startProcessLoad ? (
+            <span className="dot-loading">
+              <span className="dot one">●</span>
+              <span className="dot two">●</span>
+              <span className="dot three">●</span>
+            </span>
+          ) : (
+            "ยืนยัน"
+          )}
+        </button>
+        <button
+          style={{
+            cursor: startProcessLoad ? "not-allowed" : "pointer",
+          }}
+          disabled={startProcessLoad}
+          className="cancelbtn"
+          onClick={onClose}
+        >
+          ยกเลิก
+        </button>
+      </div>
+    </div>
+  </div>
+);
 
 export default function CheckFieldDetail() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -19,6 +91,7 @@ export default function CheckFieldDetail() {
   const [facilities, setFacilities] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  const [reasoning, setReasoning] = useState("");
   usePreventLeave(startProcessLoad);
 
   useEffect(() => {
@@ -100,6 +173,7 @@ export default function CheckFieldDetail() {
 
   // ฟังก์ชันเปิดโมดอลการยืนยันการเปลี่ยนสถานะ
   const openConfirmModal = (status) => {
+    setReasoning("");
     setNewStatus(status); // ตั้งค่าสถานะใหม่ที่ต้องการเปลี่ยน
     setShowConfirmModal(true); // เปิดโมดอล
   };
@@ -107,29 +181,43 @@ export default function CheckFieldDetail() {
   // ฟังก์ชันปิดโมดอล
   const closeConfirmModal = () => {
     setShowConfirmModal(false); // ปิดโมดอล
+    setReasoning(""); // รีเซ็ตเหตุผล
   };
 
   // ฟังก์ชันอัปเดตสถานะสนามกีฬา
   const updateFieldStatus = async (fieldId, newStatus) => {
+    if (newStatus === "ไม่ผ่านการอนุมัติ" && reasoning.length === 0) {
+      setMessage("กรุณาเลือกเหตุผลการปฏิเสธ");
+      setMessageType("error");
+      return;
+    }
     SetstartProcessLoad(true);
     try {
       const token = localStorage.getItem("auth_mobile_token");
 
-      const response = await fetch(`${API_URL}/field/${fieldId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        credentials: "include",
-        body: JSON.stringify({ status: newStatus }),
-      });
+      const response = await fetch(
+        `${API_URL}/field/update-status/${fieldId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          credentials: "include",
+          body: JSON.stringify({ status: newStatus, reasoning: reasoning }),
+        }
+      );
 
       const data = await response.json();
       if (response.ok) {
         setFieldData({ ...fieldData, status: newStatus });
         setMessage(`อัพเดทสถานะเป็น: ${newStatus}`);
-        setMessageType("succes");
+        {
+          newStatus === "ผ่านการอนุมัติ"
+            ? setMessageType("success")
+            : setMessageType("error");
+        }
+        console.log("สถานะสนามกีฬาอัพเดทสำเร็จ:", reasoning);
         closeConfirmModal(); // ปิดโมดอลหลังจากยืนยัน
       } else {
         setMessage(`เกิดข้อผิดพลาด: ${data.error}`);
@@ -141,6 +229,7 @@ export default function CheckFieldDetail() {
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
+      setReasoning("");
     }
   };
 
@@ -154,46 +243,6 @@ export default function CheckFieldDetail() {
     Sun: "อาทิตย์",
   };
   const formatPrice = (value) => new Intl.NumberFormat("th-TH").format(value);
-
-  const StatusChangeModal = ({ newStatus, onConfirm, onClose }) => (
-    <div className="confirm-modal-check-field">
-      <div className="modal-content-check-field">
-        <div className="newstatus">
-          คุณแน่ใจว่าจะเปลี่ยนสถานะเป็น: <h2>{newStatus}?</h2>
-        </div>
-        <div className="modal-actions-check-field">
-          <button
-            style={{
-              cursor: startProcessLoad ? "not-allowed" : "pointer",
-            }}
-            disabled={startProcessLoad}
-            className="confirmbtn"
-            onClick={onConfirm}
-          >
-            {startProcessLoad ? (
-              <span className="dot-loading">
-                <span className="dot one">●</span>
-                <span className="dot two">●</span>
-                <span className="dot three">●</span>
-              </span>
-            ) : (
-              "ยืนยัน"
-            )}
-          </button>
-          <button
-            style={{
-              cursor: startProcessLoad ? "not-allowed" : "pointer",
-            }}
-            disabled={startProcessLoad}
-            className="cancelbtn"
-            onClick={onClose}
-          >
-            ยกเลิก
-          </button>
-        </div>
-      </div>
-    </div>
-  );
 
   useEffect(() => {
     if (message) {
@@ -402,26 +451,30 @@ export default function CheckFieldDetail() {
         <div className="status-buttons">
           {user?.role === "admin" && (
             <>
-              <button
-                style={{
-                  cursor: startProcessLoad ? "not-allowed" : "pointer",
-                }}
-                disabled={startProcessLoad}
-                className="approve-btn"
-                onClick={() => openConfirmModal("ผ่านการอนุมัติ")}
-              >
-                ผ่านการอนุมัติ
-              </button>
-              <button
-                style={{
-                  cursor: startProcessLoad ? "not-allowed" : "pointer",
-                }}
-                disabled={startProcessLoad}
-                className="reject-btn"
-                onClick={() => openConfirmModal("ไม่ผ่านการอนุมัติ")}
-              >
-                ไม่ผ่านการอนุมัติ
-              </button>
+              {fieldData?.status !== "ผ่านการอนุมัติ" && (
+                <button
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
+                  className="approve-btn"
+                  onClick={() => openConfirmModal("ผ่านการอนุมัติ")}
+                >
+                  ผ่านการอนุมัติ
+                </button>
+              )}
+              {fieldData?.status !== "ไม่ผ่านการอนุมัติ" && (
+                <button
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
+                  className="reject-btn"
+                  onClick={() => openConfirmModal("ไม่ผ่านการอนุมัติ")}
+                >
+                  ไม่ผ่านการอนุมัติ
+                </button>
+              )}
             </>
           )}
         </div>
@@ -430,8 +483,11 @@ export default function CheckFieldDetail() {
           <StatusChangeModal
             newStatus={newStatus}
             onConfirm={() => {
-              updateFieldStatus(fieldId, newStatus);
+              updateFieldStatus(fieldId, newStatus, reasoning);
             }}
+            startProcessLoad={startProcessLoad}
+            reasoning={reasoning}
+            setReasoning={setReasoning}
             onClose={closeConfirmModal}
           />
         )}

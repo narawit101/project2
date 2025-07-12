@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import "@/app/css/Contact.css";
+import "@/app/css/contact-us.css";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 import { useRouter } from "next/navigation";
 
@@ -129,6 +129,7 @@ export default function Contact() {
         <form onSubmit={request}>
           <div className="input-contact">
             <input
+              readOnly={startProcessLoad}
               required
               type="email"
               placeholder="Email ของคุณ"
@@ -138,6 +139,7 @@ export default function Contact() {
 
             <input
               required
+              readOnly={startProcessLoad}
               maxLength={50}
               type="text"
               placeholder="หัวข้อ"
@@ -146,6 +148,7 @@ export default function Contact() {
             />
 
             <textarea
+              readOnly={startProcessLoad}
               maxLength={500}
               required
               type="text"

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter, useParams } from "next/navigation";
 import { io } from "socket.io-client";
-import "@/app/css/myOrder.css";
+import "@/app/css/my-order.css";
 
 export default function Myorder() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -73,7 +73,7 @@ export default function Myorder() {
           );
           setMessageType("error");
           setTimeout(() => {
-            router.replace("/myfield");
+            router.replace("/my-field");
           }, 2000);
         }
         setMessage(data.error);
@@ -569,7 +569,10 @@ export default function Myorder() {
                   <button
                     className="detail-button"
                     onClick={() =>
-                      window.open(`/bookingDetail/${item.booking_id}`, "_blank")
+                      window.open(
+                        `/booking-detail/${item.booking_id}`,
+                        "_blank"
+                      )
                     }
                   >
                     ดูรายละเอียด
