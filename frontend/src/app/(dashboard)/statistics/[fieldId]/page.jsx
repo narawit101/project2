@@ -4,7 +4,7 @@ import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter, useParams } from "next/navigation";
 import { io } from "socket.io-client";
 import "@/app/css/my-order.css";
-import "@/app/css/statistics.css";
+import "@/app/css/field-statistics.css";
 
 export default function Statistics() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;

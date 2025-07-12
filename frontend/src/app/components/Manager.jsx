@@ -280,9 +280,6 @@ export default function AdminManager() {
     }
   };
 
-  const handleViewDetails = (fieldId) => {
-    router.push(`/check-field/${fieldId}`);
-  };
 
   const closeModal = () => {
     setSelectedUser(null);
