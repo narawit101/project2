@@ -81,7 +81,6 @@ export default function CheckFieldDetail() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const { fieldId } = useParams(); // รับค่า field_id จาก URL
   const [fieldData, setFieldData] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false); // เปิดหรือปิดโมดอลยืนยัน
   const [newStatus, setNewStatus] = useState(""); // เก็บสถานะใหม่ที่จะเปลี่ยน
   const router = useRouter();

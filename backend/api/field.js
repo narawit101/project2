@@ -529,7 +529,6 @@ router.get("/:field_id", authMiddleware, async (req, res) => {
     const { field_id } = req.params;
     const { user_id, role } = req.user; // ดึง user_id และ role จาก token
 
-    // ตรวจสอบว่าเป็น admin หรือไม่
     if (role === "admin") {
       // Admin สามารถเข้าถึงข้อมูลทุกฟิลด์
       const result = await pool.query(
@@ -622,7 +621,6 @@ router.get("/:field_id", authMiddleware, async (req, res) => {
       return res.json(result.rows[0]);
     }
 
-    // หากไม่ใช่ admin หรือ field_owner
     return res.status(403).json({ error: "คุณไม่มีสิทธิ์เข้าถึงข้อมูลนี้" });
   } catch (error) {
     console.error("Database Error:", error);
@@ -778,6 +776,19 @@ router.put("/update-status/:field_id", authMiddleware, async (req, res) => {
     );
 
     console.log("ข้อมูลอัปเดตสำเร็จ:", result.rows[0]);
+    if (req.io) {
+      req.io.emit("updated_status", {
+        userId: checkField.rows[0].user_id,
+      });
+      console.log(
+        "ส่งข้อมูลไปยังผู้ใช้ที่เกี่ยวข้อง:",
+        checkField.rows[0].user_id
+      );
+    } else {
+      console.log("ไม่พบ req.io เพื่อส่งข้อมูลไปยังผู้ใช้");
+    }
+
+    console.log("ข้อมูลอัปเดตสำเร็จ:", result.rows[0]);
 
     res.json({ message: "อัปเดตข้อมูลสำเร็จ", data: result.rows[0] });
   } catch (error) {
@@ -907,7 +918,7 @@ router.delete("/delete/field/:id", authMiddleware, async (req, res) => {
 router.put("/edit/:field_id", authMiddleware, async (req, res) => {
   try {
     const { field_id } = req.params;
-    const { user_id, role } = req.user; // ดึง user_id และ role จาก token ใน authMiddleware
+    const { user_id,role } = req.user; // ดึง user_id และ role จาก token ใน authMiddleware
     const {
       field_name,
       address,
@@ -987,7 +998,6 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
       return res.json({ message: "อัปเดตข้อมูลสำเร็จ", data: result.rows[0] });
     }
 
-    // หากเป็น field_owner ต้องตรวจสอบว่า user_id ของผู้ใช้ตรงกับ owner ของฟิลด์นี้หรือไม่
     if (role === "field_owner" && checkField.rows[0].user_id === user_id) {
       console.log("Field owner อัปเดตข้อมูลสนามกีฬา");
 
@@ -1035,7 +1045,6 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
       return res.json({ message: "อัปเดตข้อมูลสำเร็จ", data: result.rows[0] });
     }
 
-    // หากไม่ใช่ admin หรือ field_owner จะไม่สามารถอัปเดตได้
     return res.status(403).json({ error: "คุณไม่มีสิทธิ์อัปเดตข้อมูลนี้" });
   } catch (error) {
     console.error("Database Error:", error);

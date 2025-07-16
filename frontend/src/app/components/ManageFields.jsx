@@ -64,9 +64,8 @@ export default function MyFieldPage() {
         setMyFields(data);
         setFilteredFields(data);
       } catch (err) {
-        console.error("Error loading fields:", err.message);
-        setError(err.message);
-        setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", err.message);
+        // console.error("Error loading fields:", err.message);
+        setMessage(`${err.message}`);
         setMessageType("error");
       } finally {
         setDataLoading(false);

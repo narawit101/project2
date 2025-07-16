@@ -4,10 +4,15 @@ const pool = require("../db");
 const authMiddleware = require("../middlewares/auth");
 
 router.get("/myfields", authMiddleware, async (req, res) => {
-  const user_id = req.user.user_id;
-  const role = req.user.role;  // ดึง role ของผู้ใช้งานจาก req.user
+  const { user_id,role } = req.user;
 
   try {
+    if (role !== "admin" && role !== "field_owner") {
+      return res
+        .status(403)
+        .json({ error: "คุณไม่มีสิทธิ์เข้าถึงข้อมูลสนามกีฬา" });
+    }
+
     let query = `
       SELECT DISTINCT
         users.user_id,
@@ -20,26 +25,24 @@ router.get("/myfields", authMiddleware, async (req, res) => {
         field.status
       FROM field
       INNER JOIN users ON field.user_id = users.user_id
-      WHERE (field.status = 'ผ่านการอนุมัติ' OR field.status = 'รอตรวจสอบ' OR field.status = 'ไม่ผ่านการอนุมัติ')  -- รวมสถานะที่รอตรวจสอบและไม่ผ่าน
+      WHERE (field.status = 'ผ่านการอนุมัติ' OR field.status = 'รอตรวจสอบ' OR field.status = 'ไม่ผ่านการอนุมัติ')
     `;
-    
-    // สำหรับ admin ให้ดึงข้อมูลทั้งหมด
+
+    let values = [];
+
     if (role === "admin") {
-      query += `ORDER BY field.field_id DESC;`;
+      query += ` ORDER BY field.field_id DESC`;
     } else if (role === "field_owner") {
-      // สำหรับ field_owner ให้กรองด้วย user_id ของตัวเอง
-      query += `AND field.user_id = $1 ORDER BY field.field_id DESC;`;
+      query += ` AND field.user_id = $1 ORDER BY field.field_id DESC`;
+      values = [user_id];
     }
 
-    const values = role === "field_owner" ? [user_id] : []; // ถ้าเป็น field_owner ใส่ user_id เป็นค่าใน values
-
-    const result = await pool.query(query, values); // ส่งคำขอ query ไปที่ฐานข้อมูล
-    res.json(result.rows);  // ส่งผลลัพธ์กลับไปที่ client
+    const result = await pool.query(query, values);
+    res.json(result.rows);
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ error: "Database error fetching fields" });
+    console.error("Error fetching my fields:", error);
+    res.status(500).json({ error: "เกิดข้อผิดพลาดในการดึงข้อมูลสนาม" });
   }
 });
 
-  
 module.exports = router;

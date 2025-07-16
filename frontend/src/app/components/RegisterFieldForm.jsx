@@ -658,7 +658,12 @@ export default function RegisterFieldForm() {
               placeholder="เช่น 2 = ยกเลิกได้ก่อน 2 ชม."
               value={fieldData.cancel_hours}
               onChange={(e) => {
-                const value = Math.abs(e.target.value);
+                let value = Math.abs(e.target.value);
+                if (value > 999) {
+                  setMessage("ใส่ไม่เกินไม่เกิน 3 หลัก ");
+                  setMessageType("error");
+                  return;
+                }
                 setFieldData({
                   ...fieldData,
                   cancel_hours: isNaN(value) ? 0 : value,
@@ -686,13 +691,17 @@ export default function RegisterFieldForm() {
                 {/*Input กรอกราคา */}
                 <div className="input-group-register-field">
                   <label htmlFor="">ราคา/ชั่วโมง</label>
-
                   <input
                     type="number"
                     placeholder="500 , 1000"
-                    value={sub.price}
+                    value={sub.price ?? ""}
                     onChange={(e) => {
-                      const value = Math.abs(e.target.value);
+                      let value = Math.abs(e.target.value);
+                      if (value > 999999) {
+                        setMessage("ราคาต้องไม่เกิน 6 หลัก ");
+                        setMessageType("error");
+                        return;
+                      }
                       updateSubField(subIndex, "price", value);
                     }}
                   />
@@ -722,7 +731,12 @@ export default function RegisterFieldForm() {
                     placeholder="5,7"
                     value={sub.players_per_team}
                     onChange={(e) => {
-                      const value = Math.abs(e.target.value);
+                      let value = Math.abs(e.target.value);
+                      if (value > 99) {
+                        setMessage("ใส่ได้ไม่เกิน 2 หลัก ");
+                        setMessageType("error");
+                        return;
+                      }
                       updateSubField(subIndex, "players_per_team", value);
                     }}
                   />{" "}
@@ -734,7 +748,12 @@ export default function RegisterFieldForm() {
                     placeholder="(เมตร)"
                     value={sub.wid_field}
                     onChange={(e) => {
-                      const value = Math.abs(e.target.value);
+                      let value = Math.abs(e.target.value);
+                      if (value > 999) {
+                        setMessage("ใส่ได้ไม่เกิน 3 หลัก ");
+                        setMessageType("error");
+                        return;
+                      }
                       updateSubField(subIndex, "wid_field", value);
                     }}
                   />
@@ -746,7 +765,12 @@ export default function RegisterFieldForm() {
                     placeholder="(เมตร)"
                     value={sub.length_field}
                     onChange={(e) => {
-                      const value = Math.abs(e.target.value);
+                      let value = Math.abs(e.target.value);
+                      if (value > 999) {
+                        setMessage("ใส่ได้ไม่เกิน 3 หลัก ");
+                        setMessageType("error");
+                        return;
+                      }
                       updateSubField(subIndex, "length_field", value);
                     }}
                   />
@@ -807,7 +831,12 @@ export default function RegisterFieldForm() {
                           placeholder="ราคา/ชั่วโมง"
                           value={addon.price}
                           onChange={(e) => {
-                            const value = Math.abs(e.target.value); // แปลงค่าให้เป็นค่าบวก
+                            let value = Math.abs(e.target.value);
+                            if (value > 999999) {
+                              setMessage("ใส่ได้ไม่เกิน 6 หลัก ");
+                              setMessageType("error");
+                              return;
+                            }
                             updateAddOn(subIndex, addOnIndex, "price", value);
                           }}
                         />
@@ -1016,7 +1045,11 @@ export default function RegisterFieldForm() {
                         onChange={(e) => {
                           // รับค่าที่กรอกจากผู้ใช้
                           let value = e.target.value;
-
+                          if (value > 999999) {
+                            setMessage("ใส่ได้ไม่เกิน 6 หลัก ");
+                            setMessageType("error");
+                            return;
+                          }
                           // ตรวจสอบว่าเป็นตัวเลขและเป็นค่าบวกหรือ 0
                           if (value === "" || parseFloat(value) >= 0) {
                             handleFacilityPriceChange(fac.fac_id, value); // ส่งค่าใหม่ที่ผ่านการตรวจสอบ

@@ -1475,7 +1475,17 @@ export default function CheckFieldDetail() {
                   min="0"
                   type="number"
                   value={updatedValue}
-                  onChange={(e) => setUpdatedValue(Math.abs(e.target.value))}
+                  onChange={(e) => {
+                    let value = e.target.value;
+                    if (value > 999999) {
+                      setMessage("ใส่ได้ไม่เกิน 6 หลัก");
+                      setMessageType("error");
+                      return;
+                    }
+                    setMessage(null);
+                    setMessageType(null);
+                    setUpdatedValue(Math.abs(Number(value)));
+                  }}
                 />
                 <div className="btn-group-editfield">
                   <button
@@ -1921,6 +1931,13 @@ export default function CheckFieldDetail() {
                           // รับค่าที่กรอกจากผู้ใช้
                           let value = e.target.value;
 
+                          if (value > 999999) {
+                            setMessage("ใส่ได้ไม่เกิน 6 หลัก ");
+                            setMessageType("error");
+                            return;
+                          }
+                          setMessage(null);
+                          setMessageType(null);
                           if (value === "" || parseFloat(value) >= 0) {
                             handleFacilityPriceChange(fac.fac_id, value);
                           } else {
@@ -2021,31 +2038,69 @@ export default function CheckFieldDetail() {
                   <input
                     type="number"
                     value={updatedPrice}
-                    onChange={(e) => setUpdatedPrice(Math.abs(e.target.value))}
+                    onChange={(e) => {
+                      let value = e.target.value;
+
+                      if (value > 999999) {
+                        setMessage("ใส่ได้ไม่เกิน 6 หลัก");
+                        setMessageType("error");
+                        return;
+                      }
+                      setMessage(null);
+                      setMessageType(null);
+                      setUpdatedPrice(Math.abs(e.target.value));
+                    }}
                   />
                   <strong>ผู้เล่นต่อทีม</strong>
                   <input
                     type="number"
                     value={updatedSubFieldPlayer}
-                    onChange={(e) =>
-                      setUpdatedSubFieldPlayer(Math.abs(e.target.value))
-                    }
+                    onChange={(e) => {
+                      let value = e.target.value;
+
+                      if (value > 99) {
+                        setMessage("ใส่ได้ไม่เกิน 2 หลัก");
+                        setMessageType("error");
+                        return;
+                      }
+                      setMessage(null);
+                      setMessageType(null);
+                      setUpdatedSubFieldPlayer(Math.abs(e.target.value));
+                    }}
                   />
                   <strong>ความกว้างของสนาม</strong>
                   <input
                     type="number"
                     value={updatedSubFieldWid}
-                    onChange={(e) =>
-                      setUpdatedSubFieldWid(Math.abs(e.target.value))
-                    }
+                    onChange={(e) => {
+                      let value = e.target.value;
+
+                      if (value > 999) {
+                        setMessage("ใส่ได้ไม่เกิน 3 หลัก");
+                        setMessageType("error");
+                        return;
+                      }
+                      setMessage(null);
+                      setMessageType(null);
+                      setUpdatedSubFieldWid(Math.abs(e.target.value));
+                    }}
                   />
                   <strong>ความยาวของสนาม</strong>
                   <input
                     type="number"
                     value={updatedSubFieldLength}
-                    onChange={(e) =>
-                      setUpdatedSubFieldLength(Math.abs(e.target.value))
-                    }
+                    onChange={(e) => {
+                      let value = e.target.value;
+
+                      if (value > 999) {
+                        setMessage("ใส่ได้ไม่เกิน 3 หลัก");
+                        setMessageType("error");
+                        return;
+                      }
+                      setMessage(null);
+                      setMessageType(null);
+                      setUpdatedSubFieldLength(Math.abs(e.target.value));
+                    }}
                   />
                   <strong>ประพื้นเภทสนาม</strong>
                   <input
@@ -2378,46 +2433,83 @@ export default function CheckFieldDetail() {
               <input
                 type="number"
                 placeholder="ราคา"
-                value={newSubField.price}
-                onChange={(e) =>
+                value={newSubField.price ?? ""}
+                onChange={(e) => {
+                  let value = e.target.value;
+
+                  if (value > 999999) {
+                    setMessage("ใส่ได้ไม่เกิน 6 หลัก");
+                    setMessageType("error");
+                    return;
+                  }
+                  setMessage(null);
+                  setMessageType(null);
+
                   setNewSubField({
                     ...newSubField,
-                    price: Math.abs(e.target.value),
-                  })
-                }
+                    price: Math.abs(Number(value)),
+                  });
+                }}
               />
               <input
                 type="number"
                 placeholder="ผู้เล่น"
                 value={newSubField.players_per_team}
-                onChange={(e) =>
+                onChange={(e) => {
+                  let value = e.target.value;
+
+                  if (value > 99) {
+                    setMessage("ใส่ได้ไม่เกิน 2 หลัก");
+                    setMessageType("error");
+                    return;
+                  }
+                  setMessage(null);
+                  setMessageType(null);
                   setNewSubField({
                     ...newSubField,
                     players_per_team: Math.abs(e.target.value),
-                  })
-                }
+                  });
+                }}
               />
               <input
                 type="number"
                 placeholder="กว้าง"
                 value={newSubField.wid_field}
-                onChange={(e) =>
+                onChange={(e) => {
+                  let value = e.target.value;
+
+                  if (value > 999) {
+                    setMessage("ใส่ได้ไม่เกิน 3 หลัก");
+                    setMessageType("error");
+                    return;
+                  }
+                  setMessage(null);
+                  setMessageType(null);
                   setNewSubField({
                     ...newSubField,
                     wid_field: Math.abs(e.target.value),
-                  })
-                }
+                  });
+                }}
               />
               <input
                 type="number"
                 placeholder="ยาว"
                 value={newSubField.length_field}
-                onChange={(e) =>
+                onChange={(e) => {
+                  let value = e.target.value;
+
+                  if (value > 999) {
+                    setMessage("ใส่ได้ไม่เกิน 3 หลัก");
+                    setMessageType("error");
+                    return;
+                  }
+                  setMessage(null);
+                  setMessageType(null);
                   setNewSubField({
                     ...newSubField,
                     length_field: Math.abs(e.target.value),
-                  })
-                }
+                  });
+                }}
               />
               <input
                 type="text"
