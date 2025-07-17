@@ -434,7 +434,7 @@ export default function AdminManager() {
               >
                 {!dataLoading && (
                   <img
-                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAS9JREFUSEvlVdFtAjEUsydpO0nLJC2TtJ2EY5LSScomLo5eUICEC8fBD5GQTgexn/38HsSND2+MjwcgkPQM4APAE4C3sHQL4BfAQNLP6UhakVyWtp+1SJKBVyN9WpIcDO5CSB5gNgkk/RQVD1HxJsis6j2U+ZVV+B26CCR97RR/xkVXmIEPxEiyZS5kf0YJwvO/uLFogWfPCxXpSg9Brv57Z6efqyd7fvxlD0H2vll9C7xXgWo/nDrxJymSZP+diJcy43MSpDwDSPmeCpzv1RR0NbkkLmJ9Eowage1xo7tsKmN9nKDUy5oFEwetGutLVsXak+3Gx456LYZsQ3JRK3Zs2bkf3jlpzzTO2YEc/cOJfeOd44pN5E9Ol8H36/piBddGtNnkOYCbczAn+F0U/AM5hYQZaj6WOQAAAABJRU5ErkJggg=="
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAX5JREFUSEu1lYFxwjAMRaVNYBLKJG0mASYpTFI6SdlE5BmJc5w4ca7gO45wSHqW9KWovPnom+NLE8DMvvwiOxHZiMiviNxE5KqqfFfPLMDMPkTkp/C+OgQQ59T/PtdAVYCZERgAAS/lbR3+6TZk0U1BJgFZcJzOcyVw0Lfb7EvICGBmRxE59HXGmNsvHjOjXGR8U9V97jAAuOGf17RbjJwZuBB2qjrwKwHp9qrapK6WC5QA0tyo6rbFucUmAbxRKIHyIDv03VT/HOJx6N9TUQFABTFMyWdtmYqZ4bJJUQEIFcTwNCvIK4Af2ceJKe+ePXAFkd7lH+VhMBm+pCTivEwtnklaK/ksvAyQzdCpVzlyf/SylJqZ0XCMZrdkxQ+hbHPfKUA0a7RXarrPFDS4fS2DUBT/L0J8RZA1e2g0oLVtihpwAsY2HZXMA8e6ZjAHS67ag2IygQADRE/48BzzEllWp75JRX5bgvLKBMIrc/F1OdmDlgW2xqYpgzUBS9s74QarGfJDD34AAAAASUVORK5CYII="
                     alt="refresh icon"
                     className="refresh-icon"
                   />
