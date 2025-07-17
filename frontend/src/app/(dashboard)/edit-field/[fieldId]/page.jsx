@@ -1408,13 +1408,21 @@ export default function CheckFieldDetail() {
                 <input
                   type="text"
                   value={updatedValue}
+                  pattern="[0-9]*"
+                  maxLength={2}
                   onChange={(e) => {
                     const val = e.target.value;
+                    if (val > 24) {
+                      setMessage("ใส่ไม่เกินไม่เกิน 24 ชั่วโมง ");
+                      setMessageType("error");
+                      return;
+                    }
+                    setMessage(null);
                     if (/^\d{0,2}$/.test(val)) {
                       setUpdatedValue(val);
                     }
                   }}
-                  placeholder="ใส่ได้ไม่เกิน 99 ชม."
+                  placeholder="ใส่ได้ไม่เกิน 24 ชม."
                 />
                 <div className="btn-group-editfield">
                   <button
@@ -1473,11 +1481,14 @@ export default function CheckFieldDetail() {
               <>
                 <input
                   min="0"
-                  type="number"
+                  type="text"
+                  maxLength={7}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={updatedValue}
                   onChange={(e) => {
-                    let value = e.target.value;
-                    if (value > 999999) {
+                    let value = e.target.value.replace(/\D/g, "");
+                    if (value.length > 6) {
                       setMessage("ใส่ได้ไม่เกิน 6 หลัก");
                       setMessageType("error");
                       return;
@@ -1668,14 +1679,25 @@ export default function CheckFieldDetail() {
               <>
                 <input
                   type="text"
-                  value={updatedValue}
+                  maxLength={13}
+                  pattern="[0-9]*"
+                  inputMode="numeric"
+                  value={updatedValue || ""}
                   onChange={(e) => {
-                    const val = e.target.value;
-                    if (/^\d{0,13}$/.test(val)) {
-                      setUpdatedValue(val);
+                    let val = e.target.value.replace(/\D/g, ""); // เอาเฉพาะตัวเลข
+                    setUpdatedValue(val);
+                    setMessage(null);
+                    setMessageType(null);
+                  }}
+                  onBlur={() => {
+                    const len = updatedValue?.length ?? 0;
+                    if (len !== 10 && len !== 13) {
+                      setMessage("ใส่เลขบัญชีต้อง 10 หรือ 13 หลัก");
+                      setMessageType("error");
+                      setUpdatedValue("");
                     }
                   }}
-                  placeholder="ใส่เลขบัญชีไม่เกิน 13 หลัก"
+                  placeholder="เลขบัญชีต้อง 10 หรือ 13 หลัก"
                 />
                 <div className="btn-group-editfield">
                   <button
@@ -1924,12 +1946,15 @@ export default function CheckFieldDetail() {
                   <div className="input-group-editfield">
                     <div className="input-group-checkbox-editfield">
                       <input
-                        type="number"
-                        placeholder="กำหนดราคา ถ้าไม่มีใส่ '0'"
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        maxLength={6}
+                        placeholder="ถ้าไม่มีราคาใส่ '0'"
                         value={selectedFacilities[fac.fac_id] || ""}
                         onChange={(e) => {
                           // รับค่าที่กรอกจากผู้ใช้
-                          let value = e.target.value;
+                          let value = e.target.value.replace(/\D/g, "");
 
                           if (value > 999999) {
                             setMessage("ใส่ได้ไม่เกิน 6 หลัก ");
@@ -2029,19 +2054,21 @@ export default function CheckFieldDetail() {
                 <div className="btn-group-editfield">
                   <strong>ชื่อสนามย่อย</strong>
                   <input
-                    maxLength={50}
+                    maxLength={20}
                     type="text"
                     value={updatedSubFieldName}
                     onChange={(e) => setUpdatedSubFieldName(e.target.value)}
                   />
                   <strong>ราคา</strong>
                   <input
-                    type="number"
-                    value={updatedPrice}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={7}
+                    value={updatedPrice || ""}
                     onChange={(e) => {
-                      let value = e.target.value;
-
-                      if (value > 999999) {
+                      let value = e.target.value.replace(/\D/g, "");
+                      if (value.length > 6) {
                         setMessage("ใส่ได้ไม่เกิน 6 หลัก");
                         setMessageType("error");
                         return;
@@ -2053,13 +2080,16 @@ export default function CheckFieldDetail() {
                   />
                   <strong>ผู้เล่นต่อทีม</strong>
                   <input
-                    type="number"
-                    value={updatedSubFieldPlayer}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={2}
+                    value={updatedSubFieldPlayer || ""}
                     onChange={(e) => {
-                      let value = e.target.value;
+                      let value = e.target.value.replace(/\D/g, "");
 
-                      if (value > 99) {
-                        setMessage("ใส่ได้ไม่เกิน 2 หลัก");
+                      if (value > 24) {
+                        setMessage("ใส่ได้ไม่เกิน 11 คน");
                         setMessageType("error");
                         return;
                       }
@@ -2070,13 +2100,16 @@ export default function CheckFieldDetail() {
                   />
                   <strong>ความกว้างของสนาม</strong>
                   <input
-                    type="number"
-                    value={updatedSubFieldWid}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={4}
+                    value={updatedSubFieldWid || ""}
                     onChange={(e) => {
-                      let value = e.target.value;
+                      let value = e.target.value.replace(/\D/g, "");
 
-                      if (value > 999) {
-                        setMessage("ใส่ได้ไม่เกิน 3 หลัก");
+                      if (value > 1000) {
+                        setMessage("ใส่ได้ไม่เกิน 1000 เมตร");
                         setMessageType("error");
                         return;
                       }
@@ -2087,13 +2120,16 @@ export default function CheckFieldDetail() {
                   />
                   <strong>ความยาวของสนาม</strong>
                   <input
-                    type="number"
-                    value={updatedSubFieldLength}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={4}
+                    value={updatedSubFieldLength || ""}
                     onChange={(e) => {
-                      let value = e.target.value;
+                      let value = e.target.value.replace(/\D/g, "");
 
-                      if (value > 999) {
-                        setMessage("ใส่ได้ไม่เกิน 3 หลัก");
+                      if (value > 1000) {
+                        setMessage("ใส่ได้ไม่เกิน 1000 เมตร");
                         setMessageType("error");
                         return;
                       }
@@ -2231,14 +2267,23 @@ export default function CheckFieldDetail() {
                                 }
                               />
                               <input
-                                type="number"
+                                type="text"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
+                                maxLength={7}
                                 value={editingAddon.price}
-                                onChange={(e) =>
+                                onChange={(e) => {
+                                  let value = e.target.value.replace(/\D/g, "");
+                                  if (value.length > 6) {
+                                    setMessage("ใส่ได้ไม่เกิน 6 หลัก");
+                                    setMessageType("error");
+                                    return;
+                                  }
                                   setEditingAddon({
                                     ...editingAddon,
                                     price: Math.abs(e.target.value),
-                                  })
-                                }
+                                  });
+                                }}
                               />
 
                               <button
@@ -2356,16 +2401,25 @@ export default function CheckFieldDetail() {
                     }
                   />
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={7}
                     placeholder="ราคา"
                     value={addOnInputs[sub.sub_field_id]?.price || ""}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      let value = e.target.value.repeat(/\D/g, "");
+                      if (value.length >= 6) {
+                        setMessage("ใส่ได้ไม่เกิน 6 หลัก");
+                        setMessageType("error");
+                        return;
+                      }
                       handleAddOnInputChange(
                         sub.sub_field_id,
                         "price",
                         Math.abs(e.target.value)
-                      )
-                    }
+                      );
+                    }}
                   />
                   <button
                     style={{
@@ -2420,7 +2474,7 @@ export default function CheckFieldDetail() {
             <div className="subfield-form-editfield">
               <input
                 type="text"
-                maxLength={30}
+                maxLength={20}
                 placeholder="ชื่อสนามย่อย"
                 value={newSubField.sub_field_name}
                 onChange={(e) =>
@@ -2431,11 +2485,14 @@ export default function CheckFieldDetail() {
                 }
               />
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={7}
                 placeholder="ราคา"
                 value={newSubField.price ?? ""}
                 onChange={(e) => {
-                  let value = e.target.value;
+                  let value = e.target.value.replace(/\D/g, "");
 
                   if (value > 999999) {
                     setMessage("ใส่ได้ไม่เกิน 6 หลัก");
@@ -2452,14 +2509,17 @@ export default function CheckFieldDetail() {
                 }}
               />
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={2}
                 placeholder="ผู้เล่น"
-                value={newSubField.players_per_team}
+                value={newSubField.players_per_team || ""}
                 onChange={(e) => {
-                  let value = e.target.value;
+                  let value = e.target.value.replace(/\D/g, "");
 
-                  if (value > 99) {
-                    setMessage("ใส่ได้ไม่เกิน 2 หลัก");
+                  if (value > 11) {
+                    setMessage("ใส่ได้ไม่เกิน 11 คน");
                     setMessageType("error");
                     return;
                   }
@@ -2472,14 +2532,17 @@ export default function CheckFieldDetail() {
                 }}
               />
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={4}
                 placeholder="กว้าง"
-                value={newSubField.wid_field}
+                value={newSubField.wid_field || ""}
                 onChange={(e) => {
-                  let value = e.target.value;
+                  let value = e.target.value.replace(/\D/g, "");
 
-                  if (value > 999) {
-                    setMessage("ใส่ได้ไม่เกิน 3 หลัก");
+                  if (value > 1000) {
+                    setMessage("ใส่ได้ไม่เกิน 1000 เมตร");
                     setMessageType("error");
                     return;
                   }
@@ -2492,14 +2555,17 @@ export default function CheckFieldDetail() {
                 }}
               />
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={4}
                 placeholder="ยาว"
-                value={newSubField.length_field}
+                value={newSubField.length_field || ""}
                 onChange={(e) => {
-                  let value = e.target.value;
+                  let value = e.target.value.replace(/\D/g, "");
 
-                  if (value > 999) {
-                    setMessage("ใส่ได้ไม่เกิน 3 หลัก");
+                  if (value > 1000) {
+                    setMessage("ใส่ได้ไม่เกิน 1000 เมตร");
                     setMessageType("error");
                     return;
                   }

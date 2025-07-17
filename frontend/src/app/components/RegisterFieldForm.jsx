@@ -135,15 +135,21 @@ export default function RegisterFieldForm() {
   };
 
   const handlePriceChange = (e) => {
-    const value = e.target.value;
-    // ตรวจสอบว่าเป็นค่าบวกหรือลบ
-    if (value !== "" && parseFloat(value) < 0) {
-      return; // ถ้าค่าติดลบจะไม่ให้กรอก
+    let value = e.target.value;
+
+    // ลบทุกอักขระที่ไม่ใช่ตัวเลข
+    value = value.replace(/\D/g, "");
+
+    // ตรวจสอบว่ามีเกิน 4 หลักไหม
+    if (value.length >= 7) {
+      setMessage("ใส่ได้ไม่เกิน 6 หลัก");
+      setMessageType("error");
+      return;
     }
 
     setFieldData({
       ...fieldData,
-      price_deposit: value, // อัปเดตค่ามัดจำเมื่อกรอก
+      price_deposit: value,
     });
   };
 
@@ -253,7 +259,7 @@ export default function RegisterFieldForm() {
       setMessageType("error");
       return;
     }
-
+    const token = localStorage.getItem("auth_mobile_token");
     try {
       SetstartProcessLoad(true);
       await new Promise((resolve) => setTimeout(resolve, 200));
@@ -653,14 +659,17 @@ export default function RegisterFieldForm() {
           <div className="input-group-register-field">
             <label>ยกเลิกการจองได้ภายใน (ชั่วโมง)</label>
             <input
-              type="number"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={3}
               name="cancel_hours"
               placeholder="เช่น 2 = ยกเลิกได้ก่อน 2 ชม."
               value={fieldData.cancel_hours}
               onChange={(e) => {
-                let value = Math.abs(e.target.value);
-                if (value > 999) {
-                  setMessage("ใส่ไม่เกินไม่เกิน 3 หลัก ");
+                let value = e.target.value.replace(/\D/g, ""); // เอาเฉพาะตัวเลข
+                if (value > 24) {
+                  setMessage("ใส่ไม่เกินไม่เกิน 24 ชั่วโมง ");
                   setMessageType("error");
                   return;
                 }
@@ -680,7 +689,7 @@ export default function RegisterFieldForm() {
                   <label htmlFor="">ชื่อสนามย่อย</label>
                   <input
                     type="text"
-                    maxLength={50}
+                    maxLength={20}
                     placeholder="สนาม 1,2"
                     value={sub.name}
                     onChange={(e) =>
@@ -692,12 +701,15 @@ export default function RegisterFieldForm() {
                 <div className="input-group-register-field">
                   <label htmlFor="">ราคา/ชั่วโมง</label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={7}
                     placeholder="500 , 1000"
                     value={sub.price ?? ""}
                     onChange={(e) => {
-                      let value = Math.abs(e.target.value);
-                      if (value > 999999) {
+                      let value = e.target.value.replace(/\D/g, "");
+                      if (value.length > 6) {
                         setMessage("ราคาต้องไม่เกิน 6 หลัก ");
                         setMessageType("error");
                         return;
@@ -727,13 +739,16 @@ export default function RegisterFieldForm() {
                 <div className="input-group-register-field">
                   <label htmlFor="">จำนวนผู้เล่นต่อฝั่ง</label>
                   <input
-                    type="number"
-                    placeholder="5,7"
-                    value={sub.players_per_team}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={2}
+                    placeholder="5, 7, 11"
+                    value={sub.players_per_team ?? ""}
                     onChange={(e) => {
-                      let value = Math.abs(e.target.value);
-                      if (value > 99) {
-                        setMessage("ใส่ได้ไม่เกิน 2 หลัก ");
+                      let value = e.target.value.replace(/\D/g, "");
+                      if (value > 11) {
+                        setMessage("ใส่ได้ไม่เกิน 11 คน ");
                         setMessageType("error");
                         return;
                       }
@@ -744,13 +759,16 @@ export default function RegisterFieldForm() {
                 <div className="input-group-register-field">
                   <label>ความกว้างของสนาม</label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={4}
                     placeholder="(เมตร)"
-                    value={sub.wid_field}
+                    value={sub.wid_field || ""}
                     onChange={(e) => {
-                      let value = Math.abs(e.target.value);
-                      if (value > 999) {
-                        setMessage("ใส่ได้ไม่เกิน 3 หลัก ");
+                      let value = e.target.value.replace(/\D/g, "");
+                      if (value > 1000) {
+                        setMessage("ใส่ได้ไม่เกิน 1000 เมตร");
                         setMessageType("error");
                         return;
                       }
@@ -761,13 +779,16 @@ export default function RegisterFieldForm() {
                 <div className="input-group-register-field">
                   <label>ความยาวของสนาม</label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={4}
                     placeholder="(เมตร)"
-                    value={sub.length_field}
+                    value={sub.length_field || ""}
                     onChange={(e) => {
-                      let value = Math.abs(e.target.value);
-                      if (value > 999) {
-                        setMessage("ใส่ได้ไม่เกิน 3 หลัก ");
+                      let value = e.target.value.replace(/\D/g, "");
+                      if (value > 1000) {
+                        setMessage("ใส่ได้ไม่เกิน 1000 เมตร");
                         setMessageType("error");
                         return;
                       }
@@ -827,11 +848,14 @@ export default function RegisterFieldForm() {
                       {/* Input กรอกราคา */}
                       <div className="input-group-register-field">
                         <input
-                          type="number"
+                          type="text"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          maxLength={7}
                           placeholder="ราคา/ชั่วโมง"
-                          value={addon.price}
+                          value={addon.price || ""}
                           onChange={(e) => {
-                            let value = Math.abs(e.target.value);
+                            let value = e.target.value.replace(/\D/g, "");
                             if (value > 999999) {
                               setMessage("ใส่ได้ไม่เกิน 6 หลัก ");
                               setMessageType("error");
@@ -906,12 +930,16 @@ export default function RegisterFieldForm() {
           <div className="input-group-register-field">
             <label htmlFor="number_bank">เลขบัญชีธนาคาร / พร้อมเพย์</label>
             <input
-              type="number"
+              type="text"
+              maxLength={13} // จำกัดความยาวสูงสุดที่ 13 หลัก
+              inputMode="numeric"
+              pattern="[0-9]*"
               name="number_bank"
-              placeholder="เลขบัญชี 10 หลัก หรือ 13 หลัก พร้อมเพย์ 10 หรือ หลัก 13 หลักเท่านั้น"
-              value={fieldData.number_bank}
+              placeholder="เลขบัญชีและพร้อมเพย์ 10 หลัก หรือ 13 หลัก หลักเท่านั้น"
+              value={fieldData.number_bank || ""} // ตรวจสอบให้ค่ามีค่าเริ่มต้น
               onChange={(e) => {
-                const value = e.target.value;
+                const value = e.target.value.replace(/\D/g, ""); // ลบทุกอักขระที่ไม่ใช่ตัวเลข
+                setMessage(""); // เคลียร์ข้อความเมื่อเริ่มกรอกใหม่
                 const isPromptPay = fieldData.account_type === "พร้อมเพย์"; // ตรวจสอบประเภทบัญชีที่เลือก
 
                 // อนุญาตเฉพาะตัวเลข
@@ -935,13 +963,12 @@ export default function RegisterFieldForm() {
                   (isPromptPay && length !== 10 && length !== 13) // ถ้าเป็นพร้อมเพย์ต้อง 10 หรือ 13 หลัก
                 ) {
                   setMessage(
-                    "เลขที่กรอกไม่ถูกต้อง ถ้าเป็นบัญชีธนาคารต้อง 10 หรือ 13 หลัก ถ้าเป็นพร้อมเพย์ต้อง 10 หรือ 13 หลัก"
+                    "เลขที่กรอกไม่ถูกต้อง เลขบัญชีและพร้อมเพย์ 10 หลัก หรือ 13 หลัก หลักเท่านั้น"
                   );
                   setMessageType("error");
                   setFieldData({ ...fieldData, number_bank: "" }); // เคลียร์ค่า
                 }
               }}
-              maxLength={13} //จำกัดสูงสุดที่ 13 หลัก
             />
           </div>
 
@@ -1003,11 +1030,14 @@ export default function RegisterFieldForm() {
               {fieldData.depositChecked && (
                 <div className="input-group-register-field">
                   <input
-                    type="number"
+                    type="text"
                     name="price_deposit"
                     placeholder="กำหนดค่ามัดจำ"
                     value={fieldData.price_deposit || "0"} // ตรวจสอบให้ค่ามีค่าเริ่มต้น
                     onChange={handlePriceChange} // อัปเดตค่ามัดจำเมื่อกรอก
+                    maxLength={7}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     onKeyDown={(e) => {
                       if (e.key === "-") {
                         e.preventDefault(); // ป้องกันการกรอกเครื่องหมายลบ
@@ -1039,12 +1069,15 @@ export default function RegisterFieldForm() {
                   <div className="input-group-register-field">
                     <div className="input-group-checkbox-register-field">
                       <input
-                        type="number"
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        maxLength={7}
                         placeholder="กำหนดราคา ถ้าไม่มีใส่ '0'"
                         value={selectedFacilities[fac.fac_id] || ""} // ตรวจสอบให้แน่ใจว่าไม่เป็น undefined หรือ null
                         onChange={(e) => {
                           // รับค่าที่กรอกจากผู้ใช้
-                          let value = e.target.value;
+                          let value = e.target.value.replace(/\D/g, ""); // เอาเฉพาะตัวเลข
                           if (value > 999999) {
                             setMessage("ใส่ได้ไม่เกิน 6 หลัก ");
                             setMessageType("error");
