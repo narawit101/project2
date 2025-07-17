@@ -505,3 +505,56 @@
 .table-wrapper::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+
+.head-refresh-manager {
+  display: flex;
+  gap: 20px;
+  margin-right: 10px;
+}
+
+.refresh-icon {
+  width: 22px; /* ปรับขนาดใหญ่ขึ้นได้ */
+  height: 22px;
+}
+
+.refresh-btn-manager button {
+  min-height: 50px;
+  width: 50px;
+  margin: 20px 0 20px 0;
+  background-color: var(--text-color); /* สีม่วงเข้ม */
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.refresh-btn-manager button:hover {
+  background-color: #080870;
+}
+
+.loading-data {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+}
+
+.loading-data-spinner {
+  width: 100%;
+  height: 100%;
+  border: 3px solid #fff;
+  border-top: 3px solid #9370db;
+  border-radius: 50%;
+  animation: spin-manager 0.8s linear infinite;
+}
+
+@keyframes spin-manager {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -42,44 +42,44 @@ export default function AdminManager() {
     }
   }, [user, isLoading, router]);
 
-  useEffect(() => {
+  const fetchUsers = async () => {
     const token = localStorage.getItem("auth_mobile_token");
 
     setDataLoading(true);
-    const fetchUsers = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 200));
-      if (user?.role !== "admin") return;
-      setDataLoading(true);
-      try {
-        const response = await fetch(`${API_URL}/users`, {
-          credentials: "include",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-        });
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    if (user?.role !== "admin") return;
+    setDataLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/users`, {
+        credentials: "include",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
 
-        if (response.status === 401) {
-          setTimeout(() => {
-            router.replace("/");
-          }, 2000);
-          return;
-        }
-
-        if (!response.ok) {
-          throw new Error("เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้");
-        }
-
-        const data = await response.json();
-        setUsers(data);
-      } catch (error) {
-        console.error("เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้", error);
-        setMessage(error.message || "เกิดข้อผิดพลาด");
-        setMessageType("error");
-      } finally {
-        setDataLoading(false);
+      if (response.status === 401) {
+        setTimeout(() => {
+          router.replace("/");
+        }, 2000);
+        return;
       }
-    };
 
+      if (!response.ok) {
+        throw new Error("เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้");
+      }
+
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error("เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้", error);
+      setMessage(error.message || "เกิดข้อผิดพลาด");
+      setMessageType("error");
+    } finally {
+      setDataLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchUsers();
   }, [user]);
 
@@ -171,11 +171,11 @@ export default function AdminManager() {
     setShowDeleteUserModal(false); // ปิดโมดอลลบผู้ใช้
   };
 
-  const isEmailDuplicate = (email) => {
-    return users.some(
-      (user) => user.email === email && user.user_id !== selectedUser?.user_id
-    );
-  };
+  // const isEmailDuplicate = (email) => {
+  //   return users.some(
+  //     (user) => user.email === email && user.user_id !== selectedUser?.user_id
+  //   );
+  // };
 
   const handleDelete = async (id) => {
     const token = localStorage.getItem("auth_mobile_token");
@@ -279,7 +279,6 @@ export default function AdminManager() {
     }
   };
 
-
   const closeModal = () => {
     setSelectedUser(null);
     setEmailError("");
@@ -344,11 +343,11 @@ export default function AdminManager() {
       )}
       <div className="admin-manager-container">
         <h3 className="Head">ผู้ดูแลระบบ</h3>
-        {dataLoading && (
+        {/* {dataLoading && (
           <div className="loading-data">
             <div className="loading-data-spinner"></div>
           </div>
-        )}
+        )} */}
         <div className="table-wrapper">
           <table className="manager-table">
             <thead>
@@ -401,7 +400,10 @@ export default function AdminManager() {
                         className="edit-btn"
                         onClick={() => setSelectedUser(user)}
                       >
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAANlJREFUSEu1ldENgzAMBd+brO0kLZu0k5ROUtiETVxZIlVIILKT4B8kBHdxbNnEycGT+WgSiMgTwAXAAuBFUp+bqBaIyBfANaIp/ENSpf+oEuzAA1AlA8kpvHALCvDAHEkOVQIDXLl1AiNcBXpFoysDB3wieXMVuQWuomKRW+FFQQ/4oaAXfFcgIg8Ab8OMygq6909WAxFRuEpKYYIfZZDOmFRkhtcIXHCvwA0vFfke3cu8zpds1hsaoW3huAVri8antzDSb+Z46WzatJNAt5pvmtak4RrXLYIfx95jGZW5DL4AAAAASUVORK5CYII=" alt="" />
+                        <img
+                          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAANlJREFUSEu1ldENgzAMBd+brO0kLZu0k5ROUtiETVxZIlVIILKT4B8kBHdxbNnEycGT+WgSiMgTwAXAAuBFUp+bqBaIyBfANaIp/ENSpf+oEuzAA1AlA8kpvHALCvDAHEkOVQIDXLl1AiNcBXpFoysDB3wieXMVuQWuomKRW+FFQQ/4oaAXfFcgIg8Ab8OMygq6909WAxFRuEpKYYIfZZDOmFRkhtcIXHCvwA0vFfke3cu8zpds1hsaoW3huAVri8antzDSb+Z46WzatJNAt5pvmtak4RrXLYIfx95jGZW5DL4AAAAASUVORK5CYII="
+                          alt=""
+                        />
                       </button>
                     </td>
                     <td>
@@ -409,7 +411,10 @@ export default function AdminManager() {
                         className="delete-btn"
                         onClick={() => openDeleteUserModal(user.user_id)}
                       >
-                        <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAR1JREFUSEvNlusRwiAQhG870U5MJ6YStRLTiXZiOjmzGXAQjofJMCO/HDzug7tlCaQwVPUgIhcRORths5sbAPjfSRgqgIeInEoxC3wGcMzF1ADKhQCSOHe6VzcAwaqa3YA/0bozVW0pRaVSyd9r6Tzgnmnkr0nD+CeAodiDPdm/ShQmUlVKkvLcMliWKVxoqYPK2ApIFGcB9jQ8uROtAN7U+FTW3NrYWoliRa2LIilbc8w7ARhrgKvzHx/3V4Db4irc4GdYPaBMWaYtJxhbZEr3pJK6AagW3oUtgGP8NpRsuA+AWb0NO0Kziqx3wzQ7VQ3togsgtAsPsKDhnPl05k4Q+1GLVSQ2wRLnAPFdaLHu5JKVAKXPFQuWeJAPegM03+AZ7kVVEgAAAABJRU5ErkJggg==" alt="" />
+                        <img
+                          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAR1JREFUSEvNlusRwiAQhG870U5MJ6YStRLTiXZiOjmzGXAQjofJMCO/HDzug7tlCaQwVPUgIhcRORths5sbAPjfSRgqgIeInEoxC3wGcMzF1ADKhQCSOHe6VzcAwaqa3YA/0bozVW0pRaVSyd9r6Tzgnmnkr0nD+CeAodiDPdm/ShQmUlVKkvLcMliWKVxoqYPK2ApIFGcB9jQ8uROtAN7U+FTW3NrYWoliRa2LIilbc8w7ARhrgKvzHx/3V4Db4irc4GdYPaBMWaYtJxhbZEr3pJK6AagW3oUtgGP8NpRsuA+AWb0NO0Kziqx3wzQ7VQ3togsgtAsPsKDhnPl05k4Q+1GLVSQ2wRLnAPFdaLHu5JKVAKXPFQuWeJAPegM03+AZ7kVVEgAAAABJRU5ErkJggg=="
+                          alt=""
+                        />
                       </button>
                     </td>
                   </tr>
@@ -419,7 +424,29 @@ export default function AdminManager() {
         </div>
         {/* ตารางสำหรับลูกค้า */}
         <div className="head-select-manager">
-          <h3 className="Head">ผู้ใช้ทั้งหมด</h3>
+          <div className="head-refresh-manager">
+            <h3 className="Head">ผู้ใช้ทั้งหมด</h3>
+            <div className="refresh-btn-manager">
+              <button
+                onClick={fetchUsers}
+                disabled={dataLoading}
+                style={{ cursor: dataLoading ? "not-allowed" : "pointer" }}
+              >
+                {!dataLoading && (
+                  <img
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAS9JREFUSEvlVdFtAjEUsydpO0nLJC2TtJ2EY5LSScomLo5eUICEC8fBD5GQTgexn/38HsSND2+MjwcgkPQM4APAE4C3sHQL4BfAQNLP6UhakVyWtp+1SJKBVyN9WpIcDO5CSB5gNgkk/RQVD1HxJsis6j2U+ZVV+B26CCR97RR/xkVXmIEPxEiyZS5kf0YJwvO/uLFogWfPCxXpSg9Brv57Z6efqyd7fvxlD0H2vll9C7xXgWo/nDrxJymSZP+diJcy43MSpDwDSPmeCpzv1RR0NbkkLmJ9Eowage1xo7tsKmN9nKDUy5oFEwetGutLVsXak+3Gx456LYZsQ3JRK3Zs2bkf3jlpzzTO2YEc/cOJfeOd44pN5E9Ol8H36/piBddGtNnkOYCbczAn+F0U/AM5hYQZaj6WOQAAAABJRU5ErkJggg=="
+                    alt="refresh icon"
+                    className="refresh-icon"
+                  />
+                )}
+                {dataLoading && (
+                  <div className="loading-data">
+                    <div className="loading-data-spinner"></div>
+                  </div>
+                )}
+              </button>
+            </div>
+          </div>
           <div className="filter-role-container">
             <select
               value={roleFilter}
@@ -435,11 +462,6 @@ export default function AdminManager() {
           </div>
         </div>
 
-        {dataLoading && (
-          <div className="loading-data">
-            <div className="loading-data-spinner"></div>
-          </div>
-        )}
         <div className="table-wrapper">
           <table className="manager-table-user">
             <thead>
@@ -486,7 +508,10 @@ export default function AdminManager() {
                       className="edit-btn"
                       onClick={() => setSelectedUser(user)}
                     >
-                      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAANlJREFUSEu1ldENgzAMBd+brO0kLZu0k5ROUtiETVxZIlVIILKT4B8kBHdxbNnEycGT+WgSiMgTwAXAAuBFUp+bqBaIyBfANaIp/ENSpf+oEuzAA1AlA8kpvHALCvDAHEkOVQIDXLl1AiNcBXpFoysDB3wieXMVuQWuomKRW+FFQQ/4oaAXfFcgIg8Ab8OMygq6909WAxFRuEpKYYIfZZDOmFRkhtcIXHCvwA0vFfke3cu8zpds1hsaoW3huAVri8antzDSb+Z46WzatJNAt5pvmtak4RrXLYIfx95jGZW5DL4AAAAASUVORK5CYII=" alt="" />
+                      <img
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAANlJREFUSEu1ldENgzAMBd+brO0kLZu0k5ROUtiETVxZIlVIILKT4B8kBHdxbNnEycGT+WgSiMgTwAXAAuBFUp+bqBaIyBfANaIp/ENSpf+oEuzAA1AlA8kpvHALCvDAHEkOVQIDXLl1AiNcBXpFoysDB3wieXMVuQWuomKRW+FFQQ/4oaAXfFcgIg8Ab8OMygq6909WAxFRuEpKYYIfZZDOmFRkhtcIXHCvwA0vFfke3cu8zpds1hsaoW3huAVri8antzDSb+Z46WzatJNAt5pvmtak4RrXLYIfx95jGZW5DL4AAAAASUVORK5CYII="
+                        alt=""
+                      />
                     </button>
                   </td>
                   <td>
@@ -494,7 +519,10 @@ export default function AdminManager() {
                       className="delete-btn"
                       onClick={() => openDeleteUserModal(user.user_id)}
                     >
-                      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAR1JREFUSEvNlusRwiAQhG870U5MJ6YStRLTiXZiOjmzGXAQjofJMCO/HDzug7tlCaQwVPUgIhcRORths5sbAPjfSRgqgIeInEoxC3wGcMzF1ADKhQCSOHe6VzcAwaqa3YA/0bozVW0pRaVSyd9r6Tzgnmnkr0nD+CeAodiDPdm/ShQmUlVKkvLcMliWKVxoqYPK2ApIFGcB9jQ8uROtAN7U+FTW3NrYWoliRa2LIilbc8w7ARhrgKvzHx/3V4Db4irc4GdYPaBMWaYtJxhbZEr3pJK6AagW3oUtgGP8NpRsuA+AWb0NO0Kziqx3wzQ7VQ3togsgtAsPsKDhnPl05k4Q+1GLVSQ2wRLnAPFdaLHu5JKVAKXPFQuWeJAPegM03+AZ7kVVEgAAAABJRU5ErkJggg==" alt="" />
+                      <img
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAR1JREFUSEvNlusRwiAQhG870U5MJ6YStRLTiXZiOjmzGXAQjofJMCO/HDzug7tlCaQwVPUgIhcRORths5sbAPjfSRgqgIeInEoxC3wGcMzF1ADKhQCSOHe6VzcAwaqa3YA/0bozVW0pRaVSyd9r6Tzgnmnkr0nD+CeAodiDPdm/ShQmUlVKkvLcMliWKVxoqYPK2ApIFGcB9jQ8uROtAN7U+FTW3NrYWoliRa2LIilbc8w7ARhrgKvzHx/3V4Db4irc4GdYPaBMWaYtJxhbZEr3pJK6AagW3oUtgGP8NpRsuA+AWb0NO0Kziqx3wzQ7VQ3togsgtAsPsKDhnPl05k4Q+1GLVSQ2wRLnAPFdaLHu5JKVAKXPFQuWeJAPegM03+AZ7kVVEgAAAABJRU5ErkJggg=="
+                        alt=""
+                      />
                     </button>
                   </td>
                 </tr>
