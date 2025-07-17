@@ -173,23 +173,7 @@ export default function Verification() {
               onChange={(e) => setOtp(e.target.value)}
             />
           </div>
-          <div className="btn-resend-otp">
-            <button
-              style={{
-                cursor:
-                  !canRequestOTP || startProcessLoad
-                    ? "not-allowed"
-                    : "pointer",
-              }}
-              disabled={!canRequestOTP}
-              type="button"
-              onClick={requestOTP}
-            >
-              ขอรหัสใหม่
-            </button>
-            {!canRequestOTP && <p>กรุณารอ {timer} วินาทีก่อนขอ OTP ใหม่</p>}
-            <p> (OTP มีเวลา 5 นาที ถ้าหมดต้องกดขอใหม่) </p>
-          </div>
+
           <div className="btn-submit-verify">
             <button
               type="submit"
@@ -208,6 +192,23 @@ export default function Verification() {
                 "ยืนยัน E-mail"
               )}
             </button>
+          </div>
+          <div className="btn-resend-otp">
+            <button
+              style={{
+                cursor:
+                  !canRequestOTP || startProcessLoad
+                    ? "not-allowed"
+                    : "pointer",
+              }}
+              disabled={!canRequestOTP}
+              type="button"
+              onClick={requestOTP}
+            >
+              ขอรหัสใหม่
+            </button>
+            {!canRequestOTP && <p>กรุณารอ {timer} วินาทีก่อนขอ OTP ใหม่</p>}
+            <p> (OTP มีเวลา 5 นาที ถ้าหมดต้องกดขอใหม่) </p>
           </div>
         </form>
       </div>
