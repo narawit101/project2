@@ -115,6 +115,22 @@ router.put("/:id", authMiddleware, async (req, res) => {
       "UPDATE users SET first_name = $1, last_name = $2, role = $3, status = $4 WHERE user_id = $5",
       [first_name, last_name, role, status, id]
     );
+    const result = await pool.query(
+      "SELECT user_id, user_name, first_name, last_name, email, role, status FROM users WHERE user_id = $1",
+      [id]
+    );
+
+    if (req.io) {
+      req.io.emit("updated_status", {
+        userId: id,
+        userRole: result.rows[0].role,
+      });
+      console.log("ส่งข้อมูลไปยังผู้ใช้ที่เกี่ยวข้อง:", id);
+    } else {
+      console.log("ไม่พบ req.io เพื่อส่งข้อมูลไปยังผู้ใช้");
+    }
+    console.log("rrrrrrrr", result.rows[0].role);
+    console.log("ข้อมูลอัปเดตสำเร็จ:", id);
 
     res.status(200).json({ message: "User updated successfully" });
   } catch (error) {

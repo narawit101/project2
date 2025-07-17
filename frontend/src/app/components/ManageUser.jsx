@@ -262,7 +262,6 @@ export default function AdminManager() {
       if (!response.ok) {
         throw new Error("ไม่สามารถแก้ไขได้");
       }
-
       setUsers(
         users.map((user) =>
           user.user_id === selectedUser.user_id ? selectedUser : user
