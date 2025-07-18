@@ -1,23 +1,7 @@
-/* @import url("https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap"); */
 :root {
   --text-color: #03045e;
   --active-color: #0014c7;
 }
-
-/* * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Kanit", sans-serif;
-}
-
-body {
-  background: rgba(173, 216, 230, 0.514);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-} */
 
 nav {
   z-index: 10;
@@ -826,13 +810,6 @@ nav ul li a.active {
     top: 60px;
   }
 
-  .hamburger {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    /* margin-left: 50px; */
-  }
-
   .bar {
     background-color: black;
     height: 3px;
@@ -884,12 +861,6 @@ nav ul li a.active {
     top: 60px;
   }
 
-  .hamburger {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    /* margin-left: 50px; */
-  }
 
   .bar {
     background-color: black;
@@ -957,13 +928,6 @@ nav ul li a.active {
     top: 60px;
   }
 
-  .hamburger {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    /* margin-left: 50px; */
-  }
-
   .bar {
     background-color: black;
     height: 3px;
@@ -1013,13 +977,6 @@ nav ul li a.active {
   nav ul.active {
     display: flex;
     top: 110px;
-  }
-
-  .hamburger {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    /* margin-right: 50px; */
   }
 
   .bar {

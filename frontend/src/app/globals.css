@@ -165,59 +165,68 @@ footer {
 
 .message-box {
   position: fixed;
-  top: 25%;
+  top: 72px;
   left: 50%;
   transform: translateX(-50%);
   min-width: 300px;
   max-width: 90%;
-  padding: 20px 30px;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: 16px 24px;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   font-size: 15px;
   display: flex;
   align-items: center;
   gap: 12px;
   z-index: 10000;
-  animation: fadeIn-message 0.4s ease-out;
+  animation: slideDown 0.4s ease-out, fadeOut 0.5s ease-in 3s forwards;
+  opacity: 1;
 }
 
 .message-box i {
-  font-size: 22px;
+  font-size: 20px;
 }
 
 .error {
-  background: #ffe3e3;
-  color: #a4001d;
+  background: #be1c1c; /* แดงเข้มเกือบดำ */
+  color: #ffffff;
 }
 
 .error i {
-  color: #d90429;
+  color: #ff4d4f;
 }
 
 .success {
-  background: #e1f8e6;
-  color: #1e4620;
+  background: #007432; /* เข้มเขียวแบบดาร์คโมด */
+  color: #ffffff;
+  /* เขียวสว่าง */
 }
 
 .success i {
-  color: #28a745;
+  color: #00e676; /* เขียวสดแบบสะดุดตา */
 }
 
 .message-box p {
-  text-align: center;
-  margin: 0 auto;
+  margin: auto;
   font-weight: 500;
   line-height: 1.4;
+  text-align: center;
 }
 
-@keyframes fadeIn-message {
+@keyframes slideDown {
   from {
-    opacity: 0;
     transform: translateX(-50%) translateY(-20px);
+    opacity: 0;
   }
   to {
-    opacity: 1;
     transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    transform: translateX(-50%) translateY(-10px);
+    opacity: 0;
   }
 }
 
