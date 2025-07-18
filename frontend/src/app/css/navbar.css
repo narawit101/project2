@@ -465,7 +465,7 @@ nav ul li a.active {
 }
 
 /* Media Queries for responsiveness */
-@media screen and (max-width: 1020px) {
+/* @media screen and (max-width: 1020px) {
   nav {
     z-index: 10;
     position: fixed;
@@ -483,7 +483,6 @@ nav ul li a.active {
   .ullist {
     justify-content: center;
     align-items: center;
-    /* margin: 100px 100px 100px 120px; */
   }
 
   .logo {
@@ -645,9 +644,9 @@ nav ul li a.active {
     display: block;
     width: 100%;
   }
-}
+} */
 
-@media screen and (max-width: 999px) {
+@media screen and (max-width: 1025px) {
   nav {
     padding: 0 20px 0 20px;
   }
