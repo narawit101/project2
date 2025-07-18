@@ -465,7 +465,7 @@ nav ul li a.active {
 }
 
 /* Media Queries for responsiveness */
-@media screen and (max-width: 1007px) {
+@media screen and (max-width: 1020px) {
   nav {
     z-index: 10;
     position: fixed;
