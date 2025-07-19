@@ -108,9 +108,7 @@ export default function Navbar() {
               alt="Sport-Hub Logo"
               width="30"
               height="30"
-              style={{ objectFit: "cover" ,
-                margin: "4px",
-              }}
+              style={{ objectFit: "cover", margin: "4px" }}
             />
           </button>
           <input
@@ -188,7 +186,9 @@ export default function Navbar() {
                 )}
                 {user?.role === "admin" && (
                   <li>
-                    <Link href="/manage-facility">จัดการสิ่งอำนวยความสะดวก</Link>
+                    <Link href="/manage-facility">
+                      จัดการสิ่งอำนวยความสะดวก
+                    </Link>
                   </li>
                 )}
                 {user?.role === "admin" && (
