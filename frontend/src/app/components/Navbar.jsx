@@ -108,7 +108,9 @@ export default function Navbar() {
               alt="Sport-Hub Logo"
               width="30"
               height="30"
-              style={{ objectFit: "contain" }}
+              style={{ objectFit: "cover" ,
+                margin: "4px",
+              }}
             />
           </button>
           <input
