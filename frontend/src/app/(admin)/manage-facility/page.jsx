@@ -45,7 +45,7 @@ export default function RegisterFieldForm() {
       const token = localStorage.getItem("auth_mobile_token");
       setDataLoading(true);
       try {
-        await new Promise((resolve) => setTimeout(resolve, 200));
+        // await new Promise((resolve) => setTimeout(resolve, 200));
         const res = await fetch(`${API_URL}/facilities`, {
           credentials: "include",
           headers: {
@@ -207,7 +207,7 @@ export default function RegisterFieldForm() {
       );
       setEditingFacility(null);
       setNewFacilityName("");
-      setMessage("อัปเดตสำเร็จ");
+      setMessage("แก้ไขสิ่งอำนวยคความสะดวกสำเร็จ");
       setMessageType("success");
     } catch (err) {
       console.error("Fetch error:", err);

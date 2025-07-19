@@ -48,7 +48,7 @@ export default function RegisterFieldForm() {
 
       setDataLoading(true);
       try {
-        await new Promise((resolve) => setTimeout(resolve, 200));
+        // await new Promise((resolve) => setTimeout(resolve, 200));
         const res = await fetch(`${API_URL}/sports_types`, {
           credentials: "include",
           headers: {

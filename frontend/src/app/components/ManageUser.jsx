@@ -8,16 +8,13 @@ import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 export default function AdminManager() {
   const [allowFields, setAllowFields] = useState([]);
   const [users, setUsers] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [emailError, setEmailError] = useState("");
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
   const [message, setMessage] = useState(""); // State สำหรับข้อความ
   const [messageType, setMessageType] = useState(""); // State สำหรับประเภทของข้อความ (error, success)
   const [showDeleteFieldModal, setShowDeleteFieldModal] = useState(false); // สำหรับโมดอลลบสนามกีฬา
   const [showDeleteUserModal, setShowDeleteUserModal] = useState(false); // สำหรับโมดอลลบผู้ใช้
-  const [fieldIdToDelete, setFieldIdToDelete] = useState(null); // เก็บ ID ของสนามที่ต้องการลบ
   const [userIdToDelete, setUserIdToDelete] = useState(null); // เก็บ ID ของผู้ใช้ที่ต้องการลบ
   const { user, isLoading } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
@@ -46,7 +43,7 @@ export default function AdminManager() {
     const token = localStorage.getItem("auth_mobile_token");
 
     setDataLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    // await new Promise((resolve) => setTimeout(resolve, 200));
     if (user?.role !== "admin") return;
     setDataLoading(true);
     try {
@@ -153,12 +150,6 @@ export default function AdminManager() {
     </div>
   );
 
-  // ฟังก์ชันเปิดโมดอลการลบสนามกีฬา
-  const openDeleteFieldModal = (fieldId) => {
-    setFieldIdToDelete(fieldId);
-    setShowDeleteFieldModal(true); // เปิดโมดอล
-  };
-
   // ฟังก์ชันเปิดโมดอลการลบผู้ใช้
   const openDeleteUserModal = (userId) => {
     setUserIdToDelete(userId);
@@ -170,12 +161,6 @@ export default function AdminManager() {
     setShowDeleteFieldModal(false); // ปิดโมดอลลบสนามกีฬา
     setShowDeleteUserModal(false); // ปิดโมดอลลบผู้ใช้
   };
-
-  // const isEmailDuplicate = (email) => {
-  //   return users.some(
-  //     (user) => user.email === email && user.user_id !== selectedUser?.user_id
-  //   );
-  // };
 
   const handleDelete = async (id) => {
     const token = localStorage.getItem("auth_mobile_token");
@@ -242,10 +227,6 @@ export default function AdminManager() {
 
     e.preventDefault();
 
-    // if (isEmailDuplicate(selectedUser.email)) {
-    //   setEmailError("อีเมลนี้มีการใช้งานแล้ว");
-    //   return;
-    // }
     SetstartProcessLoad(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 200));
@@ -284,7 +265,7 @@ export default function AdminManager() {
     setEmailError("");
   };
 
-  const usersPerPage = 20;
+  const usersPerPage = 10;
 
   const filteredUsers = users.filter((user) => {
     if (roleFilter === "all")
@@ -327,13 +308,6 @@ export default function AdminManager() {
     return rangeWithDots;
   };
 
-  // if (isLoading)
-  //   return (
-  //     <div className="load">
-  //       <span className="spinner"></span>
-  //     </div>
-  //   );
-
   return (
     <>
       {message && (
@@ -343,11 +317,6 @@ export default function AdminManager() {
       )}
       <div className="admin-manager-container">
         <h3 className="Head">ผู้ดูแลระบบ</h3>
-        {/* {dataLoading && (
-          <div className="loading-data">
-            <div className="loading-data-spinner"></div>
-          </div>
-        )} */}
         <div className="table-wrapper">
           <table className="manager-table">
             <thead>
@@ -641,7 +610,6 @@ export default function AdminManager() {
                   }
                   style={{ cursor: "not-allowed" }}
                 />
-                {/* {emailError && <p style={{ color: "red" }}>{emailError}</p>}{" "} */}
                 <div className="modal-buttons">
                   <button
                     type="submit"

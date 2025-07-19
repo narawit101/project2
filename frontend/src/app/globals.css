@@ -178,7 +178,7 @@ footer {
   align-items: center;
   gap: 12px;
   z-index: 10000;
-  animation: slideDown 0.4s ease-out, fadeOut 0.5s ease-in 3s forwards;
+  animation: slideDown 0.2s ease-out, fadeOut 0.4s ease-in 3s forwards;
   opacity: 1;
 }
 
@@ -187,7 +187,7 @@ footer {
 }
 
 .error {
-  background: #be1c1c; /* แดงเข้มเกือบดำ */
+  background: #be1c1c; 
   color: #ffffff;
 }
 
@@ -196,13 +196,12 @@ footer {
 }
 
 .success {
-  background: #007432; /* เข้มเขียวแบบดาร์คโมด */
+  background: #007432; 
   color: #ffffff;
-  /* เขียวสว่าง */
 }
 
 .success i {
-  color: #00e676; /* เขียวสดแบบสะดุดตา */
+  color: #00e676; 
 }
 
 .message-box p {
@@ -215,7 +214,7 @@ footer {
 @keyframes slideDown {
   from {
     transform: translateX(-50%) translateY(-20px);
-    opacity: 0;
+    opacity: 1;
   }
   to {
     transform: translateX(-50%) translateY(0);

@@ -132,7 +132,7 @@ export default function Contact() {
               readOnly={startProcessLoad}
               required
               type="email"
-              placeholder="Email ของคุณ"
+              placeholder="Email ของคุณ (สำหรับการตอบกลับ)"
               value={userEmail}
               onChange={(e) => setUserEmail(e.target.value)}
             />
@@ -142,7 +142,7 @@ export default function Contact() {
               readOnly={startProcessLoad}
               maxLength={50}
               type="text"
-              placeholder="หัวข้อ"
+              placeholder="หัวข้อ, เรื่องที่ต้องการติดต่อ"
               value={subJect}
               onChange={(e) => setSubject(e.target.value)}
             />
@@ -152,7 +152,7 @@ export default function Contact() {
               maxLength={500}
               required
               type="text"
-              placeholder="เนื้อหา"
+              placeholder="เนื้อหา, ข้อความที่ต้องการติดต่อ, แจ้งปัญหา, ข้อเสนอแนะ"
               value={conTent}
               onChange={(e) => setContent(e.target.value)}
             />

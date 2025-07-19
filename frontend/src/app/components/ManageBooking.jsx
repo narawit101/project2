@@ -285,7 +285,7 @@ export default function Mybooking() {
                     <div className="hours-container-my-order">
                       <div className="total-hours-order">
                         <p>
-                          <strong> เวลา: </strong>
+                          <strong> เวลาที่จอง: </strong>
                           {item.start_time} - {item.end_time}
                         </p>
                         {item.cancel_hours > 0 && (

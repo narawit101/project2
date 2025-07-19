@@ -732,13 +732,13 @@ export default function BookingDetail() {
             <div className="hours-detail-box">
               {/* เวลาที่จอง */}
               <div className="line-item-hours-detail">
-                <span>เวลา:</span>
+                <span>เวลาที่จอง:</span>
                 <span>
                   {booking.start_time} - {booking.end_time} น.
                 </span>
               </div>
               <div className="line-item-hours-detail">
-                <span>ชั่วโมงรวม:</span>
+                <span>รวมเวลา:</span>
                 <span>{calTotalHours(booking.total_hours)}</span>
               </div>
 

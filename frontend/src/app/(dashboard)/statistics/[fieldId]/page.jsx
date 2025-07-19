@@ -427,7 +427,7 @@ export default function Statistics() {
                   <th>ชื่อผู้จอง</th>
                   <th>สนาม</th>
                   <th>สนามย่อย</th>
-                  <th>เวลา</th>
+                  <th>เวลาที่จอง</th>
                   <th>กิจกรรม</th>
                   <th>มัดจำ</th>
                   <th>ราคารวมสุทธิ</th>
