@@ -1126,34 +1126,6 @@ export default function Booking() {
                   </div>
                 )}
               </div>
-              {/* <div className="book-owner-info">
-                <h2 className="payment-book">การชำระเงิน</h2>
-                <strong>ธนาคาร: {nameBank}</strong>
-                <strong>
-                  <label>เจ้าของบัญชี</label>: {accountHolder}
-                </strong>
-                <strong>
-                  <label>เลขบัญชี</label>: {numberBank}
-                </strong>
-
-                <div className="file-container-book">
-                  <label className="file-label-book">
-                    <input
-                      type="file"
-                      onChange={handleimgChange}
-                      accept="image/*"
-                      className="file-input-hidden-book"
-                    />
-                    เลือกรูปภาพหลักฐานการโอนเงิน
-                  </label>
-                  {imgPreview && (
-                    <div className="preview-container">
-                      <p>ตัวอย่างรูป:</p>
-                      <img src={imgPreview} alt="Preview" />
-                    </div>
-                  )}
-                </div>
-              </div> */}
               <div className={`total-box ${canBook ? "show" : ""}`}>
                 <div className="summary">
                   <strong className="price-deposit">

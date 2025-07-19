@@ -11,8 +11,6 @@ export default function EditProfile() {
   const [updatedUser, setUpdatedUser] = useState({
     first_name: "",
     last_name: "",
-    email: "",
-    role: "",
   });
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
@@ -38,8 +36,6 @@ export default function EditProfile() {
       setUpdatedUser({
         first_name: user?.first_name,
         last_name: user?.last_name,
-        email: user?.email,
-        role: user?.role,
       });
     } else {
       router.replace("/login");
@@ -54,20 +50,23 @@ export default function EditProfile() {
       setMessageType("error");
       return;
     }
-  
+
     try {
       await new Promise((resolve) => setTimeout(resolve, 200));
       const token = localStorage.getItem("auth_mobile_token");
 
-      const response = await fetch(`${API_URL}/users/${currentUser.user_id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        credentials: "include",
-        body: JSON.stringify(updatedUser),
-      });
+      const response = await fetch(
+        `${API_URL}/users/update-profile/${currentUser.user_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          credentials: "include",
+          body: JSON.stringify(updatedUser),
+        }
+      );
 
       if (response.status === 403) {
         setMessage("คุณไม่มีสิทธิ์แก้ไขข้อมูลนี้");
@@ -83,6 +82,7 @@ export default function EditProfile() {
       }
       setMessage("ข้อมูลโปรไฟล์ของคุณถูกอัปเดตแล้ว");
       setMessageType("success");
+      router.push("");
     } catch (error) {
       console.error("Error updating profile:", error);
       setMessage("เกิดข้อผิดพลาดในการอัปเดตข้อมูล", error);
@@ -90,6 +90,16 @@ export default function EditProfile() {
     } finally {
       SetstartProcessLoad(false);
     }
+  };
+
+  const formatDateToThai = (date) => {
+    if (!date) return "ไม่ทราบวันที่"; // กัน null/undefined
+
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate)) return "ไม่สามารถแปลงวันที่ได้"; // กัน Invalid Date
+
+    const options = { day: "numeric", month: "long", year: "numeric" };
+    return new Intl.DateTimeFormat("th-TH", options).format(parsedDate);
   };
 
   useEffect(() => {
@@ -118,18 +128,57 @@ export default function EditProfile() {
         </div>
       )}
       <div className="edit-profile-container">
-        <h2 className="head-edit-profile">แก้ไขโปรไฟล์</h2>
+        <h2 className="head-edit-profile">ข้อมูลของคุณ</h2>
         <form onSubmit={handleUpdateProfile} className="editprofile-form">
-          <label className="edit-profile-title">อีเมล:</label>
-          <input
-            type="email"
-            readOnly
-            value={updatedUser.email}
-            onChange={(e) =>
-              setUpdatedUser({ ...updatedUser, email: e.target.value })
-            }
-          />
-          <label className="edit-profile-title">ชื่อ:</label>
+          <div className="user-info">
+            <div className="info-row">
+              <p>
+                <strong>ชื่อผู้ใช้:</strong> {currentUser?.user_name}
+              </p>
+              <p>
+                <strong>อีเมล:</strong> {currentUser?.email}
+              </p>
+            </div>
+            <div className="info-row">
+              <p>
+                <strong>บทบาท:</strong>
+                {currentUser?.role === "admin" ? (
+                  <strong className="user-role-editprofile">ผู้ดูแลระบบ</strong>
+                ) : currentUser?.role === "user" ? (
+                  <strong className="user-role-editprofile">ผู้ใช้</strong>
+                ) : currentUser?.role === "field_owner" ? (
+                  <strong className="user-role-editprofile">
+                    เจ้าของสนามกีฬา
+                  </strong>
+                ) : (
+                  "ไม่ทราบบทบาท"
+                )}
+              </p>
+              <p>
+                <strong>สถานะ:</strong>
+                <strong
+                  className={`status-text-manager ${
+                    currentUser?.status === "รอยืนยัน"
+                      ? "pending"
+                      : currentUser?.status === "ตรวจสอบแล้ว"
+                      ? "approved"
+                      : "unknown"
+                  }`}
+                >
+                  {currentUser?.status}
+                </strong>
+              </p>
+            </div>
+            <div className="info-row">
+              <p>
+                <strong>วันที่สมัคร:</strong>{" "}
+                {formatDateToThai(currentUser?.created_at)}
+              </p>
+            </div>
+          </div>
+          <label className="edit-profile-title">แก้ไขชื่อ-สนามสกุล</label>
+
+          <label className="edit-profile-title-first-last_name">ชื่อ:</label>
           <input
             type="text"
             maxLength={100}
@@ -138,7 +187,7 @@ export default function EditProfile() {
               setUpdatedUser({ ...updatedUser, first_name: e.target.value })
             }
           />
-          <label className="edit-profile-title">นามสกุล:</label>
+          <label className="edit-profile-title-first-last_name">นามสกุล:</label>
           <input
             type="text"
             maxLength={100}
@@ -147,7 +196,9 @@ export default function EditProfile() {
               setUpdatedUser({ ...updatedUser, last_name: e.target.value })
             }
           />
-
+          <Link href="/change-password" className="change-password-link">
+            เปลี่ยนรหัสผ่าน
+          </Link>
           <button
             type="submit"
             className="save-btn"
@@ -166,10 +217,6 @@ export default function EditProfile() {
               "บันทึก"
             )}
           </button>
-          <label className="edit-profile-title">เปลี่ยนรหัสผ่าน</label>
-          <Link href="/change-password" className="change-password-link">
-            เปลี่ยนรหัสผ่าน
-          </Link>
         </form>
       </div>
     </>

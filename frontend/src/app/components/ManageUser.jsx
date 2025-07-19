@@ -6,14 +6,12 @@ import { useAuth } from "@/app/contexts/AuthContext";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function AdminManager() {
-  const [allowFields, setAllowFields] = useState([]);
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
   const [message, setMessage] = useState(""); // State สำหรับข้อความ
   const [messageType, setMessageType] = useState(""); // State สำหรับประเภทของข้อความ (error, success)
-  const [showDeleteFieldModal, setShowDeleteFieldModal] = useState(false); // สำหรับโมดอลลบสนามกีฬา
   const [showDeleteUserModal, setShowDeleteUserModal] = useState(false); // สำหรับโมดอลลบผู้ใช้
   const [userIdToDelete, setUserIdToDelete] = useState(null); // เก็บ ID ของผู้ใช้ที่ต้องการลบ
   const { user, isLoading } = useAuth();
@@ -91,26 +89,6 @@ export default function AdminManager() {
     }
   }, [message]);
 
-  //modue ลบ สนาม
-  const DeleteFieldModal = ({ fieldId, onDelete, onClose }) => (
-    <div className="confirm-modal-field">
-      <div className="modal-content-field">
-        <p>คุณแน่ใจหรือไม่ว่าต้องการลบสนามกีฬานี้?</p>
-        <div className="modal-actions-field">
-          <button
-            className="confirmbtn-field"
-            onClick={() => onDelete(fieldId)}
-          >
-            ยืนยัน
-          </button>
-          <button className="cancelbtn-field" onClick={onClose}>
-            ยกเลิก
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
   //โมดอล ลบผู้ใช้
   const DeleteUserModal = ({ userId, onDelete, onClose }) => (
     <div className="confirm-modal-user">
@@ -158,7 +136,6 @@ export default function AdminManager() {
 
   // ฟังก์ชันปิดโมดอล
   const closeDeleteModal = () => {
-    setShowDeleteFieldModal(false); // ปิดโมดอลลบสนามกีฬา
     setShowDeleteUserModal(false); // ปิดโมดอลลบผู้ใช้
   };
 
@@ -193,32 +170,6 @@ export default function AdminManager() {
     } finally {
       closeDeleteModal(); // ปิดโมดอลหลังจากการลบเสร็จ
       SetstartProcessLoad(false);
-    }
-  };
-
-  const deleteField = async (fieldId) => {
-    try {
-      const response = await fetch(`${API_URL}/field/${fieldId}`, {
-        method: "DELETE",
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        setMessage("สนามกีฬาถูกลบเรียบร้อย");
-        setMessageType("success");
-        setAllowFields(
-          allowFields.filter((field) => field.field_id !== fieldId)
-        );
-      } else {
-        setMessage(`เกิดข้อผิดพลาด: ${data.error}`);
-        setMessageType("error");
-      }
-    } catch (error) {
-      // console.error("Error deleting field:", error);
-      setMessage("เกิดข้อผิดพลาดในการลบสนามกีฬา");
-      setMessageType("error");
-    } finally {
-      closeDeleteModal(); // ปิดโมดอลหลังจากการดำเนินการเสร็จ
     }
   };
 
@@ -644,14 +595,6 @@ export default function AdminManager() {
               </form>
             </div>
           </div>
-        )}
-        {/* โมดอลยืนยันการลบสนาม */}
-        {showDeleteFieldModal && (
-          <DeleteFieldModal
-            fieldId={fieldIdToDelete}
-            onDelete={deleteField} // ฟังก์ชันลบสนาม
-            onClose={closeDeleteModal} // ฟังก์ชันปิดโมดอล
-          />
         )}
 
         {/* โมดอลยืนยันการลบผู้ใช้ */}

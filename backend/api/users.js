@@ -45,7 +45,7 @@ router.get("/me", authMiddleware, async (req, res) => {
     const user_id = req.user.user_id; // req.user มาจาก decoded token
 
     const result = await pool.query(
-      "SELECT user_id, user_name, first_name, last_name, email, role, status FROM users WHERE user_id = $1",
+      "SELECT user_id, user_name, first_name, last_name, email, role, status, created_at FROM users WHERE user_id = $1",
       [user_id]
     );
 
@@ -129,8 +129,37 @@ router.put("/:id", authMiddleware, async (req, res) => {
     } else {
       console.log("ไม่พบ req.io เพื่อส่งข้อมูลไปยังผู้ใช้");
     }
-    console.log("rrrrrrrr", result.rows[0].role);
+    console.log("role", result.rows[0].role);
     console.log("ข้อมูลอัปเดตสำเร็จ:", id);
+
+    res.status(200).json({ message: "User updated successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.put("/update-profile/:id", authMiddleware, async (req, res) => {
+  const { id } = req.params;
+  const { first_name, last_name } = req.body;
+  const currentUser = req.user;
+
+  console.log("user_id ที่ส่งมา:", id);
+  console.log("user_id ใน Token:", currentUser.user_id);
+  try {
+    //ตรวจสอบว่าเป็น Admin หรือเจ้าของบัญชี
+    if (
+      !currentUser.user_id ||
+      (parseInt(id) !== currentUser.user_id && currentUser.role !== "admin")
+    ) {
+      return res.status(403).json({ message: "คุณไม่มีสิทธิ์แก้ไขข้อมูลนี้" });
+    }
+
+    await pool.query(
+      "UPDATE users SET first_name = $1, last_name = $2 WHERE user_id = $3",
+      [first_name, last_name, id]
+    );
+
+    console.log("ข้อมูลอัปเดตสำเร็จ:", first_name, last_name);
 
     res.status(200).json({ message: "User updated successfully" });
   } catch (error) {

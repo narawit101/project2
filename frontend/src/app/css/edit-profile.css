@@ -30,7 +30,15 @@
 .edit-profile-title {
   color: var(--text-color);
   font-weight: bold;
-  margin: 12px 2px 0px;
+  font-size: 22px;
+  margin: 8px auto;
+}
+
+.edit-profile-title-first-last_name {
+  color: #333;
+  font-weight: bold;
+  margin: 10px 10px 0px;
+  text-align: left;
 }
 
 .editprofile-form input {
@@ -74,4 +82,94 @@
 
 .change-password-link:active {
   background-color: #003f6a;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 16px;
+  color: #333;
+  /* max-width: 600px; */
+  /* margin: 20px auto; */
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.info-row p {
+  flex: 1 1 45%; /* 2 ช่องต่อแถว */
+  margin: 0;
+  background: #f9f9f9;
+  padding: 10px 14px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.status-text-manager {
+  margin-left: 5px;
+  font-weight: 500;
+}
+
+.status-text-manager.pending {
+  display: inline-block;
+  color: #856404;
+  background-color: #fff4ce;
+  padding: 2px 6px;
+  border-radius: 30px;
+  font-weight: 500;
+}
+
+.status-text-manager.approved {
+  display: inline-block;
+  color: #155724;
+  background-color: #d4f4dd;
+  padding: 2px 6px;
+  border-radius: 30px;
+  font-weight: 500;
+}
+
+.status-text-manager.unknown {
+  display: inline-block;
+  color: gray;
+  background-color: #dadfdc;
+  padding: 4px 8px;
+  border-radius: 30px;
+  font-weight: 500;
+}
+
+.user-role-editprofile {
+  margin-left: 5px;
+  display: inline-block;
+  color: #155724;
+  background-color: #d4f4dd;
+  padding: 2px 6px;
+  border-radius: 30px;
+  font-weight: 500;
+}
+
+@media screen and (max-width: 620px) {
+  .edit-profile-container {
+    width: 90%;
+  }
+
+  .info-row p {
+    flex: 1 1 100%; 
+    margin-bottom: 10px;
+  }
+
+  .editprofile-form input {
+    width: 100%;
+  }
+
+  .change-password-link {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+  }
+  
 }
