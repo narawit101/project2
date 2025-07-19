@@ -145,7 +145,7 @@ export default function EditProfile() {
                 {currentUser?.role === "admin" ? (
                   <strong className="user-role-editprofile">ผู้ดูแลระบบ</strong>
                 ) : currentUser?.role === "customer" ? (
-                  <strong className="user-role-editprofile">ผู้ใช้</strong>
+                  <strong className="user-role-editprofile">ลูกค้า</strong>
                 ) : currentUser?.role === "field_owner" ? (
                   <strong className="user-role-editprofile">
                     เจ้าของสนามกีฬา

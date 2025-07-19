@@ -319,8 +319,9 @@ export default function BookingDetail() {
               : status
           }`
         );
-        setMessageType(status === "approved" ? "success" : "error");
-
+        setMessageType(
+          status === "approved" || status === "complete" ? "success" : "error"
+        );
         const updatedRes = await fetch(
           `${API_URL}/booking/bookings-detail/${booking_id}`,
           {
@@ -850,7 +851,10 @@ export default function BookingDetail() {
               startDate.setHours(0, 0, 0, 0);
 
               if (startDate >= today) {
-                if (booking?.status === "approved") {
+                if (
+                  booking?.status === "approved" ||
+                  booking?.status === "complete"
+                ) {
                   return (
                     <div className="deposit-slip-container-order-detail">
                       {/*กรณีมี deposit_slip */}
@@ -1261,18 +1265,19 @@ export default function BookingDetail() {
 
               return null;
             })()}
-            {booking?.status === "approved" && (
-              <button
-                className="complete-btn-order-detail"
-                style={{
-                  cursor: startProcessLoad ? "not-allowed" : "pointer",
-                }}
-                disabled={startProcessLoad}
-                onClick={() => openConfirmModal("complete")}
-              >
-                การจองสำเร็จ
-              </button>
-            )}
+            {booking?.status === "approved" &&
+              user?.user_id === booking.field_user_id && (
+                <button
+                  className="complete-btn-order-detail"
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
+                  onClick={() => openConfirmModal("complete")}
+                >
+                  การจองสำเร็จ
+                </button>
+              )}
             {(() => {
               const today = new Date();
               const startDate = new Date(booking.start_date);

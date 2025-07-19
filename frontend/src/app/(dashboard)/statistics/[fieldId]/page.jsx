@@ -443,7 +443,7 @@ export default function Statistics() {
                     <td>
                       {formatDate(item.start_date)}{" "}
                       <a
-                        href={`/bookingDetail/${item.booking_id}`}
+                        href={`/booking-detail/${item.booking_id}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{

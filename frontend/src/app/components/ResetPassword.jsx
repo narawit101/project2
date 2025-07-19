@@ -243,24 +243,7 @@ export default function ResetPassword() {
             />
           </div>
         )}
-        {canEnterOTP && (
-          <div className="btn-resend">
-            <button
-              style={{
-                cursor:
-                  !canRequestOTP || startProcessLoad
-                    ? "not-allowed"
-                    : "pointer",
-              }}
-              disabled={!canRequestOTP}
-              type="button"
-              onClick={reSentOTP}
-            >
-              ขอ OTP ใหม่
-            </button>
-          </div>
-        )}
-        {!canRequestOTP && <p>กรุณารอ {timer} วินาทีก่อนขอ OTP ใหม่</p>}
+
         {canEnterOTP && (
           <div className="btn-submit-reset-password">
             <button
@@ -283,7 +266,24 @@ export default function ResetPassword() {
             </button>
           </div>
         )}
-
+        {canEnterOTP && (
+          <div className="btn-resend">
+            <button
+              style={{
+                cursor:
+                  !canRequestOTP || startProcessLoad
+                    ? "not-allowed"
+                    : "pointer",
+              }}
+              disabled={!canRequestOTP}
+              type="button"
+              onClick={reSentOTP}
+            >
+              ขอ OTP ใหม่
+            </button>
+          </div>
+        )}
+        {!canRequestOTP && <p>กรุณารอ {timer} วินาทีก่อนขอ OTP ใหม่</p>}
         <Link href="/login" className="login-reset-password">
           กลับหน้า Login
         </Link>
