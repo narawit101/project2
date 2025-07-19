@@ -202,7 +202,6 @@ export default function AdminManager() {
       setMessage("แก้ไขเรียบร้อย");
       setMessageType("success");
       setSelectedUser(null);
-      setEmailError("");
     } catch (error) {
       setMessage(`${error.message}`);
       setMessageType("error");
@@ -213,7 +212,6 @@ export default function AdminManager() {
 
   const closeModal = () => {
     setSelectedUser(null);
-    setEmailError("");
   };
 
   const usersPerPage = 10;
