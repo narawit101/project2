@@ -51,7 +51,6 @@ export default function Booking() {
   const fieldName = sessionStorage.getItem("field_name");
   const [showFacilities, setShowFacilities] = useState(false);
   const [depositSlip, setDepositSlip] = useState(null); // เก็บไฟล์
-  const [imgPreview, setImgPreview] = useState(""); // เก็บ URL
   const [timeLeft, setTimeLeft] = useState(600); // เริ่มที่ 10 นาที (600 วิ)
   const [showModal, setShowModal] = useState(false);
   const timerRef = useRef(null); // กัน setInterval ซ้ำ
@@ -494,7 +493,6 @@ export default function Booking() {
         newSumFac += facPrice;
       }
 
-      // ✅ คำนวณราคาใหม่ทันที
       const sum = newPrice * totalHours + newSumFac;
       const remaining = sum - priceDeposit;
       setTotalPrice(sum);
@@ -526,32 +524,6 @@ export default function Booking() {
   const handleRadioChange = (e) => {
     setPayMethod(e.target.value);
   };
-
-  // const MAX_FILE_SIZE = 5 * 1024 * 1024;
-  // const handleimgChange = (e) => {
-  //   const file = e.target.files[0];
-
-  //   // ตรวจสอบขนาดไฟล์
-  //   if (file.size > MAX_FILE_SIZE) {
-  //     setMessage("ไฟล์รูปภาพมีขนาดใหญ่เกินไป (สูงสุด 5MB)");
-  //     setMessageType("error");
-  //     e.target.value = null;
-  //     return;
-  //   }
-
-  //   // ตรวจสอบว่าไฟล์ที่เลือกเป็นรูปภาพหรือไม่
-  //   if (file) {
-  //     if (file.type.startsWith("image/")) {
-  //       // ถ้าเป็นไฟล์รูปภาพ, เก็บข้อมูลลงในสถานะ
-  //       setDepositSlip(file);
-  //       setImgPreview(URL.createObjectURL(file)); // สร้าง URL สำหรับแสดงตัวอย่าง
-  //     } else {
-  //       e.target.value = null;
-  //       setMessage("โปรดเลือกเฉพาะไฟล์รูปภาพเท่านั้น");
-  //       setMessageType("error");
-  //     }
-  //   }
-  // };
 
   function isPastSlot(slot) {
     const [startTime] = slot.split(" - ");
@@ -592,7 +564,6 @@ export default function Booking() {
     setSelectedSlots([]);
     setPayMethod("");
     setDepositSlip(null);
-    setImgPreview("");
     setSelectedFacilities([]);
     setTimeStart("");
     setTimeEnd("");
@@ -631,7 +602,6 @@ export default function Booking() {
     setTimeLeft(0); // ไม่ trigger redirect เพราะ isTimeoutRef = false
     setPayMethod("");
     setDepositSlip(null);
-    setImgPreview("");
     setShowFacilities(false);
     setSelectedFacilities([]);
     setSumFac(0);
@@ -643,14 +613,6 @@ export default function Booking() {
       setMessageType("error");
       return;
     }
-
-    // if (priceDeposit > 0) {
-    //   if (!depositSlip) {
-    //     setMessage("กรุณาแนบสลิปหลักฐานการชำระเงินมัดจำก่อนทำการจอง");
-    //     setMessageType("error");
-    //     return;
-    //   }
-    // }
 
     setShowModal(true); // ถ้าผ่าน validation แล้วค่อยแสดงโมดอล
     setTimeLeft(600); // รีเซ็ตเวลา
@@ -711,8 +673,7 @@ export default function Booking() {
         return;
       }
       if (!response.ok) {
-        const errorData = await response.json();
-        setMessage(errorData.message);
+        setMessage(data.message);
         setMessageType("error");
         setShowModal(false);
         setStartDate("");
@@ -721,7 +682,6 @@ export default function Booking() {
         setSelectedSlots([]);
         setPayMethod("");
         setDepositSlip(null);
-        setImgPreview("");
         setSelectedFacilities([]);
         setTimeStart("");
         setTimeEnd("");
@@ -748,7 +708,6 @@ export default function Booking() {
           setSelectedSlots([]);
           setPayMethod("");
           setDepositSlip(null);
-          setImgPreview("");
           setSelectedFacilities([]);
           setTimeStart("");
           setTimeEnd("");
@@ -757,11 +716,6 @@ export default function Booking() {
           setTotalRemaining(0);
           setShowFacilities(false);
           setSumFac(0);
-
-          //router.replace("");
-          // setTimeout(() => {
-          //   router.replace("");
-          // }, 2000);
         } else {
           setMessage(`Error:${data.message}`);
           setMessageType("error");

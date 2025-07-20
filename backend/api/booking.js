@@ -403,15 +403,15 @@ module.exports = function (io) {
             .json({ success: false, message: "Invalid startDate or endDate" });
         }
 
-        await client.query("BEGIN");
         const overlapResult = await client.query(
           `SELECT * FROM bookings
-          WHERE sub_field_id = $1
-            AND status NOT IN ('rejected')
-            AND (
-              (start_date || ' ' || start_time)::timestamp < $3::timestamp
-              AND (end_date || ' ' || end_time)::timestamp > $2::timestamp
-            )`,
+            WHERE sub_field_id = $1
+              AND status NOT IN ('rejected')
+              AND (
+                (start_date || ' ' || start_time)::timestamp < $3::timestamp
+                AND (end_date || ' ' || end_time)::timestamp > $2::timestamp
+              )
+            FOR UPDATE`,
           [subFieldId, `${startDate} ${startTime}`, `${endDate} ${endTime}`]
         );
 
@@ -431,7 +431,7 @@ module.exports = function (io) {
 
         if (overlapResult.rows.length > 0) {
           if (depositSlip) {
-            await deleteCloudinaryFile(depositSlip); // ลบไฟล์ที่ upload แล้ว
+            await deleteCloudinaryFile(depositSlip);
           }
           return res.status(400).json({
             success: false,
