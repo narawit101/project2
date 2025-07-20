@@ -436,14 +436,14 @@ export default function Booking() {
   }
 
   const formatTotalHours = (totalHours) => {
-  if (totalHours  === 0.5) {
-    return '30 นาที';
-  } else if (totalHours % 1 === 0.5) {
-    return `${Math.floor(totalHours)} ชั่วโมง 30 นาที`;
-  } else {
-    return `${totalHours} ชั่วโมง`;
-  }
-};
+    if (totalHours === 0.5) {
+      return "30 นาที";
+    } else if (totalHours % 1 === 0.5) {
+      return `${Math.floor(totalHours)} ชั่วโมง 30 นาที`;
+    } else {
+      return `${totalHours} ชั่วโมง`;
+    }
+  };
 
   useEffect(() => {
     calculateSelectedTimes();
@@ -1020,16 +1020,17 @@ export default function Booking() {
             )}
 
             <div className="time-info">
-              <p>{formatDateToThai(bookingDate)}</p> เปิด: {openHours} -{" "}
-              {closeHours} น
+              <p>{formatDateToThai(bookingDate)}</p>
+            </div>
+            <div className="time-info">
+              เปิด: {openHours} - {closeHours} น
             </div>
 
             <div className="time-info-book">
               <strong>เวลาเริ่ม: {timeStart || "-"}</strong>
               <strong>เวลาสิ้นสุด: {timeEnd || "-"}</strong>
               <strong>
-                รวมเวลา:{" "}
-                {totalHours ? formatTotalHours(totalHours): "-"}
+                รวมเวลา: {totalHours ? formatTotalHours(totalHours) : "-"}
               </strong>
             </div>
 
@@ -1076,8 +1077,7 @@ export default function Booking() {
                   <strong>เวลาเริ่ม: {timeStart || "-"}</strong>
                   <strong>เวลาสิ้นสุด: {timeEnd || "-"}</strong>
                   <strong>
-                    รวมเวลา:{" "}
-                    {totalHours ? formatTotalHours(totalHours) : "-"}
+                    รวมเวลา: {totalHours ? formatTotalHours(totalHours) : "-"}
                   </strong>
                   <strong className="total-per-hour">
                     ราคา: {formatPrice(totalPrice)} บาท
