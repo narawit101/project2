@@ -384,7 +384,7 @@ export default function BookingDetail() {
   const confirmCancelBooking = async () => {
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 250));
+      await new Promise((resolve) => setTimeout(resolve, 200));
       const token = localStorage.getItem("auth_mobile_token");
 
       const res = await fetch(
@@ -409,7 +409,7 @@ export default function BookingDetail() {
         setMessageType("success");
         setTimeout(() => {
           window.location.reload();
-        }, 3000);
+        }, 4000);
       } else {
         setMessage(data.message || "ยกเลิกไม่สำเร็จ");
         setMessageType("error");
@@ -565,14 +565,6 @@ export default function BookingDetail() {
     }
   };
 
-  const getFacilityNetPrice = (item) => {
-    const totalFac = (item.facilities || []).reduce(
-      (sum, fac) => sum + (parseFloat(fac.fac_price) || 0),
-      0
-    );
-    return Math.abs(totalFac - (parseFloat(item.total_remaining) || 0));
-  };
-
   const handleGenQR = async (booking_id, amount) => {
     SetstartProcessLoad(true);
     try {
@@ -608,7 +600,7 @@ export default function BookingDetail() {
       const timer = setTimeout(() => {
         setMessage("");
         setMessageType("");
-      }, 5000);
+      }, 6000);
 
       return () => clearTimeout(timer);
     }

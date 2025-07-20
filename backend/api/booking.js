@@ -1216,7 +1216,7 @@ LIMIT 1;
         // ✅ ดึงข้อมูลการจอง
         const fieldDataResult = await pool.query(
           `
-        SELECT f.cancel_hours, b.start_date, b.start_time, f.field_name
+        SELECT f.cancel_hours, b.start_date, b.start_time, b.end_time, f.field_name
         FROM bookings b
         JOIN field f ON b.field_id = f.field_id
         WHERE b.booking_id = $1
@@ -1232,10 +1232,19 @@ LIMIT 1;
           });
         }
 
-        const { cancel_hours, start_date, start_time, field_name } =
+        const formatDateToThai = (date) => {
+          if (!date) return "ไม่ทราบวันที่"; // กัน null/undefined
+
+          const parsedDate = new Date(date);
+          if (isNaN(parsedDate)) return "ไม่สามารถแปลงวันที่ได้"; // กัน Invalid Date
+
+          const options = { day: "numeric", month: "long", year: "numeric" };
+          return new Intl.DateTimeFormat("th-TH", options).format(parsedDate);
+        };
+
+        const { cancel_hours, start_date, start_time, end_time, field_name } =
           fieldDataResult.rows[0];
 
-        // ✅ ตรวจและแปลง start_date
         let startDateStr;
         try {
           const startDateObj = new Date(start_date);
@@ -1254,7 +1263,6 @@ LIMIT 1;
           });
         }
 
-        // ✅ ตรวจและจัดการ start_time (รับ HH:mm หรือ HH:mm:ss)
         if (
           !start_time ||
           typeof start_time !== "string" ||
@@ -1268,14 +1276,15 @@ LIMIT 1;
           });
         }
 
-        const trimmedStartTime = start_time.slice(0, 5); // เหลือแค่ HH:mm
+        const trimmedStartTime = start_time.slice(0, 5);
+        const trimmedEndTime = end_time.slice(0, 5);
 
-        // 🔧 รวมวันเวลา และแปลงเป็นเวลาประเทศไทย
+        // รวมวันเวลา และแปลงเป็นเวลาประเทศไทย
         const startDateTime = DateTime.fromISO(
           `${startDateStr}T${trimmedStartTime}:00`,
           { zone: "Asia/Bangkok" }
         );
-        // 🔧 เปลี่ยนจาก isNaN(startDateTime.getTime()) เป็น !startDateTime.isValid
+        // เปลี่ยนจาก isNaN(startDateTime.getTime()) เป็น !startDateTime.isValid
         if (!startDateTime.isValid) {
           console.error(
             " Invalid startDateTime:",
@@ -1319,20 +1328,18 @@ LIMIT 1;
 
           return res.status(200).json({
             status: 1,
-            message: `การจองสนาม ${field_name} เวลา ${trimmedStartTime} วันที่ ${startDateStr} ถูกยกเลิกเรียบร้อย`,
+            message: `การจองสนาม ${field_name} เวลา ${trimmedStartTime} - ${trimmedEndTime} วันที่ ${formatDateToThai(startDateStr)} ถูกยกเลิกเรียบร้อย`,
             cancelDeadline: null,
             now: now.toISO(),
           });
         }
 
-        // ✅ คำนวณเส้นตายการยกเลิก
         const cancelDeadline = startDateTime.minus({ hours: cancel_hours });
 
         console.log("Frontend ส่งมา (cancel_time):", now.toISO());
         console.log("เวลาเริ่ม:", startDateTime.toISO());
         console.log("เส้นตายยกเลิก:", cancelDeadline.toISO());
 
-        // ✅ เปรียบเทียบเวลา
         if (now < cancelDeadline) {
           const paymentResult = await pool.query(
             `SELECT deposit_slip, total_slip FROM payment WHERE booking_id = $1`,
@@ -1365,7 +1372,7 @@ LIMIT 1;
 
           return res.status(200).json({
             status: 1,
-            message: `การจองสนาม ${field_name} เวลา ${trimmedStartTime} วันที่ ${startDateStr} ถูกยกเลิกเรียบร้อย`,
+            message: `การจองสนาม ${field_name} เวลา ${trimmedStartTime} - ${trimmedEndTime}  วันที่ ${formatDateToThai(startDateStr)} ถูกยกเลิกเรียบร้อย`,
             cancelDeadline: cancelDeadline.toISO(),
             now: now.toISO(),
           });
