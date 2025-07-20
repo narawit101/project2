@@ -930,22 +930,20 @@ export default function CheckFieldDetail() {
           <div className="field-info-profile">
             <strong>แนะนำสนาม</strong>
             <div className="detail-profile">{fieldData?.field_description}</div>
-            <hr className="divider-hours-profile"/>
-            <h1>รายละเอียดสนาม</h1>
+            <hr className="divider-hours-profile" />
             {dataLoading && (
               <div className="loading-data">
                 <div className="loading-data-spinner"></div>
               </div>
             )}
+            <h1>ตำแหน่งสนาม</h1>
             <p>
               <strong>ที่อยู่:</strong> {fieldData?.address}
             </p>
-            <p>
-              <strong>พิกัด GPS:</strong>
-            </p>
+           
 
             {fieldData?.gps_location ? (
-              <div style={{ marginTop: "8px" }}>
+              <div style={{ marginTop: "10px" }}>
                 <iframe
                   width="100%"
                   height="250"
@@ -966,6 +964,7 @@ export default function CheckFieldDetail() {
                     marginTop: "10px",
                     marginLeft: "auto",
                     marginRight: "auto",
+                    marginBottom: "30px",
                     alignItems: "center",
                     justifyContent: "center",
                     padding: "6px 12px",
@@ -983,6 +982,8 @@ export default function CheckFieldDetail() {
             ) : (
               <p style={{ color: "gray" }}>ไม่มีพิกัด GPS</p>
             )}
+
+            <h1>รายละเอียดสนาม</h1>
             <p>
               <strong>วันที่เปิดสนาม</strong>
             </p>
