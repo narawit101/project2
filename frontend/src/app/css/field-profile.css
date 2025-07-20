@@ -94,7 +94,7 @@
   background-color: #ffffff;
   border: 3px solid #6d919f7d;
   border-radius: 12px;
-  margin: 20px 30px;
+  margin: 5px 10px;
 }
 
 .facitem-profile {
@@ -117,14 +117,19 @@
 
 .detail-profile {
   font-weight: 600;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  border: 3px solid #6d919f7d;
+  /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
+  /* border: 3px solid #6d919f7d; */
   max-height: 200px;
   overflow-y: auto;
   background-color: #ffffff;
   border-radius: 12px;
   padding: 10px 20px;
-  margin: 20px 30px;
+  margin: 5px 10px;
+}
+
+.divider-hours-profile {
+  border-top: 2px solid #000000;
+  margin: 10px 0;
 }
 
 .post-profile h1 {
@@ -380,7 +385,7 @@
 
 .profile-btn button {
   width: 150px;
-  margin: 10px auto;
+  margin: 30px auto;
   display: flex;
   align-items: center;
   justify-content: center;

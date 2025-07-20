@@ -618,6 +618,58 @@ export default function CheckFieldDetail() {
           <div className="profile-btn">
             <button onClick={scrollToBookingSection}>เลือกสนาม</button>
           </div>
+          <div className="reviwe-title-profile"></div>
+          <h1>รีวิวสนามกีฬา</h1>
+          <select
+            id="review-score"
+            className="filter-profile"
+            onChange={handleFilterChange}
+            value={selectedRating}
+          >
+            <option value="ทั้งหมด">ทั้งหมด</option>
+            <option value="5">★★★★★</option>
+            <option value="4">★★★★☆</option>
+            <option value="3">★★★☆☆</option>
+            <option value="2">★★☆☆☆</option>
+            <option value="1">★☆☆☆☆</option>
+          </select>
+
+          <div className="reviwe-container-profile">
+            {filteredReviews.length > 0 ? (
+              filteredReviews.map((review, index) => (
+                <div
+                  className="reviwe-content-profile"
+                  key={review.review_id || index}
+                >
+                  <div className="review-box-profile">
+                    <strong className="review-name-profile">
+                      {review.first_name} {review.last_name}
+                    </strong>
+                    <div className="review-stars-profile">
+                      {[1, 2, 3, 4, 5].map((num) => (
+                        <span
+                          key={num}
+                          className={`star-profile ${
+                            num <= review.rating ? "active" : ""
+                          }`}
+                        >
+                          ★
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="detail-reviwe-profile">
+                    <p className="review-label">ความคิดเห็น</p>
+                    <p className="review-comment">{review.comment}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="no-reviwe-content-profile">
+                <div className="no-review-text">ยังไม่มีคะแนนการรีวิว</div>
+              </div>
+            )}
+          </div>
         </div>
         <div className="post-profile">
           <h1>โพสต์</h1>
@@ -876,6 +928,9 @@ export default function CheckFieldDetail() {
         {/* ข้อมูลสนามย่อย (sub_fields) */}
         <aside className="aside">
           <div className="field-info-profile">
+            <strong>แนะนำสนาม</strong>
+            <div className="detail-profile">{fieldData?.field_description}</div>
+            <hr className="divider-hours-profile"/>
             <h1>รายละเอียดสนาม</h1>
             {dataLoading && (
               <div className="loading-data">
@@ -962,10 +1017,6 @@ export default function CheckFieldDetail() {
             <p>
               <strong>เลขบัญชีธนาคาร:</strong> {fieldData?.number_bank}
             </p>
-            <p>
-              <strong>รายละเอียดสนาม:</strong>
-            </p>
-            <div className="detail-profile">{fieldData?.field_description}</div>
 
             <h1 className="fac-profile">สิ่งอำนวยความสะดวก</h1>
             {dataLoading && (
@@ -994,58 +1045,6 @@ export default function CheckFieldDetail() {
                 <p style={{ color: "gray" }}>
                   ข้อมูลสิ่งอำนวยความสะดวกไม่ถูกต้อง
                 </p>
-              )}
-            </div>
-            <div className="reviwe-title-profile"></div>
-            <h1>รีวิวสนามกีฬา</h1>
-            <select
-              id="review-score"
-              className="filter-profile"
-              onChange={handleFilterChange}
-              value={selectedRating}
-            >
-              <option value="ทั้งหมด">ทั้งหมด</option>
-              <option value="5">★★★★★</option>
-              <option value="4">★★★★☆</option>
-              <option value="3">★★★☆☆</option>
-              <option value="2">★★☆☆☆</option>
-              <option value="1">★☆☆☆☆</option>
-            </select>
-
-            <div className="reviwe-container-profile">
-              {filteredReviews.length > 0 ? (
-                filteredReviews.map((review, index) => (
-                  <div
-                    className="reviwe-content-profile"
-                    key={review.review_id || index}
-                  >
-                    <div className="review-box-profile">
-                      <strong className="review-name-profile">
-                        {review.first_name} {review.last_name}
-                      </strong>
-                      <div className="review-stars-profile">
-                        {[1, 2, 3, 4, 5].map((num) => (
-                          <span
-                            key={num}
-                            className={`star-profile ${
-                              num <= review.rating ? "active" : ""
-                            }`}
-                          >
-                            ★
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="detail-reviwe-profile">
-                      <p className="review-label">ความคิดเห็น</p>
-                      <p className="review-comment">{review.comment}</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="no-reviwe-content-profile">
-                  <div className="no-review-text">ยังไม่มีคะแนนการรีวิว</div>
-                </div>
               )}
             </div>
           </div>
