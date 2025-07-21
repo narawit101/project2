@@ -50,7 +50,6 @@ export default function Booking() {
   const accountHolder = sessionStorage.getItem("account_holder");
   const fieldName = sessionStorage.getItem("field_name");
   const [showFacilities, setShowFacilities] = useState(false);
-  const [depositSlip, setDepositSlip] = useState(null); // เก็บไฟล์
   const [timeLeft, setTimeLeft] = useState(600); // เริ่มที่ 10 นาที (600 วิ)
   const [showModal, setShowModal] = useState(false);
   const timerRef = useRef(null); // กัน setInterval ซ้ำ
@@ -563,7 +562,6 @@ export default function Booking() {
     setCanBook(false);
     setSelectedSlots([]);
     setPayMethod("");
-    setDepositSlip(null);
     setSelectedFacilities([]);
     setTimeStart("");
     setTimeEnd("");
@@ -581,13 +579,7 @@ export default function Booking() {
         return;
       }
     }
-    //     if (priceDeposit > 0) {
-    //   if (!depositSlip) {
-    //     setMessage("กรุณาแนบสลิปหลักฐานการชำระเงินมัดจำก่อนทำการจอง");
-    //     setMessageType("error");
-    //     return;
-    //   }
-    // }
+
     // setShowModal(false);
     handleSubmit(); // ฟังก์ชันที่ใช้จองจริง
   };
@@ -601,7 +593,6 @@ export default function Booking() {
     }
     setTimeLeft(0); // ไม่ trigger redirect เพราะ isTimeoutRef = false
     setPayMethod("");
-    setDepositSlip(null);
     setShowFacilities(false);
     setSelectedFacilities([]);
     setSumFac(0);
@@ -630,7 +621,6 @@ export default function Booking() {
       fac_name: item.fac_name,
     }));
 
-    bookingData.append("deposit_slip", depositSlip);
     bookingData.append(
       "data",
       JSON.stringify({
@@ -656,7 +646,7 @@ export default function Booking() {
     console.log("Booking Data being sent:", bookingData);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 200));
       const response = await fetch(`${API_URL}/booking`, {
         method: "POST",
         credentials: "include",
@@ -681,7 +671,6 @@ export default function Booking() {
         setCanBook(false);
         setSelectedSlots([]);
         setPayMethod("");
-        setDepositSlip(null);
         setSelectedFacilities([]);
         setTimeStart("");
         setTimeEnd("");
@@ -707,7 +696,6 @@ export default function Booking() {
           setCanBook(false);
           setSelectedSlots([]);
           setPayMethod("");
-          setDepositSlip(null);
           setSelectedFacilities([]);
           setTimeStart("");
           setTimeEnd("");

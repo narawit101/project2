@@ -350,7 +350,7 @@ module.exports = function (io) {
     LimiterBookingsRequest,
     upload.fields([{ name: "deposit_slip" }]),
     async (req, res) => {
-      let depositSlip = null;
+      // let depositSlip = null;
       const client = await pool.connect();
 
       try {
@@ -373,9 +373,9 @@ module.exports = function (io) {
           status,
         } = JSON.parse(req.body.data);
 
-        if (req.files["deposit_slip"]?.length > 0) {
-          depositSlip = req.files["deposit_slip"][0].path;
-        }
+        // if (req.files["deposit_slip"]?.length > 0) {
+        //   depositSlip = req.files["deposit_slip"][0].path;
+        // }
 
         if (
           !fieldId ||
@@ -391,7 +391,6 @@ module.exports = function (io) {
           totalRemaining === undefined ||
           !activity
         ) {
-          if (depositSlip) await deleteCloudinaryFile(depositSlip);
           return res
             .status(400)
             .json({ success: false, message: "กรุณาเลือกข้อมูลให้ครบ" });
@@ -430,9 +429,6 @@ module.exports = function (io) {
         }
 
         if (overlapResult.rows.length > 0) {
-          if (depositSlip) {
-            await deleteCloudinaryFile(depositSlip);
-          }
           return res.status(400).json({
             success: false,
             message: "ช่วงเวลาที่เลือกมีผู้จองแล้ว กรุณาเลือกเวลาใหม่",
@@ -473,13 +469,13 @@ module.exports = function (io) {
           );
         }
 
-        // เชื่อมต่อกับ payment
-        if (depositSlip) {
-          const paymentResult = await client.query(
-            `INSERT INTO payment (booking_id, deposit_slip) VALUES ($1, $2) RETURNING payment_id`,
-            [bookingId, depositSlip]
-          );
-        }
+        // // เชื่อมต่อกับ payment
+        // if (depositSlip) {
+        //   const paymentResult = await client.query(
+        //     `INSERT INTO payment (booking_id, deposit_slip) VALUES ($1, $2) RETURNING payment_id`,
+        //     [bookingId, depositSlip]
+        //   );
+        // }
 
         if (bookingResult.rows.length > 0) {
           const data = await client.query(
@@ -564,9 +560,6 @@ module.exports = function (io) {
           .json({ success: true, message: "Booking saved successfully" });
       } catch (error) {
         await client.query("ROLLBACK");
-        if (depositSlip) {
-          await deleteCloudinaryFile(depositSlip);
-        }
         console.error("Error saving booking:", error);
         res.status(500).json({
           success: false,
