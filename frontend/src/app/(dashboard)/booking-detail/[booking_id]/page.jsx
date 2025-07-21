@@ -409,10 +409,13 @@ export default function BookingDetail() {
         setMessageType("success");
         setTimeout(() => {
           window.location.reload();
-        }, 4000);
+        }, 3000);
       } else {
         setMessage(data.message || "ยกเลิกไม่สำเร็จ");
         setMessageType("error");
+        setTimeout(() => {
+          setMessage(null);
+        }, 3000);
       }
     } catch (error) {
       console.error("Cancel Booking Error:", error);
@@ -568,7 +571,7 @@ export default function BookingDetail() {
   const handleGenQR = async (booking_id, amount) => {
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      // await new Promise((resolve) => setTimeout(resolve, 200));
       const res = await fetch(`${API_URL}/booking/gen-qr`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -600,7 +603,7 @@ export default function BookingDetail() {
       const timer = setTimeout(() => {
         setMessage("");
         setMessageType("");
-      }, 6000);
+      }, 5000);
 
       return () => clearTimeout(timer);
     }
@@ -653,7 +656,7 @@ export default function BookingDetail() {
     }
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 250));
+      await new Promise((resolve) => setTimeout(resolve, 200));
       const token = localStorage.getItem("auth_mobile_token");
 
       const res = await fetch(`${API_URL}/reviews/post`, {
