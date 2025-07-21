@@ -262,7 +262,7 @@ export default function RegisterFieldForm() {
     const token = localStorage.getItem("auth_mobile_token");
     try {
       SetstartProcessLoad(true);
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      // await new Promise((resolve) => setTimeout(resolve, 200));
 
       const res = await fetch(`${API_URL}/facilities/add`, {
         method: "POST",
@@ -458,7 +458,7 @@ export default function RegisterFieldForm() {
     );
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      // await new Promise((resolve) => setTimeout(resolve, 200));
       const token = localStorage.getItem("auth_mobile_token");
 
       const res = await fetch(`${API_URL}/field/register`, {

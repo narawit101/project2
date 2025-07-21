@@ -35,7 +35,6 @@ export default function HomePage() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        // await new Promise((resolve) => setTimeout(resolve, 100));
         const res = await fetch(`${API_URL}/posts`, {
           method: "GET",
           headers: {

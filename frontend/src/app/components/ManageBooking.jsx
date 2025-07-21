@@ -355,7 +355,7 @@ export default function Mybooking() {
                       {/* รวมที่ต้องจ่าย (ไม่รวมมัดจำ) */}
                       <div className="line-item-order remaining">
                         <span className="total-remaining-order">
-                          รวมที่ต้องจ่าย(ยอดคงเหลือ):
+                          ยอดคงเหลือ:
                         </span>
                         <span className="total-remaining-order">
                           +{item.total_remaining} บาท

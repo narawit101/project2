@@ -176,7 +176,7 @@ export default function Register() {
     if (!newErrors.user_name && !newErrors.email) {
       SetstartProcessLoad(true);
       try {
-        await new Promise((resolve) => setTimeout(resolve, 200));
+        // await new Promise((resolve) => setTimeout(resolve, 200));
         const response = await Promise.all([
           fetch(
             `${API_URL}/register/check-duplicate?field=user_name&value=${formData.user_name}`
@@ -214,7 +214,7 @@ export default function Register() {
     }
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      // await new Promise((resolve) => setTimeout(resolve, 200));
       const response = await fetch(`${API_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
