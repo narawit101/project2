@@ -228,12 +228,12 @@ export default function RegisterFieldForm() {
     }
   }, [message]);
 
-  // if (isLoading)
-  //   return (
-  //     <div className="load">
-  //       <span className="spinner"></span>
-  //     </div>
-  //   );
+  if (isLoading)
+    return (
+      <div className="load">
+        <span className="spinner"></span>
+      </div>
+    );
 
   return (
     <>

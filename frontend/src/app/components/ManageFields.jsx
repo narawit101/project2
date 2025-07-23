@@ -10,9 +10,7 @@ export default function MyFieldPage() {
   const router = useRouter();
   const [myFields, setMyFields] = useState([]);
   const [filteredFields, setFilteredFields] = useState([]);
-  const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState("ทั้งหมด");
-  const [currentUser, setCurrentUser] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [fieldIdToDelete, setFieldIdToDelete] = useState(null);
   const { user, isLoading } = useAuth();
@@ -155,6 +153,13 @@ export default function MyFieldPage() {
     }
   }, [message]);
 
+    if (isLoading)
+    return (
+      <div className="load">
+        <span className="spinner"></span>
+      </div>
+    );
+
   return (
     <>
       {message && (
@@ -177,7 +182,7 @@ export default function MyFieldPage() {
             <option value="ทั้งหมด">ทั้งหมด</option>
             <option value="ผ่านการอนุมัติ">ผ่านการอนุมัติ</option>
             <option value="รอตรวจสอบ">รอตรวจสอบ</option>
-            <option value="ไม่ผ่านการอนุมัติ">ไม่ผ่าน</option>
+            <option value="ไม่ผ่านการอนุมัติ">ไม่ผ่านการอนุมัติ</option>
           </select>
         </div>
         {dataLoading ? (

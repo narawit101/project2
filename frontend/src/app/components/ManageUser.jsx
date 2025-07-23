@@ -257,6 +257,13 @@ export default function AdminManager() {
     return rangeWithDots;
   };
 
+  if (isLoading)
+    return (
+      <div className="load">
+        <span className="spinner"></span>
+      </div>
+    );
+
   return (
     <>
       {message && (
