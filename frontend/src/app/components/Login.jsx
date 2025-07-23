@@ -136,7 +136,7 @@ export default function Login() {
               <span className="dot three">●</span>
             </span>
           ) : (
-            "บันทึก"
+            "เข้าสู่ระบบ"
           )}
         </button>
 
