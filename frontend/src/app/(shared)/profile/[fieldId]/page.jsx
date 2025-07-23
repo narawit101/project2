@@ -563,7 +563,7 @@ export default function CheckFieldDetail() {
                 <div
                   key={sub.sub_field_id}
                   className="sub-field-card-profile"
-                  // onClick={() => {setShowSubfieldModal(true);} }
+                  onClick={() => router.push(`/calendar/${sub.sub_field_id}`)}
                 >
                   <p>
                     <strong>ชื่อสนาม:</strong> {sub.sub_field_name}
@@ -940,7 +940,6 @@ export default function CheckFieldDetail() {
             <p>
               <strong>ที่อยู่:</strong> {fieldData?.address}
             </p>
-           
 
             {fieldData?.gps_location ? (
               <div style={{ marginTop: "10px" }}>

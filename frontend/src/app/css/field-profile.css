@@ -248,6 +248,7 @@
 }
 
 .sub-field-card-profile {
+  cursor: pointer;
   background: #f9f9fb;
   border: 3px solid #6d919f7d;
   padding: 16px 20px;
