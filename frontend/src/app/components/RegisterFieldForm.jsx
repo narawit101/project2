@@ -1148,7 +1148,7 @@ export default function RegisterFieldForm() {
             </div>
           )}
           <div className="input-group-register-field">
-            <label>รายละเอียดสนาม</label>
+            <label>คำแนะนำของสนาม</label>
             <div className="textarea">
               <textarea
                 maxLength={256}

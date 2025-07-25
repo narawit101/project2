@@ -1751,7 +1751,7 @@ export default function CheckFieldDetail() {
             )}
           </div>
           <div className="input-group-editfield">
-            <label>รายละเอียดสนาม: </label>
+            <label>คำแนะนำของสนาม: </label>
             <div className="detail-editfield">
               {editingField === "field_description" ? (
                 <>
