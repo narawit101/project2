@@ -97,36 +97,75 @@ router.put("/update/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// ดึงข้อมูลประเภทกีฬาและสนามที่ผ่านการอนุมัติ
 router.get("/preview", async (req, res) => {
-  const sportId = req.query.sport_id; // Get the sport_id from the query string
+  const { sport_id, date, time } = req.query;
 
   try {
+    const queryParams = [];
+    let whereClause = `WHERE field.status = 'ผ่านการอนุมัติ'`;
+
+    if (sport_id) {
+      queryParams.push(sport_id);
+      whereClause += ` AND sports_types.sport_id = $${queryParams.length}`;
+    }
+
+    if (date && time) {
+      const parsedDate = new Date(date);
+      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const dayOfWeek = parsedDate.getDay();
+      const dayName = days[dayOfWeek];
+
+      queryParams.push(dayName);
+      queryParams.push(date);
+      queryParams.push(time);
+
+      whereClause += `
+  AND $${queryParams.length - 2} = ANY(field.open_days)
+  AND (
+    (field.open_hours < field.close_hours AND $${queryParams.length} >= field.open_hours AND $${queryParams.length} <= field.close_hours)
+    OR
+    (field.open_hours > field.close_hours AND ($${queryParams.length} >= field.open_hours OR $${queryParams.length} <= field.close_hours))
+  )
+  AND NOT EXISTS (
+    SELECT 1
+    FROM bookings b
+    WHERE b.field_id = field.field_id
+      AND b.booking_date = $${queryParams.length - 1}
+      AND EXISTS (
+        SELECT 1
+        FROM unnest(b.selected_slots) AS slot
+        WHERE slot LIKE '%' || $${queryParams.length} || '%'
+      )
+  )
+`;
+    }
+
     const query = `
-            SELECT 
-          field.field_id,
-          field.field_name,
-          field.img_field,
-          field.open_hours,
-          field.close_hours,
-          field.open_days,
-          COALESCE(ROUND(AVG(reviews.rating), 1), 0) AS avg_rating,
-          ARRAY_AGG(DISTINCT sports_types.sport_name) AS sport_names
-        FROM field
-        INNER JOIN sub_field ON field.field_id = sub_field.field_id
-        INNER JOIN sports_types ON sub_field.sport_id = sports_types.sport_id
-        LEFT JOIN reviews ON field.field_id = reviews.field_id
-        WHERE field.status = 'ผ่านการอนุมัติ'
-        ${sportId ? `AND sports_types.sport_id = ${sportId}` : ""}
-        GROUP BY field.field_id, field.field_name, field.img_field, field.open_hours, field.close_hours, field.open_days
-        ORDER BY avg_rating DESC, field.field_id DESC;
+      SELECT 
+        field.field_id,
+        field.field_name,
+        field.img_field,
+        field.open_hours,
+        field.close_hours,
+        field.open_days,
+        COALESCE(ROUND(AVG(reviews.rating), 1), 0) AS avg_rating,
+        ARRAY_AGG(DISTINCT sports_types.sport_name) AS sport_names
+      FROM field
+      INNER JOIN sub_field ON field.field_id = sub_field.field_id
+      INNER JOIN sports_types ON sub_field.sport_id = sports_types.sport_id
+      LEFT JOIN reviews ON field.field_id = reviews.field_id
+      ${whereClause}
+      GROUP BY 
+        field.field_id, field.field_name, field.img_field, 
+        field.open_hours, field.close_hours, field.open_days
+      ORDER BY avg_rating DESC, field.field_id DESC;
     `;
 
-    const result = await pool.query(query);
+    const result = await pool.query(query, queryParams);
     res.json(result.rows);
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ error: "Database error fetching approved fields" });
+    res.status(500).json({ error: "Database error fetching available fields" });
   }
 });
 

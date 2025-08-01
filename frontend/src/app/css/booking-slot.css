@@ -4,7 +4,16 @@
 
 .select-time-book {
   text-align: center;
-  font-size: 2rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0px;
+  color: var(--text-color);
+  padding: 5px 24px;
+  /* background-color: #f3f4f6; */
+}
+.select-date-book {
+  text-align: left;
+  font-size: 1.5rem;
   font-weight: 700;
   margin: 0px auto 0 auto;
   color: var(--text-color);
@@ -146,7 +155,7 @@
   border: 2px solid #e5e7eb;
   margin: 5px 0 10px 0;
   width: 75%;
-  padding: 5px 20px 20px 20px;
+  padding: 15px 20px 20px 20px;
   min-height: 500px;
 }
 
@@ -604,6 +613,40 @@
   background-color: #c82333;
 }
 
+.horizontal-date-bar {
+  display: flex;
+  overflow-x: auto;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.date-button {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  min-width: 100px;
+  height: 40px;
+  white-space: nowrap;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.date-button.active {
+  background: #5b21b6;
+  color: white;
+}
+
+.date-button.disabled {
+  background: #f3f3f3;
+  color: #999;
+  cursor: not-allowed;
+}
+
+
 @media screen and (max-width: 1500px) {
   .container-bookings {
     display: flex;
@@ -678,7 +721,7 @@
     margin: 5px auto;
   }
 }
-@media screen and (max-width: 360px) {
+/* @media screen and (max-width: 360px) {
   .slot-box-book {
     height: 50px;
     display: flex;
@@ -690,7 +733,7 @@
   }
   .book-content {
     width: 100%;
-    padding: 20px;
+    padding: 10px;
   }
   .slots-grid-book {
     align-items: center;
@@ -702,4 +745,4 @@
     padding: 0.5rem;
     margin: 5px auto;
   }
-}
+} */

@@ -5,6 +5,8 @@ import "@/app/css/booking-slot.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { io } from "socket.io-client";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
+import Calendar from "react-calendar";
+import "@/app/css/calendar-styles.css";
 
 export default function Booking() {
   const { subFieldId } = useParams();
@@ -36,18 +38,19 @@ export default function Booking() {
   const [payMethod, setPayMethod] = useState("");
 
   const router = useRouter();
-  const bookingDate = sessionStorage.getItem("booking_date");
-  const bookingDateFormatted = new Date(bookingDate).toLocaleDateString(
-    "en-CA"
-  );
+  const [date, setDate] = useState(null);
+  const [bookingDate, setBookingDate] = useState(null);
+  const bookingDateFormatted = bookingDate
+    ? bookingDate.toLocaleDateString("en-CA")
+    : null;
+  const [openDays, setOpenDays] = useState([]);
+  const [showCalendar, setShowCalendar] = useState(false);
+
   const { user, isLoading } = useAuth();
   // const [bookedSlots, setBookedSlots] = useState([]);
   const [isBooked, setIsBooked] = useState(false); // ใช้ติดตามว่าเกิดการจองหรือยัง
   const [subFieldData, setSubFieldData] = useState([]);
   const field_id = sessionStorage.getItem("field_id");
-  const nameBank = sessionStorage.getItem("name_bank");
-  const numberBank = sessionStorage.getItem("number_bank");
-  const accountHolder = sessionStorage.getItem("account_holder");
   const fieldName = sessionStorage.getItem("field_name");
   const [showFacilities, setShowFacilities] = useState(false);
   const [timeLeft, setTimeLeft] = useState(600); // เริ่มที่ 10 นาที (600 วิ)
@@ -72,9 +75,9 @@ export default function Booking() {
     if (user?.status !== "ตรวจสอบแล้ว") {
       router.replace("/verification");
     }
-    if (!bookingDate) {
-      router.replace("/");
-    }
+    // if (!bookingDate) {
+    //   router.replace("/");
+    // }
   }, [user, isLoading, router, bookingDate]);
 
   // ดึง slot ที่มีสถานะ
@@ -584,6 +587,112 @@ export default function Booking() {
     handleSubmit(); // ฟังก์ชันที่ใช้จองจริง
   };
 
+  useEffect(() => {
+    if (!subFieldId) return;
+
+    const daysNumbers = {
+      Sun: 0,
+      Mon: 1,
+      Tue: 2,
+      Wed: 3,
+      Thu: 4,
+      Fri: 5,
+      Sat: 6,
+    };
+
+    const fetchDate = async () => {
+      setDataLoading(true);
+      try {
+        const token = localStorage.getItem("auth_mobile_token");
+
+        const res = await fetch(`${API_URL}/field/open-days/${subFieldId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          credentials: "include",
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          console.error("ไม่พบข้อมูลวันเปิดสนาม");
+          setMessage("ไม่พบข้อมูลวันเปิดสนาม");
+          setMessageType("error");
+          return;
+        }
+
+        if (data[0] && data[0].open_days) {
+          const mapDaysToNum = data[0].open_days.map((day) => daysNumbers[day]);
+
+          const selectedSubField =
+            data[0].sub_fields.find(
+              (subField) => subField.sub_field_id === parseInt(subFieldId)
+            ) || "ไม่พบข้อมูล";
+
+          setOpenDays(mapDaysToNum);
+          setSubFieldData(selectedSubField);
+
+          console.log("ข้อมูลสนาม", data);
+          console.log("ข้อมูลสนามย่อย", selectedSubField);
+          console.log("วันที่เปิดสนาม", mapDaysToNum);
+        } else {
+          setMessage("ไม่สามารถดึงข้อมูลวันเปิดสนามได้");
+          setMessageType("error");
+        }
+      } catch (error) {
+        console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล:", error);
+        setMessage("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+        setMessageType("error");
+        // router.replace("/");
+      } finally {
+        setDataLoading(false);
+      }
+    };
+
+    fetchDate();
+  }, [subFieldId]);
+
+  const handleDateChange = (newDate) => {
+    if (date && newDate.toDateString() === date.toDateString()) {
+      setDate(null);
+      sessionStorage.removeItem("booking_date");
+      sessionStorage.removeItem("booking_date_expiry");
+    } else {
+      setDate(newDate);
+      sessionStorage.setItem("booking_date", newDate.toString());
+
+      const expiryDate = new Date();
+      expiryDate.setMinutes(expiryDate.getMinutes() + 10);
+      sessionStorage.setItem("booking_date_expiry", expiryDate.toString());
+
+      setBookingDate(newDate);
+      setMessage("");
+      fetchBookedSlots();
+      setSelectedSlotsArr([]);
+      resetSelection();
+    }
+  };
+
+  const today = new Date();
+
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 30);
+
+  const tileClassName = ({ date, view }) => {
+    const day = date.getDay();
+    if (
+      view === "month" &&
+      openDays.includes(day) &&
+      date <= maxDate &&
+      date >= today
+    ) {
+      return "allowed-day"; // เพิ่มคลาสสำหรับวันที่อนุญาตให้ hover
+    }
+    return ""; // วันที่ไม่อนุญาตจะไม่มีคลาส
+  };
+
   const handleCancel = () => {
     setShowModal(false);
     isTimeoutRef.current = false; // บอกว่าไม่ใช่หมดเวลาอัตโนมัติ
@@ -800,7 +909,7 @@ export default function Booking() {
   }
 
   const formatDateToThai = (date) => {
-    if (!date) return "ไม่ทราบวันที่"; // กัน null/undefined
+    if (!date) return ""; // กัน null/undefined
 
     const parsedDate = new Date(date);
     if (isNaN(parsedDate)) return "ไม่สามารถแปลงวันที่ได้"; // กัน Invalid Date
@@ -849,7 +958,79 @@ export default function Booking() {
           </div>
         ) : (
           <div className="book-content">
-            <h1 className="select-time-book">เลือกช่วงเวลา</h1>
+            {showCalendar && (
+              <div
+                className="calendar-popup-overlay"
+                onClick={() => setShowCalendar(false)}
+              >
+                <div
+                  className="calendar-popup"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* <button
+                  className="btn-cancel-bookings"
+                  onClick={() => setShowCalendar(!showCalendar)}
+                >
+                  X
+                </button> */}
+                  <Calendar
+                    onChange={(newDate) => {
+                      handleDateChange(newDate);
+                      setShowCalendar(false); // ปิดปฏิทินหลังเลือก
+                    }}
+                    value={date}
+                    showNeighboringMonth={false}
+                    minDate={today}
+                    maxDate={maxDate}
+                    tileClassName={tileClassName}
+                    tileDisabled={({ date, view }) => {
+                      const day = date.getDay();
+                      return view === "month" && !openDays.includes(day);
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+            {/* <div className="select-day">
+              <p>
+                วันที่: {date ? formatDateToThai(date) : "ยังไม่ได้เลือกวันที่"}
+              </p>
+     
+            </div> */}
+
+            <h1 className="select-time-book">เลือกวันที่และช่วงเวลา</h1>
+            <hr className="divider-order-select-date" />
+            <div className="calendar-btn-select-date">
+              <div className="date-picker-container">
+                <div className="date-select-label">
+                  <strong>เลือกวันที่: </strong>
+                </div>
+
+                <button
+                  className="calendar-toggle-btn"
+                  onClick={() => setShowCalendar(!showCalendar)}
+                >
+                  {date ? (
+                    formatDateToThai(date)
+                  ) : (
+                    <>
+                      <img
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAUZJREFUSEvNVYFxwjAMfG1SJilMAkxSOgndBDpJYZJv3ycFJyF2Am6vvgMOR9G/9PLb8MvLpvKTfDGzSw2/FlcCOAIQyKYEQrIYNwIguVNiAG8AVEGtirXHnAF8mtlHTqgDIKnAxCZLWkseufSOPlp6ZxPtzQG+POB9yKKmQzyXHgBO+m9mq/SrL2+L2AtZpT68HERkU64AUPKdmU2KvgSRJH/IqxOHHCDEWpJrKla5zprAAFDf0maL7DEoQwAJU5z5ueAkQ+heBX8L4Cx0ktO4+bSJ2dy9RDjXoFfBPQtYsPcPWjRX0Htxs0RurYFO8nog6MiGF2ggq9BB24fIBwDbHODJFo0AdIqlfAuz032i6vdy5aigs1l/8JBluJNGa2927YcoQFpcOGKfSPbs2RmoXa+uQdxSNUl0i139opGe3Wri/yX0b2jJ5Bkv0yj2AAAAAElFTkSuQmCC"
+                        alt=""
+                      />
+                    </>
+                  )}
+                </button>
+                {date && (
+                  <button
+                    className="btn-cancel-select-date"
+                    onClick={() => setDate(null)}
+                  >
+                    X
+                  </button>
+                )}
+              </div>
+            </div>
             <div className="sum-status-box-book">
               <div className="status-item-book">
                 <div className="status-box-book-1"></div>
@@ -889,10 +1070,11 @@ export default function Booking() {
                     key={index}
                     className={slotClass}
                     onClick={() => {
-                      if (!isBooked && !isPast) toggleSelectSlot(index);
+                      if (!isBooked && !isPast && date) toggleSelectSlot(index);
                     }}
                     style={{
-                      cursor: isBooked || isPast ? "not-allowed" : "pointer",
+                      cursor:
+                        isBooked || isPast || !date ? "not-allowed" : "pointer",
                       opacity: isPast ? 0.7 : 1, // ทำให้จางลงถ้าผ่านเวลาแล้ว
                     }}
                   >
@@ -960,9 +1142,11 @@ export default function Booking() {
                 สนาม: {subFieldData}
               </h2>
             )}
-
             <div className="time-info">
-              <p>{formatDateToThai(bookingDate)}</p>
+              <p>
+                วันที่: {date ? formatDateToThai(date) : "ยังไม่ได้เลือกวันที่"}
+              </p>
+              {/* <div>**สามารถจองล่วงหน้าได้ไม่เกิน *** วัน</div> */}
             </div>
             <div className="time-info">
               เปิด: {openHours} - {closeHours} น
@@ -979,7 +1163,7 @@ export default function Booking() {
             {/* <button onClick={showPrice} className="btn-show">
               แสดงราคา
             </button> */}
-            {canBook && (
+            {canBook && date && (
               <>
                 <button
                   onClick={validateBeforeSubmit}

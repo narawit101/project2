@@ -10,7 +10,7 @@ export default function MyCalendar() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const [date, setDate] = useState(null);
   const router = useRouter();
-  const [opendays, setOenDays] = useState([]);
+  const [openDays, setOenDays] = useState([]);
   const [fieldData, setFieldData] = useState([]);
   const { subFieldId } = useParams();
   const [isClient, setIsClient] = useState(true);
@@ -161,7 +161,7 @@ export default function MyCalendar() {
       }
 
       const day = date.getDay();
-      if (opendays.includes(day)) {
+      if (openDays.includes(day)) {
         router.push(`/booking/${subFieldId}`);
       } else {
         setMessage("ไม่สามารถเลือกวันนี้ได้");
@@ -187,7 +187,7 @@ export default function MyCalendar() {
     const day = date.getDay();
     if (
       view === "month" &&
-      opendays.includes(day) &&
+      openDays.includes(day) &&
       date <= maxDate &&
       date >= today
     ) {
@@ -233,7 +233,7 @@ export default function MyCalendar() {
           tileClassName={tileClassName}
           tileDisabled={({ date, view }) => {
             const day = date.getDay();
-            return view === "month" && !opendays.includes(day);
+            return view === "month" && !openDays.includes(day);
           }}
         />
       </div>

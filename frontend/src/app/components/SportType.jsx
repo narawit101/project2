@@ -23,6 +23,8 @@ export default function HomePage() {
   const { user, isLoading } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const fieldPerPage = 16;
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
 
   useEffect(() => {
     if (isLoading) return;
@@ -68,12 +70,18 @@ export default function HomePage() {
 
   useEffect(() => {
     const fetchApprovedFields = async () => {
-      setDataLoading(true);
+      // setDataLoading(true);
       try {
-        const queryParams = selectedSport ? `?sport_id=${selectedSport}` : "";
+        const queryParams = new URLSearchParams();
+        if (selectedSport) queryParams.append("sport_id", selectedSport);
+        if (date) queryParams.append("date", date);
+        if (time) queryParams.append("time", time);
 
+        const queryString = queryParams.toString();
         const res = await fetch(
-          `${API_URL}/sports_types/preview${queryParams}`,
+          `${API_URL}/sports_types/preview${
+            queryString ? "?" + queryString : ""
+          }`,
           {
             method: "GET",
             headers: {
@@ -81,6 +89,16 @@ export default function HomePage() {
             },
           }
         );
+
+        // ตรวจสอบว่า response เป็น JSON หรือไม่
+        const contentType = res.headers.get("content-type");
+        if (!res.ok || !contentType.includes("application/json")) {
+          const text = await res.text();
+          console.error("Response is not JSON:", text);
+          setMessage("เกิดข้อผิดพลาดจากฝั่งเซิร์ฟเวอร์");
+          setMessageType("error");
+          return;
+        }
 
         const data = await res.json();
 
@@ -94,7 +112,7 @@ export default function HomePage() {
         }
       } catch (error) {
         console.error("Error fetching approved fields:", error);
-        setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+        setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
         setMessageType("error");
       } finally {
         setDataLoading(false);
@@ -102,7 +120,7 @@ export default function HomePage() {
     };
 
     fetchApprovedFields();
-  }, [selectedSport]);
+  }, [selectedSport, date, time]);
 
   const indexOfLast = currentPage * fieldPerPage;
   const indexOfFirst = indexOfLast - fieldPerPage;
@@ -136,14 +154,14 @@ export default function HomePage() {
     const sport = sportsCategories.find(
       (category) => category.sport_id === e.target.value
     );
-    setSelectedSportName(sport ? sport.sport_name : "");
+    setSelectedSportName(sport ? sport?.sport_name : "");
   };
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
         setMessage("");
         setMessageType("");
-      }, 3500);
+      }, 3000);
 
       return () => clearTimeout(timer);
     }
@@ -159,6 +177,45 @@ export default function HomePage() {
       <div className="container-home">
         <div className="section-title-container">
           <h2 className="section-title-home">สนามที่แนะนำ</h2>
+          <div className="parent-select-home">
+            <div className="title-center-home">
+              <h2>ค้นหาเวลาว่าง</h2>
+            </div>
+            <div className="filter-center-home">
+              <div className="filter-date-home">
+                <label>
+                  {/* วันที่: */}
+                  <input
+                    type="date"
+                    name="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                  />
+                </label>
+              </div>
+              <label>
+                <select
+                  className="select-time-home"
+                  name="open_hours"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                >
+                  <option value="">-- เลือกเวลา --</option>
+                  {Array.from({ length: 48 }, (_, i) => {
+                    const hours = String(Math.floor(i / 2)).padStart(2, "0");
+                    const minutes = i % 2 === 0 ? "00" : "30";
+                    const timeValue = `${hours}:${minutes}`;
+                    return (
+                      <option key={timeValue} value={timeValue}>
+                        {timeValue}
+                      </option>
+                    );
+                  })}
+                </select>
+              </label>
+            </div>
+          </div>
+
           <select
             value={selectedSport}
             onChange={handleSportChange}
@@ -257,7 +314,7 @@ export default function HomePage() {
           </div>
         ) : (
           <div className="no-fields-message">
-            ยังไม่มีสนาม <strong>{selectedSportName}</strong> สำหรับกีฬานี้
+            ยังไม่มีสนาม <strong>{selectedSportName}</strong>
           </div>
         )}
       </div>

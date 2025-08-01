@@ -563,7 +563,7 @@ export default function CheckFieldDetail() {
                 <div
                   key={sub.sub_field_id}
                   className="sub-field-card-profile"
-                  onClick={() => router.push(`/calendar/${sub.sub_field_id}`)}
+                  onClick={() => router.push(`/booking/${sub.sub_field_id}`)}
                 >
                   <p>
                     <strong>ชื่อสนาม:</strong> {sub.sub_field_name}
@@ -1109,7 +1109,7 @@ export default function CheckFieldDetail() {
                       key={sub.sub_field_id}
                       className="sub-field-card-profile-overlay"
                       onClick={() =>
-                        router.push(`/calendar/${sub.sub_field_id}`)
+                        router.push(`/booking/${sub.sub_field_id}`)
                       }
                     >
                       <p>

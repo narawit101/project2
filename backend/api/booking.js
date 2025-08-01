@@ -683,8 +683,8 @@ module.exports = function (io) {
       // ส่งกลับ user + bookings แม้จะไม่มี booking ก็มีชื่อ
       res.status(200).json({
         success: true,
-        user: userInfo, // ✅ ชื่อผู้ใช้
-        data: bookingResult.rows, // ✅ การจอง (อาจว่าง)
+        user: userInfo, // ชื่อผู้ใช้
+        data: bookingResult.rows, //การจอง (อาจว่าง)
       });
     } catch (error) {
       console.error("Error fetching bookings:", error);

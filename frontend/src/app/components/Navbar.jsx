@@ -61,9 +61,9 @@ export default function Navbar() {
         <img
           src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926494/logo2_jxtkqq.png"
           alt="Sport-Hub Logo"
-          width="110"
-          height="110"
-          style={{ objectFit: "contain" }}
+          width="100"
+          height="70"
+          style={{ objectFit: "cover" }}
         />
       </Link>
 
