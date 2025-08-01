@@ -70,7 +70,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const fetchApprovedFields = async () => {
-      // setDataLoading(true);
+      setDataLoading(true);
       try {
         const queryParams = new URLSearchParams();
         if (selectedSport) queryParams.append("sport_id", selectedSport);
