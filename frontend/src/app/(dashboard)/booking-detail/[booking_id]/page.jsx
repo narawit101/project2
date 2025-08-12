@@ -144,10 +144,6 @@ export default function BookingDetail() {
       if (res.ok) {
         setMybooking(data.data);
         console.log(" Booking Data:", data.data);
-      } else {
-        console.log("Booking fetch error:", data.error);
-        setMessage(data.error);
-        setMessageType("error");
       }
     } catch (error) {
       console.error("Fetch error:", error);
