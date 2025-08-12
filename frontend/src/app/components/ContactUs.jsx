@@ -45,8 +45,6 @@ export default function Contact() {
 
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
-
       const res = await fetch(`${API_URL}/users/contact-admin`, {
         method: "POST",
         headers: {
@@ -100,20 +98,6 @@ export default function Contact() {
       return () => clearTimeout(timer);
     }
   }, [message]);
-
-  // if (startProcessLoad)
-  //   return (
-  //     <div className="loading-overlay">
-  //       <div className="loading-spinner"></div>
-  //     </div>
-  //   );
-
-  // if (isLoading)
-  //   return (
-  //     <div className="load">
-  //       <span className="spinner"></span>
-  //     </div>
-  //   );
 
   return (
     <>
@@ -178,7 +162,6 @@ export default function Contact() {
               )}
             </button>
             {!canRequest && <p>กรุณารอ {timer} วินาทีก่อนส่งข้อความ</p>}
-            {/* <p> (OTP มีเวลา 5 นาที ถ้าหมดต้องกดขอใหม่) </p> */}
           </div>
         </form>
       </div>

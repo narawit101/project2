@@ -11,11 +11,10 @@ export default function Mybooking() {
   const [filters, setFilters] = useState({ date: "", status: "" });
   const router = useRouter();
   const socketRef = useRef(null);
-  const [message, setMessage] = useState(""); // State for messages
-  const [messageType, setMessageType] = useState(""); // State for message type (error, success)
+  const [message, setMessage] = useState(""); 
+  const [messageType, setMessageType] = useState(""); 
   const [userName, setUserName] = useState("");
   const [userInfo, setUserInfo] = useState("");
-  const [bookingId, setBookingId] = useState("");
   const [dataLoading, setDataLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -56,7 +55,7 @@ export default function Mybooking() {
 
       const data = await res.json();
 
-      if (data.success) {
+      if (res.ok) {
         setMybooking(data.data);
         setUserName(data.user?.user_name || "");
         setUserInfo(
@@ -93,12 +92,12 @@ export default function Mybooking() {
     const socket = socketRef.current;
 
     socket.on("connect", () => {
-      console.log("🔌 Socket connected:", socket.id);
+      console.log("Socket connected:", socket.id);
     });
 
     socket.on("slot_booked", () => {
       console.log("slot_booked → reload my-bookings");
-      fetchData(); // โหลดข้อมูลใหม่เมื่อมีคนจอง
+      fetchData(); 
     });
 
     socket.on("connect_error", (err) => {
@@ -177,7 +176,7 @@ export default function Mybooking() {
   );
 
   const getPaginationRange = (current, total) => {
-    const delta = 2; // จำนวนหน้าที่แสดงก่อน/หลังหน้าปัจจุบัน
+    const delta = 2; 
     const range = [];
     const rangeWithDots = [];
     let l;
@@ -314,14 +313,13 @@ export default function Mybooking() {
                         </div>
                       )}
                     </div>
+
                     <div className="compact-price-box-order">
-                      {/* กิจกรรม */}
                       <div className="line-item-order">
                         <span>กิจกรรม:</span>
                         <span>{item.activity}</span>
                       </div>
 
-                      {/* สนาม */}
                       <div className="line-item-order">
                         <span>ราคาสนาม:</span>
                         <span>
@@ -335,7 +333,6 @@ export default function Mybooking() {
                         </span>
                       </div>
 
-                      {/* สิ่งอำนวยความสะดวก */}
                       {Array.isArray(item.facilities) &&
                         item.facilities.length > 0 && (
                           <div className="line-item-order">
@@ -352,7 +349,6 @@ export default function Mybooking() {
 
                       <hr className="divider-order" />
 
-                      {/* รวมที่ต้องจ่าย (ไม่รวมมัดจำ) */}
                       <div className="line-item-order remaining">
                         <span className="total-remaining-order">
                           ยอดคงเหลือ:
@@ -362,15 +358,11 @@ export default function Mybooking() {
                         </span>
                       </div>
 
-                      {/* มัดจำ */}
                       <div className="line-item-order plus">
                         <span className="total_deposit-order">มัดจำ:</span>
                         <span>+{item.price_deposit} บาท</span>
                       </div>
-
                       <hr className="divider-order" />
-
-                      {/* สุทธิทั้งหมด */}
                       <div className="line-item-order total">
                         <span>สุทธิ:</span>
                         <span>{item.total_price} บาท</span>

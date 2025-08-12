@@ -6,9 +6,6 @@ module.exports = function (io) {
   const { Resend } = require("resend");
   const resend = new Resend(process.env.Resend_API);
   const multer = require("multer");
-  // const path = require("path");
-  // const fs = require("fs");
-  // const { error } = require("console");
   const cron = require("node-cron");
   const authMiddleware = require("../middlewares/auth");
   const { CloudinaryStorage } = require("multer-storage-cloudinary");
@@ -20,7 +17,7 @@ module.exports = function (io) {
 
   const LimiterBookingsRequest = rateLimit({
     windowMs: 10 * 60 * 1000,
-    max: 10, // จำกัดสูงสุด 10 ครั้งใน 10 นาที
+    max: 10,
     standardHeaders: true,
     legacyHeaders: false,
 
@@ -48,13 +45,13 @@ module.exports = function (io) {
     cloudinary: cloudinary,
     params: async (req, file) => {
       let folder = "";
-      let resourceType = "auto"; // ค่าเริ่มต้น
-      let format = undefined; // ปล่อยให้ Cloudinary จัดการ
+      let resourceType = "auto";
+      let format = undefined;
 
       if (file.fieldname === "deposit_slip") {
-        folder = "uploads/images/slip/deposit_slip"; // กำหนดโฟลเดอร์สำหรับไฟล์ deposit_slip
+        folder = "uploads/images/slip/deposit_slip";
       } else if (file.fieldname === "total_slip") {
-        folder = "uploads/images/slip/total_slip"; // โฟลเดอร์สำหรับรูปภาพ
+        folder = "uploads/images/slip/total_slip";
       }
 
       const config = {
@@ -63,16 +60,14 @@ module.exports = function (io) {
         public_id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       };
 
-      // เพิ่ม format เฉพาะเมื่อจำเป็น
       if (format) {
         config.format = format;
       }
 
-      // เพิ่มการ optimize สำหรับรูปภาพ
       if (resourceType === "image") {
         config.transformation = [
-          { quality: "auto:good" }, // ปรับคุณภาพอัตโนมัติ
-          { fetch_format: "auto" }, // เลือกฟอร์แมตที่เหมาะสม
+          { quality: "auto:good" },
+          { fetch_format: "auto" },
         ];
       }
 
@@ -122,11 +117,8 @@ module.exports = function (io) {
   cron.schedule(
     "*/5 * * * *",
     async () => {
-      const now = DateTime.now().setZone("Asia/Bangkok"); // เวลาไทย
+      const now = DateTime.now().setZone("Asia/Bangkok");
       const todayStr = now.toFormat("yyyy-MM-dd");
-      // const offsetMs = 7 * 60 * 60 * 1000; // 7 ชั่วโมง (ms)
-      // const nowPlus7 = new Date(now.getTime() + offsetMs);
-      // console.log("Time +7", now);
       console.log(" CRON WORKING", now.toISO());
 
       try {
@@ -145,15 +137,10 @@ module.exports = function (io) {
 
         for (const booking of result.rows) {
           try {
-            // const rawTime = booking.start_time;
-            // const datetimeStr = `${todayStr}T${rawTime}`;
-
             const startTime = DateTime.fromISO(
               `${todayStr}T${booking.start_time}`,
               { zone: "Asia/Bangkok" }
             );
-            // const nowTime = nowPlus7;
-
             const diffMinutes = startTime
               .diff(now, "minutes")
               .toObject().minutes;
@@ -373,10 +360,6 @@ module.exports = function (io) {
           status,
         } = JSON.parse(req.body.data);
 
-        // if (req.files["deposit_slip"]?.length > 0) {
-        //   depositSlip = req.files["deposit_slip"][0].path;
-        // }
-
         if (
           !fieldId ||
           !userId ||
@@ -435,7 +418,6 @@ module.exports = function (io) {
           });
         }
 
-        // Insert bookings
         const bookingResult = await client.query(
           `INSERT INTO bookings (field_id, user_id, sub_field_id, booking_date, start_time, end_time, total_hours, total_price, pay_method, total_remaining, activity, status, start_date, end_date, selected_slots)
    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING booking_id`,
@@ -460,7 +442,6 @@ module.exports = function (io) {
 
         const bookingId = bookingResult.rows[0].booking_id;
 
-        // insert facility
         for (const facility of selectedFacilities) {
           await client.query(
             `INSERT INTO booking_fac (booking_id, field_fac_id, fac_name) 
@@ -468,14 +449,6 @@ module.exports = function (io) {
             [bookingId, facility.field_fac_id, facility.fac_name]
           );
         }
-
-        // // เชื่อมต่อกับ payment
-        // if (depositSlip) {
-        //   const paymentResult = await client.query(
-        //     `INSERT INTO payment (booking_id, deposit_slip) VALUES ($1, $2) RETURNING payment_id`,
-        //     [bookingId, depositSlip]
-        //   );
-        // }
 
         if (bookingResult.rows.length > 0) {
           const data = await client.query(
@@ -555,9 +528,7 @@ module.exports = function (io) {
         }
 
         console.log("Booking saved successfully");
-        res
-          .status(200)
-          .json({ success: true, message: "Booking saved successfully" });
+        res.status(200).json({ message: "Booking saved successfully" });
       } catch (error) {
         await client.query("ROLLBACK");
         console.error("Error saving booking:", error);
@@ -591,7 +562,6 @@ module.exports = function (io) {
         client.release();
 
         res.status(200).json({
-          success: true,
           data: result.rows,
         });
       } catch (error) {
@@ -606,7 +576,6 @@ module.exports = function (io) {
     const { date, status } = req.query;
 
     try {
-      // 1. ดึงข้อมูลผู้ใช้ก่อน
       const userResult = await pool.query(
         `SELECT user_name, first_name, last_name FROM users WHERE user_id = $1`,
         [user_id]
@@ -680,11 +649,9 @@ module.exports = function (io) {
 
       const bookingResult = await pool.query(query, values);
 
-      // ส่งกลับ user + bookings แม้จะไม่มี booking ก็มีชื่อ
       res.status(200).json({
-        success: true,
-        user: userInfo, // ชื่อผู้ใช้
-        data: bookingResult.rows, //การจอง (อาจว่าง)
+        user: userInfo,
+        data: bookingResult.rows,
       });
     } catch (error) {
       console.error("Error fetching bookings:", error);
@@ -695,16 +662,14 @@ module.exports = function (io) {
     }
   });
 
-  // แก้ไข API Route สำหรับรองรับ Date Range Filter
   router.get("/my-orders/:field_id", authMiddleware, async (req, res) => {
     const { field_id } = req.params;
-    // แก้ไขรับ startDate และ endDate แทน date
+
     const { startDate, endDate, status, bookingDate } = req.query;
     const user_id = req.user.user_id;
     const user_role = req.user.role;
 
     try {
-      // 1. ถ้าไม่ใช่ admin → ตรวจสอบว่า user นี้เป็นเจ้าของสนาม
       const fieldQuery = await pool.query(
         `SELECT user_id, field_name, status AS field_status FROM field WHERE field_id = $1`,
         [field_id]
@@ -770,20 +735,15 @@ WHERE b.field_id = $1
         query += ` AND b.booking_date= $${paramIndex}`;
         values.push(bookingDate);
         paramIndex++;
-      }
-      // แก้ไขการกรองวันที่แบบช่วง
-      else if (startDate && endDate) {
-        // กรองแบบช่วงวันที่
+      } else if (startDate && endDate) {
         query += ` AND b.start_date BETWEEN $${paramIndex} AND $${paramIndex + 1}`;
         values.push(startDate, endDate);
         paramIndex += 2;
       } else if (startDate) {
-        // กรองตั้งแต่วันที่เริ่มต้นขึ้นไป
         query += ` AND b.start_date >= $${paramIndex}`;
         values.push(startDate);
         paramIndex++;
       } else if (endDate) {
-        // กรองจนถึงวันที่สิ้นสุด
         query += ` AND b.start_date <= $${paramIndex}`;
         values.push(endDate);
         paramIndex++;
@@ -799,7 +759,6 @@ WHERE b.field_id = $1
 
       const result = await pool.query(query, values);
 
-      // คำนวณสถิติเพิ่มเติมสำหรับรายงาน
       const stats = {
         totalBookings: result.rows.length,
         statusCounts: {
@@ -812,13 +771,9 @@ WHERE b.field_id = $1
         totalRevenue: result.rows
           .filter((row) => row.status === "approved")
           .reduce((sum, row) => sum + parseFloat(row.total_price || 0), 0),
-        // totalDeposit: result.rows
-        //   .filter(row => row.status === 'approved')
-        //   .reduce((sum, row) => sum + parseFloat(row.price_deposit || 0), 0)
       };
 
       res.status(200).json({
-        success: true,
         data: result.rows,
         fieldInfo: {
           field_name: field.field_name,
@@ -878,13 +833,13 @@ WHERE b.field_id = $1
   b.selected_slots,
   p.deposit_slip,
   p.total_slip,
-  facs.facilities  -- ✅ เพิ่มตรงนี้
+  facs.facilities 
 FROM bookings b
 LEFT JOIN field f ON b.field_id = f.field_id
 LEFT JOIN sub_field sf ON b.sub_field_id = sf.sub_field_id
 LEFT JOIN users u ON u.user_id = b.user_id
 
--- ✅ JOIN ข้อมูลการชำระเงินล่าสุด
+
 LEFT JOIN LATERAL (
   SELECT deposit_slip, total_slip
   FROM payment
@@ -893,7 +848,7 @@ LEFT JOIN LATERAL (
   LIMIT 1
 ) p ON true
 
--- ✅ JOIN facilities แบบ LATERAL
+
 LEFT JOIN LATERAL (
   SELECT COALESCE(json_agg(jsonb_build_object(
     'field_fac_id', bf.field_fac_id,
@@ -932,7 +887,7 @@ LIMIT 1;
           });
         }
 
-        return res.status(200).json({ success: true, data: booking });
+        return res.status(200).json({ data: booking });
       } catch (error) {
         console.error("Error fetching booking detail:", error);
         return res.status(500).json({
@@ -966,28 +921,11 @@ LIMIT 1;
           [field.rows[0].field_id]
         );
 
-        // ✅ อัปเดตสถานะ และ updated_at ถ้า approved
         if (booking_status === "approved") {
           result = await pool.query(
             "UPDATE bookings SET status = $1, updated_at = $2 WHERE booking_id = $3 RETURNING *",
             [booking_status, updatedAtThai, booking_id]
           );
-
-          // if (filedData.rows[0].price_deposit > 0) {
-          //   const qrCodeData = promptpay(filedData.rows[0].number_bank, {
-          //     amount: filedData.rows[0].price_deposit,
-          //   });
-          //   const qrBase64 = await qrcode.toDataURL(qrCodeData);
-
-          //   // upload ไป Cloudinary
-          //   const uploadRes = await cloudinary.uploader.upload(qrBase64, {
-          //     folder: "qr_codes",
-          //     public_id: `qr_${booking_id}_${Date.now()}`,
-          //     overwrite: true,
-          //     resource_type: "image",
-          //   });
-          //   qrDeposit = uploadRes.secure_url; // ใช้ url นี้ใน <img src="...">
-          // }
         } else {
           result = await pool.query(
             "UPDATE bookings SET status = $1 WHERE booking_id = $2 RETURNING *",
@@ -1158,13 +1096,11 @@ LIMIT 1;
           }
         }
 
-        // ส่ง socket event แจ้งหน้าเว็บ
         req.io.emit("slot_booked", {
           bookingId: booking_id,
         });
 
         return res.status(200).json({
-          success: true,
           message: "อัปเดตสถานะสำเร็จ",
           data: booking,
         });
@@ -1186,7 +1122,6 @@ LIMIT 1;
       const { cancel_time } = req.body;
 
       try {
-        // ✅ ตรวจ cancel_time
         if (!cancel_time) {
           return res.status(400).json({
             status: 0,
@@ -1195,7 +1130,6 @@ LIMIT 1;
         }
 
         const now = DateTime.fromISO(cancel_time, { zone: "Asia/Bangkok" });
-        // 🔧 เปลี่ยนจาก isNaN(now.getTime()) เป็น !now.isValid
         if (!now.isValid) {
           return res.status(400).json({
             status: 0,
@@ -1206,7 +1140,6 @@ LIMIT 1;
         console.log(` ยกเลิก booking_id = ${booking_id}`);
         console.log(` เวลาที่กดปุ่ม cancel: ${now.toISO()}`);
 
-        // ✅ ดึงข้อมูลการจอง
         const fieldDataResult = await pool.query(
           `
         SELECT f.cancel_hours, b.start_date, b.start_time, b.end_time, f.field_name
@@ -1226,10 +1159,10 @@ LIMIT 1;
         }
 
         const formatDateToThai = (date) => {
-          if (!date) return "ไม่ทราบวันที่"; // กัน null/undefined
+          if (!date) return "ไม่ทราบวันที่";
 
           const parsedDate = new Date(date);
-          if (isNaN(parsedDate)) return "ไม่สามารถแปลงวันที่ได้"; // กัน Invalid Date
+          if (isNaN(parsedDate)) return "ไม่สามารถแปลงวันที่ได้";
 
           const options = { day: "numeric", month: "long", year: "numeric" };
           return new Intl.DateTimeFormat("th-TH", options).format(parsedDate);
@@ -1272,12 +1205,11 @@ LIMIT 1;
         const trimmedStartTime = start_time.slice(0, 5);
         const trimmedEndTime = end_time.slice(0, 5);
 
-        // รวมวันเวลา และแปลงเป็นเวลาประเทศไทย
         const startDateTime = DateTime.fromISO(
           `${startDateStr}T${trimmedStartTime}:00`,
           { zone: "Asia/Bangkok" }
         );
-        // เปลี่ยนจาก isNaN(startDateTime.getTime()) เป็น !startDateTime.isValid
+
         if (!startDateTime.isValid) {
           console.error(
             " Invalid startDateTime:",
@@ -1290,10 +1222,9 @@ LIMIT 1;
           });
         }
 
-        console.log("startDateStr:", startDateStr); // ควรเป็น 2025-06-02
-        console.log("start_time:", start_time); // ควรเป็น 19:00:00
+        console.log("startDateStr:", startDateStr);
+        console.log("start_time:", start_time);
 
-        // ถ้าไม่มีเวลายกเลิก → ยกเลิกได้ทันที
         if (cancel_hours === null) {
           const paymentResult = await pool.query(
             `SELECT deposit_slip, total_slip FROM payment WHERE booking_id = $1`,
@@ -1303,11 +1234,8 @@ LIMIT 1;
           if (paymentResult.rowCount > 0) {
             const { deposit_slip, total_slip } = paymentResult.rows[0];
 
-            // ลบ deposit_slip ถ้ามี
             if (deposit_slip) await deleteCloudinaryFile(deposit_slip);
             if (total_slip) await deleteCloudinaryFile(total_slip);
-
-            // ลบ row จาก payment
             await pool.query(`DELETE FROM payment WHERE booking_id = $1`, [
               booking_id,
             ]);
@@ -1345,7 +1273,6 @@ LIMIT 1;
             if (deposit_slip) await deleteCloudinaryFile(deposit_slip);
             if (total_slip) await deleteCloudinaryFile(total_slip);
 
-            // ลบ row จาก payment
             await pool.query(`DELETE FROM payment WHERE booking_id = $1`, [
               booking_id,
             ]);
@@ -1364,14 +1291,12 @@ LIMIT 1;
           }
 
           return res.status(200).json({
-            status: 1,
             message: `การจองสนาม ${field_name} เวลา ${trimmedStartTime} - ${trimmedEndTime}  วันที่ ${formatDateToThai(startDateStr)} ถูกยกเลิกเรียบร้อย`,
             cancelDeadline: cancelDeadline.toISO(),
             now: now.toISO(),
           });
         } else {
           return res.status(400).json({
-            status: 0,
             message: `ไม่สามารถยกเลิกได้ เลยเวลาการยกเลิกภายใน ${cancel_hours} ชม. ก่อนจะเริ่ม`,
             field: field_name,
             startDateTime: startDateTime.toISO(),
@@ -1383,7 +1308,6 @@ LIMIT 1;
         console.error(" Error while canceling booking:", error);
 
         return res.status(500).json({
-          status: 0,
           message: "Internal Server Error",
           error: error.message,
           booking_id,
@@ -1416,7 +1340,6 @@ LIMIT 1;
           });
         }
 
-        // UPSERT → มี booking_id อยู่แล้วให้ update, ไม่มีให้ insert
         const result = await client.query(
           `
         INSERT INTO payment (booking_id, deposit_slip, total_slip)
@@ -1430,11 +1353,9 @@ LIMIT 1;
           [bookingId, depositSlip, totalSlip]
         );
 
-        // Emit socket
         if (req.io) req.io.emit("slot_booked", { bookingId });
 
         res.json({
-          success: true,
           message: "Upload success",
           filePath: { depositSlip, totalSlip },
           payment_id: result.rows[0].payment_id,
@@ -1442,7 +1363,6 @@ LIMIT 1;
       } catch (error) {
         console.error("Upload Error:", error);
         res.status(500).json({
-          success: false,
           message: "Server error",
           error: error.message,
         });
@@ -1469,8 +1389,6 @@ LIMIT 1;
             .status(400)
             .json({ success: false, message: "ต้องแนบสลิป" });
         }
-
-        // ตรวจสอบว่ามี row หรือยัง
         const check = await client.query(
           `SELECT * FROM payment WHERE booking_id = $1`,
           [bookingId]
@@ -1478,13 +1396,11 @@ LIMIT 1;
 
         let result;
         if (check.rows.length > 0) {
-          // มีอยู่แล้ว → update
           result = await client.query(
             `UPDATE payment SET total_slip = $1 WHERE booking_id = $2 RETURNING *`,
             [totalSlip, bookingId]
           );
         } else {
-          // ยังไม่มี → insert ใหม่
           result = await client.query(
             `INSERT INTO payment (booking_id, total_slip) VALUES ($1, $2) RETURNING *`,
             [bookingId, totalSlip]
@@ -1574,7 +1490,6 @@ LIMIT 1;
         if (req.io) req.io.emit("slot_booked", { bookingId });
 
         res.json({
-          success: true,
           message: "Upload success",
           filePath: { totalSlip },
           payment_id: result.rows[0].payment_id,
@@ -1582,7 +1497,6 @@ LIMIT 1;
       } catch (error) {
         console.error("Upload Error:", error);
         res.status(500).json({
-          success: false,
           message: "Server error",
           error: error.message,
         });
@@ -1637,13 +1551,7 @@ LIMIT 1;
 
       const qr = await qrcode.toDataURL(qrCodeData);
       console.log("QR Code generated:", qr);
-
-      // Optional: Save QR code to database or perform other actions here
-
-      // Respond with the QR code
-
       res.status(200).json({
-        status: true,
         message: "QR code generated successfully",
         qrCode: qr,
       });

@@ -27,6 +27,14 @@ export default function Login() {
     }
   }, [user, isLoading, redirect]);
 
+  useEffect(() => {
+    const msg = sessionStorage.getItem("login_message");
+    if (msg) {
+      setMessage({ text: msg, type: "error" });
+      sessionStorage.removeItem("login_message");
+    }
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -36,7 +44,6 @@ export default function Login() {
     e.preventDefault();
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 100));
       const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -69,7 +76,7 @@ export default function Login() {
         setMessage({ text: "เข้าสู่ระบบสำเร็จ", type: "success" });
         const userData = await res.json();
         setUser(userData);
-        router.push("/");
+        router.push(redirect);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -78,16 +85,6 @@ export default function Login() {
       SetstartProcessLoad(false);
     }
   };
-
-  useEffect(() => {
-    if (message) {
-      const timer = setTimeout(() => {
-        setMessage("");
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [message]);
 
   return (
     <div className="login-container">
@@ -150,7 +147,6 @@ export default function Login() {
         </div>
       </form>
 
-      {/* แสดงข้อความที่ได้จาก setMessage */}
       {message.text && (
         <div className={`message ${message.type}`}>
           <div>{message.text}</div>

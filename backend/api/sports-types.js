@@ -3,7 +3,6 @@ const router = express.Router();
 const pool = require("../db");
 const authMiddleware = require("../middlewares/auth");
 
-// ดึงประเภทกีฬา
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM sports_types");
@@ -13,7 +12,6 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
-// เพิ่มประเภทกีฬาใหม่
 router.post("/add", authMiddleware, async (req, res) => {
   const { sport_name } = req.body;
 
@@ -21,7 +19,6 @@ router.post("/add", authMiddleware, async (req, res) => {
     return res.status(400).json({ error: "Sport name is required" });
   }
 
-  // ตรวจสอบชื่อประเภทกีฬาซ้ำ
   const existingSportType = await pool.query(
     "SELECT * FROM sports_types WHERE sport_name = $1",
     [sport_name]
@@ -42,7 +39,6 @@ router.post("/add", authMiddleware, async (req, res) => {
   }
 });
 
-// ลบประเภทกีฬา
 router.delete("/delete/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
 
@@ -62,7 +58,6 @@ router.delete("/delete/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// แก้ไขชื่อประเภทกีฬา
 router.put("/update/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { sport_name } = req.body;
@@ -71,7 +66,6 @@ router.put("/update/:id", authMiddleware, async (req, res) => {
     return res.status(400).json({ error: "Sport name is required" });
   }
 
-  // ตรวจสอบชื่อประเภทกีฬาซ้ำ
   const existingSportType = await pool.query(
     "SELECT * FROM sports_types WHERE sport_name = $1 AND sport_id != $2",
     [sport_name, id]

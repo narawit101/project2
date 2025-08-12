@@ -2,7 +2,6 @@
   --text-color: #03045e;
 }
 
-/* Modern Booking Table Styles */
 .table-stat {
   width: 100%;
   border-collapse: collapse;
@@ -123,7 +122,6 @@
   font-weight: 600;
 }
 
-/* Price styling */
 .table-stat tbody td:nth-child(4) {
   color: #333;
   text-align: center;
@@ -148,7 +146,6 @@
   text-align: center;
 }
 
-/* Rating styling */
 .table-stat tbody td:nth-child(10) {
   font-size: 13px;
   color: #f5ca0b;
@@ -158,14 +155,12 @@
 
 .table-stat tbody td:nth-child(9) span {
   display: inline-block;
-  /* background-color: #333; */
   padding: 4px 8px;
   border-radius: 12px;
   margin: 2px;
   font-size: 11px;
 }
 
-/* Comments styling */
 .table-stat tbody td:nth-child(11) {
   max-width: 200px;
   font-size: 12px;
@@ -256,14 +251,12 @@
   }
 }
 
-/* Empty state */
 .table-stat tbody tr.empty-row td {
   text-align: center;
   font-style: italic;
   padding: 40px 20px;
 }
 
-/* Print styles */
 @media print {
   .table-stat {
     box-shadow: none;

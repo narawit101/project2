@@ -48,7 +48,7 @@ router.get("/", async (req, res) => {
     );
 
     if (exactResult.rows.length > 0) {
-      return res.status(200).json({ success: true, data: exactResult.rows });
+      return res.status(200).json({ data: exactResult.rows });
     }
 
     const fuzzyResult = await pool.query(
@@ -90,7 +90,7 @@ router.get("/", async (req, res) => {
       [query]
     );
 
-    return res.status(200).json({ success: true, data: fuzzyResult.rows });
+    return res.status(200).json({ data: fuzzyResult.rows });
   } catch (error) {
     console.error("error", error);
     res.status(500).json({ success: false, error: "Server error" });

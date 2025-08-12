@@ -84,8 +84,6 @@ const CreatePost = ({ fieldId, onPostSuccess, setCurrentPage }) => {
     SetstartProcessLoad(true);
     try {
       const token = localStorage.getItem("auth_mobile_token");
-
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const response = await fetch(`${API_URL}/posts/post`, {
         method: "POST",
         credentials: "include",
@@ -99,7 +97,7 @@ const CreatePost = ({ fieldId, onPostSuccess, setCurrentPage }) => {
       if (response.ok) {
         const data = await response.json();
         onPostSuccess(data.post);
-        setCurrentPage(1); // Reset to the first page after posting
+        setCurrentPage(1); 
         setMessage("โพสต์เรียบร้อย");
         setMessageType("success");
         setTitle("");

@@ -11,12 +11,12 @@ export default function RegisterFieldForm() {
   const [facilities, setFacilities] = useState([]);
   const [newFacility, setNewFacility] = useState("");
   const [showNewFacilityInput, setShowNewFacilityInput] = useState(false);
-  const [message, setMessage] = useState(""); // State สำหรับข้อความ
-  const [messageType, setMessageType] = useState(""); // State สำหรับประเภทของข้อความ (error, success)
-  const [showConfirmModal, setShowConfirmModal] = useState(false); // สำหรับการแสดงโมดอล
-  const [facilityToDelete, setFacilityToDelete] = useState(null); // เก็บข้อมูลสิ่งอำนวยความสะดวกที่จะลบ
-  const [editingFacility, setEditingFacility] = useState(null); // สำหรับเก็บข้อมูลสิ่งอำนวยความสะดวกที่กำลังแก้ไข
-  const [newFacilityName, setNewFacilityName] = useState(""); // สำหรับเก็บชื่อใหม่ของสิ่งอำนวยความสะดวก
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [facilityToDelete, setFacilityToDelete] = useState(null);
+  const [editingFacility, setEditingFacility] = useState(null);
+  const [newFacilityName, setNewFacilityName] = useState("");
   const { user, isLoading } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
@@ -45,7 +45,6 @@ export default function RegisterFieldForm() {
       const token = localStorage.getItem("auth_mobile_token");
       setDataLoading(true);
       try {
-        // await new Promise((resolve) => setTimeout(resolve, 200));
         const res = await fetch(`${API_URL}/facilities`, {
           credentials: "include",
           headers: {
@@ -67,7 +66,7 @@ export default function RegisterFieldForm() {
         setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
         setMessageType("error");
       } finally {
-        setDataLoading(false); // โหลดเสร็จ ไม่ว่าผลจะสำเร็จหรือ error
+        setDataLoading(false);
       }
     };
 
@@ -84,7 +83,6 @@ export default function RegisterFieldForm() {
     if (!newFacility.trim()) return;
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const res = await fetch(`${API_URL}/facilities/add`, {
         method: "POST",
         headers: {
@@ -128,8 +126,6 @@ export default function RegisterFieldForm() {
     if (!facilityToDelete) return;
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
-
       const res = await fetch(
         `${API_URL}/facilities/delete/${facilityToDelete}`,
         {
@@ -153,12 +149,12 @@ export default function RegisterFieldForm() {
 
       setFacilities(
         facilities.filter((fac) => fac.fac_id !== facilityToDelete)
-      ); // ลบสิ่งอำนวยความสะดวกจาก state
-      setShowConfirmModal(false); // ซ่อนโมดอล
+      );
+      setShowConfirmModal(false);
       setMessage("ลบสิ่งอำนวยคความสะดวกเรียบร้อย");
       setMessageType("success");
     } catch (err) {
-      setShowConfirmModal(false); // ซ่อนโมดอล
+      setShowConfirmModal(false);
       console.error("Fetch error:", err);
       setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
       setMessageType("error");
@@ -168,7 +164,6 @@ export default function RegisterFieldForm() {
     }
   };
 
-  // ฟังก์ชันแก้ไขชื่อสิ่งอำนวยความสะดวก
   const editFacility = async () => {
     const token = localStorage.getItem("auth_mobile_token");
 
@@ -176,7 +171,6 @@ export default function RegisterFieldForm() {
     SetstartProcessLoad(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const res = await fetch(
         `${API_URL}/facilities/update/${editingFacility.fac_id}`,
         {
@@ -304,50 +298,50 @@ export default function RegisterFieldForm() {
               <div className="loading-data-spinner"></div>
             </div>
           )}
-             {editingFacility && (
-          <div className="edit-form-fac">
-            <input
-              type="text"
-              maxLength={50}
-              placeholder="ชื่อสิ่งอำนวยความสะดวก"
-              value={newFacilityName}
-              onChange={(e) => setNewFacilityName(e.target.value)}
-            />
-            <div className="form-actions-admin">
-              <button
-                className="savebtn-admin"
-                style={{
-                  cursor: startProcessLoad ? "not-allowed" : "pointer",
-                }}
-                disabled={startProcessLoad}
-                onClick={editFacility}
-              >
-                {startProcessLoad ? (
-                  <span className="dot-loading">
-                    <span className="dot one">●</span>
-                    <span className="dot two">●</span>
-                    <span className="dot three">●</span>
-                  </span>
-                ) : (
-                  "บันทึก"
-                )}
-              </button>
-              <button
-                className="cancelbtn-admin"
-                style={{
-                  cursor: startProcessLoad ? "not-allowed" : "pointer",
-                }}
-                disabled={startProcessLoad}
-                onClick={() => {
-                  setEditingFacility(null);
-                  setNewFacilityName("");
-                }}
-              >
-                ยกเลิก
-              </button>
+          {editingFacility && (
+            <div className="edit-form-fac">
+              <input
+                type="text"
+                maxLength={50}
+                placeholder="ชื่อสิ่งอำนวยความสะดวก"
+                value={newFacilityName}
+                onChange={(e) => setNewFacilityName(e.target.value)}
+              />
+              <div className="form-actions-admin">
+                <button
+                  className="savebtn-admin"
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
+                  onClick={editFacility}
+                >
+                  {startProcessLoad ? (
+                    <span className="dot-loading">
+                      <span className="dot one">●</span>
+                      <span className="dot two">●</span>
+                      <span className="dot three">●</span>
+                    </span>
+                  ) : (
+                    "บันทึก"
+                  )}
+                </button>
+                <button
+                  className="cancelbtn-admin"
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
+                  onClick={() => {
+                    setEditingFacility(null);
+                    setNewFacilityName("");
+                  }}
+                >
+                  ยกเลิก
+                </button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
         </div>
         <div className="factcon-admin">
           {currentFacilities.length > 0 ? (
@@ -395,8 +389,6 @@ export default function RegisterFieldForm() {
             )
           )}
         </div>
-
-     
 
         {showConfirmModal && (
           <div className="confirm-modal-type">

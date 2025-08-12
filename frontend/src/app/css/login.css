@@ -157,12 +157,9 @@
 
 .reset-password a:hover {
   background-color: #cdcccc;
-  /* color: white; */
   cursor: pointer;
 }
 
 .login-button[disabled] {
-  /* background: #7275be; */
   cursor: not-allowed;
-  /* opacity: 0.8; */
 }

@@ -90,8 +90,6 @@
   gap: 12px;
   font-size: 16px;
   color: #333;
-  /* max-width: 600px; */
-  /* margin: 20px auto; */
 }
 
 .info-row {
@@ -102,7 +100,7 @@
 }
 
 .info-row p {
-  flex: 1 1 45%; /* 2 ช่องต่อแถว */
+  flex: 1 1 45%; 
   margin: 0;
   background: #f9f9f9;
   padding: 10px 14px;

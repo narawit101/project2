@@ -27,7 +27,6 @@
   font-weight: 600;
 }
 
-/* Form Grid Layout */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -71,7 +70,6 @@
   font-size: 1.1rem;
 }
 
-/* Image Section */
 .image-container {
   grid-column: 1 / -1;
   text-align: center;
@@ -88,7 +86,6 @@
   box-shadow: var(--shadow);
 }
 
-/* Information Grid */
 .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -117,7 +114,6 @@
   color: #333;
 }
 
-/* Document Section */
 .document-container {
   background: var(--secondary-bg);
   border: 2px solid var(--border-color);
@@ -143,7 +139,6 @@
   text-decoration: none;
 }
 
-/* Sub Fields Section */
 .sub-fields-container-check-field {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -188,7 +183,6 @@
   font-size: 1.1rem;
 }
 
-/* Field Facilities */
 .field-facilities-check-field {
   background: var(--secondary-bg);
   border: 1px solid var(--border-color);
@@ -234,7 +228,6 @@
   margin: 0;
 }
 
-/* Add-ons Section */
 .add-ons-container-check-field {
   background: #e3f2fd;
   border: 1px solid #bbdefb;
@@ -251,7 +244,6 @@
   margin-bottom: 0.5rem;
 }
 
-/* Status Buttons */
 .status-buttons {
   display: flex;
   gap: 1rem;
@@ -320,7 +312,6 @@
   margin: 1rem 0;
 }
 
-/* Modal Styles */
 .confirm-modal-check-field {
   backdrop-filter: blur(3px);
   position: fixed;

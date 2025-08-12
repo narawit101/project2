@@ -29,7 +29,6 @@
   font-weight: 600;
 }
 
-/* Input Groups */
 .input-group-editfield {
   margin: 10px auto;
 }
@@ -46,7 +45,6 @@
 }
 
 .input-group-editfield label {
-  /* display: inline-block; */
   color: var(--text-color);
   font-size: 1.1rem;
   font-weight: 600;
@@ -84,7 +82,6 @@
   line-height: 1.5;
 }
 
-/* Form Controls */
 .editfield-container textarea,
 .editfield-container select {
   width: 100%;
@@ -141,13 +138,11 @@
   box-shadow: 0 0 0 3px rgba(3, 4, 94, 0.1);
 }
 
-/* Image Preview */
 .preview-container-editfield {
   width: 300px;
   height: 300px;
   max-width: 100%;
   border-radius: 50%;
-  /* overflow: hidden; */
   display: flex;
   flex-direction: column;
   margin: 1rem auto;
@@ -161,7 +156,6 @@
   object-fit: cover;
 }
 
-/* Document Container */
 .document-container-editfield {
   background: var(--secondary-bg);
   border: 2px solid var(--border-color);
@@ -176,7 +170,6 @@
   border-color: var(--text-color);
 }
 
-/* Field Facilities */
 .field-facilities {
   background: var(--secondary-bg);
   border: 1px solid var(--border-color);
@@ -274,7 +267,6 @@
   font-weight: 600;
 }
 
-/* Sub Fields */
 .sub-fields-container-editfield {
   max-height: 500px;
   overflow-y: auto;
@@ -324,7 +316,6 @@
   box-shadow: 0 0 0 3px rgba(3, 4, 94, 0.1);
 }
 
-/* Add-ons Container */
 .add-ons-container-editfield {
   background: #e3f2fd;
   border: 1px solid #bbdefb;
@@ -353,7 +344,6 @@
   border: 1px solid #bbdefb;
 }
 
-/* Forms */
 .add-addon-form-editfield,
 .subfield-form-editfield {
   width: 1000px;
@@ -394,7 +384,6 @@
   margin-top: 1rem;
 }
 
-/* Buttons */
 .editfield-container button {
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -484,7 +473,6 @@
   margin: 1rem 0;
 }
 
-/* Button Groups */
 .button-group-editfield {
   display: flex;
   gap: 1rem;
@@ -494,7 +482,6 @@
   margin: 10px auto;
 }
 
-/* Modal */
 .modal-overlay-editfield {
   backdrop-filter: blur(3px);
   position: fixed;

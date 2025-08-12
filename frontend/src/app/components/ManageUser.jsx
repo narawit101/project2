@@ -10,10 +10,10 @@ export default function AdminManager() {
   const [selectedUser, setSelectedUser] = useState(null);
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
-  const [message, setMessage] = useState(""); // State สำหรับข้อความ
-  const [messageType, setMessageType] = useState(""); // State สำหรับประเภทของข้อความ (error, success)
-  const [showDeleteUserModal, setShowDeleteUserModal] = useState(false); // สำหรับโมดอลลบผู้ใช้
-  const [userIdToDelete, setUserIdToDelete] = useState(null); // เก็บ ID ของผู้ใช้ที่ต้องการลบ
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
+  const [showDeleteUserModal, setShowDeleteUserModal] = useState(false);
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
   const { user, isLoading } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
@@ -41,9 +41,7 @@ export default function AdminManager() {
     const token = localStorage.getItem("auth_mobile_token");
 
     setDataLoading(true);
-    // await new Promise((resolve) => setTimeout(resolve, 200));
     if (user?.role !== "admin") return;
-    setDataLoading(true);
     try {
       const response = await fetch(`${API_URL}/users`, {
         credentials: "include",
@@ -89,7 +87,6 @@ export default function AdminManager() {
     }
   }, [message]);
 
-  //โมดอล ลบผู้ใช้
   const DeleteUserModal = ({ userId, onDelete, onClose }) => (
     <div className="confirm-modal-user">
       <div className="modal-content-user">
@@ -128,15 +125,13 @@ export default function AdminManager() {
     </div>
   );
 
-  // ฟังก์ชันเปิดโมดอลการลบผู้ใช้
   const openDeleteUserModal = (userId) => {
     setUserIdToDelete(userId);
-    setShowDeleteUserModal(true); // เปิดโมดอล
+    setShowDeleteUserModal(true);
   };
 
-  // ฟังก์ชันปิดโมดอล
   const closeDeleteModal = () => {
-    setShowDeleteUserModal(false); // ปิดโมดอลลบผู้ใช้
+    setShowDeleteUserModal(false);
   };
 
   const handleDelete = async (id) => {
@@ -144,7 +139,6 @@ export default function AdminManager() {
 
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const response = await fetch(`${API_URL}/users/${id}`, {
         method: "DELETE",
         headers: {
@@ -164,11 +158,10 @@ export default function AdminManager() {
       setMessage("ผู้ใช้ถูกลบเรียบร้อย");
       setMessageType("success");
     } catch (error) {
-      // console.error("Error deleting user:", error);
       setMessage(`${error.message}`);
       setMessageType("error");
     } finally {
-      closeDeleteModal(); // ปิดโมดอลหลังจากการลบเสร็จ
+      closeDeleteModal();
       SetstartProcessLoad(false);
     }
   };
@@ -180,7 +173,6 @@ export default function AdminManager() {
 
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const response = await fetch(`${API_URL}/users/${selectedUser.user_id}`, {
         method: "PUT",
         headers: {
@@ -194,6 +186,7 @@ export default function AdminManager() {
       if (!response.ok) {
         throw new Error("ไม่สามารถแก้ไขได้");
       }
+
       setUsers(
         users.map((user) =>
           user.user_id === selectedUser.user_id ? selectedUser : user
@@ -227,7 +220,7 @@ export default function AdminManager() {
   const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
 
   const getPaginationRange = (current, total) => {
-    const delta = 2; // จำนวนหน้าที่แสดงก่อน/หลังหน้าปัจจุบัน
+    const delta = 2;
     const range = [];
     const rangeWithDots = [];
     let l;
@@ -347,7 +340,7 @@ export default function AdminManager() {
             </tbody>
           </table>
         </div>
-        {/* ตารางสำหรับลูกค้า */}
+
         <div className="head-select-manager">
           <div className="head-refresh-manager">
             <h3 className="Head">ผู้ใช้ทั้งหมด</h3>
@@ -502,13 +495,13 @@ export default function AdminManager() {
         {selectedUser && (
           <div className="modal-manager">
             <div className="modal-content-manager">
-              <h3 className="Head">แก้ไขข้อมูลลูกค้า</h3>
+              <h3 className="Head">แก้ไขข้อมูลผู้ใช้</h3>
               <form onSubmit={handleUpdateUser}>
                 <label>ชื่อ:</label>
                 <input
                   type="text"
                   maxLength={50}
-                  value={selectedUser.first_name}
+                  value={selectedUser?.first_name}
                   onChange={(e) =>
                     setSelectedUser({
                       ...selectedUser,
@@ -520,7 +513,7 @@ export default function AdminManager() {
                 <input
                   type="text"
                   maxLength={50}
-                  value={selectedUser.last_name}
+                  value={selectedUser?.last_name}
                   onChange={(e) =>
                     setSelectedUser({
                       ...selectedUser,
@@ -530,7 +523,7 @@ export default function AdminManager() {
                 />
                 <label>สถานะบัญชี:</label>
                 <select
-                  value={selectedUser.status}
+                  value={selectedUser?.status}
                   onChange={(e) =>
                     setSelectedUser({
                       ...selectedUser,
@@ -543,7 +536,7 @@ export default function AdminManager() {
                 </select>
                 <label>บทบาท:</label>
                 <select
-                  value={selectedUser.role}
+                  value={selectedUser?.role}
                   onChange={(e) =>
                     setSelectedUser({
                       ...selectedUser,
@@ -560,10 +553,7 @@ export default function AdminManager() {
                 <input
                   readOnly
                   type="email"
-                  value={selectedUser.email}
-                  onChange={(e) =>
-                    setSelectedUser({ ...selectedUser, email: e.target.value })
-                  }
+                  value={selectedUser?.email}
                   style={{ cursor: "not-allowed" }}
                 />
                 <div className="modal-buttons">
@@ -602,12 +592,11 @@ export default function AdminManager() {
           </div>
         )}
 
-        {/* โมดอลยืนยันการลบผู้ใช้ */}
         {showDeleteUserModal && (
           <DeleteUserModal
             userId={userIdToDelete}
-            onDelete={handleDelete} // ฟังก์ชันลบผู้ใช้
-            onClose={closeDeleteModal} // ฟังก์ชันปิดโมดอล
+            onDelete={handleDelete}
+            onClose={closeDeleteModal}
           />
         )}
       </div>

@@ -8,17 +8,17 @@ import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 export default function RegisterFieldForm() {
   const router = useRouter("");
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const [showConfirmModal, setShowConfirmModal] = useState(false); // โมดอลยืนยันลบ
-  const [showEditModal, setShowEditModal] = useState(false); // โมดอลแก้ไข
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [sports, setSports] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
-  const [message, setMessage] = useState(""); // State สำหรับข้อความ
-  const [messageType, setMessageType] = useState(""); // State สำหรับประเภทของข้อความ (error, success)
-  const [editSport, setEditSport] = useState(null); // สำหรับเก็บข้อมูลประเภทกีฬาที่กำลังแก้ไข
-  const [newSportName, setNewSportName] = useState(""); // สำหรับเก็บชื่อใหม่ของประเภทกีฬา
-  const [SportTypeToDelete, setSportTypeToDelete] = useState(null); // เก็บข้อมูลประเภทกีฬาที่จะลบ
-  const [showNewSportInput, setShowNewSportInput] = useState(false); // ฟอร์มสำหรับเพิ่มประเภทกีฬาใหม่
-  const [newSport, setNewSport] = useState(""); // ชื่อประเภทกีฬาที่จะเพิ่ม
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
+  const [editSport, setEditSport] = useState(null);
+  const [newSportName, setNewSportName] = useState("");
+  const [SportTypeToDelete, setSportTypeToDelete] = useState(null);
+  const [showNewSportInput, setShowNewSportInput] = useState(false);
+  const [newSport, setNewSport] = useState("");
   const { user, isLoading } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
@@ -48,7 +48,6 @@ export default function RegisterFieldForm() {
 
       setDataLoading(true);
       try {
-        // await new Promise((resolve) => setTimeout(resolve, 200));
         const res = await fetch(`${API_URL}/sports_types`, {
           credentials: "include",
           headers: {
@@ -79,14 +78,12 @@ export default function RegisterFieldForm() {
   const indexOfFirst = indexOfLast - sportTypePerPage;
   const currentsportType = sports.slice(indexOfFirst, indexOfLast);
 
-  // ฟังก์ชันเพิ่มประเภทกีฬาใหม่
   const addType = async () => {
     const token = localStorage.getItem("auth_mobile_token");
 
     if (!newSport.trim()) return;
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const res = await fetch(`${API_URL}/sports_types/add`, {
         method: "POST",
         headers: {
@@ -105,9 +102,9 @@ export default function RegisterFieldForm() {
         return;
       }
 
-      setSports([...sports, data]); // เพิ่มประเภทกีฬาใหม่ใน state
-      setNewSport(""); // รีเซ็ตชื่อประเภทกีฬา
-      setShowNewSportInput(false); // ซ่อนฟอร์มการเพิ่ม
+      setSports([...sports, data]); 
+      setNewSport(""); 
+      setShowNewSportInput(false); 
       setMessage("เพิ่มประเภทกีฬาสำเร็จ");
       setMessageType("success");
     } catch (err) {
@@ -119,14 +116,12 @@ export default function RegisterFieldForm() {
     }
   };
 
-  // ฟังก์ชันลบประเภทกีฬา
   const deleteSportType = async () => {
     const token = localStorage.getItem("auth_mobile_token");
 
     if (!SportTypeToDelete) return;
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const res = await fetch(
         `${API_URL}/sports_types/delete/${SportTypeToDelete}`,
         {
@@ -147,8 +142,8 @@ export default function RegisterFieldForm() {
         setMessageType("error");
         return;
       }
-      setSports(sports.filter((sport) => sport.sport_id !== SportTypeToDelete)); // ลบประเภทกีฬาจาก state
-      setShowConfirmModal(false); // ซ่อนโมดอล
+      setSports(sports.filter((sport) => sport.sport_id !== SportTypeToDelete)); 
+      setShowConfirmModal(false); 
       setMessage("ลบประเภทกีฬาสำเร็จ");
       setMessageType("success");
     } catch (err) {
@@ -160,14 +155,12 @@ export default function RegisterFieldForm() {
     }
   };
 
-  // ฟังก์ชันแก้ไขชื่อประเภทกีฬา
   const editSportType = async () => {
     const token = localStorage.getItem("auth_mobile_token");
 
     if (!newSportName.trim()) return;
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const res = await fetch(
         `${API_URL}/sports_types/update/${editSport.sport_id}`,
         {
@@ -184,7 +177,7 @@ export default function RegisterFieldForm() {
       const data = await res.json();
 
       if (data.error) {
-        setMessage(data.error); // แสดงข้อผิดพลาดหากชื่อซ้ำ
+        setMessage(data.error);
         setMessageType("error");
         return;
       }
@@ -196,9 +189,9 @@ export default function RegisterFieldForm() {
             : sport
         )
       );
-      setEditSport(null); // รีเซ็ตการแก้ไข
-      setNewSportName(""); // รีเซ็ตชื่อใหม่
-      setShowEditModal(false); // ปิดโมดอลแก้ไข
+      setEditSport(null);
+      setNewSportName("");
+      setShowEditModal(false);
       setMessage("แก้ไขประเภทกีฬาสำเร็จ");
       setMessageType("success");
     } catch (err) {

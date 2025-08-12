@@ -9,13 +9,13 @@ export default function ChangePassword() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState(""); // State สำหรับข้อความ
-  const [messageType, setMessageType] = useState(""); // State สำหรับประเภทของข้อความ (error, success)
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
   const { user, isLoading } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
-  usePreventLeave(startProcessLoad); 
+  usePreventLeave(startProcessLoad);
 
   useEffect(() => {
     if (isLoading) return;
@@ -44,7 +44,6 @@ export default function ChangePassword() {
       return;
     }
 
-    // ตรวจสอบรูปแบบรหัสผ่านที่แข็งแกร่ง
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
 
@@ -63,7 +62,6 @@ export default function ChangePassword() {
       return;
     }
 
-    // ตรวจสอบความถูกต้องของรหัสผ่านใหม่กับการยืนยันรหัสผ่าน
     if (newPassword !== confirmPassword) {
       setMessage("รหัสใหม่และการยืนยันรหัสไม่ตรงกัน");
       setMessageType("error");
@@ -72,9 +70,6 @@ export default function ChangePassword() {
     SetstartProcessLoad(true);
     try {
       const token = localStorage.getItem("auth_mobile_token");
-
-      await new Promise((resolve) => setTimeout(resolve, 200));
-      // ส่ง request ไปตรวจสอบรหัสเดิม
       const response = await fetch(
         `${API_URL}/users/${user.user_id}/check-password`,
         {
@@ -88,12 +83,8 @@ export default function ChangePassword() {
         }
       );
 
-      const data = await response.json();
-
-      if (data.success) {
+      if (response.ok) {
         const token = localStorage.getItem("auth_mobile_token");
-
-        // ถ้ารหัสเดิมถูกต้อง อัปเดตรหัสผ่านใหม่
         const updateResponse = await fetch(
           `${API_URL}/users/${user.user_id}/change-password`,
           {
@@ -104,7 +95,7 @@ export default function ChangePassword() {
             },
             credentials: "include",
             body: JSON.stringify({
-              password: newPassword, // ส่งแค่รหัสผ่านใหม่
+              password: newPassword,
             }),
           }
         );
@@ -142,13 +133,6 @@ export default function ChangePassword() {
       return () => clearTimeout(timer);
     }
   }, [message]);
-
-  // if (startProcessLoad)
-  //   return (
-  //     <div className="loading-overlay">
-  //       <div className="loading-spinner"></div>
-  //     </div>
-  //   );
 
   if (isLoading)
     return (

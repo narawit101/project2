@@ -13,8 +13,8 @@ const { DateTime } = require("luxon");
 const rateLimit = require("express-rate-limit");
 
 const LimiterRequestContact = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 ชั่วโมง
-  max: 5, // ขอได้ 5 ครั้ง/ชั่วโมง ต่อ email
+  windowMs: 60 * 60 * 1000, 
+  max: 5,
   keyGenerator: (req, res) => {
     try {
       return req.body.email?.toLowerCase().trim() || req.ip;
@@ -42,7 +42,7 @@ const LimiterRequestContact = rateLimit({
 
 router.get("/me", authMiddleware, async (req, res) => {
   try {
-    const user_id = req.user.user_id; // req.user มาจาก decoded token
+    const user_id = req.user.user_id;
 
     const result = await pool.query(
       "SELECT user_id, user_name, first_name, last_name, email, role, status, created_at FROM users WHERE user_id = $1",
@@ -62,7 +62,6 @@ router.get("/me", authMiddleware, async (req, res) => {
   }
 });
 
-// ดึงข้อมูลผู้ใช้ทั้งหมด
 router.get("/", authMiddleware, async (req, res) => {
   try {
     if (req.user.role !== "admin") {
@@ -88,7 +87,6 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
-// แก้ไขข้อมูลผู้ใช้ (admin หรือเจ้าของเท่านั้น)
 router.put("/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { first_name, last_name, role, status } = req.body;
@@ -103,7 +101,6 @@ router.put("/:id", authMiddleware, async (req, res) => {
   );
 
   try {
-    //ตรวจสอบว่าเป็น Admin หรือเจ้าของบัญชี
     if (
       !currentUser.user_id ||
       (parseInt(id) !== currentUser.user_id && currentUser.role !== "admin")
@@ -146,7 +143,6 @@ router.put("/update-profile/:id", authMiddleware, async (req, res) => {
   console.log("user_id ที่ส่งมา:", id);
   console.log("user_id ใน Token:", currentUser.user_id);
   try {
-    //ตรวจสอบว่าเป็น Admin หรือเจ้าของบัญชี
     if (
       !currentUser.user_id ||
       (parseInt(id) !== currentUser.user_id && currentUser.role !== "admin")
@@ -167,7 +163,6 @@ router.put("/update-profile/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// ลบผู้ใช้ (เฉพาะ Admin เท่านั้น)
 router.delete("/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const currentUser = req.user;
@@ -208,10 +203,9 @@ router.post("/check-email", authMiddleware, async (req, res) => {
   }
 });
 
-// ตรวจสอบรหัสเดิม
 router.post("/:id/check-password", authMiddleware, async (req, res) => {
   const { id } = req.params;
-  const { currentPassword } = req.body; // รับค่ารหัสเดิมจาก body
+  const { currentPassword } = req.body; 
 
   try {
     const result = await pool.query(
@@ -234,7 +228,7 @@ router.post("/:id/check-password", authMiddleware, async (req, res) => {
       return res.status(400).json({ message: "รหัสเดิมไม่ถูกต้อง" });
     }
 
-    res.status(200).json({ success: true }); // ถ้ารหัสตรง
+    res.status(200).json({ success: true });
   } catch (error) {
     console.error("Error checking password:", error);
     res.status(500).json({ message: "เกิดข้อผิดพลาด" });
@@ -395,9 +389,8 @@ router.post("/resent-reset-password", async (req, res) => {
 });
 
 router.post("/verify-otp", async (req, res) => {
-  const { email, otp } = req.body; // รับ email และ otp จาก frontend
+  const { email, otp } = req.body; 
   try {
-    // ตรวจสอบผู้ใช้จากอีเมล
     const result = await pool.query("SELECT * FROM users WHERE email = $1", [
       email,
     ]);
@@ -429,7 +422,6 @@ router.post("/verify-otp", async (req, res) => {
   }
 });
 
-// อัปเดตรหัสผ่าน
 router.put("/:id/change-password", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { password } = req.body;

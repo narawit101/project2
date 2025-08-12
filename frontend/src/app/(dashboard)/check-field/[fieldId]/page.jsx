@@ -79,18 +79,18 @@ const StatusChangeModal = ({
 
 export default function CheckFieldDetail() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const { fieldId } = useParams(); // รับค่า field_id จาก URL
+  const { fieldId } = useParams();
   const [fieldData, setFieldData] = useState(null);
-  const [showConfirmModal, setShowConfirmModal] = useState(false); // เปิดหรือปิดโมดอลยืนยัน
-  const [newStatus, setNewStatus] = useState(""); // เก็บสถานะใหม่ที่จะเปลี่ยน
-  const router = useRouter();
-  const [message, setMessage] = useState(""); // State สำหรับข้อความ
-  const [messageType, setMessageType] = useState(""); // State สำหรับประเภทของข้อความ (error, success)
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [newStatus, setNewStatus] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const { user, isLoading } = useAuth();
   const [facilities, setFacilities] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
   const [reasoning, setReasoning] = useState("");
+  const router = useRouter();
   usePreventLeave(startProcessLoad);
 
   useEffect(() => {
@@ -113,7 +113,6 @@ export default function CheckFieldDetail() {
     const fetchFieldData = async () => {
       if (!fieldId) return;
       try {
-        await new Promise((resolve) => setTimeout(resolve, 200));
         const token = localStorage.getItem("auth_mobile_token");
 
         const res = await fetch(`${API_URL}/field/${fieldId}`, {
@@ -140,7 +139,7 @@ export default function CheckFieldDetail() {
         setMessage("เกิดข้อผิดพลาดในการดึงข้อมูลสนามกีฬา", error);
         setMessageType("error");
       } finally {
-        setDataLoading(false); // จบการโหลด
+        setDataLoading(false);
       }
     };
 
@@ -150,14 +149,21 @@ export default function CheckFieldDetail() {
   useEffect(() => {
     const fetchFacilities = async () => {
       try {
-        const response = await fetch(`${API_URL}/facilities/${fieldId}`);
-
+        const token = localStorage.getItem("auth_mobile_token");
+        const response = await fetch(`${API_URL}/facilities/${fieldId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          credentials: "include",
+        });
         if (!response.ok) {
           throw new Error("Failed to fetch facilities");
         }
 
         const data = await response.json();
-        setFacilities(data);
+        setFacilities(data.data);
       } catch (err) {
         console.log(err);
         setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", err);
@@ -170,20 +176,17 @@ export default function CheckFieldDetail() {
     fetchFacilities();
   }, [fieldId]);
 
-  // ฟังก์ชันเปิดโมดอลการยืนยันการเปลี่ยนสถานะ
   const openConfirmModal = (status) => {
     setReasoning("");
-    setNewStatus(status); // ตั้งค่าสถานะใหม่ที่ต้องการเปลี่ยน
-    setShowConfirmModal(true); // เปิดโมดอล
+    setNewStatus(status);
+    setShowConfirmModal(true);
   };
 
-  // ฟังก์ชันปิดโมดอล
   const closeConfirmModal = () => {
-    setShowConfirmModal(false); // ปิดโมดอล
-    setReasoning(""); // รีเซ็ตเหตุผล
+    setShowConfirmModal(false);
+    setReasoning("");
   };
 
-  // ฟังก์ชันอัปเดตสถานะสนามกีฬา
   const updateFieldStatus = async (fieldId, newStatus) => {
     if (newStatus === "ไม่ผ่านการอนุมัติ" && reasoning.length === 0) {
       setMessage("กรุณาเลือกเหตุผลการปฏิเสธ");
@@ -217,7 +220,7 @@ export default function CheckFieldDetail() {
             : setMessageType("error");
         }
         console.log("สถานะสนามกีฬาอัพเดทสำเร็จ:", reasoning);
-        closeConfirmModal(); // ปิดโมดอลหลังจากยืนยัน
+        closeConfirmModal();
       } else {
         setMessage(`เกิดข้อผิดพลาด: ${data.error}`);
         setMessageType("error");
@@ -270,7 +273,6 @@ export default function CheckFieldDetail() {
       )}
       <div className="check-field-detail-container">
         <h1 className="h1">รายละเอียดสนามกีฬา</h1>
-        {/*  รูปภาพสนาม */}
         {fieldData?.img_field ? (
           <div className="image-container">
             <img
@@ -355,24 +357,22 @@ export default function CheckFieldDetail() {
             <p className="detail-checkfield">{fieldData?.field_description}</p>
           </div>
         </div>
-        {/* แสดงเอกสาร (PDF) ถ้ามี */}
         {fieldData?.documents ? (
           (Array.isArray(fieldData.documents)
             ? fieldData.documents
             : fieldData.documents.split(",")
-          ) // แปลงจาก string เป็น array
-            .map((doc, i) => (
-              <div className="document-container" key={i}>
-                <a
-                  href={`${doc.trim()}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="document-link"
-                >
-                  <p>เอกสารที่แนบไว้ {i + 1}</p>
-                </a>
-              </div>
-            ))
+          ).map((doc, i) => (
+            <div className="document-container" key={i}>
+              <a
+                href={`${doc.trim()}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="document-link"
+              >
+                <p>เอกสารที่แนบไว้ {i + 1}</p>
+              </a>
+            </div>
+          ))
         ) : (
           <p>ไม่มีเอกสารแนบ</p>
         )}
@@ -387,8 +387,6 @@ export default function CheckFieldDetail() {
                   className="facitem-checkfield"
                   key={`${facility.fac_id}-${index}`}
                 >
-                  {" "}
-                  {/* Unique key using both fac_id and index */}
                   <strong>{facility.fac_name}</strong>{" "}
                   <p>{formatPrice(facility.fac_price)} บาท</p>
                 </div>
@@ -396,7 +394,6 @@ export default function CheckFieldDetail() {
             </div>
           )}
         </div>
-        {/* ข้อมูลสนามย่อย (sub_fields) */}
         <h1>สนามย่อย</h1>
         <div className="sub-fields-container-check-field">
           {fieldData?.sub_fields && fieldData.sub_fields.length > 0 ? (
@@ -428,7 +425,6 @@ export default function CheckFieldDetail() {
                 <p>
                   <strong>ประเภทของพื้นสนาม</strong> {sub?.field_surface}
                 </p>
-                {/*  แสดง Add-ons ถ้ามี */}
                 {sub.add_ons && sub.add_ons.length > 0 ? (
                   <div className="add-ons-container-check-field">
                     <h3>ราคาสำหรับจัดกิจกรรมพิเศษ</h3>
@@ -477,7 +473,6 @@ export default function CheckFieldDetail() {
             </>
           )}
         </div>
-        {/* โมดอลยืนยันการเปลี่ยนสถานะ */}
         {showConfirmModal && (
           <StatusChangeModal
             newStatus={newStatus}

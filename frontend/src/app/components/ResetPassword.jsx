@@ -15,22 +15,10 @@ export default function ResetPassword() {
   const [canEnterOTP, setCanEnterOTP] = useState(false);
   const [sentEmail, setSentEmail] = useState(true);
   const [canRead, setCanRead] = useState(true);
-  const [timer, setTimer] = useState(60); // เริ่มต้นจาก 60 วินาที
-  const [canRequestOTP, setCanRequestOTP] = useState(true); // ใช้สำหรับการอนุญาตให้ผู้ใช้ขอ OTP ใหม่
+  const [timer, setTimer] = useState(60); 
+  const [canRequestOTP, setCanRequestOTP] = useState(true); 
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
   usePreventLeave(startProcessLoad);
-
-  useEffect(() => {
-    const expiresAt = sessionStorage.getItem("expiresAt");
-
-    if (Date.now() < expiresAt) {
-      const user = JSON.parse(sessionStorage.getItem("user"));
-    } else {
-      sessionStorage.removeItem("expiresAt");
-      sessionStorage.removeItem("user");
-      router.replace("/reset-password");
-    }
-  }, []);
 
   useEffect(() => {
     if (timer === 0) {
@@ -47,7 +35,6 @@ export default function ResetPassword() {
     e.preventDefault();
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const res = await fetch(`${API_URL}/users/reset-password`, {
         method: "POST",
         headers: {
@@ -60,8 +47,8 @@ export default function ResetPassword() {
       if (res.ok) {
         setMessage(`ส่ง OTP ไปที่ ${email} สำเร็จ`);
         setMessageType("success");
-        sessionStorage.setItem("user", JSON.stringify(result.user)); // เก็บข้อมูลผู้ใช้
-        sessionStorage.setItem("expiresAt", JSON.stringify(result.expiresAt)); // เก็บเวลา expiresAt
+        sessionStorage.setItem("user", JSON.stringify(result.user)); 
+        sessionStorage.setItem("expiresAt", JSON.stringify(result.expiresAt)); 
         setCanEnterOTP(true);
         setSentEmail(false);
         setCanRead(false);
@@ -91,7 +78,6 @@ export default function ResetPassword() {
     setTimer(60);
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const res = await fetch(`${API_URL}/users/resent-reset-password`, {
         method: "POST",
         headers: {
@@ -104,8 +90,8 @@ export default function ResetPassword() {
       if (res.ok) {
         setMessage(`ส่ง OTP ใหม่ไปที่ ${email} สำเร็จ`);
         setMessageType("success");
-        sessionStorage.setItem("user", JSON.stringify(result.user)); // เก็บข้อมูลผู้ใช้
-        sessionStorage.setItem("expiresAt", JSON.stringify(result.expiresAt)); // เก็บเวลา expiresAt
+        sessionStorage.setItem("user", JSON.stringify(result.user)); 
+        sessionStorage.setItem("expiresAt", JSON.stringify(result.expiresAt));
       } else {
         sessionStorage.removeItem("user", JSON.stringify(result));
         sessionStorage.removeItem("expiresAt", result);
@@ -133,7 +119,6 @@ export default function ResetPassword() {
     }
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const res = await fetch(`${API_URL}/users/verify-otp`, {
         method: "POST",
         headers: {
@@ -172,12 +157,6 @@ export default function ResetPassword() {
     }
   }, [message]);
 
-  // if (startProcessLoad)
-  //   return (
-  //     <div className="loading-overlay">
-  //       <div className="loading-spinner"></div>
-  //     </div>
-  //   );
 
   return (
     <div>

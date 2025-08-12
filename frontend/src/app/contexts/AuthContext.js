@@ -1,4 +1,3 @@
-// contexts/AuthContext.js
 "use client";
 import {
   createContext,
@@ -35,7 +34,6 @@ export function AuthProvider({ children }) {
         const data = await res.json();
         setUser(data);
       } else {
-        // setUser(null);
         return;
       }
     } catch (error) {
@@ -63,11 +61,6 @@ export function AuthProvider({ children }) {
     });
 
     socket.on("updated_status", (data) => {
-      // console.log("updated_status:", data);
-      // console.log("Current role:", data.userRole);
-      // console.log("Current ID:", data.userId);
-      // console.log("Current user:", user);
-      // console.log("Current user ID:", user.user_id);
       if (user && parseInt(user.user_id) === parseInt(data.userId)) {
         fetchUser();
       }

@@ -19,9 +19,9 @@ export default function Myorder() {
   const [bookingId, setBookingId] = useState("");
   const router = useRouter();
   const { fieldId } = useParams();
-  const [message, setMessage] = useState(""); // State for messages
-  const [messageType, setMessageType] = useState(""); // State for message type (error, success)
-  const [fieldName, setFieldName] = useState(""); // เพิ่ม state สำหรับชื่อสนาม
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
+  const [fieldName, setFieldName] = useState("");
   const [dataLoading, setDataLoading] = useState(true);
   const [useDateRange, setUseDateRange] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,7 +61,7 @@ export default function Myorder() {
       );
 
       const data = await res.json();
-      if (data.success) {
+      if (res.ok) {
         setMybooking(data.data);
         setFieldName(data.fieldInfo?.field_name || "");
         if (data.stats) console.log("Stats:", data.stats);
@@ -106,7 +106,7 @@ export default function Myorder() {
 
     socket.on("slot_booked", () => {
       console.log(" slot_booked received");
-      fetchData(); // reload เมื่อมีจองใหม่
+      fetchData();
     });
 
     socket.on("connect_error", (err) => {
@@ -124,7 +124,6 @@ export default function Myorder() {
     setCurrentPage(1);
   };
 
-  // เพิ่มฟังก์ชันสำหรับ Clear Filters
   const clearFilters = () => {
     setFilters({ startDate: "", endDate: "", status: "", bookingDate: "" });
     setCurrentPage(1);
@@ -157,7 +156,6 @@ export default function Myorder() {
     });
   };
 
-  // คำนวณสถิติจากข้อมูลที่ได้
   const calculateStats = () => {
     const stats = {
       total: booking.length,
@@ -169,9 +167,6 @@ export default function Myorder() {
 
         .filter((item) => item.status === "complete")
         .reduce((sum, item) => sum + parseFloat(item.total_price || 0), 0),
-      // totalDeposit: booking
-      //   .filter(item => item.status === 'approved')
-      //   .reduce((sum, item) => sum + parseFloat(item.price_deposit || 0), 0)
     };
     return stats;
   };
@@ -211,7 +206,7 @@ export default function Myorder() {
   );
 
   const getPaginationRange = (current, total) => {
-    const delta = 2; // จำนวนหน้าที่แสดงก่อน/หลังหน้าปัจจุบัน
+    const delta = 2;
     const range = [];
     const rangeWithDots = [];
     let l;
@@ -285,7 +280,6 @@ export default function Myorder() {
               type="button"
               onClick={() => {
                 setUseDateRange((prev) => !prev);
-                // เคลียร์ค่าที่ไม่ได้ใช้
                 setFilters((prev) => ({
                   ...prev,
                   bookingDate: useDateRange ? prev.bookingDate : "",
@@ -305,10 +299,6 @@ export default function Myorder() {
                     {stats.totalRevenue.toLocaleString()} บาท
                   </p>
                 </div>
-                {/* <div className="revenue-card">
-                <h3>ค่ามัดจำรวม</h3>
-                <p className="revenue-amount">{stats.totalDeposit.toLocaleString()} บาท</p>
-              </div> */}
               </div>
             )}
           </div>
@@ -340,7 +330,7 @@ export default function Myorder() {
                   name="endDate"
                   value={filters.endDate}
                   onChange={handleFilterChange}
-                  min={filters.startDate} // ป้องกันเลือกวันที่สิ้นสุดก่อนวันที่เริ่มต้น
+                  min={filters.startDate}
                 />
               </label>
             </div>
@@ -368,7 +358,6 @@ export default function Myorder() {
               type="button"
               onClick={() => {
                 setUseDateRange((prev) => !prev);
-                // เคลียร์ค่าที่ไม่ได้ใช้
                 setFilters((prev) => ({
                   ...prev,
                   bookingDate: useDateRange ? prev.bookingDate : "",
@@ -389,16 +378,11 @@ export default function Myorder() {
                     {stats.totalRevenue.toLocaleString()} บาท
                   </p>
                 </div>
-                {/* <div className="revenue-card">
-                <h3>ค่ามัดจำรวม</h3>
-                <p className="revenue-amount">{stats.totalDeposit.toLocaleString()} บาท</p>
-              </div> */}
               </div>
             )}
           </div>
         )}
 
-        {/* แสดงสถิติ */}
         {booking.length > 0 && (
           <div className="stats-summary">
             <div className="stats-grid">
@@ -490,13 +474,10 @@ export default function Myorder() {
                       </div>
                     </div>
                     <div className="compact-price-box-order">
-                      {/* กิจกรรม */}
                       <div className="line-item-order">
                         <span>กิจกรรม:</span>
                         <span>{item.activity}</span>
                       </div>
-
-                      {/* สนาม */}
                       <div className="line-item-order">
                         <span>ราคาสนาม:</span>
                         <span>
@@ -510,7 +491,6 @@ export default function Myorder() {
                         </span>
                       </div>
 
-                      {/* สิ่งอำนวยความสะดวก */}
                       {Array.isArray(item.facilities) &&
                         item.facilities.length > 0 && (
                           <div className="line-item-order">
@@ -527,7 +507,6 @@ export default function Myorder() {
 
                       <hr className="divider-order" />
 
-                      {/* รวมที่ต้องจ่าย (ไม่รวมมัดจำ) */}
                       <div className="line-item-order remaining">
                         <span className="total-remaining-order">
                           ยอดคงเหลือ:
@@ -537,7 +516,6 @@ export default function Myorder() {
                         </span>
                       </div>
 
-                      {/* มัดจำ */}
                       <div className="line-item-order plus">
                         <span className="total_deposit-order">มัดจำ:</span>
                         <span>+{item.price_deposit} บาท</span>
@@ -545,7 +523,6 @@ export default function Myorder() {
 
                       <hr className="divider-order" />
 
-                      {/* สุทธิทั้งหมด */}
                       <div className="line-item-order total">
                         <span>สุทธิ:</span>
                         <span>{item.total_price} บาท</span>

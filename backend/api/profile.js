@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
-// const authMiddleware = require("../middlewares/auth");
 
 router.get("/:field_id", async (req, res) => {
   try {
@@ -45,12 +44,12 @@ router.get("/:field_id", async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "ไม่พบข้อมูลสนามกีฬา" });
+      return res.status(404).json({ message: "ไม่พบข้อมูลสนามกีฬา" });
     }
-    return res.json(result.rows[0]);
+    return res.status(200).json({ data: result.rows[0] });
   } catch (error) {
     console.error("Database Error:", error);
-    res.status(500).json({ error: "เกิดข้อผิดพลาดในการดึงข้อมูลสนามกีฬา" });
+    res.status(500).json({ message: "เกิดข้อผิดพลาดในการดึงข้อมูลสนามกีฬา" });
   }
 });
 

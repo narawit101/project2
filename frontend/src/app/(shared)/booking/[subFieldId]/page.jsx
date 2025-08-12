@@ -1,6 +1,10 @@
 "use client";
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
+import {
+  useParams,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import "@/app/css/booking-slot.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { io } from "socket.io-client";
@@ -16,8 +20,8 @@ export default function Booking() {
   const [openHours, setOpenHours] = useState("");
   const [closeHours, setCloseHours] = useState("");
   const [slots, setSlots] = useState([]);
-  const [selectedSlots, setSelectedSlots] = useState([]); // array เก็บ index ที่เลือก
-  const [selectedSlotsArr, setSelectedSlotsArr] = useState([]); // array เก็บ index ที่เลือก
+  const [selectedSlots, setSelectedSlots] = useState([]);
+  const [selectedSlotsArr, setSelectedSlotsArr] = useState([]);
   const [canBook, setCanBook] = useState(false);
   const [timeStart, setTimeStart] = useState("");
   const [timeEnd, setTimeEnd] = useState("");
@@ -38,7 +42,6 @@ export default function Booking() {
   const [payMethod, setPayMethod] = useState("");
 
   const router = useRouter();
-  const [date, setDate] = useState(null);
   const [bookingDate, setBookingDate] = useState(null);
   const bookingDateFormatted = bookingDate
     ? bookingDate.toLocaleDateString("en-CA")
@@ -47,45 +50,44 @@ export default function Booking() {
   const [showCalendar, setShowCalendar] = useState(false);
 
   const { user, isLoading } = useAuth();
-  // const [bookedSlots, setBookedSlots] = useState([]);
-  const [isBooked, setIsBooked] = useState(false); // ใช้ติดตามว่าเกิดการจองหรือยัง
+  const [isBooked, setIsBooked] = useState(false);
   const [subFieldData, setSubFieldData] = useState([]);
   const field_id = sessionStorage.getItem("field_id");
   const fieldName = sessionStorage.getItem("field_name");
   const [showFacilities, setShowFacilities] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(600); // เริ่มที่ 10 นาที (600 วิ)
+  const [timeLeft, setTimeLeft] = useState(600);
   const [showModal, setShowModal] = useState(false);
-  const timerRef = useRef(null); // กัน setInterval ซ้ำ
+  const timerRef = useRef(null);
   const isTimeoutRef = useRef(false);
-  const [message, setMessage] = useState(""); // ข้อความแสดงผลผิดพลาด
+  const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [bookTimeArr, setBookTimeArr] = useState([]);
-  // const [bookingId, setBookingId] = useState("");
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
   usePreventLeave(startProcessLoad);
+  const searchParams = useSearchParams();
+  const currentUrl = `/booking/${subFieldId}${
+    searchParams.toString() ? `?${searchParams.toString()}` : ""
+  }`;
 
   useEffect(() => {
     if (isLoading) return;
 
     if (!user) {
-      router.replace("/login");
+      sessionStorage.setItem("login_message", "กรุณาเข้าสู่ระบบ");
+      router.replace(`/login?redirect=${encodeURIComponent(currentUrl)}`);
+      return;
     }
 
     if (user?.status !== "ตรวจสอบแล้ว") {
       router.replace("/verification");
     }
-    // if (!bookingDate) {
-    //   router.replace("/");
-    // }
   }, [user, isLoading, router, bookingDate]);
 
-  // ดึง slot ที่มีสถานะ
   const fetchBookedSlots = useCallback(async () => {
     try {
       const token = localStorage.getItem("auth_mobile_token");
 
-      const bookingDateRaw = sessionStorage.getItem("booking_date");
       const bookingDateFormatted = new Date(bookingDate).toLocaleDateString(
         "en-CA"
       );
@@ -97,10 +99,6 @@ export default function Booking() {
 
       const start = today.toISOString().split("T")[0];
       const end = tomorrow.toISOString().split("T")[0];
-
-      console.log(`today: ${bookingDateRaw}`);
-      console.log(`start: ${start}`);
-      console.log(`end: ${end}`);
 
       const res = await fetch(
         `${API_URL}/booking/booked-block/${subFieldId}/${start}/${end}`,
@@ -114,9 +112,6 @@ export default function Booking() {
       const data = await res.json();
 
       if (!data.error) {
-        // setBookedSlots(data.data);
-        // setDataLoading(false);
-
         const timeRangesWithStatus = data.data.flatMap((item) =>
           (item.selected_slots || []).map((time) => ({
             time,
@@ -130,16 +125,11 @@ export default function Booking() {
 
         setBookTimeArr(timeRangesWithStatus);
         setSelectedSlotsArr(selectedSlotsFromAPI);
-
-        // console.log("bookingtime", timeRangesWithStatus);
-        //console.log(data.data);
       } else {
-        console.error("API returned error:", data.message);
         setMessage("ไม่สามารถดึงข้อมูลได้", data.message);
         setMessageType("error");
       }
     } catch (error) {
-      console.error("Failed to fetch booked slots:", error.message);
       setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error.message);
       setMessageType("error");
     } finally {
@@ -184,12 +174,10 @@ export default function Booking() {
     }
   }, [isBooked, fetchBookedSlots]);
 
-  // สิ่งอำนวย
   useEffect(() => {
     if (!field_id) {
       return;
     }
-    // console.log(`bookedSlots${bookedSlots}`);
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("auth_mobile_token");
@@ -205,18 +193,14 @@ export default function Booking() {
 
         const data = await res.json();
 
-        // ตรวจสอบว่าไม่มี error ใน response
         if (!data.error && data.data) {
-          const fac = data.data.filter((f) => f.fac_price !== 0); // ตรวจสอบว่า fac_price ไม่เป็น 0
+          const fac = data.data.filter((f) => f.fac_price !== 0);
           setFacilities(fac);
-          // console.log(fac); // แสดงข้อมูลที่ได้จาก API
         } else {
-          console.error("Error fetching data:", data.message);
           setMessage("ไม่สามารถดึงข้อมูลได้", data.message);
           setMessageType("error");
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
         setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
         setMessageType("error");
       } finally {
@@ -225,97 +209,66 @@ export default function Booking() {
     };
 
     fetchData();
-  }, [field_id]); // ใช้ field_id เป็น dependency
-  // ดึงเวลาเปิด-ปิด
+  }, [field_id]);
   useEffect(() => {
+    const daysNumbers = {
+      Sun: 0,
+      Mon: 1,
+      Tue: 2,
+      Wed: 3,
+      Thu: 4,
+      Fri: 5,
+      Sat: 6,
+    };
+
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("auth_mobile_token");
-
         const res = await fetch(`${API_URL}/field/field-data/${subFieldId}`, {
-          method: "GET",
           headers: {
             "Content-Type": "application/json",
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
+
         const data = await res.json();
+
         if (!data.error) {
-          setOpenHours(data.data[0].open_hours);
-          setCloseHours(data.data[0].close_hours);
-          setPriceDeposit(data.data[0].price_deposit);
+          const fieldData = data.data[0];
+          setOpenHours(fieldData.open_hours);
+          setCloseHours(fieldData.close_hours);
+          setPriceDeposit(fieldData.price_deposit);
+          const mapDaysToNum = fieldData.open_days.map(
+            (day) => daysNumbers[day]
+          );
+          setOpenDays(mapDaysToNum);
+
           const calculatedSlots = slotTimes(
-            data.data[0].open_hours,
-            data.data[0].close_hours
+            fieldData.open_hours,
+            fieldData.close_hours
           );
           setSlots(calculatedSlots);
 
-          const subField = data.data[0].sub_fields.find(
-            (field) => field.sub_field_id == subFieldId
+          const subField = fieldData.sub_fields.find(
+            (sf) => sf.sub_field_id == subFieldId
           );
-          if (subField) {
-            console.log("subField:", subField);
 
+          if (subField) {
             setAddOns(subField.add_ons);
-            setPrice(subField.price); // กำหนดราคาเริ่มต้น
+            setPrice(subField.price);
             setNewPrice(subField.price);
+            setSubFieldData(subField);
           } else {
-            console.log("ไม่พบ subField ตาม subFieldId");
             setMessage("ไม่พบ subField ตาม subFieldId");
             setMessageType("error");
           }
         } else {
-          console.log("ไม่พบข้อมูลวันเปิดสนาม");
           setMessage("ไม่พบข้อมูลวันเปิดสนาม");
           setMessageType("error");
         }
       } catch (error) {
-        router.replace("/");
-        console.error("Error fetching open days", error);
-        setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
-        setMessageType("error");
-      } finally {
-        setDataLoading(false);
-      }
-    };
-    fetchData();
-  }, [subFieldId]);
-  // ดึงวันเปิด
-  useEffect(() => {
-    if (!subFieldId) return;
-
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("auth_mobile_token");
-
-        const res = await fetch(`${API_URL}/field/open-days/${subFieldId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          credentials: "include",
-        });
-
-        const data = await res.json();
-
-        if (data.error) {
-          console.error("ไม่พบข้อมูล");
-          setMessage("ไม่สามารถดึงข้อมูลได้");
-          setMessageType("error");
-          return;
-        }
-
-        const selectedSubField =
-          data[0]?.sub_fields?.find(
-            (subField) => subField.sub_field_id === parseInt(subFieldId)
-          ) || "ไม่พบข้อมูล";
-
-        setSubFieldData(selectedSubField);
-      } catch (error) {
-        console.error("Error Fetching:", error);
-        setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+        setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
         setMessageType("error");
       } finally {
         setDataLoading(false);
@@ -380,7 +333,6 @@ export default function Booking() {
   function getSlotStatus(slot) {
     console.log(bookTimeArr);
     const found = bookTimeArr.find((b) => b.time === slot);
-    //console.log(`CHECK: slot = ${slot}, found =`, found);
     return found ? found.status : null;
   }
 
@@ -388,8 +340,8 @@ export default function Booking() {
     if (selectedSlots.length === 0) {
       setTimeStart("");
       setTimeEnd("");
-      setStartDate(null); // เปลี่ยนจาก "" เป็น null
-      setEndDate(null); // เปลี่ยนจาก "" เป็น null
+      setStartDate(null);
+      setEndDate(null);
       setTotalHours(0);
       return;
     }
@@ -413,7 +365,6 @@ export default function Booking() {
       endDateObj.setDate(endDateObj.getDate() + 1);
     }
 
-    // ถ้าเวลาสิ้นสุดข้ามวัน ให้เพิ่มวันให้ endDateObj
     if (
       endHour < startHour ||
       (endHour === startHour && endMinute < startMinute)
@@ -421,8 +372,8 @@ export default function Booking() {
       endDateObj.setDate(endDateObj.getDate() + 1);
     }
 
-    setStartDate(startDateObj.toISOString().split("T")[0]); // แปลงเป็นรูปแบบ YYYY-MM-DD
-    setEndDate(endDateObj.toISOString().split("T")[0]); // แปลงเป็นรูปแบบ YYYY-MM-DD
+    setStartDate(startDateObj.toISOString().split("T")[0]);
+    setEndDate(endDateObj.toISOString().split("T")[0]);
     setTimeStart(start);
     setTimeEnd(end);
 
@@ -430,7 +381,7 @@ export default function Booking() {
     const endInMinutes = endHour * 60 + endMinute;
     let minutes = endInMinutes - startInMinutes;
 
-    if (minutes < 0) minutes += 24 * 60; // คำนวณกรณีข้ามวัน
+    if (minutes < 0) minutes += 24 * 60;
     let hours = minutes / 60;
 
     setTotalHours(hours);
@@ -455,21 +406,18 @@ export default function Booking() {
     setSelectPrice(selectedValue);
 
     console.log("Selected Value:", selectedValue);
-
-    // ถ้าเลือก "เล่นกีฬา"
     if (selectedValue === "subFieldPrice") {
-      setNewPrice(price); // ใช้ราคา base ของ subField
-      console.log("subField price:", price); // แสดงราคาที่เลือก
+      setNewPrice(price);
+      console.log("subField price:", price);
       setActivity(subFieldData.sport_name);
     } else {
-      // หา add-on ที่เลือกจาก add_ons
       const selectedAddOn = addOns.find(
         (addOn) => addOn.add_on_id === parseInt(selectedValue)
       );
       console.log("Available AddOns:", addOns);
 
       if (selectedAddOn) {
-        setNewPrice(selectedAddOn.price); // อัปเดตราคา
+        setNewPrice(selectedAddOn.price);
         console.log("Add-On price:", selectedAddOn.price);
         setActivity(selectedAddOn.content);
       } else {
@@ -540,17 +488,14 @@ export default function Booking() {
 
     if (!isToday) return false;
 
-    // เวลาของ slot
     const slotDateTime = new Date(bookingDateObj);
     slotDateTime.setHours(hour);
     slotDateTime.setMinutes(minute);
     slotDateTime.setSeconds(0);
 
-    // แยกเวลาเปิด/ปิดออกมา
     const [openHour] = openHours.split(":").map(Number);
     const [closeHour] = closeHours.split(":").map(Number);
 
-    // ถ้าสนามเปิดข้ามวัน และ slot นั้นมีเวลา < เวลาเปิด => ต้องเป็นของวันถัดไป
     if (closeHour < openHour && hour < openHour) {
       slotDateTime.setDate(slotDateTime.getDate() + 1);
     }
@@ -582,91 +527,13 @@ export default function Booking() {
         return;
       }
     }
-
-    // setShowModal(false);
-    handleSubmit(); // ฟังก์ชันที่ใช้จองจริง
+    handleSubmit();
   };
 
-  useEffect(() => {
-    if (!subFieldId) return;
-
-    const daysNumbers = {
-      Sun: 0,
-      Mon: 1,
-      Tue: 2,
-      Wed: 3,
-      Thu: 4,
-      Fri: 5,
-      Sat: 6,
-    };
-
-    const fetchDate = async () => {
-      setDataLoading(true);
-      try {
-        const token = localStorage.getItem("auth_mobile_token");
-
-        const res = await fetch(`${API_URL}/field/open-days/${subFieldId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          credentials: "include",
-        });
-
-        const data = await res.json();
-
-        if (data.error) {
-          console.error("ไม่พบข้อมูลวันเปิดสนาม");
-          setMessage("ไม่พบข้อมูลวันเปิดสนาม");
-          setMessageType("error");
-          return;
-        }
-
-        if (data[0] && data[0].open_days) {
-          const mapDaysToNum = data[0].open_days.map((day) => daysNumbers[day]);
-
-          const selectedSubField =
-            data[0].sub_fields.find(
-              (subField) => subField.sub_field_id === parseInt(subFieldId)
-            ) || "ไม่พบข้อมูล";
-
-          setOpenDays(mapDaysToNum);
-          setSubFieldData(selectedSubField);
-
-          console.log("ข้อมูลสนาม", data);
-          console.log("ข้อมูลสนามย่อย", selectedSubField);
-          console.log("วันที่เปิดสนาม", mapDaysToNum);
-        } else {
-          setMessage("ไม่สามารถดึงข้อมูลวันเปิดสนามได้");
-          setMessageType("error");
-        }
-      } catch (error) {
-        console.error("เกิดข้อผิดพลาดในการโหลดข้อมูล:", error);
-        setMessage("เกิดข้อผิดพลาดในการโหลดข้อมูล");
-        setMessageType("error");
-        // router.replace("/");
-      } finally {
-        setDataLoading(false);
-      }
-    };
-
-    fetchDate();
-  }, [subFieldId]);
-
   const handleDateChange = (newDate) => {
-    if (date && newDate.toDateString() === date.toDateString()) {
-      setDate(null);
-      sessionStorage.removeItem("booking_date");
-      sessionStorage.removeItem("booking_date_expiry");
+    if (bookingDate && newDate.toDateString() === bookingDate.toDateString()) {
+      setBookingDate(null);
     } else {
-      setDate(newDate);
-      sessionStorage.setItem("booking_date", newDate.toString());
-
-      const expiryDate = new Date();
-      expiryDate.setMinutes(expiryDate.getMinutes() + 10);
-      sessionStorage.setItem("booking_date_expiry", expiryDate.toString());
-
       setBookingDate(newDate);
       setMessage("");
       fetchBookedSlots();
@@ -688,19 +555,19 @@ export default function Booking() {
       date <= maxDate &&
       date >= today
     ) {
-      return "allowed-day"; // เพิ่มคลาสสำหรับวันที่อนุญาตให้ hover
+      return "allowed-day";
     }
-    return ""; // วันที่ไม่อนุญาตจะไม่มีคลาส
+    return "";
   };
 
   const handleCancel = () => {
     setShowModal(false);
-    isTimeoutRef.current = false; // บอกว่าไม่ใช่หมดเวลาอัตโนมัติ
+    isTimeoutRef.current = false;
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
-    setTimeLeft(0); // ไม่ trigger redirect เพราะ isTimeoutRef = false
+    setTimeLeft(0);
     setPayMethod("");
     setShowFacilities(false);
     setSelectedFacilities([]);
@@ -714,9 +581,9 @@ export default function Booking() {
       return;
     }
 
-    setShowModal(true); // ถ้าผ่าน validation แล้วค่อยแสดงโมดอล
-    setTimeLeft(600); // รีเซ็ตเวลา
-    if (timerRef.current) clearInterval(timerRef.current); // เคลียร์ก่อน
+    setShowModal(true);
+    setTimeLeft(600);
+    if (timerRef.current) clearInterval(timerRef.current);
     startCountdown();
   };
 
@@ -755,7 +622,6 @@ export default function Booking() {
     console.log("Booking Data being sent:", bookingData);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const response = await fetch(`${API_URL}/booking`, {
         method: "POST",
         credentials: "include",
@@ -771,7 +637,31 @@ export default function Booking() {
         router.push("/api-rate-limited");
         return;
       }
-      if (!response.ok) {
+      if (response.ok) {
+        setMessage("บันทึกการจองสำเร็จ");
+        setMessageType("success");
+        setShowModal(false);
+        isTimeoutRef.current = false;
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+        setStartDate("");
+        setEndDate("");
+        setTimeLeft(0);
+        setIsBooked(true);
+        setCanBook(false);
+        setSelectedSlots([]);
+        setPayMethod("");
+        setSelectedFacilities([]);
+        setTimeStart("");
+        setTimeEnd("");
+        setTotalHours(0);
+        setTotalPrice(0);
+        setTotalRemaining(0);
+        setShowFacilities(false);
+        setSumFac(0);
+      } else {
         setMessage(data.message);
         setMessageType("error");
         setShowModal(false);
@@ -788,65 +678,14 @@ export default function Booking() {
         setTotalRemaining(0);
         setShowFacilities(false);
         setSumFac(0);
-      } else {
-        if (data.success) {
-          setMessage("บันทึกการจองสำเร็จ");
-          setMessageType("success");
-          setShowModal(false);
-          isTimeoutRef.current = false; // บอกว่าไม่ใช่หมดเวลาอัตโนมัติ
-          if (timerRef.current) {
-            clearInterval(timerRef.current);
-            timerRef.current = null;
-          }
-          setStartDate("");
-          setEndDate("");
-          setTimeLeft(0); // ไม่ trigger redirect เพราะ isTimeoutRef = false
-          setIsBooked(true);
-          setCanBook(false);
-          setSelectedSlots([]);
-          setPayMethod("");
-          setSelectedFacilities([]);
-          setTimeStart("");
-          setTimeEnd("");
-          setTotalHours(0);
-          setTotalPrice(0);
-          setTotalRemaining(0);
-          setShowFacilities(false);
-          setSumFac(0);
-        } else {
-          setMessage(`Error:${data.message}`);
-          setMessageType("error");
-        }
       }
     } catch (error) {
-      setMessage(`เกิดข้อผิดพลาด:${error.message}`);
+      setMessage(`ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้`);
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
     }
   };
-
-  // const showPrice = () => {
-  //   // แสดงราคาใน UI
-  //   console.log(price);
-  //   console.log(bookingDateFormatted);
-  //   console.log(`new${newPrice}`);
-  //   console.log(`field_id${field_id}`);
-  //   console.log(facilities);
-  //   console.log(sumFac);
-  //   console.log(`มัดจำ${priceDeposit}`);
-  //   console.log(`${payMethod}`);
-  //   console.log(`${bookingDate}`);
-  //   console.log(`${activity}`);
-  //   console.log(`selectedFacilities${selectedFacilities}`);
-  //   console.log(JSON.stringify(selectedFacilities, null, 2));
-  //   const facilityList = Object.values(selectedFacilities).map((item) => ({
-  //     field_fac_id: item.field_fac_id,
-  //     fac_name: item.fac_name,
-  //   }));
-
-  //   console.log(facilityList);
-  // };
 
   useEffect(() => {
     console.log("คิดเงิน");
@@ -858,10 +697,9 @@ export default function Booking() {
       calculatePrice(newPrice, totalHours, sumFac);
     }
   }, [newPrice, totalHours, sumFac]);
-  useEffect(() => {});
 
   const startCountdown = () => {
-    isTimeoutRef.current = true; // เริ่มนับแบบอัตโนมัติ
+    isTimeoutRef.current = true;
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => prev - 1);
     }, 1000);
@@ -871,9 +709,11 @@ export default function Booking() {
     if (timeLeft <= 0 && isTimeoutRef.current) {
       clearInterval(timerRef.current);
       setCanBook(false);
-      sessionStorage.clear();
-      sessionStorage.clear();
-      router.replace("/");
+      setBookingDate(null);
+      setShowModal(false);
+      resetSelection();
+      setMessage("หมดเวลาการจอง กรุณาเลือกช่วงเวลาและวันที่ใหม่อีกครั้ง");
+      setMessageType("error");
     }
   }, [timeLeft]);
 
@@ -909,10 +749,10 @@ export default function Booking() {
   }
 
   const formatDateToThai = (date) => {
-    if (!date) return ""; // กัน null/undefined
+    if (!date) return "";
 
     const parsedDate = new Date(date);
-    if (isNaN(parsedDate)) return "ไม่สามารถแปลงวันที่ได้"; // กัน Invalid Date
+    if (isNaN(parsedDate)) return "ไม่สามารถแปลงวันที่ได้";
 
     const options = { day: "numeric", month: "long", year: "numeric" };
     return new Intl.DateTimeFormat("th-TH", options).format(parsedDate);
@@ -967,18 +807,12 @@ export default function Booking() {
                   className="calendar-popup"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {/* <button
-                  className="btn-cancel-bookings"
-                  onClick={() => setShowCalendar(!showCalendar)}
-                >
-                  X
-                </button> */}
                   <Calendar
                     onChange={(newDate) => {
                       handleDateChange(newDate);
-                      setShowCalendar(false); // ปิดปฏิทินหลังเลือก
+                      setShowCalendar(false);
                     }}
-                    value={date}
+                    value={bookingDate}
                     showNeighboringMonth={false}
                     minDate={today}
                     maxDate={maxDate}
@@ -991,27 +825,21 @@ export default function Booking() {
                 </div>
               </div>
             )}
-            {/* <div className="select-day">
-              <p>
-                วันที่: {date ? formatDateToThai(date) : "ยังไม่ได้เลือกวันที่"}
-              </p>
-     
-            </div> */}
 
             <h1 className="select-time-book">เลือกวันที่และช่วงเวลา</h1>
             <hr className="divider-order-select-date" />
             <div className="calendar-btn-select-date">
               <div className="date-picker-container">
                 <div className="date-select-label">
-                  <strong>เลือกวันที่: </strong>
+                  <h2>เลือกวันที่: </h2>
                 </div>
 
                 <button
                   className="calendar-toggle-btn"
                   onClick={() => setShowCalendar(!showCalendar)}
                 >
-                  {date ? (
-                    formatDateToThai(date)
+                  {bookingDate ? (
+                    formatDateToThai(bookingDate)
                   ) : (
                     <>
                       <img
@@ -1021,10 +849,10 @@ export default function Booking() {
                     </>
                   )}
                 </button>
-                {date && (
+                {bookingDate && (
                   <button
                     className="btn-cancel-select-date"
-                    onClick={() => setDate(null)}
+                    onClick={() => setBookingDate(null)}
                   >
                     X
                   </button>
@@ -1070,12 +898,15 @@ export default function Booking() {
                     key={index}
                     className={slotClass}
                     onClick={() => {
-                      if (!isBooked && !isPast && date) toggleSelectSlot(index);
+                      if (!isBooked && !isPast && bookingDate)
+                        toggleSelectSlot(index);
                     }}
                     style={{
                       cursor:
-                        isBooked || isPast || !date ? "not-allowed" : "pointer",
-                      opacity: isPast ? 0.7 : 1, // ทำให้จางลงถ้าผ่านเวลาแล้ว
+                        isBooked || isPast || !bookingDate
+                          ? "not-allowed"
+                          : "pointer",
+                      opacity: isPast || !bookingDate ? 0.7 : 1,
                     }}
                   >
                     <div className="slot-time-book">{slot}</div>
@@ -1144,9 +975,11 @@ export default function Booking() {
             )}
             <div className="time-info">
               <p>
-                วันที่: {date ? formatDateToThai(date) : "ยังไม่ได้เลือกวันที่"}
+                วันที่:{" "}
+                {bookingDate
+                  ? formatDateToThai(bookingDate)
+                  : "ยังไม่ได้เลือกวันที่"}
               </p>
-              {/* <div>**สามารถจองล่วงหน้าได้ไม่เกิน *** วัน</div> */}
             </div>
             <div className="time-info">
               เปิด: {openHours} - {closeHours} น
@@ -1160,10 +993,7 @@ export default function Booking() {
               </strong>
             </div>
 
-            {/* <button onClick={showPrice} className="btn-show">
-              แสดงราคา
-            </button> */}
-            {canBook && date && (
+            {canBook && bookingDate && (
               <>
                 <button
                   onClick={validateBeforeSubmit}
@@ -1210,48 +1040,50 @@ export default function Booking() {
                   </strong>
                 </div>
               </div>
-              <div className="facility-wrapper">
-                <button
-                  style={{
-                    cursor: startProcessLoad ? "not-allowed" : "pointer",
-                  }}
-                  disabled={startProcessLoad}
-                  onClick={() => setShowFacilities(!showFacilities)}
-                  className="toggle-facilities"
-                >
-                  {showFacilities
-                    ? "ซ่อนสิ่งอำนวยความสะดวก"
-                    : "สิ่งอำนวยความสะดวกเพิ่มเติม"}
-                </button>
+              {facilities.length > 0 && (
+                <div className="facility-wrapper">
+                  <button
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    onClick={() => setShowFacilities(!showFacilities)}
+                    className="toggle-facilities"
+                  >
+                    {showFacilities
+                      ? "ซ่อนสิ่งอำนวยความสะดวก"
+                      : "สิ่งอำนวยความสะดวกเพิ่มเติม"}
+                  </button>
 
-                {showFacilities && (
-                  <div className="facilities-list-book">
-                    {facilities.map((fac) => (
-                      <div
-                        key={fac.field_fac_id}
-                        className="facility-item-book"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={
-                            selectedFacilities[fac.field_fac_id] !== undefined
-                          }
-                          onChange={() =>
-                            handleCheckBox(
-                              fac.field_fac_id,
-                              fac.fac_price,
-                              fac.fac_name
-                            )
-                          }
-                        />
-                        <label>
-                          {fac.fac_name} - {formatPrice(fac.fac_price)} บาท
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                  {showFacilities && (
+                    <div className="facilities-list-book">
+                      {facilities.map((fac) => (
+                        <div
+                          key={fac.field_fac_id}
+                          className="facility-item-book"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={
+                              selectedFacilities[fac.field_fac_id] !== undefined
+                            }
+                            onChange={() =>
+                              handleCheckBox(
+                                fac.field_fac_id,
+                                fac.fac_price,
+                                fac.fac_name
+                              )
+                            }
+                          />
+                          <label>
+                            {fac.fac_name} - {formatPrice(fac.fac_price)} บาท
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
               <div className={`total-box ${canBook ? "show" : ""}`}>
                 <div className="summary">
                   <strong className="price-deposit">

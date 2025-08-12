@@ -7,8 +7,8 @@ import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function LogoutButton() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const [message, setMessage] = useState(""); // State for messages
-  const [messageType, setMessageType] = useState(""); // State for message type (error, success)
+  const [message, setMessage] = useState(""); 
+  const [messageType, setMessageType] = useState(""); 
   const router = useRouter();
   const { setUser } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);

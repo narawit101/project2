@@ -10,8 +10,8 @@ export default function Verification() {
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
-  const [timer, setTimer] = useState(60); // เริ่มต้นจาก 60 วินาที
-  const [canRequestOTP, setCanRequestOTP] = useState(true); // ใช้สำหรับการอนุญาตให้ผู้ใช้ขอ OTP ใหม่
+  const [timer, setTimer] = useState(60); 
+  const [canRequestOTP, setCanRequestOTP] = useState(true);
   const router = useRouter("");
   const { user, isLoading, setUser } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
@@ -45,13 +45,11 @@ export default function Verification() {
     }
   }, [timer, canRequestOTP]);
 
-  const noSave = async (e) => {
+  const onSave = async (e) => {
     e.preventDefault();
     SetstartProcessLoad(true);
     try {
       const token = localStorage.getItem("auth_mobile_token");
-
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const res = await fetch(`${API_URL}/register/verify/${userId}`, {
         method: "POST",
         headers: {
@@ -68,7 +66,7 @@ export default function Verification() {
         setMessageType("success");
         setTimeout(() => {
           window.location.replace("/");
-        }, 3000);
+        }, 2000);
       } else {
         setMessage(result.message);
         setMessageType("error");
@@ -92,7 +90,6 @@ export default function Verification() {
 
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const token = localStorage.getItem("auth_mobile_token");
 
       const res = await fetch(`${API_URL}/register/new-otp/${userId}`, {
@@ -137,13 +134,6 @@ export default function Verification() {
     }
   }, [message]);
 
-  // if (startProcessLoad)
-  //   return (
-  //     <div className="loading-overlay">
-  //       <div className="loading-spinner"></div>
-  //     </div>
-  //   );
-
   if (isLoading)
     return (
       <div className="load">
@@ -162,7 +152,7 @@ export default function Verification() {
         <div className="head-titel">
           <h1>ยืนยันบัญชีของคุณก่อนใช้บริการ</h1>
         </div>
-        <form onSubmit={noSave}>
+        <form onSubmit={onSave}>
           <div className="input-verify">
             <input
               required

@@ -19,8 +19,8 @@ export default function HomePage() {
   const [expandedPosts, setExpandedPosts] = useState({});
   const { user, isLoading } = useAuth();
   const [dataLoading, setDataLoading] = useState(true);
-  const [message, setMessage] = useState(""); // State for messages
-  const [messageType, setMessageType] = useState(""); // State for message type (error, success)
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
 
   useEffect(() => {
     if (isLoading) return;
@@ -43,15 +43,15 @@ export default function HomePage() {
         });
 
         const data = await res.json();
-
         if (data.message === "ไม่มีโพส") {
           setPostData([]);
-        } else if (data.error) {
-          console.error("Backend error:", data.error);
-          setMessage("ไม่สามารถดึงข้อมูลโพสได้", data.error);
-          setMessageType("error");
+        } else if (res.ok) {
+          setPostData(data.data);
+          console.log(data.data);
         } else {
-          setPostData(data);
+          console.error("Backend error:", data.error);
+          setMessage("ไม่สามารถดึงข้อมูลได้", data.error);
+          setMessageType("error");
         }
       } catch (error) {
         console.error("Error fetching post data:", error);
@@ -157,10 +157,25 @@ export default function HomePage() {
           )}
           {postData.map((post) => (
             <div key={post.post_id} className="post-card-home">
-              <h2 className="post-title-home">{post.content}</h2>
-              <div className="time-home">
-                {dayjs(post.created_at).fromNow()}
+              <div className="inline-name-field">
+                <img
+                  src={
+                    post.img_field
+                      ? `${post.img_field}`
+                      : "https://www.nstru.ac.th/resources/news/thumbnail/221.jpg"
+                  }
+                  alt={post.field_name}
+                  className="post-img-field-home"
+                />
+                <div className="field-name-created-at-home">
+                  <h2 className="post-field-name-home">{post.field_name}</h2>
+                  <div className="time-home">
+                    {dayjs(post.created_at).fromNow()}
+                  </div>
+                </div>
               </div>
+              <h2 className="post-title-home">{post.content}</h2>
+
               {post.images && post.images.length > 0 && (
                 <div className="ig-carousel-container-home">
                   <div className="ig-carousel-track-wrapper-home">

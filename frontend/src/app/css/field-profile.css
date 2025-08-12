@@ -54,7 +54,6 @@
   transition: transform 0.3s ease;
 }
 
-/* Container for the field details */
 .field-detail-container-profile {
   max-width: 1450px;
   margin: 0px auto 20px auto;
@@ -117,8 +116,6 @@
 
 .detail-profile {
   font-weight: 600;
-  /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
-  /* border: 3px solid #6d919f7d; */
   max-height: 200px;
   overflow-y: auto;
   background-color: #ffffff;
@@ -199,7 +196,6 @@
   color: #333;
 }
 
-/* Sub Fields Section */
 .undercontainer-proflie {
   background-color: #ffffff;
   padding: 15px;
@@ -233,7 +229,6 @@
   overflow-y: auto;
 }
 .sub-fields-container-profile-overlay {
-  /* max-height: 600px; */
   overflow-y: auto;
 }
 
@@ -270,7 +265,7 @@
 
 .sub-field-card-profile-overlay:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* ขยายเงาตอน hover */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); 
   cursor: pointer;
 }
 
@@ -305,12 +300,12 @@
   background: #e7edf7;
   border-radius: 12px;
   color: #333;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* ขยายเงาตอน hover */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); 
 }
 
 .sub-field-card-profile:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* ขยายเงาตอน hover */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); 
 }
 
 .sub-field-card-profile h2 {
@@ -392,7 +387,7 @@
   justify-content: center;
   text-align: center;
   margin-top: 20px;
-  background: linear-gradient(135deg, #1b0ed4, #055199); /* ไล่สี */
+  background: linear-gradient(135deg, #1b0ed4, #055199); 
   color: white;
   font-size: 18px;
   font-weight: bold;
@@ -503,7 +498,6 @@
   flex-shrink: 0;
 }
 
-/* ปุ่มเลื่อน */
 .arrow-btn {
   position: absolute;
   top: 50%;
@@ -575,7 +569,6 @@
   }
 }
 
-/* css edit del */
 .form-group-profile {
   display: flex;
   flex-direction: column;

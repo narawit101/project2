@@ -60,7 +60,7 @@ export default function Statistics() {
         }
       );
       const data = await res.json();
-      if (data.success) {
+      if (res.ok) {
         setMybooking(data.data);
         setFieldName(data.fieldInfo?.field_name || "");
         console.log("Booking data:", data.data);
@@ -68,7 +68,6 @@ export default function Statistics() {
           console.log("Stats:", data.stats);
         }
       } else {
-        // ดักกรณีสนามยังไม่ผ่าน
         if (data.fieldInfo) {
           setFieldName(data.fieldInfo.field_name || "");
           setMessage(
@@ -110,7 +109,7 @@ export default function Statistics() {
 
     socket.on("slot_booked", () => {
       console.log(" slot_booked received");
-      fetchData(); // reload เมื่อมีจองใหม่
+      fetchData();
     });
 
     socket.on("connect_error", (err) => {
@@ -125,13 +124,12 @@ export default function Statistics() {
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
-    setCurrentPage(1); // รีเซ็ตหน้าทันทีเมื่อกรอง
+    setCurrentPage(1);
   };
 
-  // เพิ่มฟังก์ชันสำหรับ Clear Filters
   const clearFilters = () => {
     setFilters({ startDate: "", endDate: "", status: "", bookingDate: "" });
-    setCurrentPage(1); // รีเซ็ตหน้าทันทีเมื่อกรอง
+    setCurrentPage(1);
   };
 
   const formatDate = (isoString) => {
@@ -143,7 +141,6 @@ export default function Statistics() {
     });
   };
 
-  // คำนวณสถิติจากข้อมูลที่ได้
   const calculateStats = () => {
     const stats = {
       total: booking.length,
@@ -189,7 +186,7 @@ export default function Statistics() {
   );
 
   const getPaginationRange = (current, total) => {
-    const delta = 2; // จำนวนหน้าที่แสดงก่อน/หลังหน้าปัจจุบัน
+    const delta = 2;
     const range = [];
     const rangeWithDots = [];
     let l;
@@ -262,7 +259,6 @@ export default function Statistics() {
               type="button"
               onClick={() => {
                 setUseDateRange((prev) => !prev);
-                // เคลียร์ค่าที่ไม่ได้ใช้
                 setFilters((prev) => ({
                   ...prev,
                   bookingDate: useDateRange ? prev.bookingDate : "",
@@ -282,10 +278,6 @@ export default function Statistics() {
                     {stats.totalRevenue.toLocaleString()} บาท
                   </p>
                 </div>
-                {/* <div className="revenue-card">
-                <h3>ค่ามัดจำรวม</h3>
-                <p className="revenue-amount">{stats.totalDeposit.toLocaleString()} บาท</p>
-              </div> */}
               </div>
             )}
           </div>
@@ -317,7 +309,7 @@ export default function Statistics() {
                   name="endDate"
                   value={filters.endDate}
                   onChange={handleFilterChange}
-                  min={filters.startDate} // ป้องกันเลือกวันที่สิ้นสุดก่อนวันที่เริ่มต้น
+                  min={filters.startDate}
                 />
               </label>
             </div>
@@ -345,7 +337,6 @@ export default function Statistics() {
               type="button"
               onClick={() => {
                 setUseDateRange((prev) => !prev);
-                // เคลียร์ค่าที่ไม่ได้ใช้
                 setFilters((prev) => ({
                   ...prev,
                   bookingDate: useDateRange ? prev.bookingDate : "",
@@ -365,16 +356,11 @@ export default function Statistics() {
                     {stats.totalRevenue.toLocaleString()} บาท
                   </p>
                 </div>
-                {/* <div className="revenue-card">
-                <h3>ค่ามัดจำรวม</h3>
-                <p className="revenue-amount">{stats.totalDeposit.toLocaleString()} บาท</p>
-              </div> */}
               </div>
             )}
           </div>
         )}
 
-        {/* แสดงสถิติ */}
         {booking.length > 0 && (
           <div className="stats-summary">
             <div className="stats-grid">
@@ -411,7 +397,7 @@ export default function Statistics() {
             </div>
           </div>
         )}
-        {/* ส่วนสถิติ */}
+
         {dataLoading ? (
           <div className="load-container-order">
             <div className="loading-data">
@@ -559,7 +545,6 @@ export default function Statistics() {
         ) : (
           <h1 className="booking-list">ไม่พบคำสั่งจอง</h1>
         )}
-        {/* ส่วนสถิติ */}
       </div>
     </>
   );

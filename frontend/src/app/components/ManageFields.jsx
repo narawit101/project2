@@ -41,7 +41,6 @@ export default function MyFieldPage() {
   useEffect(() => {
     const fetchMyFields = async () => {
       try {
-        // await new Promise((resolve) => setTimeout(resolve, 2000));
         const token = localStorage.getItem("auth_mobile_token");
 
         const res = await fetch(`${API_URL}/myfield/myfields`, {
@@ -62,7 +61,6 @@ export default function MyFieldPage() {
         setMyFields(data);
         setFilteredFields(data);
       } catch (err) {
-        // console.error("Error loading fields:", err.message);
         setMessage(`${err.message}`);
         setMessageType("error");
       } finally {
@@ -198,7 +196,7 @@ export default function MyFieldPage() {
                   src={
                     field.img_field
                       ? `${field.img_field}`
-                      : "https://via.placeholder.com/300x200"
+                      : "https://www.nstru.ac.th/resources/news/thumbnail/221.jpg"
                   }
                   alt={field.field_name}
                   className="card-myfield-img"

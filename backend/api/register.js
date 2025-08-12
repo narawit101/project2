@@ -11,7 +11,7 @@ const rateLimit = require("express-rate-limit");
 
 const LimiterRegister = rateLimit({
   windowMs: 30 * 60 * 1000,
-  max: 10, // จำกัด 10 ครั้งต่อ IP /30 นาที
+  max: 10,
   message: {
     message: "คุณส่งคำขอมากเกินไป กรุณารอสักครู่แล้วลองใหม่อีกครั้ง",
   },
@@ -38,7 +38,7 @@ router.get("/check-duplicate", async (req, res) => {
   const { field, value } = req.query;
 
   if (!field || !value) {
-    return res.status(400).json({ message: "Field and value are required" }); // ส่งสถานะ 400 หากไม่มีค่า
+    return res.status(400).json({ message: "Field and value are required" }); 
   }
 
   try {
@@ -51,8 +51,8 @@ router.get("/check-duplicate", async (req, res) => {
       return res.status(200).json({ isDuplicate: false });
     }
   } catch (error) {
-    console.error("Error checking duplicates:", error); // แสดงข้อผิดพลาดใน console
-    return res.status(500).json({ message: "Internal server error" }); // ส่งสถานะ 500 พร้อมข้อความ
+    console.error("Error checking duplicates:", error);
+    return res.status(500).json({ message: "Internal server error" }); 
   }
 });
 
@@ -64,10 +64,9 @@ router.post("/", LimiterRegister, async (req, res) => {
     email,
     role,
     user_name,
-  }); // Log request
+  });
 
   try {
-    // ตรวจสอบอีเมลและชื่อผู้ใช้ซ้ำในระบบ
     const emailCheck = await pool.query(
       "SELECT * FROM users WHERE email = $1 OR user_name = $2",
       [email, user_name]
@@ -78,15 +77,13 @@ router.post("/", LimiterRegister, async (req, res) => {
         .json({ message: "Email or Username already registered" });
     }
 
-    // แฮชรหัสผ่าน
     const hashedPassword = await bcrypt.hash(password, 10);
     function generateNumericOtp(length) {
-      const otp = crypto.randomBytes(length).toString("hex").slice(0, length); // ใช้ 'hex' เพื่อให้เป็นตัวเลข
+      const otp = crypto.randomBytes(length).toString("hex").slice(0, length);
       return otp;
     }
     const otp = generateNumericOtp(6);
-    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // กำหนดเวลาให้ OTP หมดอายุใน 5 นาที
-    // เพิ่มข้อมูลผู้ใช้ลงในฐานข้อมูล
+    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
     const result = await pool.query(
       "INSERT INTO users (first_name, last_name, email, password, role, user_name, verification, status, otp_expiry) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
       [
@@ -191,27 +188,24 @@ router.put("/new-otp/:user_id", async (req, res) => {
     const { user_id } = req.params;
     const { email } = req.body;
     function generateNumericOtp(length) {
-      const otp = crypto.randomBytes(length).toString("hex").slice(0, length); // ใช้ 'hex' เพื่อให้เป็นตัวเลข
+      const otp = crypto.randomBytes(length).toString("hex").slice(0, length); 
       return otp;
     }
-    const otp = generateNumericOtp(6); // สร้าง OTP ใหม่
-    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // กำหนดเวลาให้ OTP หมดอายุใน 5 นาที
+    const otp = generateNumericOtp(6); 
+    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); 
 
-    // อัปเดต OTP ในฐานข้อมูลและใช้ RETURNING เพื่อดึงค่าใหม่
     const result = await pool.query(
       `UPDATE users SET verification = $1, otp_expiry = $2 WHERE user_id = $3 RETURNING verification`,
       [otp, otpExpiry, user_id]
     );
 
-    // ตรวจสอบว่าการอัปเดตสำเร็จหรือไม่
     if (result.rowCount === 0) {
       return res.status(404).json({ message: "ไม่พบข้อมูลผู้ใช้" });
     }
 
-    const newOtp = result.rows[0].verification; // OTP ที่อัปเดตแล้ว
+    const newOtp = result.rows[0].verification;
 
     try {
-      // ส่งอีเมลใหม่
       const resultEmail = await resend.emails.send({
         from: process.env.Sender_Email,
         to: email,

@@ -47,12 +47,10 @@ export default function Register() {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
-    // เคลียร์ข้อผิดพลาดเมื่อกรอกข้อมูล
     if (value.trim() !== "") {
       setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
     }
 
-    // ตรวจสอบรหัสผ่านและยืนยันรหัสผ่านแบบ Real-Time
     if (name === "password" || name === "confirmPassword") {
       const updatedPassword = name === "password" ? value : formData.password;
       const updatedConfirmPassword =
@@ -114,7 +112,7 @@ export default function Register() {
         }));
       }
     }
-    // ตรวจสอบ Username และ Email แบบ Real-Time
+
     if (name === "user_name" || name === "email") {
       clearTimeout(window.checkDuplicateTimeout);
       window.checkDuplicateTimeout = setTimeout(async () => {
@@ -166,7 +164,6 @@ export default function Register() {
         "*รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]";
     }
 
-    // ตรวจสอบอีเมลและชื่อผู้ใช้
     const allowDomain = ["@gmail.com", "@hotmail.com", "@rmuti.ac.th"];
     if (!allowDomain.some((domain) => formData.email.endsWith(domain))) {
       newErrors.email =
@@ -176,7 +173,6 @@ export default function Register() {
     if (!newErrors.user_name && !newErrors.email) {
       SetstartProcessLoad(true);
       try {
-        // await new Promise((resolve) => setTimeout(resolve, 200));
         const response = await Promise.all([
           fetch(
             `${API_URL}/register/check-duplicate?field=user_name&value=${formData.user_name}`
@@ -214,7 +210,6 @@ export default function Register() {
     }
     SetstartProcessLoad(true);
     try {
-      // await new Promise((resolve) => setTimeout(resolve, 200));
       const response = await fetch(`${API_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -256,13 +251,6 @@ export default function Register() {
       SetstartProcessLoad(false);
     }
   };
-
-  // if (startProcessLoad)
-  //   return (
-  //     <div className="loading-overlay">
-  //       <div className="loading-spinner"></div>
-  //     </div>
-  //   );
 
   return (
     <div className="register-container">

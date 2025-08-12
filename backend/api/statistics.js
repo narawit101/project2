@@ -5,13 +5,11 @@ const authMiddleware = require("../middlewares/auth");
 
 router.get("/:field_id", authMiddleware, async (req, res) => {
   const { field_id } = req.params;
-  // แก้ไขรับ startDate และ endDate แทน date
   const { startDate, endDate, status, bookingDate } = req.query;
   const user_id = req.user.user_id;
   const user_role = req.user.role;
 
   try {
-    // 1. ถ้าไม่ใช่ admin → ตรวจสอบว่า user นี้เป็นเจ้าของสนาม
     const fieldQuery = await pool.query(
       `SELECT user_id, field_name, status AS field_status FROM field WHERE field_id = $1`,
       [field_id]
@@ -68,10 +66,7 @@ INNER JOIN users u ON u.user_id = b.user_id
 LEFT JOIN field f ON b.field_id = f.field_id
 LEFT JOIN sub_field sf ON b.sub_field_id = sf.sub_field_id
 LEFT JOIN reviews r  ON b.booking_id = r.booking_id
-
 WHERE b.field_id = $1
-
-
     `;
 
     let values = [field_id];
@@ -81,20 +76,15 @@ WHERE b.field_id = $1
       query += ` AND b.booking_date= $${paramIndex}`;
       values.push(bookingDate);
       paramIndex++;
-    }
-    // แก้ไขการกรองวันที่แบบช่วง
-    else if (startDate && endDate) {
-      // กรองแบบช่วงวันที่
+    } else if (startDate && endDate) {
       query += ` AND b.start_date BETWEEN $${paramIndex} AND $${paramIndex + 1}`;
       values.push(startDate, endDate);
       paramIndex += 2;
     } else if (startDate) {
-      // กรองตั้งแต่วันที่เริ่มต้นขึ้นไป
       query += ` AND b.start_date >= $${paramIndex}`;
       values.push(startDate);
       paramIndex++;
     } else if (endDate) {
-      // กรองจนถึงวันที่สิ้นสุด
       query += ` AND b.start_date <= $${paramIndex}`;
       values.push(endDate);
       paramIndex++;
@@ -110,7 +100,6 @@ WHERE b.field_id = $1
 
     const result = await pool.query(query, values);
 
-    // คำนวณสถิติเพิ่มเติมสำหรับรายงาน
     const stats = {
       totalBookings: result.rows.length,
       statusCounts: {
@@ -121,13 +110,9 @@ WHERE b.field_id = $1
       totalRevenue: result.rows
         .filter((row) => row.status === "approved")
         .reduce((sum, row) => sum + parseFloat(row.total_price || 0), 0),
-      // totalDeposit: result.rows
-      //   .filter(row => row.status === 'approved')
-      //   .reduce((sum, row) => sum + parseFloat(row.price_deposit || 0), 0)
     };
 
     res.status(200).json({
-      success: true,
       data: result.rows,
       fieldInfo: {
         field_name: field.field_name,

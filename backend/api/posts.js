@@ -12,15 +12,14 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (req, file) => {
     let folder = "uploads/images/posts";
-    let resourceType = "auto"; // ค่าเริ่มต้น
-    let format = undefined; // ปล่อยให้ Cloudinary จัดการ
+    let resourceType = "auto";
+    let format = undefined;
 
-    // แยกประเภท resource_type ตาม mimetype
     if (file.mimetype.startsWith("image/")) {
-      resourceType = "image"; // รูปภาพ - ดูได้ใน Cloudinary
-      format = undefined; // ปล่อยให้ Cloudinary optimize
+      resourceType = "image";
+      format = undefined;
     } else {
-      resourceType = "raw"; // ไฟล์อื่นๆ เช่น doc, docx
+      resourceType = "raw";
       format = file.mimetype.split("/")[1];
     }
 
@@ -30,16 +29,14 @@ const storage = new CloudinaryStorage({
       public_id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     };
 
-    // เพิ่ม format เฉพาะเมื่อจำเป็น
     if (format) {
       config.format = format;
     }
 
-    // เพิ่มการ optimize สำหรับรูปภาพ
     if (resourceType === "image") {
       config.transformation = [
-        { quality: "auto:good" }, // ปรับคุณภาพอัตโนมัติ
-        { fetch_format: "auto" }, // เลือกฟอร์แมตที่เหมาะสม
+        { quality: "auto:good" },
+        { fetch_format: "auto" },
       ];
     }
 
@@ -74,7 +71,7 @@ async function deleteCloudinaryFile(fileUrl) {
 
     const resourceType = isRaw ? "raw" : "image";
     const lastDotIndex = fullPath.lastIndexOf(".");
-    const publicId = isRaw ? fullPath : fullPath.substring(0, lastDotIndex); // ตัด .jpg .png ฯลฯ
+    const publicId = isRaw ? fullPath : fullPath.substring(0, lastDotIndex); 
 
     const result = await cloudinary.uploader.destroy(publicId, {
       resource_type: resourceType,
@@ -94,9 +91,8 @@ router.post(
     const client = await pool.connect();
     try {
       const { title, content, field_id } = req.body;
-      const user_id = req.user.user_id; // Get the authenticated user's ID
+      const user_id = req.user.user_id;
 
-      // Check if the user is an admin or the owner of the field
       const fieldOwner = await pool.query(
         `SELECT user_id FROM field WHERE field_id = $1`,
         [field_id]
@@ -108,7 +104,6 @@ router.post(
 
       const field_user_id = fieldOwner.rows[0].user_id;
 
-      // Check if the user is an admin or if the user owns the field
       if (req.user.role !== "admin" && field_user_id !== user_id) {
         return res
           .status(403)
@@ -118,7 +113,7 @@ router.post(
       await client.query("BEGIN");
 
       const newPost = await client.query(
-        `INSERT INTO posts (title, content, field_id) VALUES ($1, $2, $3) RETURNING post_id`, // Include user_id
+        `INSERT INTO posts (title, content, field_id) VALUES ($1, $2, $3) RETURNING post_id`, 
         [title, content, field_id]
       );
 
@@ -193,7 +188,7 @@ router.get("/:field_id", async (req, res) => {
       return res.status(200).json({ message: "ไม่มีโพส" });
     }
 
-    res.json(result.rows);
+    res.status(200).json({ data: result.rows });
   } catch (error) {
     console.error("Database Error:", error);
     res.status(500).json({ error: "เกิดข้อผิดพลาดในการดึงข้อมูลโพส" });
@@ -208,6 +203,8 @@ router.get("/", async (req, res) => {
           p.field_id,
           p.title,
           p.content,
+          f.field_name,
+          f.img_field,
           (p.created_at AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Bangkok')::text AS created_at,
           COALESCE(
             json_agg(
@@ -215,24 +212,25 @@ router.get("/", async (req, res) => {
             ) FILTER (WHERE pi.image_url IS NOT NULL), '[]'
           ) AS images
         FROM posts p
+        LEFT JOIN field f ON p.field_id = f.field_id
         LEFT JOIN post_images pi ON p.post_id = pi.post_id
-        GROUP BY p.post_id
+        GROUP BY p.post_id, f.field_name, f.img_field
         ORDER BY p.created_at DESC
-        LIMIT 5;` // ใช้ LIMIT 5 เพื่อดึงแค่ 5 โพสล่าสุด
+        LIMIT 5;`
     );
 
     if (result.rows.length === 0) {
       return res.status(200).json({ message: "ไม่มีโพส" });
     }
 
-    res.json(result.rows);
+    res.status(200).json({ data: result.rows });
   } catch (error) {
     console.error("Database Error:", error);
     res.status(500).json({ error: "เกิดข้อผิดพลาดในการดึงข้อมูลโพส" });
   }
 });
 
-// PATCH แก้ไขโพส
+
 router.patch(
   "/update/:post_id",
   authMiddleware,
@@ -244,7 +242,6 @@ router.patch(
       const { title, content } = req.body;
       const user_id = req.user.user_id;
 
-      // ตรวจสอบว่า user เป็นเจ้าของโพส
       const result = await client.query(
         `SELECT p.*, f.user_id AS field_owner FROM posts p JOIN field f ON p.field_id = f.field_id WHERE p.post_id = $1`,
         [post_id]
@@ -304,7 +301,6 @@ router.patch(
   }
 );
 
-// DELETE ลบโพส
 router.delete("/delete/:post_id", authMiddleware, async (req, res) => {
   const { post_id } = req.params;
   const user_id = req.user.user_id;
@@ -320,7 +316,6 @@ router.delete("/delete/:post_id", authMiddleware, async (req, res) => {
     if (req.user.role !== "admin" && post.field_owner !== user_id)
       return res.status(403).json({ message: "Permission denied" });
 
-    // ดึง path รูปภาพก่อนลบ
     const images = await pool.query(
       `SELECT image_url FROM post_images WHERE post_id = $1`,
       [post_id]

@@ -4,12 +4,11 @@
 
 .select-time-book {
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: 700;
   margin: 0px;
   color: var(--text-color);
   padding: 5px 24px;
-  /* background-color: #f3f4f6; */
 }
 .select-date-book {
   text-align: left;
@@ -18,7 +17,6 @@
   margin: 0px auto 0 auto;
   color: var(--text-color);
   padding: 12px 24px;
-  /* background-color: #f3f4f6; */
 }
 
 .sum-status-box-book {
@@ -88,7 +86,7 @@
 }
 
 .slot-box-book {
-  flex: 1 1 calc(11.66% - 1rem); /* 6 ช่องต่อแถว + gap */
+  flex: 1 1 calc(11.66% - 1rem); 
   min-width: 120px;
   max-width: 180px;
   display: flex;
@@ -143,9 +141,6 @@
   width: 100%;
   margin: 70px auto 0 auto;
   position: relative;
-  /* background-color: #f3f4f6; */
-  /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); */
-  /* border: 1px solid #e5e7eb; */
 }
 
 .book-content {
@@ -323,7 +318,7 @@
   opacity: 0;
   transform: translateY(20px);
   transition: all 0.4s ease;
-  pointer-events: none; /* ป้องกันคลิกขณะซ่อน */
+  pointer-events: none;
 }
 .total-box.show {
   opacity: 1;
@@ -364,7 +359,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* min-height: 280px; */
   overflow-y: auto;
   border: 1px solid #ddd;
   padding: 12px;
@@ -645,7 +639,13 @@
   color: #999;
   cursor: not-allowed;
 }
-
+.date-select-label h2 {
+  font-size: 30px;
+  color: var(--text-color);
+}
+.date-select-label {
+  margin-right: 10px;
+}
 
 @media screen and (max-width: 1500px) {
   .container-bookings {
@@ -721,28 +721,3 @@
     margin: 5px auto;
   }
 }
-/* @media screen and (max-width: 360px) {
-  .slot-box-book {
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    width: 100%;
-    margin: 5px auto;
-  }
-  .book-content {
-    width: 100%;
-    padding: 10px;
-  }
-  .slots-grid-book {
-    align-items: center;
-    justify-content: center;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(70px, 2fr));
-    gap: 1rem;
-    width: 100%;
-    padding: 0.5rem;
-    margin: 5px auto;
-  }
-} */

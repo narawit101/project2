@@ -74,8 +74,6 @@
   text-align: left;
 }
 
-
-
 .depositcon-regisfield {
   border-radius: 5px;
   padding: 10px 10px 10px 10px;
@@ -102,14 +100,14 @@
   display: inline-block;
   margin: 6px 0;
   font-size: 16px;
-  color: #1a73e8; /* สีฟ้าแบบ Google */
+  color: #1a73e8;
   text-decoration: none;
   transition: all 0.2s ease-in-out;
   border-bottom: 1px dashed transparent;
 }
 
 .exapmle-gps a:hover {
-  color: #0b5ed7; /* สี hover */
+  color: #0b5ed7;
   border-bottom: 1px dashed #0b5ed7;
   transform: translateX(2px);
 }
@@ -152,7 +150,7 @@
 }
 
 .input-group-checkbox-register-field input[type="checkbox"]:checked + label {
-  color: var(--text-color); /* เปลี่ยนสีข้อความเมื่อเลือก checkbox */
+  color: var(--text-color);
 }
 
 .input-group-checkbox-register-field label:hover {
@@ -250,7 +248,7 @@
 }
 
 .field-register-contianer select {
-  appearance: none; /* ลบสไตล์ดีฟอลต์ของเบราว์เซอร์ */
+  appearance: none; 
   background-color: white;
   border-color: var(--text-color);
   border-radius: 8px;
@@ -307,9 +305,9 @@
 }
 
 .textarea {
-  width: 100%; /* ทำให้ textarea ขยายเต็มความกว้างของ container */
-  max-width: 100%; /* จำกัดความกว้างไม่ให้เกิน container */
-  box-sizing: border-box; /* รวม padding และ border ในการคำนวณความกว้าง */
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .field-register-contianer textarea {

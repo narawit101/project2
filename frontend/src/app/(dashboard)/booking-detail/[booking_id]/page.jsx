@@ -84,18 +84,13 @@ export default function BookingDetail() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [newStatus, setNewStatus] = useState("");
-  const [message, setMessage] = useState(""); //
+  const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const socketRef = useRef(null);
-  const [bookingId, setBookingId] = useState("");
   const [depositSlip, setDepositSlip] = useState(null);
   const [totalSlip, setTotalSlip] = useState(null);
   const [imgPreviewTotal, setImgPreviewTotal] = useState("");
   const [imgPreviewDeposit, setImgPreviewDeposit] = useState("");
-  const [disabledButtons, setDisabledButtons] = useState({
-    approved: false,
-    rejected: false,
-  });
   const [dataLoading, setDataLoading] = useState(true);
 
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
@@ -114,8 +109,6 @@ export default function BookingDetail() {
   const [reasoning, setReasoning] = useState("");
 
   usePreventLeave(startProcessLoad);
-
-  const [fieldId, setFieldId] = useState("");
   useEffect(() => {
     if (isLoading || !booking_id) return;
 
@@ -131,7 +124,6 @@ export default function BookingDetail() {
     }
   }, [user, isLoading, booking_id]);
 
-  //  1. fetchData แยกไว้เพื่อใช้ซ้ำได้
   const fetchData = useCallback(async () => {
     try {
       if (!booking_id) return;
@@ -149,14 +141,13 @@ export default function BookingDetail() {
 
       const data = await res.json();
 
-      if (data.success) {
+      if (res.ok) {
         setMybooking(data.data);
-        setFieldId(data.data.field_id);
         console.log(" Booking Data:", data.data);
       } else {
         console.log("Booking fetch error:", data.error);
-        // setMessage(data.error);
-        // setMessageType("error");
+        setMessage(data.error);
+        setMessageType("error");
       }
     } catch (error) {
       console.error("Fetch error:", error);
@@ -167,12 +158,10 @@ export default function BookingDetail() {
     }
   }, [booking_id, API_URL]);
 
-  // 2. โหลดข้อมูลรอบแรก
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  // 3. เชื่อม socket แล้วฟัง slot_booked เฉพาะ booking นี้
   useEffect(() => {
     const socket = io(API_URL, {
       transports: ["websocket"],
@@ -182,7 +171,7 @@ export default function BookingDetail() {
     socketRef.current = socket;
 
     socket.on("connect", () => {
-      console.log("🔌 Socket connected:", socket.id);
+      console.log("Socket connected:", socket.id);
     });
 
     socket.on("slot_booked", (data) => {
@@ -195,7 +184,7 @@ export default function BookingDetail() {
     socket.on("review_posted", (data) => {
       if (String(data.bookingId) === String(booking_id)) {
         console.log("ได้รีวิวใหม่ → โหลดรีวิวใหม่");
-        fetchReview(); // โหลดรีวิวใหม่
+        fetchReview();
       }
     });
 
@@ -263,12 +252,12 @@ export default function BookingDetail() {
   };
 
   const openConfirmModal = (status) => {
-    setNewStatus(status); // ตั้งค่าสถานะใหม่ที่ต้องการเปลี่ยน
-    setShowConfirmModal(true); // เปิดโมดอล
+    setNewStatus(status);
+    setShowConfirmModal(true);
   };
 
   const closeConfirmModal = () => {
-    setShowConfirmModal(false); // ปิดโมดอล
+    setShowConfirmModal(false);
     setReasoning("");
   };
 
@@ -307,7 +296,7 @@ export default function BookingDetail() {
 
       const data = await res.json();
 
-      if (res.ok && data.success) {
+      if (res.ok) {
         setMessage(
           `อัปเดตสถานะเป็น ${
             status === "approved"
@@ -332,7 +321,7 @@ export default function BookingDetail() {
           }
         );
         const updatedData = await updatedRes.json();
-        if (updatedData.success) {
+        if (updatedRes.ok) {
           setMybooking(updatedData.data);
         }
       } else {
@@ -384,7 +373,6 @@ export default function BookingDetail() {
   const confirmCancelBooking = async () => {
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const token = localStorage.getItem("auth_mobile_token");
 
       const res = await fetch(
@@ -481,7 +469,6 @@ export default function BookingDetail() {
 
     const formData = new FormData();
     if (depositSlip) formData.append("deposit_slip", depositSlip);
-    //if (totalSlip) formData.append("total_slip", totalSlip);
     const token = localStorage.getItem("auth_mobile_token");
 
     SetstartProcessLoad(true);
@@ -499,7 +486,7 @@ export default function BookingDetail() {
       );
 
       const data = await res.json();
-      if (data.success) {
+      if (res.ok) {
         setMessage("อัปโหลดเรียบร้อยแล้ว");
         setMessageType("success");
         fetchData();
@@ -545,9 +532,8 @@ export default function BookingDetail() {
           },
         }
       );
-
       const data = await res.json();
-      if (data.success) {
+      if (res.ok) {
         setMessage("อัปโหลดเรียบร้อยแล้ว");
         setMessageType("success");
         fetchData();
@@ -571,18 +557,17 @@ export default function BookingDetail() {
   const handleGenQR = async (booking_id, amount) => {
     SetstartProcessLoad(true);
     try {
-      // await new Promise((resolve) => setTimeout(resolve, 200));
       const res = await fetch(`${API_URL}/booking/gen-qr`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ bookingId: booking_id, amount: amount }),
       });
       const data = await res.json();
-      if (data.status === true) {
+      if (res.ok) {
         setQrCode(data.qrCode);
         console.log("QR Code generated:", data.qr);
-        // setMessage("สร้าง QR Code สำเร็จ");
-        // setMessageType("success");
+        setMessage("สร้าง QR Code สำเร็จ");
+        setMessageType("success");
       } else {
         setMessage("เกิดข้อผิดพลาด: " + data.message);
         setMessageType("error");
@@ -603,7 +588,7 @@ export default function BookingDetail() {
       const timer = setTimeout(() => {
         setMessage("");
         setMessageType("");
-      }, 5000);
+      }, 3000);
 
       return () => clearTimeout(timer);
     }
@@ -623,7 +608,7 @@ export default function BookingDetail() {
       });
 
       const data = await res.json();
-      if (data.success) {
+      if (res.ok) {
         setReviewData(data.data);
       } else {
         setMessage("เกิดข้อผิดพลาด: " + data.message);
@@ -656,7 +641,6 @@ export default function BookingDetail() {
     }
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const token = localStorage.getItem("auth_mobile_token");
 
       const res = await fetch(`${API_URL}/reviews/post`, {
@@ -676,7 +660,7 @@ export default function BookingDetail() {
       });
 
       const data = await res.json();
-      if (data.success) {
+      if (res.ok) {
         setMessage("เขียนรีวิวสำเร็จ");
         setMessageType("success");
         handleCloseReviewModal();
@@ -726,7 +710,6 @@ export default function BookingDetail() {
             </p>
 
             <div className="hours-detail-box">
-              {/* เวลาที่จอง */}
               <div className="line-item-hours-detail">
                 <span>เวลาที่จอง:</span>
                 <span>
@@ -737,10 +720,7 @@ export default function BookingDetail() {
                 <span>รวมเวลา:</span>
                 <span>{calTotalHours(booking.total_hours)}</span>
               </div>
-
               <hr className="divider-hours-detail" />
-
-              {/* ยกเลิกได้ถึง */}
               <div className="line-item-hours-detail cancel-info">
                 <span>ยกเลิกได้ถึง:</span>
                 <span>
@@ -754,14 +734,11 @@ export default function BookingDetail() {
                 </span>
               </div>
             </div>
-
             <div className="booking-detail-box">
               <div className="line-item-detail">
                 <span className="all-price-detail">กิจกรรม:</span>
                 <span className="all-price-detail">{booking.activity}</span>
               </div>
-
-              {/* สนาม */}
               <div className="line-item-detail">
                 <span className="all-price-detail">ราคาสนาม:</span>
                 <span className="all-price-detail">
@@ -777,7 +754,6 @@ export default function BookingDetail() {
                 </span>
               </div>
 
-              {/* สิ่งอำนวยความสะดวก */}
               {Array.isArray(booking.facilities) && (
                 <>
                   <div className="line-item-detail">
@@ -852,7 +828,6 @@ export default function BookingDetail() {
                 ) {
                   return (
                     <div className="deposit-slip-container-order-detail">
-                      {/*กรณีมี deposit_slip */}
                       {booking.deposit_slip || booking.total_slip ? (
                         <div>
                           {booking.deposit_slip ? (
@@ -1023,12 +998,6 @@ export default function BookingDetail() {
                                 />
                               </div>
                             )}
-                            {/* <div className="total-remaining-detail">
-                            <p>
-                              <strong>ราคาสุทธิ:</strong> {booking.total_price}{" "}
-                              บาท
-                            </p>
-                          </div> */}
                             <p>
                               <strong>ชื่อเจ้าของบัญชี</strong>{" "}
                               {booking.account_holder}
@@ -1276,8 +1245,6 @@ export default function BookingDetail() {
             {(() => {
               const today = new Date();
               const startDate = new Date(booking.start_date);
-
-              // ตั้งเวลาให้เท่ากันเพื่อเปรียบเทียบเฉพาะวัน
               today.setHours(0, 0, 0, 0);
               startDate.setHours(0, 0, 0, 0);
 

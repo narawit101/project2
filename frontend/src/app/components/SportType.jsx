@@ -16,8 +16,8 @@ export default function HomePage() {
   const [selectedSport, setSelectedSport] = useState("");
   const [approvedFields, setApprovedFields] = useState([]);
   const [selectedSportName, setSelectedSportName] = useState("");
-  const [message, setMessage] = useState(""); // State for messages
-  const [messageType, setMessageType] = useState(""); // State for message type (error, success)
+  const [message, setMessage] = useState(""); 
+  const [messageType, setMessageType] = useState(""); 
   const [sportsCategories, setSportsCategories] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
   const { user, isLoading } = useAuth();
@@ -90,7 +90,6 @@ export default function HomePage() {
           }
         );
 
-        // ตรวจสอบว่า response เป็น JSON หรือไม่
         const contentType = res.headers.get("content-type");
         if (!res.ok || !contentType.includes("application/json")) {
           const text = await res.text();
@@ -184,7 +183,6 @@ export default function HomePage() {
             <div className="filter-center-home">
               <div className="filter-date-home">
                 <label>
-                  {/* วันที่: */}
                   <input
                     type="date"
                     name="date"
@@ -245,7 +243,7 @@ export default function HomePage() {
                   src={
                     field.img_field
                       ? `${field.img_field}`
-                      : "https://via.placeholder.com/300x200"
+                      : "https://www.nstru.ac.th/resources/news/thumbnail/221.jpg"
                   }
                   alt={field.field_name}
                   className="card-img-home"

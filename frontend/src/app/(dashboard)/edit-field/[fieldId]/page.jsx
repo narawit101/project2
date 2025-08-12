@@ -25,7 +25,6 @@ export default function CheckFieldDetail() {
   const [editingField, setEditingField] = useState(null);
   const [updatedValue, setUpdatedValue] = useState("");
   const [subFields, setSubFields] = useState([]);
-  const [addons, setAddons] = useState([]);
   const [addOnInputs, setAddOnInputs] = useState({});
   const [facilities, setFacilities] = useState([]);
   const [allFacilities, setAllFacilities] = useState([]);
@@ -53,9 +52,8 @@ export default function CheckFieldDetail() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [showAddSubFieldForm, setShowAddSubFieldForm] = useState(false);
   const [showAddOnForm, setShowAddOnForm] = useState({});
-  const [message, setMessage] = useState(""); // State สำหรับข้อความ
-  const [messageType, setMessageType] = useState(""); // State สำหรับประเภทของข้อความ (error, success)
-
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedSubField, setSelectedSubField] = useState(null);
   const [showDeleteAddOnModal, setShowDeleteAddOnModal] = useState(false);
@@ -92,7 +90,6 @@ export default function CheckFieldDetail() {
     if (!fieldId) return;
     const fetchFieldData = async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 200));
         const token = localStorage.getItem("auth_mobile_token");
 
         const res = await fetch(`${API_URL}/field/${fieldId}`, {
@@ -192,7 +189,6 @@ export default function CheckFieldDetail() {
     fetchFacilities();
   }, []);
 
-  //  ฟังก์ชันเลือก Checkbox สิ่งอำนวยความสะดวก
   const handleFacilityChange = (facId) => {
     setSelectedFacilities((prev) => {
       const updatedFacilities = { ...prev };
@@ -205,7 +201,6 @@ export default function CheckFieldDetail() {
     });
   };
 
-  //  ฟังก์ชันอัปเดตราคาสิ่งอำนวยความสะดวก
   const handleFacilityPriceChange = (facId, price) => {
     setSelectedFacilities((prev) => ({
       ...prev,
@@ -340,15 +335,23 @@ export default function CheckFieldDetail() {
 
   useEffect(() => {
     const fetchFacilities = async () => {
+      const token = localStorage.getItem("auth_mobile_token");
       try {
-        const response = await fetch(`${API_URL}/facilities/${fieldId}`);
+        const response = await fetch(`${API_URL}/facilities/${fieldId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          credentials: "include",
+        });
 
         if (!response.ok) {
           throw new Error("Failed to fetch facilities");
         }
 
         const data = await response.json();
-        setFacilities(data);
+        setFacilities(data.data);
       } catch (err) {
         console.error(err);
         setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", err);
@@ -452,8 +455,8 @@ export default function CheckFieldDetail() {
 
   const cancelEditing = () => {
     if (previewUrl) {
-      URL.revokeObjectURL(previewUrl); // ล้าง blob จาก memory
-      setPreviewUrl(null); // ล้างค่าพรีวิว
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
     }
     setEditingField(null);
     setUpdatedSubFieldName("");
@@ -465,7 +468,7 @@ export default function CheckFieldDetail() {
     setUpdatedSportId("");
   };
 
-  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+  const MAX_FILE_SIZE = 5 * 1024 * 1024;
   const handleImgChange = (e) => {
     const file = e.target.files[0];
     if (file.size > MAX_FILE_SIZE) {
@@ -496,11 +499,10 @@ export default function CheckFieldDetail() {
       e.target.value = null;
       return;
     }
-    // ตรวจสอบไฟล์ทั้งหมดที่เลือก
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
 
-      // ตรวจสอบขนาดไฟล์
       if (file.size > MAX_FILE_SIZE) {
         isValid = false;
         setMessage("ไฟล์มีขนาดใหญ่เกินไป (สูงสุด 5MB)");
@@ -509,7 +511,6 @@ export default function CheckFieldDetail() {
         break;
       }
 
-      // ตรวจสอบว่าเป็นไฟล์รูปภาพหรือ PDF
       const fileType = file.type;
       if (!fileType.startsWith("image/") && fileType !== "application/pdf") {
         isValid = false;
@@ -579,7 +580,7 @@ export default function CheckFieldDetail() {
       }
       const formData = new FormData();
       for (let i = 0; i < selectedFile.length; i++) {
-        formData.append("documents", selectedFile[i]); // ส่งไฟล์เอกสารหลายไฟล์
+        formData.append("documents", selectedFile[i]);
       }
       const token = localStorage.getItem("auth_mobile_token");
 
@@ -628,11 +629,11 @@ export default function CheckFieldDetail() {
     }
 
     if (typeof value === "number") {
-      return false; // ยอมให้เลข 0 ผ่านได้
+      return false;
     }
 
     if (value instanceof File) {
-      return value.size === 0; // รูปแต่ไม่มีเนื้อหาก็ถือว่าว่าง
+      return value.size === 0;
     }
 
     if (Array.isArray(value)) {
@@ -692,7 +693,6 @@ export default function CheckFieldDetail() {
   };
 
   const addSubField = async (userId) => {
-    // ตรวจสอบว่ามีการเลือกประเภทกีฬาก่อน
     if (!newSportId) {
       setMessage("กรุณาเลือกประเภทกีฬาก่อนเพิ่มสนาม");
       setMessageType("error");
@@ -1684,7 +1684,7 @@ export default function CheckFieldDetail() {
                   inputMode="numeric"
                   value={updatedValue || ""}
                   onChange={(e) => {
-                    let val = e.target.value.replace(/\D/g, ""); // เอาเฉพาะตัวเลข
+                    let val = e.target.value.replace(/\D/g, "");
                     setUpdatedValue(val);
                     setMessage(null);
                     setMessageType(null);
@@ -1932,7 +1932,6 @@ export default function CheckFieldDetail() {
           <div className="factcon-editfield">
             {allFacilities.map((fac) => (
               <div key={fac.fac_id} className="facility-item-editfield">
-                {/* Checkbox เลือกสิ่งอำนวยความสะดวก */}
                 <div className="input-group-checkbox-editfield">
                   <input
                     type="checkbox"
@@ -1953,7 +1952,6 @@ export default function CheckFieldDetail() {
                         placeholder="ถ้าไม่มีราคาใส่ '0'"
                         value={selectedFacilities[fac.fac_id] || ""}
                         onChange={(e) => {
-                          // รับค่าที่กรอกจากผู้ใช้
                           let value = e.target.value.replace(/\D/g, "");
 
                           if (value > 999999) {
@@ -2245,7 +2243,6 @@ export default function CheckFieldDetail() {
                 </div>
               )}
 
-              {/* Add-ons */}
               {sub.add_ons && sub.add_ons.length > 0 ? (
                 <div className="add-ons-container-editfield">
                   <div className="input-group-editfield">
@@ -2362,7 +2359,6 @@ export default function CheckFieldDetail() {
                 </div>
               )}
 
-              {/* ปุ่ม toggle แสดง/ซ่อนฟอร์ม Add-on */}
               <div className="btn-group-editfield">
                 <div className="input-group-editfield">
                   <button
@@ -2384,7 +2380,7 @@ export default function CheckFieldDetail() {
                   </button>
                 </div>
               </div>
-              {/* เงื่อนไขแสดงฟอร์มเพิ่ม Add-on */}
+
               {showAddOnForm[sub.sub_field_id] && (
                 <div className="add-addon-form-editfield">
                   <input
@@ -2460,7 +2456,7 @@ export default function CheckFieldDetail() {
               )}
             </div>
           ))}
-          {/* ปุ่มเดียวสำหรับเพิ่มสนามย่อย */}
+
         </div>
         <div className="input-group-editfield-addsubfield">
           {!showAddSubFieldForm ? (
@@ -2673,7 +2669,6 @@ export default function CheckFieldDetail() {
           </div>
         )}
 
-        {/* โมดอล */}
         {showDeleteModal && (
           <div className="modal-overlay-editfield">
             <div className="modal-editfield">

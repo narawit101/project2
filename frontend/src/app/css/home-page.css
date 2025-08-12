@@ -8,12 +8,10 @@
   align-items: center;
   min-height: 100vh;
   margin: 20px 20px 10px 20px;
-  /* color: rgb(255, 255, 255); */
 }
 
 .banner-container {
   position: relative;
-  /* margin-top: 70px; */
   padding: 60px 0px;
   display: flex;
   justify-content: center;
@@ -24,7 +22,6 @@
   gap: 40px;
   overflow: hidden;
   text-align: center;
-  /* background: rgb(255, 255, 255); */
 }
 
 .banner-video {
@@ -40,7 +37,7 @@
 
 .home-btn button {
   width: auto;
-  background: linear-gradient(135deg, #1b0ed4, #055199); /* ไล่สี */
+  background: linear-gradient(135deg, #1b0ed4, #055199);
   color: white;
   font-size: 18px;
   font-weight: bold;
@@ -54,8 +51,8 @@
 }
 
 .home-btn button:hover {
-  background: linear-gradient(135deg, #055199, #1b0ed4); /* สลับสีไล่เฉด */
-  transform: scale(1.05); /* ขยายเล็กน้อย */
+  background: linear-gradient(135deg, #055199, #1b0ed4);
+  transform: scale(1.05);
 }
 
 .home-btn button:active {
@@ -110,7 +107,7 @@
 .news-section {
   width: 100%;
   max-width: 900px;
-  margin: 50px auto; /* จัดให้อยู่ตรงกลาง */
+  margin: 50px auto;
   background: #ffffff7a;
   border-radius: 16px;
   padding: 40px 32px;
@@ -150,7 +147,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* padding: 20px; */
   padding: 10px 40px 0 40px;
   gap: 20px;
 }
@@ -175,7 +171,7 @@
   outline: none;
   cursor: pointer;
   font-weight: 500;
-  margin: 10px auto; 
+  margin: 10px auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -202,12 +198,9 @@
   border-radius: 8px;
   border: 1px solid #ccc;
   font-size: 1rem;
-  /* margin-top: 0.4rem; */
-  /* min-width: 300px; */
 }
 
 .section-title-home {
-  /* box-shadow: 0 5px 15px rgba(0, 0, 0, 0.132); */
   font-size: 28px;
   font-weight: 600;
 
@@ -217,7 +210,7 @@
   margin: 0px 0px 0px 0px;
   padding: 0.95rem;
 }
-/* card */
+
 .grid-home {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -252,7 +245,6 @@
   object-fit: contain;
   width: 100%;
   height: 300px;
-  /* object-fit: cover; */
   border-bottom: 2px solid rgba(0, 0, 0, 0.421);
 }
 
@@ -311,7 +303,6 @@
   font-size: large;
   margin: 20px;
 }
-/* card */
 
 .post-card-home {
   position: relative;
@@ -335,14 +326,14 @@
 }
 
 .post-title-home {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
   color: var(--text-color);
   margin-bottom: 6px;
 }
 
 .post-text-home {
-  font-size: 18px;
+  font-size: 16px;
   color: #444;
   line-height: 1.6;
   overflow: hidden;
@@ -361,7 +352,6 @@
 .time-home {
   font-size: 14px;
   color: #999;
-  text-align: right;
 }
 
 .post-card-home {
@@ -477,6 +467,23 @@
   color: white;
   font-weight: bold;
 }
+.inline-name-field {
+  display: flex;
+}
+.post-img-field-home {
+  width: 50px;
+  height: 50px;
+  max-width: 100%;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+}
+.field-name-created-at-home {
+  margin: auto 10px;
+}
+.post-field-name-home {
+  font-size: 22px;
+}
 
 /* ///////////////////////////////////////////////////////////////////////////////////////////////////////////// */
 @media screen and (max-width: 1440px) {
@@ -488,7 +495,6 @@
     align-items: center;
     min-height: 100vh;
     margin: 20px 30px 10px 30px;
-    /* color: rgb(255, 255, 255); */
   }
 
   .banner-video {
@@ -622,10 +628,10 @@
   }
 }
 @media screen and (max-width: 880px) {
-    .section-title-container {
+  .section-title-container {
     flex-direction: column;
   }
-  .title-center-home{
+  .title-center-home {
     padding: 0px;
   }
   .homepage {
@@ -711,8 +717,6 @@
     object-fit: contain;
     width: 100%;
     max-width: 100%;
-    /* height: auto; */
-    /* object-fit: cover; */
   }
   .card-body-home h3 {
     min-height: 50px;
@@ -720,7 +724,6 @@
   }
 }
 @media screen and (max-width: 830px) {
-
 }
 
 @media screen and (max-width: 799px) {
@@ -763,6 +766,9 @@
 }
 
 @media screen and (max-width: 596px) {
+  .news-section {
+    padding: 20px;
+  }
   .banner-text {
     margin-top: 0px;
   }
@@ -808,7 +814,7 @@
   .section-title-home {
     border-radius: 25px;
     border: none;
-    padding: 0.65rem; 
+    padding: 0.65rem;
   }
   .grid-home {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -822,7 +828,6 @@
   }
 }
 @media screen and (max-width: 570px) {
-
   .banner-text h1 {
     font-size: 36px;
     padding: 2px;
@@ -837,9 +842,6 @@
     margin-top: 50px;
     padding-bottom: 40px;
   }
-  /* .banner-video {
-    height: 300px;
-  } */
 
   .banner-text {
     margin-top: 0px;
@@ -864,20 +866,19 @@
   }
 }
 @media screen and (max-width: 500px) {
-  .post-title-home {
-    /* text-align: center; */
+  .post-field-name-home {
     font-size: 20px;
+  }
+  .post-title-home {
+    font-size: 18px;
   }
   .time-home {
     margin: 5px 0px 3px 0px;
-    /* text-align: center; */
     font-size: 1rem;
   }
   .post-text-home {
-    /* font-size: 16px; */
-    /* text-align: center; */
+    font-size: 14px;
     color: #555;
-    /* margin: 20px auto 30px auto; */
   }
 }
 @media screen and (max-width: 489px) {
@@ -885,9 +886,6 @@
     margin-top: 50px;
     padding-bottom: 40px;
   }
-  /* .banner-video {
-    height: 300px;
-  } */
 
   .banner-text {
     margin-top: 0px;
@@ -917,16 +915,13 @@
 }
 
 @media screen and (max-width: 476px) {
-  .filter-center-home{
+  .filter-center-home {
     flex-direction: column;
   }
   .banner-container {
     margin-top: 50px;
     padding-bottom: 40px;
   }
-  /* .banner-video {
-    height: 300px;
-  } */
 
   .banner-text {
     margin-top: 0px;
@@ -944,13 +939,13 @@
 }
 
 @media screen and (max-width: 456px) {
+  .post-card-home {
+    padding: 10px;
+  }
   .banner-container {
     margin-top: 30px;
     padding-bottom: 40px;
   }
-  /* .banner-video {
-    height: 300px;
-  } */
 
   .banner-text {
     margin-top: 0px;
@@ -1004,7 +999,6 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* text-align: center; */
     align-items: center;
     width: 100%;
     max-width: 280px;
@@ -1013,10 +1007,14 @@
 }
 
 @media screen and (max-width: 320px) {
+  .post-img-field-home {
+    width: 40px;
+    height: 40px;
+  }
   .homepage {
     margin: 0px 40px 10px 40px;
   }
-  .title-center-home{
+  .title-center-home {
     font-size: 12px;
   }
 

@@ -13,7 +13,7 @@ export default function Navbar() {
   const searchRef = useRef(null);
   const dropdownRef = useRef(null);
   const userProfileRef = useRef(null);
-  const router = useRouter("");
+  const router = useRouter();
   const pathname = usePathname();
   const { user, isLoading } = useAuth();
 
@@ -167,8 +167,6 @@ export default function Navbar() {
                     <Link href="/my-field">สนามของฉัน</Link>
                   </li>
                 )}
-                {/* {user?.role === "field_owner" && <li><Link href="/bookingOrder">คำสั่งจองสนามของฉัน</Link></li>}
-                {user?.role === "admin" && <li><Link href="/bookingOrder">คำสั่งจองสนามของฉัน</Link></li>} */}
                 {user?.role === "admin" && (
                   <li>
                     <Link href="/edit-profile">แก้ไขโปรไฟล์</Link>

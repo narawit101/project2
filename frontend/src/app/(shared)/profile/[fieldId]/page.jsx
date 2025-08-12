@@ -21,18 +21,17 @@ export default function CheckFieldDetail() {
   const { fieldId } = useParams();
   const [fieldData, setFieldData] = useState(null);
   const [postData, setPostData] = useState([]);
-  const [canPost, setCanPost] = useState(false); // State for checking if the user can post
+  const [canPost, setCanPost] = useState(false);
   const [facilities, setFacilities] = useState([]);
-  const [imageIndexes, setImageIndexes] = useState({}); // เก็บ index ของแต่ละโพส
+  const [imageIndexes, setImageIndexes] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedPostId, setSelectedPostId] = useState(null);
   const [editingPostId, setEditingPostId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
   const [newImages, setNewImages] = useState([]);
   const [previewImages, setPreviewImages] = useState([]);
-  const [message, setMessage] = useState(""); // State for messages
-  const [messageType, setMessageType] = useState(""); // State for message type (error, success)
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
   const [expandedPosts, setExpandedPosts] = useState({});
@@ -89,7 +88,9 @@ export default function CheckFieldDetail() {
 
         const data = await res.json();
 
-        if (data.error) {
+        if (res.ok) {
+          setFieldData(data.data);
+        } else {
           setMessage("ไม่สามารถดึงข้อมูลได้");
           setMessageType("error");
           setTimeout(() => {
@@ -97,16 +98,10 @@ export default function CheckFieldDetail() {
           }, 2000);
           return;
         }
-
-        setFieldData(data);
-
-        // เก็บข้อมูลใน sessionStorage
-        sessionStorage.setItem("account_holder", data.account_holder || "");
-        sessionStorage.setItem("name_bank", data.name_bank || "");
-        sessionStorage.setItem("number_bank", data.number_bank || "");
-        sessionStorage.setItem("field_name", data.field_name || "");
-
-        // ตรวจสอบสิทธิ์การโพสต์
+        const fieldName = sessionStorage.setItem(
+          "field_name",
+          data.data.field_name
+        );
         const fieldOwnerId = data.user_id;
         const currentUserId = user?.user_id;
         const currentUserRole = user?.role;
@@ -116,10 +111,8 @@ export default function CheckFieldDetail() {
         } else {
           setCanPost(false);
         }
-
-        // ตรวจสอบสถานะสนาม
-        if (data.status !== "ผ่านการอนุมัติ") {
-          setMessage(`สนามคุณ ${data.status}`);
+        if (data.data.status !== "ผ่านการอนุมัติ") {
+          setMessage(`สนามคุณ ${data.data.status}`);
           setMessageType("error");
           setTimeout(() => {
             router.replace("/my-field");
@@ -154,16 +147,15 @@ export default function CheckFieldDetail() {
         });
 
         const data = await res.json();
-
         if (data.message === "ไม่มีโพส") {
           setPostData([]);
-        } else if (data.error) {
+        } else if (res.ok) {
+          setPostData(data.data);
+          console.log(data.data);
+        } else {
           console.error("Backend error:", data.error);
           setMessage("ไม่สามารถดึงข้อมูลได้", data.error);
           setMessageType("error");
-        } else {
-          setPostData(data);
-          console.log(data);
         }
       } catch (error) {
         console.error("Error fetching post data:", error);
@@ -177,9 +169,9 @@ export default function CheckFieldDetail() {
     fetchPosts();
   }, [fieldId, router]);
 
-  // useEffect(() => {
-  //   window.scrollTo({ top: 900, behavior: "smooth" });
-  // }, [currentPage]);
+  useEffect(() => {
+    window.scrollTo({ top: 900, behavior: "smooth" });
+  }, [currentPage]);
 
   const postPerPage = 5;
 
@@ -190,7 +182,7 @@ export default function CheckFieldDetail() {
   const totalPages = Math.ceil(postData.length / postPerPage);
 
   const getPaginationRange = (current, total) => {
-    const delta = 2; // จำนวนหน้าที่แสดงก่อน/หลังหน้าปัจจุบัน
+    const delta = 2;
     const range = [];
     const rangeWithDots = [];
     let l;
@@ -225,12 +217,12 @@ export default function CheckFieldDetail() {
       try {
         const response = await fetch(`${API_URL}/facilities/${fieldId}`);
 
-        if (!response.ok) {
+        if (response.ok) {
+          const data = await response.json();
+          setFacilities(data.data);
+        } else {
           throw new Error("Failed to fetch facilities");
         }
-
-        const data = await response.json();
-        setFacilities(data);
       } catch (err) {
         console.error(err);
         setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", err);
@@ -248,7 +240,7 @@ export default function CheckFieldDetail() {
       try {
         const res = await fetch(`${API_URL}/reviews/rating-previwe/${fieldId}`);
         const data = await res.json();
-        if (data.success) {
+        if (res.ok) {
           console.log("reviewsData", data.data);
           setReviewData(data.data);
         }
@@ -282,33 +274,8 @@ export default function CheckFieldDetail() {
     }));
   };
 
-  // const handlePrev = (postId, length) => {
-  //   setImageIndexes((prev) => ({
-  //     ...prev,
-  //     [postId]:
-  //       (prev[postId] || 0) - 1 < 0 ? length - 1 : (prev[postId] || 0) - 1,
-  //   }));
-  // };
-
-  // const handleNext = (postId, length) => {
-  //   setImageIndexes((prev) => ({
-  //     ...prev,
-  //     [postId]: (prev[postId] || 0) + 1 >= length ? 0 : (prev[postId] || 0) + 1,
-  //   }));
-  // };
-
-  // const handleImageClick = (imgUrl, postId) => {
-  //   const currentPost = postData.find((p) => p.post_id === postId);
-  //   const images = currentPost?.images || [];
-  //   const index = images.findIndex((img) => `${img.image_url}` === `${imgUrl}`);
-  //   setSelectedImage(`${imgUrl}`);
-  //   setSelectedPostId(postId);
-  //   setImageIndexes((prev) => ({ ...prev, [postId]: index }));
-  // };
-
   const handleCloseLightbox = () => {
     setSelectedImage(null);
-    setSelectedPostId(null);
   };
 
   const handleEdit = (post) => {
@@ -364,7 +331,6 @@ export default function CheckFieldDetail() {
     newImages.forEach((img) => formData.append("img_url", img));
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const res = await fetch(`${API_URL}/posts/update/${postId}`, {
         method: "PATCH",
         credentials: "include",
@@ -402,7 +368,6 @@ export default function CheckFieldDetail() {
   const handleDelete = async () => {
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const token = localStorage.getItem("auth_mobile_token");
 
       const res = await fetch(`${API_URL}/posts/delete/${postToDelete}`, {
@@ -436,21 +401,17 @@ export default function CheckFieldDetail() {
   const extractLatLngFromUrl = (input) => {
     if (!input) return null;
 
-    // ลบช่องว่างทั้งหมดออก (หรืออย่างน้อยช่องว่างหลัง comma)
     const cleanedInput = input.replace(/\s+/g, "");
 
-    // ถ้าเป็นพิกัดตรง ๆ เช่น "16.05498987029293,103.65254733566806"
     if (/^-?[0-9.]+,-?[0-9.]+$/.test(cleanedInput)) {
       return cleanedInput;
     }
 
-    // ถ้าเป็น URL ที่มีพิกัด เช่น /place/16.05498987029293,103.65254733566806
     const match = cleanedInput.match(/([-0-9.]+),([-0-9.]+)/);
     if (match) {
       return `${match[1]},${match[2]}`;
     }
 
-    // short URL ที่ไม่รองรับ
     if (
       cleanedInput.includes("maps.app.goo.gl") ||
       cleanedInput.includes("goo.gl/maps")
@@ -468,17 +429,13 @@ export default function CheckFieldDetail() {
   const getGoogleMapsLink = (gpsLocation) => {
     if (!gpsLocation) return "#";
 
-    // ลบช่องว่างก่อน
     const cleaned = gpsLocation.replace(/\s+/g, "");
 
-    // ถ้าเป็น URL (เริ่มต้นด้วย http) ให้ใช้เลย
     if (cleaned.startsWith("http")) return cleaned;
 
-    // ถ้าเป็นพิกัด ให้สร้างลิงก์ Google Maps
     if (/^-?[0-9.]+,-?[0-9.]+$/.test(cleaned)) {
       return `https://www.google.com/maps/search/?api=1&query=${cleaned}`;
     }
-
     return "#";
   };
 
@@ -587,7 +544,6 @@ export default function CheckFieldDetail() {
                     <strong>ประเภทของพื้นสนาม</strong> {sub.field_surface}
                   </p>
 
-                  {/*  แสดง Add-ons ถ้ามี */}
                   {sub.add_ons && sub.add_ons.length > 0 ? (
                     <div className="add-ons-container-profile">
                       <h3>ราคาสำหรับจัดกิจกรรมพิเศษ</h3>
@@ -925,7 +881,6 @@ export default function CheckFieldDetail() {
           )}
         </div>
 
-        {/* ข้อมูลสนามย่อย (sub_fields) */}
         <aside className="aside">
           <div className="field-info-profile">
             <strong>แนะนำสนาม</strong>
@@ -1121,7 +1076,6 @@ export default function CheckFieldDetail() {
                       <p>
                         <strong>กีฬา:</strong> {sub.sport_name}
                       </p>
-                      {/*  แสดง Add-ons ถ้ามี */}
                     </div>
                   ))
                 ) : (

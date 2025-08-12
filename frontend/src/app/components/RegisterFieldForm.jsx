@@ -30,6 +30,21 @@ export default function RegisterFieldForm() {
     if (user?.status !== "ตรวจสอบแล้ว") {
       router.replace("/verification");
     }
+    if (subFields.length === 0) {
+      setSubFields([
+        {
+          name: "",
+          price: "",
+          sport_id: "",
+          user_id: user.user_id,
+          addOns: [],
+          wid_field: "",
+          length_field: "",
+          players_per_team: "",
+          field_surface: "",
+        },
+      ]);
+    }
   }, [user, isLoading, router]);
 
   const [fieldData, setFieldData] = useState({
@@ -47,8 +62,8 @@ export default function RegisterFieldForm() {
     name_bank: "",
     selectedSport: "",
     depositChecked: false,
-    open_days: [], // เพิ่ม open_days
-    field_description: "", // Include description
+    open_days: [],
+    field_description: "",
     cancel_hours: 0,
   });
 
@@ -84,7 +99,6 @@ export default function RegisterFieldForm() {
     fetchSports();
   }, []);
 
-  //  โหลดสิ่งอำนวยความสะดวก
   useEffect(() => {
     const fetchFacilities = async () => {
       try {
@@ -129,18 +143,16 @@ export default function RegisterFieldForm() {
     const { checked } = e.target;
     setFieldData({
       ...fieldData,
-      depositChecked: checked, // อัปเดตค่าของ checkbox
-      price_deposit: checked ? fieldData.price_deposit : "0", // กำหนดให้เป็น 0 ถ้าไม่ติ๊ก
+      depositChecked: checked,
+      price_deposit: checked ? fieldData.price_deposit : "0",
     });
   };
 
   const handlePriceChange = (e) => {
     let value = e.target.value;
 
-    // ลบทุกอักขระที่ไม่ใช่ตัวเลข
     value = value.replace(/\D/g, "");
 
-    // ตรวจสอบว่ามีเกิน 4 หลักไหม
     if (value.length >= 7) {
       setMessage("ใส่ได้ไม่เกิน 6 หลัก");
       setMessageType("error");
@@ -154,17 +166,15 @@ export default function RegisterFieldForm() {
   };
 
   useEffect(() => {
-    // เมื่อเริ่มต้นถ้าไม่ติ๊ก depositChecked จะให้ price_deposit เป็น "0"
     if (!fieldData.depositChecked && fieldData.price_deposit === "") {
       setFieldData((prevState) => ({
         ...prevState,
-        price_deposit: "0", // กำหนดค่ามัดจำเป็น 0
+        price_deposit: "0",
       }));
     }
-  }, [fieldData.depositChecked]); // ตรวจสอบเมื่อ depositChecked เปลี่ยนแปลง
+  }, [fieldData.depositChecked]);
 
-  // ฟังก์ชันจัดการอัปโหลดรูป และแสดงตัวอย่าง
-  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+  const MAX_FILE_SIZE = 5 * 1024 * 1024;
   const handleimgChange = (e) => {
     const file = e.target.files[0];
     if (file.size > MAX_FILE_SIZE) {
@@ -172,14 +182,13 @@ export default function RegisterFieldForm() {
       setMessageType("error");
       e.target.value = null;
       return;
-    } // ดึงไฟล์รูปจาก input
+    }
     if (file) {
-      // ตรวจสอบว่าไฟล์ที่เลือกเป็นรูปภาพหรือไม่
       if (file.type.startsWith("image/")) {
         setFieldData({
           ...fieldData,
-          img_field: file, // เก็บไฟล์รูปภาพ
-          imgPreview: URL.createObjectURL(file), // สร้าง URL เพื่อแสดงรูป
+          img_field: file,
+          imgPreview: URL.createObjectURL(file),
         });
       } else {
         e.target.value = null;
@@ -189,7 +198,7 @@ export default function RegisterFieldForm() {
     }
   };
 
-  const MAX_FILES = 10; // Limit to 10 files
+  const MAX_FILES = 10;
   const handleFileChange = (e) => {
     const files = e.target.files;
     let isValid = true;
@@ -197,10 +206,10 @@ export default function RegisterFieldForm() {
     if (files.length > MAX_FILES) {
       setMessage(`คุณสามารถอัพโหลดได้สูงสุด ${MAX_FILES} ไฟล์`);
       setMessageType("error");
-      e.target.value = null; // Reset the input value
+      e.target.value = null;
       return;
     }
-    // ตรวจสอบไฟล์ทั้งหมดที่เลือก
+
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const fileType = file.type;
@@ -209,11 +218,10 @@ export default function RegisterFieldForm() {
         isValid = false;
         setMessage("ไฟล์มีขนาดใหญ่เกินไป (สูงสุด 5MB)");
         setMessageType("error");
-        e.target.value = null; // รีเซ็ตไฟล์เมื่อขนาดไฟล์เกิน
+        e.target.value = null;
         break;
       }
 
-      // ตรวจสอบว่าเป็นไฟล์รูปภาพหรือ PDF
       if (!fileType.startsWith("image/") && fileType !== "application/pdf") {
         isValid = false;
         setMessage("โปรดเลือกเฉพาะไฟล์รูปภาพหรือ PDF เท่านั้น");
@@ -223,15 +231,12 @@ export default function RegisterFieldForm() {
     }
 
     if (isValid) {
-      // เก็บไฟล์ที่ถูกต้อง
       setFieldData({ ...fieldData, documents: files });
     } else {
-      // ล้างไฟล์ที่ไม่ถูกต้อง
       e.target.value = null;
     }
   };
 
-  //  ฟังก์ชันเลือก Checkbox สิ่งอำนวยความสะดวก
   const handleFacilityChange = (facId) => {
     setSelectedFacilities((prev) => {
       const updatedFacilities = { ...prev };
@@ -244,7 +249,6 @@ export default function RegisterFieldForm() {
     });
   };
 
-  //  ฟังก์ชันอัปเดตราคาสิ่งอำนวยความสะดวก
   const handleFacilityPriceChange = (facId, price) => {
     setSelectedFacilities((prev) => ({
       ...prev,
@@ -252,7 +256,6 @@ export default function RegisterFieldForm() {
     }));
   };
 
-  //  ฟังก์ชันเพิ่มสิ่งอำนวยความสะดวกใหม่
   const addNewFacility = async () => {
     if (!newFacility.trim()) {
       setMessage("กรุณากรอกชื่อสิ่งอำนวยความสะดวก");
@@ -262,8 +265,6 @@ export default function RegisterFieldForm() {
     const token = localStorage.getItem("auth_mobile_token");
     try {
       SetstartProcessLoad(true);
-      // await new Promise((resolve) => setTimeout(resolve, 200));
-
       const res = await fetch(`${API_URL}/facilities/add`, {
         method: "POST",
         headers: {
@@ -297,7 +298,6 @@ export default function RegisterFieldForm() {
     }
   };
 
-  //  เพิ่มสนามย่อย (มี addOns ในตัวเอง)
   const addSubField = () => {
     setSubFields([
       ...subFields,
@@ -315,12 +315,10 @@ export default function RegisterFieldForm() {
     ]);
   };
 
-  //  ลบสนามย่อย (รวมถึง Add-ons ที่อยู่ภายใน)
   const removeSubField = (index) => {
     setSubFields(subFields.filter((_, i) => i !== index));
   };
 
-  //  อัปเดตข้อมูลสนามย่อย
   const updateSubField = (index, key, value) => {
     const updatedSubFields = [...subFields];
     updatedSubFields[index][key] = value;
@@ -333,14 +331,12 @@ export default function RegisterFieldForm() {
     setSubFields(updatedSubFields);
   };
 
-  //  อัปเดตค่า Add-on
   const updateAddOn = (subIndex, addOnIndex, key, value) => {
     const updatedSubFields = [...subFields];
     updatedSubFields[subIndex].addOns[addOnIndex][key] = value;
     setSubFields(updatedSubFields);
   };
 
-  // ลบ Add-on
   const removeAddOn = (subIndex, addOnIndex) => {
     const updatedSubFields = [...subFields];
     updatedSubFields[subIndex].addOns.splice(addOnIndex, 1);
@@ -353,7 +349,7 @@ export default function RegisterFieldForm() {
     setFieldData({
       ...fieldData,
       account_type: value,
-      name_bank: value === "พร้อมเพย์" ? "พร้อมเพย์" : fieldData.name_bank, // ถ้าเลือกพร้อมเพย์ ให้กำหนด name_bank เป็น "พร้อมเพย์"
+      name_bank: value === "พร้อมเพย์" ? "พร้อมเพย์" : fieldData.name_bank,
     });
   };
 
@@ -368,7 +364,6 @@ export default function RegisterFieldForm() {
 
     const userId = user.user_id;
 
-    // ตรวจสอบข้อมูลที่กรอกให้ครบถ้วน
     if (
       !fieldData.field_name ||
       !fieldData.address ||
@@ -391,6 +386,11 @@ export default function RegisterFieldForm() {
       setMessageType("error");
       return;
     }
+    
+    if (fieldData.cancel_hours < 0 || fieldData.cancel_hours > 24) {
+      setMessage("กรุณากรอกจำนวนชั่วโมงยกเลิกการจองให้ถูกต้อง (0-24 ชั่วโมง)");
+      setMessageType("error");
+    }
 
     for (let sub of subFields) {
       if (
@@ -408,13 +408,12 @@ export default function RegisterFieldForm() {
       }
     }
 
-    // ถ้าเลือกเอกสารหรือรูปภาพไม่ได้
     if (!fieldData.documents || !fieldData.img_field) {
       setMessage("กรุณาเลือกเอกสารและรูปโปรไฟล์สนาม");
       setMessageType("error");
       return;
     }
-    const selectedFacs = Object.keys(selectedFacilities); // ประกาศตัวแปร selectedFacs
+    const selectedFacs = Object.keys(selectedFacilities);
     if (selectedFacs.length === 0) {
       setMessage("กรุณาเลือกสิ่งอำนวยความสะดวก");
       setMessageType("error");
@@ -448,17 +447,16 @@ export default function RegisterFieldForm() {
         account_holder: fieldData.account_holder,
         price_deposit: fieldData.price_deposit,
         name_bank: fieldData.name_bank,
-        status: fieldData.status || "รอตรวจสอบ", // เพิ่มค่า Status
+        status: fieldData.status || "รอตรวจสอบ",
         selectedFacilities,
         subFields: subFields,
-        open_days: fieldData.open_days, // เพิ่ม open_days
-        field_description: fieldData.field_description, // Include description
+        open_days: fieldData.open_days,
+        field_description: fieldData.field_description,
         cancel_hours: fieldData.cancel_hours,
       })
     );
     SetstartProcessLoad(true);
     try {
-      // await new Promise((resolve) => setTimeout(resolve, 200));
       const token = localStorage.getItem("auth_mobile_token");
 
       const res = await fetch(`${API_URL}/field/register`, {
@@ -494,12 +492,12 @@ export default function RegisterFieldForm() {
         name_bank: "",
         selectedSport: "",
         depositChecked: false,
-        open_days: [], // ล้าง open_days
-        field_description: "", // Include description
+        open_days: [],
+        field_description: "",
         cancel_hours: "",
       });
-      setSubFields([]); // เคลียร์สนามย่อย
-      setSelectedFacilities({}); // เคลียร์สิ่งอำนวยความสะดวก
+      setSubFields([]);
+      setSelectedFacilities({});
       setTimeout(() => {
         setMessage("");
         router.replace("");
@@ -667,7 +665,7 @@ export default function RegisterFieldForm() {
               placeholder="เช่น 2 = ยกเลิกได้ก่อน 2 ชม."
               value={fieldData.cancel_hours}
               onChange={(e) => {
-                let value = e.target.value.replace(/\D/g, ""); // เอาเฉพาะตัวเลข
+                let value = e.target.value.replace(/\D/g, "");
                 if (value > 24) {
                   setMessage("ใส่ไม่เกินไม่เกิน 24 ชั่วโมง ");
                   setMessageType("error");
@@ -684,7 +682,6 @@ export default function RegisterFieldForm() {
           <div className="subfieldcon">
             {subFields.map((sub, subIndex) => (
               <div key={subIndex}>
-                {/*Input กรอกชื่อสนามย่อย */}
                 <div className="input-group-register-field">
                   <label htmlFor="">ชื่อสนามย่อย</label>
                   <input
@@ -697,7 +694,7 @@ export default function RegisterFieldForm() {
                     }
                   />
                 </div>
-                {/*Input กรอกราคา */}
+
                 <div className="input-group-register-field">
                   <label htmlFor="">ราคา/ชั่วโมง</label>
                   <input
@@ -718,7 +715,7 @@ export default function RegisterFieldForm() {
                     }}
                   />
                 </div>
-                {/*Dropdown เลือกประเภทกีฬา */}
+
                 <div className="input-group-register-field">
                   <label htmlFor="">ประเภทกีฬา</label>
 
@@ -808,7 +805,7 @@ export default function RegisterFieldForm() {
                     }
                   />
                 </div>
-                {/*ปุ่มเพิ่มกิจกรรมเพิ่มเติม (เฉพาะสนามนี้) */}
+
                 <button
                   className="addbtn-regisfield"
                   type="button"
@@ -816,7 +813,7 @@ export default function RegisterFieldForm() {
                 >
                   เพิ่มกิจกรรมเพิ่มเติม
                 </button>
-                {/*ปุ่มลบสนามย่อย */}
+
                 <button
                   className="delbtn-regisfield"
                   type="button"
@@ -824,11 +821,10 @@ export default function RegisterFieldForm() {
                 >
                   ลบสนามย่อย
                 </button>
-                {/* แสดงรายการกิจกรรมเพิ่มเติมที่อยู่ในสนามนี้ */}
+
                 <div className="addoncon">
                   {sub.addOns.map((addon, addOnIndex) => (
                     <div key={addOnIndex}>
-                      {/* Input กรอกชื่อกิจกรรม */}
                       <div className="input-group-register-field">
                         <input
                           type="text"
@@ -845,7 +841,7 @@ export default function RegisterFieldForm() {
                           }
                         />
                       </div>
-                      {/* Input กรอกราคา */}
+
                       <div className="input-group-register-field">
                         <input
                           type="text"
@@ -866,7 +862,6 @@ export default function RegisterFieldForm() {
                         />
                       </div>
 
-                      {/* ปุ่มลบกิจกรรมเพิ่มเติม */}
                       <button
                         className="delevn"
                         type="button"
@@ -880,7 +875,6 @@ export default function RegisterFieldForm() {
               </div>
             ))}
 
-            {/*ปุ่มเพิ่มสนามย่อย */}
             <button
               className="addsubfield-regisfield"
               type="button"
@@ -894,7 +888,7 @@ export default function RegisterFieldForm() {
 
             <input type="file" onChange={handleimgChange} accept="image/*" />
           </div>
-          {/*แสดงรูปตัวอย่างถ้ามีการอัปโหลด */}
+
           {fieldData.imgPreview && (
             <div className="preview-container-regis-field">
               <p>ตัวอย่างรูป:</p>
@@ -908,7 +902,7 @@ export default function RegisterFieldForm() {
             </label>
             <input
               type="file"
-              onChange={handleFileChange} // ใช้ฟังก์ชันที่กำหนดไว้
+              onChange={handleFileChange}
               accept="image/*,.pdf"
               multiple
             />
@@ -917,9 +911,9 @@ export default function RegisterFieldForm() {
           <div className="input-group-register-field">
             <label htmlFor="account-type">เลือกประเภทบัญชี</label>
             <select
-              name="account_type" // เปลี่ยนชื่อ name เพื่อไม่ให้ชนกับ input
+              name="account_type"
               value={fieldData.account_type}
-              onChange={handleAccountTypeChange} // ใช้ handleAccountTypeChange ในการจัดการการเปลี่ยนประเภทบัญชี
+              onChange={handleAccountTypeChange}
             >
               <option value="">กรุณาเลือกบัญชี</option>
               <option value="ธนาคาร">ธนาคาร</option>
@@ -931,48 +925,44 @@ export default function RegisterFieldForm() {
             <label htmlFor="number_bank">เลขบัญชีธนาคาร / พร้อมเพย์</label>
             <input
               type="text"
-              maxLength={13} // จำกัดความยาวสูงสุดที่ 13 หลัก
+              maxLength={13}
               inputMode="numeric"
               pattern="[0-9]*"
               name="number_bank"
               placeholder="เลขบัญชีและพร้อมเพย์ 10 หลัก หรือ 13 หลัก หลักเท่านั้น"
-              value={fieldData.number_bank || ""} // ตรวจสอบให้ค่ามีค่าเริ่มต้น
+              value={fieldData.number_bank || ""}
               onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, ""); // ลบทุกอักขระที่ไม่ใช่ตัวเลข
-                setMessage(""); // เคลียร์ข้อความเมื่อเริ่มกรอกใหม่
-                const isPromptPay = fieldData.account_type === "พร้อมเพย์"; // ตรวจสอบประเภทบัญชีที่เลือก
+                const value = e.target.value.replace(/\D/g, "");
+                setMessage("");
+                const isPromptPay = fieldData.account_type === "พร้อมเพย์";
 
-                // อนุญาตเฉพาะตัวเลข
                 if (/^\d*$/.test(value)) {
-                  // ตรวจสอบจำนวนหลัก
                   if (
-                    (isPromptPay && value.length <= 13) || // พร้อมเพย์ 10 หรือ 13 หลัก
-                    (!isPromptPay && value.length <= 12) // ธนาคาร 12 หลัก
+                    (isPromptPay && value.length <= 13) ||
+                    (!isPromptPay && value.length <= 12)
                   ) {
                     setFieldData({ ...fieldData, number_bank: value });
                   }
                 }
               }}
               onBlur={() => {
-                const isPromptPay = fieldData.account_type === "พร้อมเพย์"; // ตรวจสอบประเภทบัญชีที่เลือก
+                const isPromptPay = fieldData.account_type === "พร้อมเพย์";
                 const length = fieldData.number_bank.length;
 
-                // ตรวจสอบความถูกต้องของเลขที่กรอก
                 if (
-                  (!isPromptPay && length !== 10 && length !== 12) || // ถ้าเป็นบัญชีธนาคารต้อง 12 หลัก
-                  (isPromptPay && length !== 10 && length !== 13) // ถ้าเป็นพร้อมเพย์ต้อง 10 หรือ 13 หลัก
+                  (!isPromptPay && length !== 10 && length !== 12) ||
+                  (isPromptPay && length !== 10 && length !== 13)
                 ) {
                   setMessage(
                     "เลขที่กรอกไม่ถูกต้อง เลขบัญชีและพร้อมเพย์ 10 หลัก หรือ 13 หลัก หลักเท่านั้น"
                   );
                   setMessageType("error");
-                  setFieldData({ ...fieldData, number_bank: "" }); // เคลียร์ค่า
+                  setFieldData({ ...fieldData, number_bank: "" });
                 }
               }}
             />
           </div>
 
-          {/* กรอกชื่อธนาคาร */}
           {fieldData.account_type === "ธนาคาร" && (
             <div className="input-group-register-field">
               <label htmlFor="bank">ชื่อธนาคาร</label>
@@ -987,7 +977,6 @@ export default function RegisterFieldForm() {
             </div>
           )}
 
-          {/* ไม่ให้กรอกชื่อธนาคารเมื่อเลือก "พร้อมเพย์" */}
           {fieldData.account_type === "พร้อมเพย์" && (
             <div className="input-group-register-field">
               <label htmlFor="bank">ชื่อธนาคาร</label>
@@ -1033,14 +1022,14 @@ export default function RegisterFieldForm() {
                     type="text"
                     name="price_deposit"
                     placeholder="กำหนดค่ามัดจำ"
-                    value={fieldData.price_deposit || "0"} // ตรวจสอบให้ค่ามีค่าเริ่มต้น
-                    onChange={handlePriceChange} // อัปเดตค่ามัดจำเมื่อกรอก
+                    value={fieldData.price_deposit || "0"}
+                    onChange={handlePriceChange}
                     maxLength={7}
                     inputMode="numeric"
                     pattern="[0-9]*"
                     onKeyDown={(e) => {
                       if (e.key === "-") {
-                        e.preventDefault(); // ป้องกันการกรอกเครื่องหมายลบ
+                        e.preventDefault();
                       }
                     }}
                   />
@@ -1054,7 +1043,6 @@ export default function RegisterFieldForm() {
           <div className="factcon-register-field">
             {facilities.map((fac) => (
               <div key={fac.fac_id} className="facility-item-register-field">
-                {/* Checkbox เลือกสิ่งอำนวยความสะดวก */}
                 <div className="input-group-checkbox-register-field">
                   <input
                     type="checkbox"
@@ -1064,7 +1052,6 @@ export default function RegisterFieldForm() {
                   <label>{fac.fac_name}</label>
                 </div>
 
-                {/* ป้อนราคาเมื่อเลือกสิ่งอำนวยความสะดวก */}
                 {selectedFacilities[fac.fac_id] !== undefined && (
                   <div className="input-group-register-field">
                     <div className="input-group-checkbox-register-field">
@@ -1074,20 +1061,18 @@ export default function RegisterFieldForm() {
                         pattern="[0-9]*"
                         maxLength={7}
                         placeholder="กำหนดราคา ถ้าไม่มีใส่ '0'"
-                        value={selectedFacilities[fac.fac_id] || ""} // ตรวจสอบให้แน่ใจว่าไม่เป็น undefined หรือ null
+                        value={selectedFacilities[fac.fac_id] || ""}
                         onChange={(e) => {
-                          // รับค่าที่กรอกจากผู้ใช้
-                          let value = e.target.value.replace(/\D/g, ""); // เอาเฉพาะตัวเลข
+                          let value = e.target.value.replace(/\D/g, "");
                           if (value > 999999) {
                             setMessage("ใส่ได้ไม่เกิน 6 หลัก ");
                             setMessageType("error");
                             return;
                           }
-                          // ตรวจสอบว่าเป็นตัวเลขและเป็นค่าบวกหรือ 0
                           if (value === "" || parseFloat(value) >= 0) {
-                            handleFacilityPriceChange(fac.fac_id, value); // ส่งค่าใหม่ที่ผ่านการตรวจสอบ
+                            handleFacilityPriceChange(fac.fac_id, value);
                           } else {
-                            handleFacilityPriceChange(fac.fac_id, 0); // ถ้าค่าติดลบให้เป็น 0
+                            handleFacilityPriceChange(fac.fac_id, 0);
                           }
                         }}
                       />

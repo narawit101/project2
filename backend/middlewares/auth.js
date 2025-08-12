@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const pool = require("../db"); // เพิ่ม pool จากไฟล์เชื่อมต่อฐานข้อมูล
+const pool = require("../db"); 
 
 const authMiddleware = async (req, res, next) => {
   let token = null;

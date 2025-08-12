@@ -13,12 +13,11 @@ export default function ConfirmResetPassword() {
   const router = useRouter("");
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
   usePreventLeave(startProcessLoad);
-  
+
   useEffect(() => {
+    const user = sessionStorage.getItem("user");
     const expiresAt = JSON.parse(sessionStorage.getItem("expiresAt"));
-    if (Date.now() < expiresAt) {
-      const user = JSON.parse(sessionStorage.getItem("user"));
-    } else {
+    if (expiresAt < Date.now() || !user) {
       sessionStorage.removeItem("expiresAt");
       sessionStorage.removeItem("user");
       router.replace("/reset-password");
@@ -47,7 +46,6 @@ export default function ConfirmResetPassword() {
       setMessageType("error");
       return;
     }
-    // ตรวจสอบรูปแบบรหัสผ่านที่แข็งแกร่ง
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
 
@@ -74,7 +72,6 @@ export default function ConfirmResetPassword() {
     }
     SetstartProcessLoad(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
       const response = await fetch(
         `${API_URL}/users/${user.user_id}/change-password-reset`,
         {
@@ -121,13 +118,6 @@ export default function ConfirmResetPassword() {
       return () => clearTimeout(timer);
     }
   }, [message]);
-
-  // if (startProcessLoad)
-  //   return (
-  //     <div className="loading-overlay">
-  //       <div className="loading-spinner"></div>
-  //     </div>
-  //   );
 
   return (
     <div>

@@ -15,8 +15,8 @@ export default function Search() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query");
   const [approvedFields, setApprovedFields] = useState([]);
-  const [message, setMessage] = useState(""); // State for messages
-  const [messageType, setMessageType] = useState(""); // State for message type (error, success)
+  const [message, setMessage] = useState(""); 
+  const [messageType, setMessageType] = useState(""); 
   const [dataLoading, setDataLoading] = useState(true);
   const { user, isLoading } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,7 +38,7 @@ export default function Search() {
       setDataLoading(false);
       return;
     }
-    
+
     const dayMapThaiToEng = {
       จันทร์: "Mon",
       อังคาร: "Tue",
@@ -49,7 +49,7 @@ export default function Search() {
       อาทิตย์: "Sun",
     };
 
-   const translatedQuery = dayMapThaiToEng[query?.trim()] || query;
+    const translatedQuery = dayMapThaiToEng[query?.trim()] || query;
 
     const fetchApprovedFields = async () => {
       setDataLoading(true);
@@ -68,13 +68,13 @@ export default function Search() {
 
         const data = await res.json();
 
-        if (data.error) {
+        if (res.ok) {
+          setApprovedFields(data.data);
+          console.log("approvefield", data);
+        } else {
           console.error("เกิดข้อผิดพลาด:", data.error);
           setMessage(data.error);
           setMessageType("error");
-        } else {
-          setApprovedFields(data.data);
-          console.log("approvefield", data);
         }
       } catch (error) {
         console.error("Error fetching approved fields:", error);
@@ -120,7 +120,7 @@ export default function Search() {
       const timer = setTimeout(() => {
         setMessage("");
         setMessageType("");
-      }, 3500);
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
@@ -159,7 +159,7 @@ export default function Search() {
                   src={
                     field.img_field
                       ? `${field.img_field}`
-                      : "https://via.placeholder.com/300x200"
+                      : "https://www.nstru.ac.th/resources/news/thumbnail/221.jpg"
                   }
                   alt={field.field_name}
                   className="card-img-search"
