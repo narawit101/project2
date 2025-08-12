@@ -37,7 +37,7 @@
 
 .input-group-register input {
   width: 100%;
-  padding: 10px;
+  padding: 10px;  
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 14px;
@@ -78,7 +78,7 @@
   color: #d90429;
 }
 
-.input-group-register input.error {
+.input-group-register input.errors {
   border-color: #d90429;
   background: rgba(217, 4, 41, 0.1);
 }

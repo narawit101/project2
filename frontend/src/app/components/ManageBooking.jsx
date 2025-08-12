@@ -11,8 +11,8 @@ export default function Mybooking() {
   const [filters, setFilters] = useState({ date: "", status: "" });
   const router = useRouter();
   const socketRef = useRef(null);
-  const [message, setMessage] = useState(""); 
-  const [messageType, setMessageType] = useState(""); 
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const [userName, setUserName] = useState("");
   const [userInfo, setUserInfo] = useState("");
   const [dataLoading, setDataLoading] = useState(true);
@@ -97,7 +97,7 @@ export default function Mybooking() {
 
     socket.on("slot_booked", () => {
       console.log("slot_booked → reload my-bookings");
-      fetchData(); 
+      fetchData();
     });
 
     socket.on("connect_error", (err) => {
@@ -176,10 +176,10 @@ export default function Mybooking() {
   );
 
   const getPaginationRange = (current, total) => {
-    const delta = 2; 
+    const delta = 2;
     const range = [];
     const rangeWithDots = [];
-    let l;
+    let j;
 
     for (let i = 1; i <= total; i++) {
       if (
@@ -192,15 +192,15 @@ export default function Mybooking() {
     }
 
     for (let i of range) {
-      if (l) {
-        if (i - l === 2) {
-          rangeWithDots.push(l + 1);
-        } else if (i - l > 2) {
+      if (j) {
+        if (i - j === 2) {
+          rangeWithDots.push(j + 1);
+        } else if (i - j > 2) {
           rangeWithDots.push("...");
         }
       }
       rangeWithDots.push(i);
-      l = i;
+      j = i;
     }
 
     return rangeWithDots;
@@ -293,11 +293,10 @@ export default function Mybooking() {
                             {item.cancel_hours} ชม.
                           </p>
                         )}
-
                       </div>
                       {item.cancel_hours > 0 && (
                         <div className="total-date-order">
-                        <hr className="divider-order" />
+                          <hr className="divider-order" />
 
                           <p>
                             ยกเลิกได้ถึง <strong>วันที่:</strong>{" "}
@@ -388,7 +387,10 @@ export default function Mybooking() {
                   <button
                     className="detail-button"
                     onClick={() =>
-                      window.open(`/booking-detail/${item.booking_id}`, "_blank")
+                      window.open(
+                        `/booking-detail/${item.booking_id}`,
+                        "_blank"
+                      )
                     }
                   >
                     ดูรายละเอียด

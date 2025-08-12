@@ -185,7 +185,7 @@ export default function CheckFieldDetail() {
     const delta = 2;
     const range = [];
     const rangeWithDots = [];
-    let l;
+    let j;
 
     for (let i = 1; i <= total; i++) {
       if (
@@ -198,15 +198,15 @@ export default function CheckFieldDetail() {
     }
 
     for (let i of range) {
-      if (l) {
-        if (i - l === 2) {
-          rangeWithDots.push(l + 1);
-        } else if (i - l > 2) {
+      if (j) {
+        if (i - j === 2) {
+          rangeWithDots.push(j + 1);
+        } else if (i - j > 2) {
           rangeWithDots.push("...");
         }
       }
       rangeWithDots.push(i);
-      l = i;
+      j = i;
     }
 
     return rangeWithDots;

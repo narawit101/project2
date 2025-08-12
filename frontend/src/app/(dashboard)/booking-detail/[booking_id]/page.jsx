@@ -197,11 +197,6 @@ export default function BookingDetail() {
     };
   }, [API_URL, booking_id, fetchData]);
 
-  useEffect(() => {
-    console.log("BookingDetail Debug - user:", user);
-    console.log("BookingDetail Debug - isLoading:", isLoading);
-  }, [user, isLoading]);
-
   const formatDate = (isoString) => {
     const date = new Date(isoString);
     return date.toLocaleDateString("th-TH", {

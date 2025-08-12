@@ -11,7 +11,6 @@ export default function RegisterFieldForm() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [sports, setSports] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [editSport, setEditSport] = useState(null);

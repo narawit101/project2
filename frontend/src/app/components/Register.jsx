@@ -264,7 +264,7 @@ export default function Register() {
             name="user_name"
             value={formData.user_name}
             onChange={handleChange}
-            className={errors.user_name ? "error" : ""}
+            className={errors.user_name ? "errors" : ""}
           />
           {errors.user_name && (
             <p className="error-message">
@@ -281,7 +281,7 @@ export default function Register() {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className={errors.email ? "error" : ""}
+            className={errors.email ? "errors" : ""}
           />
           {errors.email && (
             <p className="error-message">
@@ -297,7 +297,7 @@ export default function Register() {
             name="first_name"
             value={formData.first_name}
             onChange={handleChange}
-            className={errors.first_name ? "error" : ""}
+            className={errors.first_name ? "errors" : ""}
           />
           {errors.first_name && (
             <p className="error-message">
@@ -314,7 +314,7 @@ export default function Register() {
             name="last_name"
             value={formData.last_name}
             onChange={handleChange}
-            className={errors.last_name ? "error" : ""}
+            className={errors.last_name ? "errors" : ""}
           />
           {errors.last_name && (
             <p className="error-message">
@@ -330,7 +330,7 @@ export default function Register() {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            className={errors.passwordLength ? "error" : ""}
+            className={errors.passwordLength ? "errors" : ""}
           />
           {errors.passwordLength && (
             <p className="error-message">
@@ -350,7 +350,7 @@ export default function Register() {
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
-            className={errors.passwordMatch ? "error" : ""}
+            className={errors.passwordMatch ? "errors" : ""}
           />
           {errors.passwordMatch && (
             <p className="error-message">
