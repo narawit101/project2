@@ -34,7 +34,7 @@ export function AuthProvider({ children }) {
         const data = await res.json();
         setUser(data);
       } else {
-        return;
+        setUser(null);
       }
     } catch (error) {
       console.error("Error fetching user", error);

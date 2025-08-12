@@ -16,8 +16,8 @@ export default function HomePage() {
   const [selectedSport, setSelectedSport] = useState("");
   const [approvedFields, setApprovedFields] = useState([]);
   const [selectedSportName, setSelectedSportName] = useState("");
-  const [message, setMessage] = useState(""); 
-  const [messageType, setMessageType] = useState(""); 
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const [sportsCategories, setSportsCategories] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
   const { user, isLoading } = useAuth();
