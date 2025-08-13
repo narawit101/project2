@@ -625,8 +625,8 @@ export default function BookingDetail() {
       return;
     }
 
-    if (!comment || comment.trim().length < 5) {
-      setMessage("กรุณาเขียนรีวิวอย่างน้อย 5 ตัวอักษร");
+    if (comment.trim().length < 0) {
+      setMessage("กรุณาเขียนรีวิว");
       setMessageType("error");
       return;
     }

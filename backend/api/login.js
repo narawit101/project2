@@ -16,10 +16,10 @@ router.post("/", async (req, res) => {
   console.log("Secue", req.secure);
   console.log("User-Agent:", req.headers["user-agent"]);
 
-  const isMobile = /Mobile|Android|iPhone|iPad/i.test(
-    req.headers["user-agent"]
-  );
-  console.log("Device Type:", isMobile ? "Mobile" : "Desktop");
+  // const isMobile = /Mobile|Android|iPhone|iPad/i.test(
+  //   req.headers["user-agent"]
+  // );
+  // console.log("Device Type:", isMobile ? "Mobile" : "Desktop");
 
   try {
     const userQuery = `SELECT * FROM users WHERE user_name = $1 OR email = $1`;
@@ -58,15 +58,16 @@ router.post("/", async (req, res) => {
       secure: isProd && isHttps,
       sameSite: isProd && isHttps ? "None" : "Lax",
       maxAge: expiresIn,
+      ...(isProd && { domain: ".sporthub-online.me" }) // ใส่ domain แค่ตอน prod
     });
 
     const responseData = {
       message: "เข้าสู่ระบบสำเร็จ",
     };
 
-    if (isMobile) {
-      responseData.token = token;
-    }
+    // if (isMobile) {
+    //   responseData.token = token;
+    // }
 
     return res.status(200).json(responseData);
   } catch (error) {

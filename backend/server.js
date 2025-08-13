@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config();
-const path = require("path");
+// const path = require("path");
 const cloudinary = require("cloudinary").v2;
 const cookieParser = require("cookie-parser");
 const http = require("http");
@@ -24,7 +24,7 @@ const io = new Server(server, {
     credentials: true,
   },
 });
-//  Middleware ผูก io เข้ากับ req
+
 app.use((req, res, next) => {
   req.io = io;
   next();
@@ -89,7 +89,6 @@ app.use("/search", search);
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
-  // ฟัง event ที่ client ส่งมาเพื่อ join ห้อง user_id
   socket.on("join_room", (userId) => {
     socket.join(userId.toString());
     console.log(`User joined room: ${userId}`);
