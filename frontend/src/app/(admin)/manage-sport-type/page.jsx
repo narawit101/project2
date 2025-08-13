@@ -43,15 +43,10 @@ export default function RegisterFieldForm() {
 
   useEffect(() => {
     const fetchSports = async () => {
-      const token = localStorage.getItem("auth_mobile_token");
-
       setDataLoading(true);
       try {
         const res = await fetch(`${API_URL}/sports_types`, {
           credentials: "include",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
         });
 
         if (!res.ok) {
@@ -78,8 +73,6 @@ export default function RegisterFieldForm() {
   const currentsportType = sports.slice(indexOfFirst, indexOfLast);
 
   const addType = async () => {
-    const token = localStorage.getItem("auth_mobile_token");
-
     if (!newSport.trim()) return;
     SetstartProcessLoad(true);
     try {
@@ -87,7 +80,6 @@ export default function RegisterFieldForm() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({ sport_name: newSport }),
@@ -101,9 +93,9 @@ export default function RegisterFieldForm() {
         return;
       }
 
-      setSports([...sports, data]); 
-      setNewSport(""); 
-      setShowNewSportInput(false); 
+      setSports([...sports, data]);
+      setNewSport("");
+      setShowNewSportInput(false);
       setMessage("เพิ่มประเภทกีฬาสำเร็จ");
       setMessageType("success");
     } catch (err) {
@@ -116,8 +108,6 @@ export default function RegisterFieldForm() {
   };
 
   const deleteSportType = async () => {
-    const token = localStorage.getItem("auth_mobile_token");
-
     if (!SportTypeToDelete) return;
     SetstartProcessLoad(true);
     try {
@@ -127,7 +117,6 @@ export default function RegisterFieldForm() {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         }
@@ -141,8 +130,8 @@ export default function RegisterFieldForm() {
         setMessageType("error");
         return;
       }
-      setSports(sports.filter((sport) => sport.sport_id !== SportTypeToDelete)); 
-      setShowConfirmModal(false); 
+      setSports(sports.filter((sport) => sport.sport_id !== SportTypeToDelete));
+      setShowConfirmModal(false);
       setMessage("ลบประเภทกีฬาสำเร็จ");
       setMessageType("success");
     } catch (err) {
@@ -155,8 +144,6 @@ export default function RegisterFieldForm() {
   };
 
   const editSportType = async () => {
-    const token = localStorage.getItem("auth_mobile_token");
-
     if (!newSportName.trim()) return;
     SetstartProcessLoad(true);
     try {
@@ -166,7 +153,6 @@ export default function RegisterFieldForm() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
           body: JSON.stringify({ sport_name: newSportName }),

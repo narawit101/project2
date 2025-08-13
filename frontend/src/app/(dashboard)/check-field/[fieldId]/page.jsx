@@ -113,13 +113,10 @@ export default function CheckFieldDetail() {
     const fetchFieldData = async () => {
       if (!fieldId) return;
       try {
-        const token = localStorage.getItem("auth_mobile_token");
-
         const res = await fetch(`${API_URL}/field/${fieldId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -149,12 +146,10 @@ export default function CheckFieldDetail() {
   useEffect(() => {
     const fetchFacilities = async () => {
       try {
-        const token = localStorage.getItem("auth_mobile_token");
         const response = await fetch(`${API_URL}/facilities/${fieldId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -195,15 +190,12 @@ export default function CheckFieldDetail() {
     }
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const response = await fetch(
         `${API_URL}/field/update-status/${fieldId}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
           body: JSON.stringify({ status: newStatus, reasoning: reasoning }),

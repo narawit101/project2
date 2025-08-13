@@ -35,8 +35,6 @@ export default function Mybooking() {
     if (!user?.user_id) return;
 
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const queryParams = new URLSearchParams();
       if (filters.date) queryParams.append("date", filters.date);
       if (filters.status) queryParams.append("status", filters.status);
@@ -47,9 +45,6 @@ export default function Mybooking() {
         }?${queryParams.toString()}`,
         {
           credentials: "include",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
         }
       );
 

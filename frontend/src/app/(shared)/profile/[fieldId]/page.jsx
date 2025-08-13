@@ -73,15 +73,12 @@ export default function CheckFieldDetail() {
 
     const fetchFieldData = async () => {
       try {
-        const token = localStorage.getItem("auth_mobile_token");
-
         sessionStorage.setItem("field_id", fieldId);
 
         const res = await fetch(`${API_URL}/profile/${fieldId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -135,13 +132,10 @@ export default function CheckFieldDetail() {
 
     const fetchPosts = async () => {
       try {
-        const token = localStorage.getItem("auth_mobile_token");
-
         const res = await fetch(`${API_URL}/posts/${fieldId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -323,7 +317,6 @@ export default function CheckFieldDetail() {
 
   const handleEditSubmit = async (e, postId) => {
     e.preventDefault();
-    const token = localStorage.getItem("auth_mobile_token");
 
     const formData = new FormData();
     formData.append("title", editTitle);
@@ -334,9 +327,6 @@ export default function CheckFieldDetail() {
       const res = await fetch(`${API_URL}/posts/update/${postId}`, {
         method: "PATCH",
         credentials: "include",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
         body: formData,
       });
 
@@ -368,14 +358,9 @@ export default function CheckFieldDetail() {
   const handleDelete = async () => {
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const res = await fetch(`${API_URL}/posts/delete/${postToDelete}`, {
         method: "DELETE",
         credentials: "include",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
       });
 
       if (res.ok) {

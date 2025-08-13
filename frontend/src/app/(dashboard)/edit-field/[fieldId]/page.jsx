@@ -90,13 +90,10 @@ export default function CheckFieldDetail() {
     if (!fieldId) return;
     const fetchFieldData = async () => {
       try {
-        const token = localStorage.getItem("auth_mobile_token");
-
         const res = await fetch(`${API_URL}/field/${fieldId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -127,13 +124,10 @@ export default function CheckFieldDetail() {
   useEffect(() => {
     const fetchSportsCategories = async () => {
       try {
-        const token = localStorage.getItem("auth_mobile_token");
-
         const response = await fetch(`${API_URL}/sports_types/preview/type`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -162,12 +156,8 @@ export default function CheckFieldDetail() {
   useEffect(() => {
     const fetchFacilities = async () => {
       try {
-        const token = localStorage.getItem("auth_mobile_token");
-
         const response = await fetch(`${API_URL}/facilities`, {
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
+          headers: {},
           credentials: "include",
         });
 
@@ -223,13 +213,10 @@ export default function CheckFieldDetail() {
     }
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const res = await fetch(`${API_URL}/field/facilities/${fieldId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({ selectedFacilities }),
@@ -263,16 +250,12 @@ export default function CheckFieldDetail() {
     const { field_id, field_fac_id } = selectedFacility;
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const res = await fetch(
         `${API_URL}/field/facilities/${field_id}/${field_fac_id}`,
         {
           method: "DELETE",
           credentials: "include",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
+          headers: {},
         }
       );
 
@@ -301,13 +284,10 @@ export default function CheckFieldDetail() {
     if (!newFacility.trim()) return;
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const res = await fetch(`${API_URL}/facilities/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({ fac_name: newFacility }),
@@ -335,13 +315,11 @@ export default function CheckFieldDetail() {
 
   useEffect(() => {
     const fetchFacilities = async () => {
-      const token = localStorage.getItem("auth_mobile_token");
       try {
         const response = await fetch(`${API_URL}/facilities/${fieldId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -377,15 +355,12 @@ export default function CheckFieldDetail() {
     }
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const response = await fetch(
         `${API_URL}/field/supfiled/${sub_field_id}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
           body: JSON.stringify({
@@ -536,16 +511,12 @@ export default function CheckFieldDetail() {
         setMessageType("error");
         return;
       }
-      const token = localStorage.getItem("auth_mobile_token");
 
       const formData = new FormData();
       formData.append("img_field", selectedFile);
       const response = await fetch(`${API_URL}/field/${fieldId}/upload-image`, {
         method: "POST",
         credentials: "include",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
         body: formData,
       });
 
@@ -582,15 +553,12 @@ export default function CheckFieldDetail() {
       for (let i = 0; i < selectedFile.length; i++) {
         formData.append("documents", selectedFile[i]);
       }
-      const token = localStorage.getItem("auth_mobile_token");
 
       const response = await fetch(
         `${API_URL}/field/${fieldId}/upload-document`,
         {
           method: "POST",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
+
           credentials: "include",
           body: formData,
         }
@@ -655,13 +623,10 @@ export default function CheckFieldDetail() {
     }
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const response = await fetch(`${API_URL}/field/edit/${fieldId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({ [fieldName]: updatedValue }),
@@ -700,13 +665,10 @@ export default function CheckFieldDetail() {
     }
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const response = await fetch(`${API_URL}/field/subfield/${fieldId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({
@@ -768,15 +730,12 @@ export default function CheckFieldDetail() {
     }
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const response = await fetch(
         `${API_URL}/field/delete/subfield/${sub_field_id}`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         }
@@ -805,13 +764,10 @@ export default function CheckFieldDetail() {
   const addAddOn = async (subFieldId, content, price) => {
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const res = await fetch(`${API_URL}/field/addon`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({
@@ -858,15 +814,12 @@ export default function CheckFieldDetail() {
   const deleteAddOn = async (add_on_id) => {
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const response = await fetch(
         `${API_URL}/field/delete/addon/${add_on_id}`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         }
@@ -899,15 +852,12 @@ export default function CheckFieldDetail() {
   const saveAddon = async () => {
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const response = await fetch(
         `${API_URL}/field/add_on/${editingAddon.addOnId}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
           body: JSON.stringify({
@@ -962,13 +912,10 @@ export default function CheckFieldDetail() {
   const upDateStatus = async () => {
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const res = await fetch(`${API_URL}/field/appeal/${field.field_id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({
@@ -2456,7 +2403,6 @@ export default function CheckFieldDetail() {
               )}
             </div>
           ))}
-
         </div>
         <div className="input-group-editfield-addsubfield">
           {!showAddSubFieldForm ? (

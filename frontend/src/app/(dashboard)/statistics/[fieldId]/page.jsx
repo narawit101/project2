@@ -42,8 +42,6 @@ export default function Statistics() {
   const fetchData = useCallback(async () => {
     if (!fieldId) return;
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const queryParams = new URLSearchParams();
       if (filters.bookingDate)
         queryParams.append("bookingDate", filters.bookingDate);
@@ -54,9 +52,6 @@ export default function Statistics() {
         `${API_URL}/statistics/${fieldId}?${queryParams.toString()}`,
         {
           credentials: "include",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
         }
       );
       const data = await res.json();

@@ -52,15 +52,12 @@ export default function EditProfile() {
     }
 
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const response = await fetch(
         `${API_URL}/users/update-profile/${currentUser.user_id}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
           body: JSON.stringify(updatedUser),
@@ -92,10 +89,10 @@ export default function EditProfile() {
   };
 
   const formatDateToThai = (date) => {
-    if (!date) return "ไม่ทราบวันที่"; 
+    if (!date) return "ไม่ทราบวันที่";
 
     const parsedDate = new Date(date);
-    if (isNaN(parsedDate)) return "ไม่สามารถแปลงวันที่ได้"; 
+    if (isNaN(parsedDate)) return "ไม่สามารถแปลงวันที่ได้";
 
     const options = { day: "numeric", month: "long", year: "numeric" };
     return new Intl.DateTimeFormat("th-TH", options).format(parsedDate);

@@ -42,14 +42,10 @@ export default function RegisterFieldForm() {
 
   useEffect(() => {
     const fetchFacilities = async () => {
-      const token = localStorage.getItem("auth_mobile_token");
       setDataLoading(true);
       try {
         const res = await fetch(`${API_URL}/facilities`, {
           credentials: "include",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
         });
 
         const data = await res.json();
@@ -78,8 +74,6 @@ export default function RegisterFieldForm() {
   const currentFacilities = facilities.slice(indexOfFirst, indexOfLast);
 
   const addNewFacility = async () => {
-    const token = localStorage.getItem("auth_mobile_token");
-
     if (!newFacility.trim()) return;
     SetstartProcessLoad(true);
     try {
@@ -87,7 +81,6 @@ export default function RegisterFieldForm() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({ fac_name: newFacility }),
@@ -121,8 +114,6 @@ export default function RegisterFieldForm() {
   };
 
   const deleteFacility = async () => {
-    const token = localStorage.getItem("auth_mobile_token");
-
     if (!facilityToDelete) return;
     SetstartProcessLoad(true);
     try {
@@ -132,7 +123,6 @@ export default function RegisterFieldForm() {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         }
@@ -165,8 +155,6 @@ export default function RegisterFieldForm() {
   };
 
   const editFacility = async () => {
-    const token = localStorage.getItem("auth_mobile_token");
-
     if (!newFacilityName.trim()) return;
     SetstartProcessLoad(true);
 
@@ -177,7 +165,6 @@ export default function RegisterFieldForm() {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
           body: JSON.stringify({ fac_name: newFacilityName }),

@@ -13,7 +13,7 @@ const CreatePost = ({ fieldId, onPostSuccess, setCurrentPage }) => {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
-  usePreventLeave(startProcessLoad); 
+  usePreventLeave(startProcessLoad);
 
   const MAX_FILE_SIZE = 8 * 1024 * 1024;
   const MAX_FILES = 10;
@@ -83,21 +83,16 @@ const CreatePost = ({ fieldId, onPostSuccess, setCurrentPage }) => {
     });
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
       const response = await fetch(`${API_URL}/posts/post`, {
         method: "POST",
         credentials: "include",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-
         body: formData,
       });
 
       if (response.ok) {
         const data = await response.json();
         onPostSuccess(data.post);
-        setCurrentPage(1); 
+        setCurrentPage(1);
         setMessage("โพสต์เรียบร้อย");
         setMessageType("success");
         setTitle("");

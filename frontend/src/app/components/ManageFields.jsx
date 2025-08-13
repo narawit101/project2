@@ -41,13 +41,10 @@ export default function MyFieldPage() {
   useEffect(() => {
     const fetchMyFields = async () => {
       try {
-        const token = localStorage.getItem("auth_mobile_token");
-
         const res = await fetch(`${API_URL}/myfield/myfields`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -103,8 +100,6 @@ export default function MyFieldPage() {
 
   const confirmDeleteSubField = async () => {
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       SetstartProcessLoad(true);
       const res = await fetch(
         `${API_URL}/field/delete/field/${fieldIdToDelete}`,
@@ -112,7 +107,6 @@ export default function MyFieldPage() {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         }
@@ -151,7 +145,7 @@ export default function MyFieldPage() {
     }
   }, [message]);
 
-    if (isLoading)
+  if (isLoading)
     return (
       <div className="load">
         <span className="spinner"></span>

@@ -69,14 +69,12 @@ export default function ChangePassword() {
     }
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
       const response = await fetch(
         `${API_URL}/users/${user.user_id}/check-password`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
           body: JSON.stringify({ currentPassword }),
@@ -84,14 +82,12 @@ export default function ChangePassword() {
       );
 
       if (response.ok) {
-        const token = localStorage.getItem("auth_mobile_token");
         const updateResponse = await fetch(
           `${API_URL}/users/${user.user_id}/change-password`,
           {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
             },
             credentials: "include",
             body: JSON.stringify({

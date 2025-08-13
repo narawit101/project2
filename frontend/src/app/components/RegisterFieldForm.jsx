@@ -70,12 +70,8 @@ export default function RegisterFieldForm() {
   useEffect(() => {
     const fetchSports = async () => {
       try {
-        const token = localStorage.getItem("auth_mobile_token");
         const res = await fetch(`${API_URL}/sports_types`, {
           credentials: "include",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
         });
 
         const data = await res.json();
@@ -102,13 +98,8 @@ export default function RegisterFieldForm() {
   useEffect(() => {
     const fetchFacilities = async () => {
       try {
-        const token = localStorage.getItem("auth_mobile_token");
-
         const res = await fetch(`${API_URL}/facilities`, {
           credentials: "include",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
         });
 
         const data = await res.json();
@@ -262,14 +253,13 @@ export default function RegisterFieldForm() {
       setMessageType("error");
       return;
     }
-    const token = localStorage.getItem("auth_mobile_token");
+
     try {
       SetstartProcessLoad(true);
       const res = await fetch(`${API_URL}/facilities/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({ fac_name: newFacility }),
@@ -386,7 +376,7 @@ export default function RegisterFieldForm() {
       setMessageType("error");
       return;
     }
-    
+
     if (fieldData.cancel_hours < 0 || fieldData.cancel_hours > 24) {
       setMessage("กรุณากรอกจำนวนชั่วโมงยกเลิกการจองให้ถูกต้อง (0-24 ชั่วโมง)");
       setMessageType("error");
@@ -457,14 +447,10 @@ export default function RegisterFieldForm() {
     );
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const res = await fetch(`${API_URL}/field/register`, {
         method: "POST",
         credentials: "include",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+
         body: formData,
       });
 

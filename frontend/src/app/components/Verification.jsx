@@ -10,7 +10,7 @@ export default function Verification() {
   const [otp, setOtp] = useState("");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
-  const [timer, setTimer] = useState(60); 
+  const [timer, setTimer] = useState(60);
   const [canRequestOTP, setCanRequestOTP] = useState(true);
   const router = useRouter("");
   const { user, isLoading, setUser } = useAuth();
@@ -49,12 +49,10 @@ export default function Verification() {
     e.preventDefault();
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
       const res = await fetch(`${API_URL}/register/verify/${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({ otp }),
@@ -90,13 +88,10 @@ export default function Verification() {
 
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const res = await fetch(`${API_URL}/register/new-otp/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify({ email: userEmail }),

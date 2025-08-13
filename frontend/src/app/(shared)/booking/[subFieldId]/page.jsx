@@ -1,10 +1,6 @@
 "use client";
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import {
-  useParams,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import "@/app/css/booking-slot.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { io } from "socket.io-client";
@@ -86,8 +82,6 @@ export default function Booking() {
 
   const fetchBookedSlots = useCallback(async () => {
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const bookingDateFormatted = new Date(bookingDate).toLocaleDateString(
         "en-CA"
       );
@@ -104,9 +98,6 @@ export default function Booking() {
         `${API_URL}/booking/booked-block/${subFieldId}/${start}/${end}`,
         {
           credentials: "include",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
         }
       );
       const data = await res.json();
@@ -180,13 +171,10 @@ export default function Booking() {
     }
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("auth_mobile_token");
-
         const res = await fetch(`${API_URL}/field/field-fac/${field_id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -223,11 +211,9 @@ export default function Booking() {
 
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("auth_mobile_token");
         const res = await fetch(`${API_URL}/field/field-data/${subFieldId}`, {
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           credentials: "include",
         });
@@ -588,8 +574,6 @@ export default function Booking() {
   };
 
   const handleSubmit = async () => {
-    const token = localStorage.getItem("auth_mobile_token");
-
     const bookingData = new FormData();
     SetstartProcessLoad(true);
     const facilityList = Object.values(selectedFacilities).map((item) => ({
@@ -625,10 +609,6 @@ export default function Booking() {
       const response = await fetch(`${API_URL}/booking`, {
         method: "POST",
         credentials: "include",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-
         body: bookingData,
       });
       const data = await response.json();

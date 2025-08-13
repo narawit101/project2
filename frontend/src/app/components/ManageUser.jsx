@@ -38,16 +38,11 @@ export default function AdminManager() {
   }, [user, isLoading, router]);
 
   const fetchUsers = async () => {
-    const token = localStorage.getItem("auth_mobile_token");
-
     setDataLoading(true);
     if (user?.role !== "admin") return;
     try {
       const response = await fetch(`${API_URL}/users`, {
         credentials: "include",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
       });
 
       if (response.status === 401) {
@@ -135,8 +130,6 @@ export default function AdminManager() {
   };
 
   const handleDelete = async (id) => {
-    const token = localStorage.getItem("auth_mobile_token");
-
     SetstartProcessLoad(true);
     try {
       const response = await fetch(`${API_URL}/users/${id}`, {
@@ -145,9 +138,6 @@ export default function AdminManager() {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
       });
 
       if (!response.ok) {
@@ -167,8 +157,6 @@ export default function AdminManager() {
   };
 
   const handleUpdateUser = async (e) => {
-    const token = localStorage.getItem("auth_mobile_token");
-
     e.preventDefault();
 
     SetstartProcessLoad(true);
@@ -177,7 +165,6 @@ export default function AdminManager() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
         body: JSON.stringify(selectedUser),

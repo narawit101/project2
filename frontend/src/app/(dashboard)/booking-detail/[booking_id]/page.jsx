@@ -127,15 +127,12 @@ export default function BookingDetail() {
   const fetchData = useCallback(async () => {
     try {
       if (!booking_id) return;
-      const token = localStorage.getItem("auth_mobile_token");
 
       const res = await fetch(
         `${API_URL}/booking/bookings-detail/${booking_id}`,
         {
           credentials: "include",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
+          headers: {},
         }
       );
 
@@ -267,15 +264,12 @@ export default function BookingDetail() {
     }
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const res = await fetch(
         `${API_URL}/booking/booking-status/${booking_id}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
             booking_status: status,
@@ -306,9 +300,7 @@ export default function BookingDetail() {
           `${API_URL}/booking/bookings-detail/${booking_id}`,
           {
             credentials: "include",
-            headers: {
-              ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
+            headers: {},
           }
         );
         const updatedData = await updatedRes.json();
@@ -364,15 +356,12 @@ export default function BookingDetail() {
   const confirmCancelBooking = async () => {
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const res = await fetch(
         `${API_URL}/booking/cancel-bookings/${booking.booking_id}`,
         {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
           body: JSON.stringify({
             cancel_time: new Date().toISOString(),
@@ -460,7 +449,6 @@ export default function BookingDetail() {
 
     const formData = new FormData();
     if (depositSlip) formData.append("deposit_slip", depositSlip);
-    const token = localStorage.getItem("auth_mobile_token");
 
     SetstartProcessLoad(true);
     try {
@@ -470,9 +458,6 @@ export default function BookingDetail() {
           method: "POST",
           body: formData,
           credentials: "include",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
         }
       );
 
@@ -510,17 +495,12 @@ export default function BookingDetail() {
     if (totalSlip) formData.append("total_slip", totalSlip);
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const res = await fetch(
         `${API_URL}/booking/upload-slip/${booking.booking_id}`,
         {
           method: "PUT",
           body: formData,
           credentials: "include",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
         }
       );
       const data = await res.json();
@@ -587,13 +567,10 @@ export default function BookingDetail() {
 
   const fetchReview = useCallback(async () => {
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const res = await fetch(`${API_URL}/reviews/get/${booking_id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         credentials: "include",
       });
@@ -632,13 +609,10 @@ export default function BookingDetail() {
     }
     SetstartProcessLoad(true);
     try {
-      const token = localStorage.getItem("auth_mobile_token");
-
       const res = await fetch(`${API_URL}/reviews/post`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({
           booking_id: booking.booking_id,
