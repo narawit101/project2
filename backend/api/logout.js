@@ -9,6 +9,7 @@ router.post("/", (req, res) => {
     httpOnly: true,
     secure: isProd && isHttps,
     sameSite: isProd && isHttps ? "None" : "Lax",
+    ...(isProd && { domain: ".sporthub-online.me" }),
   });
 
   res.status(200).json({ message: "ออกจากระบบสำเร็จ" });

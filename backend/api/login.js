@@ -58,7 +58,7 @@ router.post("/", async (req, res) => {
       secure: isProd && isHttps,
       sameSite: isProd && isHttps ? "None" : "Lax",
       maxAge: expiresIn,
-      ...(isProd && { domain: ".sporthub-online.me" }) // ใส่ domain แค่ตอน prod
+      ...(isProd && { domain: ".sporthub-online.me" })
     });
 
     const responseData = {
