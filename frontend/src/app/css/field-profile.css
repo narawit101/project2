@@ -45,12 +45,10 @@
 
 .field-image-profile {
   margin-top: 20px;
-  width: 100%;
-  max-width: 500px;
-  height: auto;
-  border-radius: 10px;
+  width: 350px;
+  border-radius: 50%;
+  height: 350px;
   object-fit: cover;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
 }
 
@@ -265,7 +263,7 @@
 
 .sub-field-card-profile-overlay:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); 
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
   cursor: pointer;
 }
 
@@ -300,12 +298,12 @@
   background: #e7edf7;
   border-radius: 12px;
   color: #333;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); 
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
 .sub-field-card-profile:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); 
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
 .sub-field-card-profile h2 {
@@ -387,7 +385,7 @@
   justify-content: center;
   text-align: center;
   margin-top: 20px;
-  background: linear-gradient(135deg, #1b0ed4, #055199); 
+  background: linear-gradient(135deg, #1b0ed4, #055199);
   color: white;
   font-size: 18px;
   font-weight: bold;
@@ -946,6 +944,18 @@
 
 .btn-cancel-subfield-profile:hover {
   background-color: #c82333;
+}
+.user-profile-name-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.user-profile-review-profile {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+
 }
 
 @media screen and (max-width: 1180px) {

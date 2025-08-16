@@ -13,7 +13,8 @@ export default function Mybooking() {
   const socketRef = useRef(null);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
-  const [userName, setUserName] = useState("");
+  const [userFirstName, setUserFirstUserName] = useState("");
+  const [userLastName, setUserLastUserName] = useState("");
   const [userInfo, setUserInfo] = useState("");
   const [dataLoading, setDataLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -52,7 +53,8 @@ export default function Mybooking() {
 
       if (res.ok) {
         setMybooking(data.data);
-        setUserName(data.user?.user_name || "");
+        setUserFirstUserName(data.user?.first_name || "");
+        setUserLastUserName(data.user?.last_name || "");
         setUserInfo(
           `${data.user?.first_name || ""} ${data.user?.last_name || ""}`
         );
@@ -156,7 +158,7 @@ export default function Mybooking() {
     );
     return Math.abs(totalFac - (parseFloat(item.total_remaining) || 0));
   };
-  const bookingPerPage = 4;
+  const bookingPerPage = 8;
 
   const filteredBookings = booking.filter((item) => {
     if (!filters.status) return true;
@@ -220,7 +222,9 @@ export default function Mybooking() {
         </div>
       )}
       <div className="myorder-container">
-        <h1 className="head-title-my-order">รายการจองสนามของคุณ {userName}</h1>
+        <h1 className="head-title-my-order">
+          การจองสนามของคุณ {userFirstName} {userLastName}
+        </h1>
 
         <div className="filters-order">
           <label>

@@ -86,7 +86,7 @@
 }
 
 .slot-box-book {
-  flex: 1 1 calc(11.66% - 1rem); 
+  flex: 1 1 calc(11.66% - 1rem);
   min-width: 120px;
   max-width: 180px;
   display: flex;
@@ -131,6 +131,13 @@
   background-color: #e8c124;
   color: rgb(73, 69, 69);
   pointer-events: none;
+}
+
+.past-slot {
+  background-color: #858b95;
+  color: #ffffff;
+  pointer-events: none;
+  opacity: 0.7;
 }
 
 .container-bookings {

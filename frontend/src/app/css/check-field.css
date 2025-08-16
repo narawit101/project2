@@ -6,13 +6,15 @@
   --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   --border-radius: 12px;
   --spacing: 1.5rem;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
 }
 
 .check-field-detail-container {
   width: 100%;
   max-width: 1200px;
   margin: 80px auto;
-  padding: 2rem;
+  padding: 1rem 2rem 2rem 2rem;
   background: var(--primary-bg);
   box-shadow: var(--shadow);
   border-radius: var(--border-radius);
@@ -22,8 +24,8 @@
 .check-field-detail-container h1 {
   text-align: center;
   color: var(--text-color);
-  margin-bottom: 2rem;
-  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
   font-weight: 600;
 }
 
@@ -71,9 +73,19 @@
 }
 
 .image-container {
-  grid-column: 1 / -1;
-  text-align: center;
-  margin-bottom: var(--spacing);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--secondary-bg);
+  padding: 16px 20px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  color: #333;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 20px;
 }
 
 .check-field-image {
@@ -118,21 +130,17 @@
   background: var(--secondary-bg);
   border: 2px solid var(--border-color);
   border-radius: var(--border-radius);
-  padding: 1rem;
-  margin: 1rem 0;
+  padding: 0.7rem;
+  margin: 0.7rem 0;
   text-align: center;
   transition: all 0.3s ease;
-}
-
-.document-container:hover {
-  border-color: var(--text-color);
 }
 
 .document-link {
   text-decoration: none;
   color: var(--text-color);
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
 }
 
 .document-link:hover {
@@ -140,10 +148,22 @@
 }
 
 .sub-fields-container-check-field {
+  max-height: none;
+  overflow: visible;
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--border-color);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: var(--spacing);
-  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 1.5rem;
+}
+.sub-fields-container-check-field h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  grid-column: 1 / -1;
 }
 
 .sub-field-card-check-field {
@@ -184,18 +204,28 @@
 }
 
 .field-facilities-check-field {
-  background: var(--secondary-bg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  padding: 1rem;
-  margin-top: 1rem;
-  max-height: 250px;
+  margin: 10px auto;
+  max-height: 350px;
   overflow-y: auto;
+  padding: 16px 20px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: white;
+  color: #333;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.field-facilities-check-field:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
 }
 
 .field-facilities-check-field h1 {
   color: var(--text-color);
-  font-size: 1.5rem;
+  font-size: 1rem;
   font-weight: 600;
   margin-bottom: 1rem;
   text-align: center;
@@ -209,7 +239,7 @@
 
 .facitem-checkfield {
   background: var(--primary-bg);
-  border: 1px solid var(--border-color);
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   padding: 1rem;
 }
@@ -276,15 +306,38 @@
   background-color: #dc3545;
   color: white;
 }
-
-.status-approved {
-  color: #28a745;
+.status-text {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
   font-weight: bold;
+  font-size: 0.95rem;
+  margin: 10px auto;
 }
 
-.status-rejected {
-  color: #dc3545;
-  font-weight: bold;
+.status-text-approved {
+  color: #155724;
+  background-color: #d4f4dd;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.status-text-rejected {
+  color: #721c24;
+  background-color: #fddede;
+  padding: 4px 8px;
+  border-radius: 8px;
+
+  font-weight: 500;
+}
+
+.status-text-pending {
+  color: #856404;
+  background-color: #fff4ce;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-weight: 500;
 }
 
 .newstatus {
@@ -302,6 +355,13 @@
   padding: 1rem;
   max-height: 150px;
   overflow-y: auto;
+}
+
+.check-field-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .check-field-under p {
@@ -396,15 +456,129 @@
   height: 200px;
   resize: none;
 }
-.newstatus-text{
+.newstatus-text {
   margin: 10px auto;
 }
 
-/* Responsive Design */
+.field-row-checkfield {
+  display: flex;
+  flex-direction: column;
+  padding: 1.2rem;
+  margin-bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  height: 100%;
+}
+
+.field-row-checkfield:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.field-details-checkfield {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  flex: 1;
+  height: 100%;
+}
+
+.field-details-checkfield strong {
+  color: var(--text-color);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: left;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.field-value-checkfield {
+  color: var(--text-dark, #333);
+  font-size: 0.95rem;
+  font-weight: 500;
+  flex: 1;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+.field-value-checkfield  a {
+  color: var(--primary-color, #007bff);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.field-value-checkfield a:hover {
+  color: var(--primary-hover, #0056b3);
+  text-decoration: underline;
+}
+
+.doc-fac-conntainer-check-field {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.documents-container-check-field {
+  margin: 10px auto;
+  max-height: 350px;
+  overflow-y: auto;
+  padding: 16px 20px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: white;
+  color: #333;
+  width: 100%;
+  box-sizing: border-box;
+}
+.documents-container-check-field:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+.sub-field-card-check-field {
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-bottom: 0;
+  transition: all 0.3s ease;
+  max-width: 100%;
+  height: fit-content;
+}
+
+.sub-field-card-check-field:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 1200px) {
+  .sub-fields-container-check-field {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  }
+}
+
+@media (max-width: 1028px) {
+  .check-field-detail-container {
+    margin-top: 5rem;
+    width: 800px;
+  }
+}
+@media (max-width: 900px) {
+  .sub-fields-container-check-field {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
 @media (max-width: 768px) {
   .check-field-detail-container {
-    margin: 1rem;
     padding: 1.5rem;
+    width: 600px;
   }
 
   .form-grid {
@@ -444,7 +618,6 @@
 
 @media (max-width: 480px) {
   .check-field-detail-container {
-    margin: 0.5rem;
     padding: 1rem;
   }
 
@@ -471,6 +644,84 @@
   }
 }
 
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .check-field-info {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0.8rem;
+  }
+}
+
+@media (max-width: 968px) {
+  .check-field-info {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .field-row-checkfield {
+    padding: 1rem;
+  }
+
+  .field-details-checkfield strong {
+    font-size: 0.85rem;
+  }
+
+  .field-value-checkfield {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .check-field-info {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .field-row-checkfield {
+    padding: 0.9rem;
+  }
+
+  .field-details-checkfield strong {
+    font-size: 0.8rem;
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .field-value-checkfield {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 580px) {
+  .check-field-info {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .field-row-checkfield {
+    padding: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .check-field-info {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .field-row-checkfield {
+    padding: 0.75rem;
+  }
+
+  .field-details-checkfield strong {
+    font-size: 0.8rem;
+  }
+
+  .field-value-checkfield {
+    font-size: 0.8rem;
+  }
+}
+
 @media (max-width: 360px) {
   .check-field-detail-container {
     padding: 0.75rem;
@@ -485,5 +736,214 @@
   .info-card,
   .sub-field-card-check-field {
     padding: 0.75rem;
+  }
+}
+
+.sub-fields-container-editfield {
+  max-height: none;
+  overflow: visible;
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 2px solid var(--border-color);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 1.5rem;
+}
+
+.sub-fields-container-editfield h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  grid-column: 1 / -1;
+}
+
+.sub-field-card-editfield {
+  background: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-bottom: 0;
+  transition: all 0.3s ease;
+  max-width: 100%;
+  height: fit-content;
+}
+
+.sub-field-card-editfield:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+.sub-field-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sub-field-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.sub-field-sport {
+  background: var(--text-color);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.sub-field-display {
+  margin-bottom: 1rem;
+}
+
+.field-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.addons-section {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.addons-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.addons-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.addons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.addon-item {
+  background: var(--primary-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.addon-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.addon-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.addon-name {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.addon-price {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.no-addons {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 1rem;
+}
+
+@media (max-width: 1200px) {
+  .sub-fields-container-editfield {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .sub-fields-container-editfield {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .sub-field-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .field-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .addon-display {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .addons-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sub-fields-container-editfield {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+
+  .sub-field-card-editfield {
+    padding: 1rem;
+  }
+
+  .sub-field-header h3 {
+    font-size: 1.1rem;
   }
 }

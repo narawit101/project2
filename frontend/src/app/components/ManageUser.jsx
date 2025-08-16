@@ -258,6 +258,7 @@ export default function AdminManager() {
             <thead>
               <tr>
                 <th>id</th>
+                <th>รูป</th>
                 <th>ชื่อ</th>
                 <th>อีเมล</th>
                 <th>สถานะบัญชี</th>
@@ -273,7 +274,17 @@ export default function AdminManager() {
                   <tr key={user.user_id}>
                     <td>{user.user_id}</td>
                     <td>
-                      {user.first_name} - {user.last_name}
+                      <img
+                        className="user-profile-manager"
+                        src={
+                          user?.user_profile
+                            ? user.user_profile
+                            : "https://res.cloudinary.com/dlwfuul9o/image/upload/v1755157542/qlementine-icons--user-24_zre8k9.png"
+                        }
+                      />
+                    </td>
+                    <td>
+                      {user.first_name} {user.last_name}
                     </td>
                     <td>{user.email}</td>
                     <td>
@@ -294,7 +305,7 @@ export default function AdminManager() {
                       {user.role === "customer"
                         ? "ลูกค้า"
                         : user.role === "field_owner"
-                        ? "เจ้าของสนาม"
+                        ? "เจ้าของสนามกีฬา"
                         : user.role === "admin"
                         ? "ผู้ดูแลระบบ"
                         : user.role}
@@ -362,7 +373,7 @@ export default function AdminManager() {
             >
               <option value="all">ทั้งหมด</option>
               <option value="customer">ลูกค้า</option>
-              <option value="field_owner">เจ้าของสนาม</option>
+              <option value="field_owner">เจ้าของสนามกีฬา</option>
             </select>
           </div>
         </div>
@@ -372,6 +383,7 @@ export default function AdminManager() {
             <thead>
               <tr>
                 <th>ID</th>
+                <th>รูป</th>
                 <th>ชื่อ-สกุล</th>
                 <th>อีเมล</th>
                 <th>สถานะบัญชี</th>
@@ -385,7 +397,18 @@ export default function AdminManager() {
                 <tr key={user.user_id}>
                   <td>{user.user_id}</td>
                   <td>
-                    {user.first_name} - {user.last_name}
+                    {" "}
+                    <img
+                      className="user-profile-manager"
+                      src={
+                        user?.user_profile
+                          ? user.user_profile
+                          : "https://res.cloudinary.com/dlwfuul9o/image/upload/v1755157542/qlementine-icons--user-24_zre8k9.png"
+                      }
+                    />
+                  </td>
+                  <td>
+                    {user.first_name} {user.last_name}
                   </td>
                   <td>{user.email}</td>
                   <td>
@@ -405,7 +428,7 @@ export default function AdminManager() {
                     {user.role === "customer"
                       ? "ลูกค้า"
                       : user.role === "field_owner"
-                      ? "เจ้าของสนาม"
+                      ? "เจ้าของสนามกีฬา"
                       : user.role}
                   </td>
                   <td>
@@ -484,6 +507,14 @@ export default function AdminManager() {
             <div className="modal-content-manager">
               <h3 className="Head">แก้ไขข้อมูลผู้ใช้</h3>
               <form onSubmit={handleUpdateUser}>
+                <img
+                  className="user-profile-modal-manager"
+                  src={
+                    selectedUser?.user_profile
+                      ? selectedUser.user_profile
+                      : "https://res.cloudinary.com/dlwfuul9o/image/upload/v1755157542/qlementine-icons--user-24_zre8k9.png"
+                  }
+                />
                 <label>ชื่อ:</label>
                 <input
                   type="text"
@@ -532,7 +563,7 @@ export default function AdminManager() {
                   }
                 >
                   <option value="customer">ลูกค้า</option>
-                  <option value="field_owner">เจ้าของสนาม</option>
+                  <option value="field_owner">เจ้าของสนามกีฬา</option>
                   <option value="admin">ผู้ดูแลระบบ</option>
                 </select>
 

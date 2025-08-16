@@ -264,7 +264,7 @@ export default function CheckFieldDetail() {
         </div>
       )}
       <div className="check-field-detail-container">
-        <h1 className="h1">รายละเอียดสนามกีฬา</h1>
+        <h1>รายละเอียดสนามกีฬา</h1>
         {fieldData?.img_field ? (
           <div className="image-container">
             <img
@@ -279,156 +279,280 @@ export default function CheckFieldDetail() {
           </div>
         )}
         <div className="check-field-info">
-          <div className="check-field-under">
-            <p>
-              <strong>สถานะ: </strong>
-              <span
-                className={
-                  fieldData?.status === "ผ่านการอนุมัติ"
-                    ? "status-approved"
-                    : "status-rejected"
-                }
-              >
-                {fieldData?.status}
-              </span>
-            </p>
-            <p>
-              <strong>ชื่อสนาม:</strong> {fieldData?.field_name}
-            </p>
-            <p>
-              <strong>ที่อยู่:</strong> {fieldData?.address}
-            </p>
-            <p>
-              <strong>พิกัด GPS:</strong>{" "}
-              <a
-                href={fieldData?.gps_location}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {fieldData?.gps_location}
-              </a>
-            </p>
-            <p>
-              <strong>วันที่เปิดทำการ</strong>
-            </p>
-            {dataLoading ? (
-              <div className="loading-data">
-                <div className="loading-data-spinner"></div>
-              </div>
-            ) : (
-              <p>
-                {fieldData?.open_days
-                  ?.map((day) => daysInThai[day])
-                  ?.join(", ")}
-              </p>
-            )}
-            <p>
-              <strong>เวลาทำการ:</strong> {fieldData?.open_hours} -{" "}
-              {fieldData?.close_hours}
-            </p>
-            <p>
-              <strong>เจ้าของ:</strong> {fieldData?.first_name}{" "}
-              {fieldData?.last_name}
-            </p>
-            <p>
-              <strong>ค่ามัดจำ:</strong> {formatPrice(fieldData?.price_deposit)}{" "}
-              บาท
-            </p>
-            <p>
-              <strong>ธนาคาร:</strong> {fieldData?.name_bank}
-            </p>
-            <p>
-              <strong>ชื่อเจ้าของบัญชี:</strong> {fieldData?.account_holder}
-            </p>
-            <p>
-              <strong>เลขบัญชีธนาคาร:</strong> {fieldData?.number_bank}
-            </p>
-            <p>
-              <strong>รายละเอียดสนาม:</strong>
-            </p>
-            <p className="detail-checkfield">{fieldData?.field_description}</p>
-          </div>
-        </div>
-        {fieldData?.documents ? (
-          (Array.isArray(fieldData.documents)
-            ? fieldData.documents
-            : fieldData.documents.split(",")
-          ).map((doc, i) => (
-            <div className="document-container" key={i}>
-              <a
-                href={`${doc.trim()}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="document-link"
-              >
-                <p>เอกสารที่แนบไว้ {i + 1}</p>
-              </a>
-            </div>
-          ))
-        ) : (
-          <p>ไม่มีเอกสารแนบ</p>
-        )}
-        <h1>สิ่งอำนวยความสะดวก</h1>
-        <div className="field-facilities-check-field">
-          {facilities.length === 0 ? (
-            <p>ยังไม่มีสิ่งอำนวยความสะดวกสำหรับสนามนี้</p>
-          ) : (
-            <div className="facbox-checkfield">
-              {facilities.map((facility, index) => (
-                <div
-                  className="facitem-checkfield"
-                  key={`${facility.fac_id}-${index}`}
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>สถานะ:</strong>
+              <div className="field-value-checkfield">
+                <span
+                  className={
+                    fieldData?.status === "ผ่านการอนุมัติ"
+                      ? "status-text-approved"
+                      : fieldData?.status === "ไม่ผ่านการอนุมัติ"
+                      ? "status-text-rejected"
+                      : fieldData?.status === "รอตรวจสอบ"
+                      ? "status-text-pending"
+                      : ""
+                  }
                 >
-                  <strong>{facility.fac_name}</strong>{" "}
-                  <p>{formatPrice(facility.fac_price)} บาท</p>
-                </div>
-              ))}
+                  {fieldData?.status || "ไม่มีข้อมูล"}
+                </span>
+              </div>
             </div>
-          )}
-        </div>
-        <h1>สนามย่อย</h1>
-        <div className="sub-fields-container-check-field">
-          {fieldData?.sub_fields && fieldData.sub_fields.length > 0 ? (
-            fieldData.sub_fields.map((sub) => (
-              <div
-                key={sub.sub_field_id}
-                className="sub-field-card-check-field"
-              >
-                <p>
-                  <strong>ชื่อสนามย่อย:</strong> {sub?.sub_field_name}
-                </p>
-                <p>
-                  <strong>ราคา:</strong> {formatPrice(sub?.price)} บาท
-                </p>
-                <p>
-                  <strong>ประเภทกีฬา:</strong> {sub?.sport_name}
-                </p>
-                <p>
-                  <strong>ผู้เล่นต่อฝั่ง:</strong> {sub?.players_per_team} คน
-                </p>
-                <p>
-                  <strong>ความกว้างของสนาม</strong>{" "}
-                  {formatPrice(sub?.wid_field)} เมตร
-                </p>
-                <p>
-                  <strong>ความยาวของสนาม</strong>{" "}
-                  {formatPrice(sub?.length_field)} เมตร
-                </p>
-                <p>
-                  <strong>ประเภทของพื้นสนาม</strong> {sub?.field_surface}
-                </p>
-                {sub.add_ons && sub.add_ons.length > 0 ? (
-                  <div className="add-ons-container-check-field">
-                    <h3>ราคาสำหรับจัดกิจกรรมพิเศษ</h3>
-                    {sub.add_ons.map((addon) => (
-                      <p key={addon.add_on_id}>
-                        {addon.content} - {formatPrice(addon.price)} บาท
-                      </p>
-                    ))}
+          </div>
+
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>ชื่อสนาม:</strong>
+              <div className="field-value-checkfield">
+                {fieldData?.field_name || "ไม่มีข้อมูล"}
+              </div>
+            </div>
+          </div>
+
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>ที่อยู่:</strong>
+              <div className="field-value-checkfield">
+                {fieldData?.address || "ไม่มีข้อมูล"}
+              </div>
+            </div>
+          </div>
+
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>พิกัด GPS:</strong>
+              <div className="field-value-checkfield">
+                {fieldData?.gps_location ? (
+                  <a
+                    href={fieldData.gps_location}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {fieldData.gps_location}
+                  </a>
+                ) : (
+                  "ไม่มีข้อมูล"
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>วันที่เปิดทำการ:</strong>
+              <div className="field-value-checkfield">
+                {dataLoading ? (
+                  <div className="loading-data">
+                    <div className="loading-data-spinner"></div>
                   </div>
                 ) : (
-                  <p>ไม่มีราคาสำหรับจัดกิจกรรมพิเศษ</p>
+                  fieldData?.open_days
+                    ?.map((day) => daysInThai[day])
+                    ?.join(", ") || "ไม่มีข้อมูล"
                 )}
+              </div>
+            </div>
+          </div>
+
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>เวลาทำการ:</strong>
+              <div className="field-value-checkfield">
+                {fieldData?.open_hours && fieldData?.close_hours
+                  ? `${fieldData.open_hours} - ${fieldData.close_hours}`
+                  : "ไม่มีข้อมูล"}
+              </div>
+            </div>
+          </div>
+
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>เวลาที่ให้จอง:</strong>
+              <div className="field-value-checkfield">
+                {fieldData?.booking_duration
+                  ? fieldData.booking_duration === 30
+                    ? "30 นาที"
+                    : fieldData.booking_duration === 60
+                    ? "1 ชั่วโมง"
+                    : `${fieldData.booking_duration} นาที`
+                  : "ไม่มีข้อมูล"}
+              </div>
+            </div>
+          </div>
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>เจ้าของ:</strong>
+              <div className="field-value-checkfield">
+                {fieldData?.first_name && fieldData?.last_name
+                  ? `${fieldData.first_name} ${fieldData.last_name}`
+                  : "ไม่มีข้อมูล"}
+              </div>
+            </div>
+          </div>
+
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>ค่ามัดจำ:</strong>
+              <div className="field-value-checkfield">
+                {fieldData?.price_deposit
+                  ? `${formatPrice(fieldData.price_deposit)} บาท`
+                  : "ไม่มีข้อมูล"}
+              </div>
+            </div>
+          </div>
+
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>ธนาคาร:</strong>
+              <div className="field-value-checkfield">
+                {fieldData?.name_bank || "ไม่มีข้อมูล"}
+              </div>
+            </div>
+          </div>
+
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>ชื่อเจ้าของบัญชี:</strong>
+              <div className="field-value-checkfield">
+                {fieldData?.account_holder || "ไม่มีข้อมูล"}
+              </div>
+            </div>
+          </div>
+
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>เลขบัญชีธนาคาร:</strong>
+              <div className="field-value-checkfield">
+                {fieldData?.number_bank || "ไม่มีข้อมูล"}
+              </div>
+            </div>
+          </div>
+
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>รายละเอียดสนาม:</strong>
+              <div className="field-value-checkfield">
+                {fieldData?.field_description || "ไม่มีข้อมูล"}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="doc-fac-conntainer-check-field">
+          <div className="documents-container-check-field">
+            <h1>เอกสาร: </h1>
+            {fieldData?.documents ? (
+              (Array.isArray(fieldData.documents)
+                ? fieldData.documents
+                : fieldData.documents.split(",")
+              ).map((doc, i) => (
+                <div className="document-container" key={i}>
+                  <a
+                    href={`${doc.trim()}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="document-link"
+                  >
+                    <p>{i + 1}</p>
+                  </a>
+                </div>
+              ))
+            ) : (
+              <p>ไม่มีเอกสารแนบ</p>
+            )}
+          </div>
+          <div className="field-facilities-check-field">
+            <h1>สิ่งอำนวยความสะดวก: </h1>
+            {facilities.length === 0 ? (
+              <p>ยังไม่มีสิ่งอำนวยความสะดวกสำหรับสนามนี้</p>
+            ) : (
+              <div className="facbox-checkfield">
+                {facilities.map((facility, index) => (
+                  <div
+                    className="facitem-checkfield"
+                    key={`${facility.fac_id}-${index}`}
+                  >
+                    <strong>{facility.fac_name}</strong>{" "}
+                    <p>{formatPrice(facility.fac_price)} บาท</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="sub-fields-container-editfield">
+          {fieldData?.sub_fields && fieldData.sub_fields.length > 0 ? (
+            fieldData.sub_fields.map((sub) => (
+              <div key={sub.sub_field_id} className="sub-field-card-editfield">
+                <div className="sub-field-header">
+                  <h3>สนามย่อย {sub?.sub_field_name}</h3>
+                  <span className="sub-field-sport">{sub?.sport_name}</span>
+                </div>
+
+                <div className="sub-field-display">
+                  <div className="field-info-grid">
+                    <div className="info-item">
+                      <span className="info-label">ราคา:</span>
+                      <span className="info-value">
+                        {sub?.price
+                          ? `${formatPrice(sub.price)} บาท`
+                          : "ไม่มีข้อมูล"}
+                      </span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label">ผู้เล่นต่อทีม:</span>
+                      <span className="info-value">
+                        {sub?.players_per_team
+                          ? `${sub.players_per_team} คน`
+                          : "ไม่มีข้อมูล"}
+                      </span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label">ขนาดสนาม:</span>
+                      <span className="info-value">
+                        {sub?.wid_field && sub?.length_field
+                          ? `${formatPrice(sub.wid_field)} × ${formatPrice(
+                              sub.length_field
+                            )} เมตร`
+                          : "ไม่มีข้อมูล"}
+                      </span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label">ประเภทพื้น:</span>
+                      <span className="info-value">
+                        {sub?.field_surface || "ไม่มีข้อมูล"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="addons-section">
+                  <div className="addons-header">
+                    <h4>กิจกรรมพิเศษ</h4>
+                  </div>
+
+                  {sub.add_ons && sub.add_ons.length > 0 ? (
+                    <div className="addons-list">
+                      {sub.add_ons.map((addon) => (
+                        <div key={addon.add_on_id} className="addon-item">
+                          <div className="addon-display">
+                            <div className="addon-info">
+                              <span className="addon-name">
+                                {addon.content}
+                              </span>
+                              <span className="addon-price">
+                                {formatPrice(addon.price)} บาท
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="no-addons">
+                      <span>ไม่มีกิจกรรมพิเศษ</span>
+                    </div>
+                  )}
+                </div>
               </div>
             ))
           ) : (

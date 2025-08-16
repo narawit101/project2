@@ -867,7 +867,9 @@ export default function Booking() {
                 const isPast = isPastSlot(slot);
 
                 let slotClass = "slot-box-book";
-                if (slotStatus === "approved") slotClass += " approved-slot";
+                if (isPast) slotClass += " past-slot";
+                else if (slotStatus === "approved")
+                  slotClass += " approved-slot";
                 else if (slotStatus === "complete")
                   slotClass += " complete-slot";
                 else if (slotStatus === "pending") slotClass += " pending-slot";
@@ -886,18 +888,28 @@ export default function Booking() {
                         isBooked || isPast || !bookingDate
                           ? "not-allowed"
                           : "pointer",
-                      opacity: isPast || !bookingDate ? 0.7 : 1,
+                      opacity: isPast || !bookingDate ? 0.6 : 1,
                     }}
                   >
                     <div className="slot-time-book">{slot}</div>
                     <div className="slot-tag-book">
-                      {slotStatus === "approved"
-                        ? ""
-                        : slotStatus === "pending"
-                        ? ""
-                        : isSelected
-                        ? "กำลังเลือก"
-                        : ""}
+                      {isPast ? (
+                        <img
+                          src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1755181987/lsicon--overtime-outline_tywsty.png"
+                          width={20}
+                          height={20}
+                          style={{ marginTop: "5px" }}
+                          alt="Past Slot"
+                        />
+                      ) : slotStatus === "approved" ? (
+                        ""
+                      ) : slotStatus === "pending" ? (
+                        ""
+                      ) : isSelected ? (
+                        "กำลังเลือก"
+                      ) : (
+                        ""
+                      )}
                     </div>
                   </div>
                 );

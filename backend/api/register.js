@@ -8,7 +8,6 @@ const crypto = require("crypto");
 const { DateTime } = require("luxon");
 const rateLimit = require("express-rate-limit");
 
-
 const LimiterRegister = rateLimit({
   windowMs: 30 * 60 * 1000,
   max: 10,
@@ -38,7 +37,7 @@ router.get("/check-duplicate", async (req, res) => {
   const { field, value } = req.query;
 
   if (!field || !value) {
-    return res.status(400).json({ message: "Field and value are required" }); 
+    return res.status(400).json({ message: "Field and value are required" });
   }
 
   try {
@@ -52,7 +51,7 @@ router.get("/check-duplicate", async (req, res) => {
     }
   } catch (error) {
     console.error("Error checking duplicates:", error);
-    return res.status(500).json({ message: "Internal server error" }); 
+    return res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -188,11 +187,11 @@ router.put("/new-otp/:user_id", async (req, res) => {
     const { user_id } = req.params;
     const { email } = req.body;
     function generateNumericOtp(length) {
-      const otp = crypto.randomBytes(length).toString("hex").slice(0, length); 
+      const otp = crypto.randomBytes(length).toString("hex").slice(0, length);
       return otp;
     }
-    const otp = generateNumericOtp(6); 
-    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); 
+    const otp = generateNumericOtp(6);
+    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
 
     const result = await pool.query(
       `UPDATE users SET verification = $1, otp_expiry = $2 WHERE user_id = $3 RETURNING verification`,

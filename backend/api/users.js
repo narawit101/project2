@@ -1,5 +1,6 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const multer = require("multer");
 const router = express.Router();
 const authMiddleware = require("../middlewares/auth");
 const cookieParser = require("cookie-parser");
@@ -11,9 +12,123 @@ const jwt = require("jsonwebtoken");
 router.use(cookieParser());
 const { DateTime } = require("luxon");
 const rateLimit = require("express-rate-limit");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("../server");
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (req, file) => {
+    let folder = "uploads";
+    let resourceType = "auto";
+    let format = undefined;
+    if (file.fieldname === "user_profile") {
+      folder = "user-profile";
+      resourceType = "image";
+      format = undefined;
+    }
+
+    const config = {
+      folder: folder,
+      resource_type: resourceType,
+      public_id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    };
+
+    if (format) {
+      config.format = format;
+      console.log(`กำหนด format เป็น: ${format}`);
+    }
+
+    if (resourceType === "image") {
+      config.transformation = [
+        { quality: "auto:good" },
+        { fetch_format: "auto" },
+      ];
+    }
+
+    return config;
+  },
+});
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    files: 11,
+    fileSize: 8 * 1024 * 1024,
+  },
+});
+
+async function deleteCloudinaryFile(fileUrl) {
+  try {
+    console.log("กำลังลบไฟล์:", fileUrl);
+
+    const urlParts = fileUrl.split("/");
+
+    const uploadIndex = urlParts.findIndex((part) => part === "upload");
+    if (uploadIndex === -1) {
+      console.error("URL ไม่ถูกต้อง - ไม่มี 'upload'");
+      return;
+    }
+
+    let pathStartIndex = uploadIndex + 1;
+    if (urlParts[pathStartIndex] && urlParts[pathStartIndex].startsWith("v")) {
+      pathStartIndex++;
+    }
+
+    const pathParts = urlParts.slice(pathStartIndex);
+    const fullPath = pathParts.join("/");
+
+    const isRawFile = fileUrl.includes("/raw/upload/");
+    const isImageFile =
+      fileUrl.includes("/image/upload/") ||
+      (!fileUrl.includes("/raw/") && !fileUrl.includes("/video/"));
+
+    let publicId, resourceType;
+
+    if (isRawFile) {
+      publicId = fullPath;
+      resourceType = "raw";
+      console.log("ไฟล์เอกสาร (raw):", publicId);
+    } else {
+      const lastDotIndex = fullPath.lastIndexOf(".");
+      publicId =
+        lastDotIndex > 0 ? fullPath.substring(0, lastDotIndex) : fullPath;
+      resourceType = "image";
+      console.log("ไฟล์รูปภาพ:", publicId);
+    }
+
+    console.log(`กำลังลบ: ${publicId} (${resourceType})`);
+
+    const result = await cloudinary.uploader.destroy(publicId, {
+      resource_type: resourceType,
+    });
+
+    if (result.result === "ok") {
+      console.log(`ลบ Cloudinary สำเร็จ: ${publicId}`);
+    } else if (result.result === "not found") {
+      console.warn(`ไม่พบไฟล์: ${publicId} (${resourceType})`);
+
+      const alternativeType = resourceType === "raw" ? "image" : "raw";
+      console.log(`ลองลบด้วย resource_type: ${alternativeType}`);
+
+      const retryResult = await cloudinary.uploader.destroy(publicId, {
+        resource_type: alternativeType,
+      });
+
+      if (retryResult.result === "ok") {
+        console.log(`ลบสำเร็จด้วย ${alternativeType}: ${publicId}`);
+      } else {
+        console.warn(`ลบไม่สำเร็จทั้งสองแบบ: ${publicId}`, retryResult);
+      }
+    } else {
+      console.warn(`ผลลัพธ์ไม่คาดคิด: ${publicId}`, result);
+    }
+  } catch (error) {
+    console.error("ลบ Cloudinary ไม่สำเร็จ:", error);
+  }
+}
 
 const LimiterRequestContact = rateLimit({
-  windowMs: 60 * 60 * 1000, 
+  windowMs: 60 * 60 * 1000,
   max: 5,
   keyGenerator: (req, res) => {
     try {
@@ -45,7 +160,7 @@ router.get("/me", authMiddleware, async (req, res) => {
     const user_id = req.user.user_id;
 
     const result = await pool.query(
-      "SELECT user_id, user_name, first_name, last_name, email, role, status, created_at FROM users WHERE user_id = $1",
+      "SELECT user_id, user_name, first_name, last_name, email, role, status, created_at,user_profile FROM users WHERE user_id = $1",
       [user_id]
     );
 
@@ -69,7 +184,7 @@ router.get("/", authMiddleware, async (req, res) => {
     }
 
     const result =
-      await pool.query(`SELECT user_id, user_name, first_name, last_name, email, role, status
+      await pool.query(`SELECT user_id, user_name, first_name, last_name, email, role, status,user_profile
             FROM users
             ORDER BY 
             CASE role
@@ -134,6 +249,73 @@ router.put("/:id", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+router.put(
+  "/update-user-profile/:id",
+  upload.fields([{ name: "user_profile", maxCount: 1 }]),
+  authMiddleware,
+  async (req, res) => {
+    const { id } = req.params;
+    const currentUser = req.user;
+
+    console.log("user_id ที่ส่งมา:", id);
+    console.log("user_id ใน Token:", currentUser.user_id);
+    console.log("Files received:", req.files);
+
+    try {
+      if (!currentUser.user_id || parseInt(id) !== currentUser.user_id) {
+        return res
+          .status(403)
+          .json({ message: "คุณไม่มีสิทธิ์แก้ไขข้อมูลนี้" });
+      }
+
+      if (
+        !req.files ||
+        !req.files["user_profile"] ||
+        req.files["user_profile"].length === 0
+      ) {
+        return res.status(400).json({ message: "กรุณาเลือกไฟล์รูปภาพ" });
+      }
+
+      const oldUserResult = await pool.query(
+        "SELECT user_profile FROM users WHERE user_id = $1",
+        [id]
+      );
+
+      const oldUserProfile = oldUserResult.rows[0]?.user_profile;
+
+      const user_profile = req.files["user_profile"][0].path;
+      console.log("Path ของรูปที่อัปโหลด:", user_profile);
+
+      await pool.query(
+        "UPDATE users SET user_profile = $1 WHERE user_id = $2",
+        [user_profile, id]
+      );
+
+      if (oldUserProfile && oldUserProfile.includes("cloudinary.com")) {
+        try {
+          await deleteCloudinaryFile(oldUserProfile);
+          console.log("ลบรูปเก่าสำเร็จ:", oldUserProfile);
+        } catch (deleteError) {
+          console.error("ไม่สามารถลบรูปเก่าได้:", deleteError);
+        }
+      }
+
+      console.log("ข้อมูลอัปเดตสำเร็จ");
+
+      res.status(200).json({
+        message: "อัปโหลดรูปสำเร็จ",
+        user_profile: user_profile,
+      });
+    } catch (error) {
+      console.error("Error in update-user-profile:", error);
+      res.status(500).json({
+        error: "Internal Server Error",
+        message: "เกิดข้อผิดพลาดในการอัปโหลดรูป",
+      });
+    }
+  }
+);
 
 router.put("/update-profile/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
@@ -205,7 +387,7 @@ router.post("/check-email", authMiddleware, async (req, res) => {
 
 router.post("/:id/check-password", authMiddleware, async (req, res) => {
   const { id } = req.params;
-  const { currentPassword } = req.body; 
+  const { currentPassword } = req.body;
 
   try {
     const result = await pool.query(
@@ -389,7 +571,7 @@ router.post("/resent-reset-password", async (req, res) => {
 });
 
 router.post("/verify-otp", async (req, res) => {
-  const { email, otp } = req.body; 
+  const { email, otp } = req.body;
   try {
     const result = await pool.query("SELECT * FROM users WHERE email = $1", [
       email,

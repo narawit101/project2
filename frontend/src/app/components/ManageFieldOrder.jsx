@@ -4,6 +4,7 @@ import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter, useParams } from "next/navigation";
 import { io } from "socket.io-client";
 import "@/app/css/my-order.css";
+import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function Myorder() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -16,15 +17,20 @@ export default function Myorder() {
     status: "",
   });
   const socketRef = useRef(null);
-  const [bookingId, setBookingId] = useState("");
   const router = useRouter();
   const { fieldId } = useParams();
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [fieldName, setFieldName] = useState("");
+  const [fieldOwnerId, setFieldOwnerId] = useState(null);
   const [dataLoading, setDataLoading] = useState(true);
   const [useDateRange, setUseDateRange] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  const [bookingIdToDelete, setBookingIdToDelete] = useState(null);
+
+  usePreventLeave(startProcessLoad);
 
   useEffect(() => {
     if (isLoading) return;
@@ -59,6 +65,7 @@ export default function Myorder() {
       if (res.ok) {
         setMybooking(data.data);
         setFieldName(data.fieldInfo?.field_name || "");
+        setFieldOwnerId(data.fieldInfo?.field_owner_id || null);
         if (data.stats) console.log("Stats:", data.stats);
       } else {
         if (data.fieldInfo) {
@@ -165,13 +172,40 @@ export default function Myorder() {
     };
     return stats;
   };
+  const handleDeleteBooking = (bookingId) => {
+    if (!bookingId) return;
+    setBookingIdToDelete(bookingId);
+    setShowDeleteModal(true);
+  };
 
-  const getFacilityNetPrice = (item) => {
-    const totalFac = (item.facilities || []).reduce(
-      (sum, fac) => sum + (parseFloat(fac.fac_price) || 0),
-      0
-    );
-    return Math.abs(totalFac - (parseFloat(item.total_remaining) || 0));
+  const confirmDeleteBooking = async () => {
+    SetstartProcessLoad(true);
+    try {
+      const res = await fetch(
+        `${API_URL}/booking/delete/${bookingIdToDelete}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (res.ok) {
+        setMessage("ลบการจองสำเร็จ");
+        setMessageType("success");
+        setShowDeleteModal(false);
+        fetchData();
+      } else {
+        const data = await res.json();
+        setMessage(data.error || "ไม่สามารถลบการจองได้");
+        setMessageType("error");
+      }
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      setMessage("ไม่สามารถลบการจองได้");
+      setMessageType("error");
+    } finally {
+      SetstartProcessLoad(false);
+    }
   };
 
   const stats = calculateStats();
@@ -180,13 +214,13 @@ export default function Myorder() {
       const timer = setTimeout(() => {
         setMessage("");
         setMessageType("");
-      }, 3500);
+      }, 3000);
 
       return () => clearTimeout(timer);
     }
   }, [message]);
 
-  const bookingPerPage = 4;
+  const bookingPerPage = 8;
 
   const filteredBookings = booking.filter((item) => {
     if (!filters.status) return true;
@@ -549,6 +583,22 @@ export default function Myorder() {
                   >
                     ดูรายละเอียด
                   </button>
+                  {user?.user_id === fieldOwnerId && (
+                    <button
+                      className="card-delete-bookinng-btn"
+                      title="ลบการจอง"
+                      onClick={() => {
+                        handleDeleteBooking(item.booking_id);
+                      }}
+                    >
+                      <img
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAR1JREFUSEvNlusRwiAQhG870U5MJ6YStRLTiXZiOjmzGXAQjofJMCO/HDzug7tlCaQwVPUgIhcRORths5sbAPjfSRgqgIeInEoxC3wGcMzF1ADKhQCSOHe6VzcAwaqa3YA/0bozVW0pRaVSyd9r6Tzgnmnkr0nD+CeAodiDPdm/ShQmUlVKkvLcMliWKVxoqYPK2ApIFGcB9jQ8uROtAN7U+FTW3NrYWoliRa2LIilbc8w7ARhrgKvzHx/3V4Db4irc4GdYPaBMWaYtJxhbZEr3pJK6AagW3oUtgGP8NpRsuA+AWb0NO0Kziqx3wzQ7VQ3togsgtAsPsKDhnPl05k4Q+1GLVSQ2wRLnAPFdaLHu5JKVAKXPFQuWeJAPegM03+AZ7kVVEgAAAABJRU5ErkJggg=="
+                        alt=""
+                        width={15}
+                        height={15}
+                      />
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -606,6 +656,44 @@ export default function Myorder() {
           <h1 className="booking-list">ไม่พบคำสั่งจอง</h1>
         )}
       </div>
+      {showDeleteModal && (
+        <div className="modal-overlay-booking">
+          <div className="modal-booking">
+            <h3>ยืนยันการลบ</h3>
+            <p>ต้องการลบการจองนี้ใช่ไหม? เมื่อลบแล้วจะไม่สามารถกู้คืนได้</p>
+            <div className="modal-actions-booking">
+              <button
+                style={{
+                  cursor: startProcessLoad ? "not-allowed" : "pointer",
+                }}
+                disabled={startProcessLoad}
+                className="savebtn-booking"
+                onClick={confirmDeleteBooking}
+              >
+                {startProcessLoad ? (
+                  <span className="dot-loading">
+                    <span className="dot one">●</span>
+                    <span className="dot two">●</span>
+                    <span className="dot three">●</span>
+                  </span>
+                ) : (
+                  "ยืนยัน"
+                )}
+              </button>
+              <button
+                style={{
+                  cursor: startProcessLoad ? "not-allowed" : "pointer",
+                }}
+                disabled={startProcessLoad}
+                className="canbtn-booking"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                ยกเลิก
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

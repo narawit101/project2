@@ -7,12 +7,12 @@ import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 export default function LogoutButton() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const [message, setMessage] = useState(""); 
-  const [messageType, setMessageType] = useState(""); 
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const router = useRouter();
   const { setUser } = useAuth();
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
-  usePreventLeave(startProcessLoad); 
+  usePreventLeave(startProcessLoad);
 
   const handleLogout = async () => {
     SetstartProcessLoad(true);
@@ -61,6 +61,12 @@ export default function LogoutButton() {
       <div className="logout-container">
         <button className="logout-button" onClick={handleLogout}>
           <i className="fas fa-sign-out-alt"></i>{" "}
+          <img
+            src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1755271167/bx--log-out_eq26uh.png"
+            width={20}
+            height={20}
+            alt=""
+          />
           {startProcessLoad ? (
             <span className="dot-loading">
               <span className="dot one">●</span>

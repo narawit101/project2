@@ -60,7 +60,7 @@ router.get("/rating-previwe/:field_id", async (req, res) => {
   const { field_id } = req.params;
   try {
     const result = await pool.query(
-      `SELECT u.first_name, u.last_name, r.*
+      `SELECT u.first_name, u.last_name,u.user_profile, r.*
 FROM reviews r
 INNER JOIN users u ON r.user_id = u.user_id
 WHERE r.field_id = $1

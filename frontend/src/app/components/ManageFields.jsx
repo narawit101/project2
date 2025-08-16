@@ -13,6 +13,8 @@ export default function MyFieldPage() {
   const [statusFilter, setStatusFilter] = useState("ทั้งหมด");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [fieldIdToDelete, setFieldIdToDelete] = useState(null);
+  const [fieldNameToDelete, setFieldNameToDelete] = useState("");
+  const [confirmInput, setConfirmInput] = useState("");
   const { user, isLoading } = useAuth();
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
@@ -36,7 +38,7 @@ export default function MyFieldPage() {
     if (user?.role !== "admin" && user?.role !== "field_owner") {
       router.replace("/");
     }
-  }, [user, isLoading, , router]);
+  }, [user, isLoading, router]);
 
   useEffect(() => {
     const fetchMyFields = async () => {
@@ -93,8 +95,10 @@ export default function MyFieldPage() {
     }
   }, [statusFilter, myFields]);
 
-  const handleDeleteField = (field_id) => {
+  const handleDeleteField = (field_id, field_name) => {
     setFieldIdToDelete(field_id);
+    setFieldNameToDelete(field_name || "");
+    setConfirmInput("");
     setShowDeleteModal(true);
   };
 
@@ -185,6 +189,21 @@ export default function MyFieldPage() {
           <div className="grid-myfield">
             {currentField.map((field) => (
               <div key={field.field_id} className="card-myfield">
+                <button
+                  onClick={() =>
+                    handleDeleteField(field.field_id, field.field_name)
+                  }
+                  className="card-delete-btn"
+                  title="ลบสนาม"
+                >
+                  <img
+                    src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAR1JREFUSEvNlusRwiAQhG870U5MJ6YStRLTiXZiOjmzGXAQjofJMCO/HDzug7tlCaQwVPUgIhcRORths5sbAPjfSRgqgIeInEoxC3wGcMzF1ADKhQCSOHe6VzcAwaqa3YA/0bozVW0pRaVSyd9r6Tzgnmnkr0nD+CeAodiDPdm/ShQmUlVKkvLcMliWKVxoqYPK2ApIFGcB9jQ8uROtAN7U+FTW3NrYWoliRa2LIilbc8w7ARhrgKvzHx/3V4Db4irc4GdYPaBMWaYtJxhbZEr3pJK6AagW3oUtgGP8NpRsuA+AWb0NO0Kziqx3wzQ7VQ3togsgtAsPsKDhnPl05k4Q+1GLVSQ2wRLnAPFdaLHu5JKVAKXPFQuWeJAPegM03+AZ7kVVEgAAAABJRU5ErkJggg=="
+                    alt=""
+                    width={15}
+                    height={15}
+                  />
+                </button>
+
                 <img
                   onClick={() => router.push(`/profile/${field.field_id}`)}
                   src={
@@ -210,50 +229,74 @@ export default function MyFieldPage() {
                 >
                   {field.status}
                 </div>
+
                 <div className="custom-button-group-myfield">
-                  <button
-                    onClick={() =>
-                      router.push(`/check-field/${field.field_id}`)
-                    }
-                    className="custom-button-view-myfield"
-                  >
-                    ดูรายละเอียด
-                  </button>
-                  {field.status !== "รอตรวจสอบ" && (
+                  <div className="main-buttons-row">
                     <button
                       onClick={() =>
-                        router.push(`/edit-field/${field.field_id}`)
+                        router.push(`/check-field/${field.field_id}`)
                       }
-                      className="custom-button-edit-myfield"
+                      className="custom-button-view-myfield"
                     >
-                      แก้ไข
+                      <img
+                        src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1755269173/icon-park-outline--doc-detail_rufhhe.png"
+                        alt=""
+                        width={15}
+                        height={15}
+                      />
+                      ดูรายละเอียด
                     </button>
+                    {field.status !== "รอตรวจสอบ" && (
+                      <button
+                        onClick={() =>
+                          router.push(`/edit-field/${field.field_id}`)
+                        }
+                        className="custom-button-edit-myfield"
+                      >
+                        <img
+                          src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1755269214/flowbite--edit-outline_efjgro.png"
+                          width={15}
+                          height={15}
+                          alt=""
+                        />
+                        แก้ไข
+                      </button>
+                    )}
+                  </div>
+
+                  {field.status == "ผ่านการอนุมัติ" && (
+                    <div className="full-width-buttons">
+                      <button
+                        onClick={() =>
+                          router.push(`/my-order/${field.field_id}`)
+                        }
+                        className="custom-button-view-order-myfield"
+                      >
+                        <img
+                          src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1755269241/material-symbols--order-approve-outline-rounded_xgqryx.png"
+                          width={15}
+                          height={15}
+                          alt=""
+                        />
+                        รายการจองของสนาม
+                      </button>
+                      <button
+                        onClick={() =>
+                          router.push(`/statistics/${field.field_id}`)
+                        }
+                        className="custom-button-view-stat-myfield"
+                      >
+                        <img
+                          src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1755269200/akar-icons--statistic-up_w8pkoi.png"
+                          width={15}
+                          height={15}
+                          alt=""
+                        />
+                        สถิติการจองสนาม
+                      </button>
+                    </div>
                   )}
-                  <button
-                    onClick={() => handleDeleteField(field.field_id)}
-                    className="custom-button-delete-myfield"
-                  >
-                    ลบ
-                  </button>
                 </div>
-                {field.status == "ผ่านการอนุมัติ" && (
-                  <>
-                    <button
-                      onClick={() => router.push(`/my-order/${field.field_id}`)}
-                      className="custom-button-view-order-myfield"
-                    >
-                      รายการจองของสนาม
-                    </button>
-                    <button
-                      onClick={() =>
-                        router.push(`/statistics/${field.field_id}`)
-                      }
-                      className="custom-button-view-stat-myfield"
-                    >
-                      สถิติการจองสนาม
-                    </button>
-                  </>
-                )}
               </div>
             ))}
           </div>
@@ -266,13 +309,41 @@ export default function MyFieldPage() {
           <div className="modal-overlay-myfield">
             <div className="modal-myfield">
               <h3>ยืนยันการลบสนาม</h3>
-              <p>คุณต้องการลบสนามหรือไม่</p>
+              <p className="confirm-delete-text">
+                พิมพ์ชื่อสนาม <strong>{fieldNameToDelete}</strong>{" "}
+                เพื่อยืนยันการลบ
+                <br />
+                การลบนี้ไม่สามารถย้อนกลับได้ รวมถึงข้อมูลการจองและข้อมูลอื่น ๆ ของสนามกีฬา
+              </p>
+              <div className="input-confirmdelete-myfield">
+                <input
+                  type="text"
+                  placeholder={fieldNameToDelete}
+                  value={confirmInput}
+                  onChange={(e) => setConfirmInput(e.target.value)}
+                  className="confirm-delete-input"
+                />
+                {/* {fieldNameToDelete &&
+                  confirmInput &&
+                  confirmInput.trim() !== fieldNameToDelete && (
+                    <div className="confirm-delete-error">ชื่อสนามไม่ตรง</div>
+                  )} */}
+              </div>
               <div className="modal-actions-myfield">
                 <button
                   style={{
-                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    cursor:
+                      (fieldNameToDelete &&
+                        confirmInput.trim() !== fieldNameToDelete) ||
+                      startProcessLoad
+                        ? "not-allowed"
+                        : "pointer",
                   }}
-                  disabled={startProcessLoad}
+                  disabled={
+                    startProcessLoad ||
+                    (fieldNameToDelete &&
+                      confirmInput.trim() !== fieldNameToDelete)
+                  }
                   className="savebtn-myfield"
                   onClick={confirmDeleteSubField}
                 >

@@ -913,6 +913,7 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
       documents,
       field_description,
       cancel_hours,
+  open_days,
     } = req.body;
 
     console.log("field_id ที่ได้รับ:", field_id);
@@ -938,22 +939,23 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
       console.log("Admin อัปเดตข้อมูลสนามกีฬา");
 
       const result = await pool.query(
-        `UPDATE field 
-         SET field_name = COALESCE($1, field_name), 
-             address = COALESCE($2, address), 
-             gps_location = COALESCE($3, gps_location),
-             open_hours = COALESCE($4, open_hours), 
-             close_hours = COALESCE($5, close_hours),
-             price_deposit = COALESCE($6, price_deposit), 
-             name_bank = COALESCE($7, name_bank),
-             account_holder = COALESCE($8, account_holder), 
-             number_bank = COALESCE($9, number_bank),
-             img_field = COALESCE($10, img_field),
-             documents = COALESCE($11, documents),
-             field_description = COALESCE($12, field_description),
-             cancel_hours = COALESCE($13, cancel_hours)
-         WHERE field_id = $14
-         RETURNING *;`,
+    `UPDATE field 
+     SET field_name = COALESCE($1, field_name), 
+       address = COALESCE($2, address), 
+       gps_location = COALESCE($3, gps_location),
+       open_hours = COALESCE($4, open_hours), 
+       close_hours = COALESCE($5, close_hours),
+       price_deposit = COALESCE($6, price_deposit), 
+       name_bank = COALESCE($7, name_bank),
+       account_holder = COALESCE($8, account_holder), 
+       number_bank = COALESCE($9, number_bank),
+       img_field = COALESCE($10, img_field),
+       documents = COALESCE($11, documents),
+       field_description = COALESCE($12, field_description),
+       cancel_hours = COALESCE($13, cancel_hours),
+       open_days = COALESCE($14, open_days)
+     WHERE field_id = $15
+     RETURNING *;`,
         [
           field_name,
           address,
@@ -968,7 +970,8 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
           documents,
           field_description,
           cancel_hours,
-          field_id,
+      open_days,
+      field_id,
         ]
       );
 
@@ -980,22 +983,23 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
       console.log("Field owner อัปเดตข้อมูลสนามกีฬา");
 
       const result = await pool.query(
-        `UPDATE field 
-         SET field_name = COALESCE($1, field_name), 
-             address = COALESCE($2, address), 
-             gps_location = COALESCE($3, gps_location),
-             open_hours = COALESCE($4, open_hours), 
-             close_hours = COALESCE($5, close_hours),
-             price_deposit = COALESCE($6, price_deposit), 
-             name_bank = COALESCE($7, name_bank),
-             account_holder = COALESCE($8, account_holder), 
-             number_bank = COALESCE($9, number_bank),
-             img_field = COALESCE($10, img_field),
-             documents = COALESCE($11, documents),
-             field_description = COALESCE($12, field_description),
-             cancel_hours = COALESCE($13, cancel_hours)
-         WHERE field_id = $14 AND user_id = $15
-         RETURNING *;`,
+    `UPDATE field 
+     SET field_name = COALESCE($1, field_name), 
+       address = COALESCE($2, address), 
+       gps_location = COALESCE($3, gps_location),
+       open_hours = COALESCE($4, open_hours), 
+       close_hours = COALESCE($5, close_hours),
+       price_deposit = COALESCE($6, price_deposit), 
+       name_bank = COALESCE($7, name_bank),
+       account_holder = COALESCE($8, account_holder), 
+       number_bank = COALESCE($9, number_bank),
+       img_field = COALESCE($10, img_field),
+       documents = COALESCE($11, documents),
+       field_description = COALESCE($12, field_description),
+       cancel_hours = COALESCE($13, cancel_hours),
+       open_days = COALESCE($14, open_days)
+     WHERE field_id = $15 AND user_id = $16
+     RETURNING *;`,
         [
           field_name,
           address,
@@ -1010,8 +1014,9 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
           documents,
           field_description,
           cancel_hours,
-          field_id,
-          user_id,
+      open_days,
+      field_id,
+      user_id,
         ]
       );
 

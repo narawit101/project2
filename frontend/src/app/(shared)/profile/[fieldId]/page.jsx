@@ -583,9 +583,19 @@ export default function CheckFieldDetail() {
                   key={review.review_id || index}
                 >
                   <div className="review-box-profile">
-                    <strong className="review-name-profile">
-                      {review.first_name} {review.last_name}
-                    </strong>
+                    <div className="user-profile-name-profile">
+                      <img
+                        className="user-profile-review-profile"
+                        src={
+                          review?.user_profile
+                            ? review.user_profile
+                            : "https://res.cloudinary.com/dlwfuul9o/image/upload/v1755157542/qlementine-icons--user-24_zre8k9.png"
+                        }
+                      />
+                      <strong className="review-name-profile">
+                        {review.first_name} {review.last_name}
+                      </strong>
+                    </div>
                     <div className="review-stars-profile">
                       {[1, 2, 3, 4, 5].map((num) => (
                         <span

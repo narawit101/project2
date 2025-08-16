@@ -219,7 +219,7 @@ export default function HomePage() {
             onChange={handleSportChange}
             className="sport-select-main"
           >
-            <option value="">ประเภทกีฬาทั้งหมด</option>
+            <option value="">สนามกีฬาทั้งหมด</option>
             {sportsCategories.map((category) => (
               <option key={category.sport_id} value={category.sport_id}>
                 {category.sport_name}

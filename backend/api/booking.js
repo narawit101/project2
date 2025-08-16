@@ -710,7 +710,6 @@ SELECT
   b.total_hours, b.total_price, b.total_remaining,
   b.pay_method, b.status, b.activity, b.selected_slots,
 
-  -- รวม facility เฉพาะของ booking นั้น
 (
   SELECT COALESCE(json_agg(jsonb_build_object(
     'field_fac_id', bf.field_fac_id,
@@ -778,6 +777,7 @@ WHERE b.field_id = $1
         fieldInfo: {
           field_name: field.field_name,
           field_status: field.field_status,
+          field_owner_id: field.user_id,
         },
         stats: stats,
         dateRange: {
@@ -1316,6 +1316,61 @@ LIMIT 1;
       }
     }
   );
+
+  router.delete("/delete/:booking_id", authMiddleware, async (req, res) => {
+    const { booking_id } = req.params;
+
+    try {
+      const client = await pool.connect();
+      const bookingCheck = await client.query(
+        `SELECT * FROM bookings WHERE booking_id = $1`,
+        [booking_id]
+      );
+
+      if (bookingCheck.rowCount === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "ไม่พบการจองนี้",
+        });
+      }
+
+      const paymentResult = await pool.query(
+        `SELECT deposit_slip, total_slip FROM payment WHERE booking_id = $1`,
+        [booking_id]
+      );
+      if (paymentResult.rowCount > 0) {
+        const { deposit_slip, total_slip } = paymentResult.rows[0];
+
+        if (deposit_slip) await deleteCloudinaryFile(deposit_slip);
+        if (total_slip) await deleteCloudinaryFile(total_slip);
+
+        await pool.query(`DELETE FROM payment WHERE booking_id = $1`, [
+          booking_id,
+        ]);
+      }
+
+      await pool.query(`DELETE FROM booking_fac WHERE booking_id = $1`, [
+        booking_id,
+      ]);
+      await pool.query(`DELETE FROM bookings WHERE booking_id = $1`, [
+        booking_id,
+      ]);
+
+      client.release();
+
+      if (req.io) req.io.emit("slot_booked", { bookingId: booking_id });
+
+      res.status(200).json({
+        message: "การจองถูกลบเรียบร้อยแล้ว",
+      });
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      res.status(500).json({
+        success: false,
+        message: "เกิดข้อผิดพลาดในการลบการจอง",
+      });
+    }
+  });
 
   router.post(
     "/upload-slip/:booking_id",

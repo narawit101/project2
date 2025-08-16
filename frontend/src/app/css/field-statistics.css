@@ -86,39 +86,45 @@
 }
 
 .status-text-detail-stat {
+  display: inline-block;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  margin: 10px;
   font-size: 14px;
+  white-space: nowrap;
 }
 
 .status-text-detail-stat.pending {
   color: #856404;
   background-color: #fff4ce;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 4px 12px;
+  border-radius: 16px;
   font-weight: 600;
 }
 
 .status-text-detail-stat.approved {
   color: #155724;
   background-color: #d4f4dd;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 4px 12px;
+  border-radius: 16px;
   font-weight: 600;
 }
 
 .status-text-detail-stat.complete {
   background-color: #d4f4dd;
   color: #155724;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 4px 12px;
+  border-radius: 16px;
   font-weight: 600;
 }
 
 .status-text-detail-stat.rejected {
   color: #721c24;
   background-color: #fddede;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 4px 12px;
+  border-radius: 16px;
   font-weight: 600;
 }
 
@@ -140,14 +146,14 @@
 }
 
 .table-stat tbody td:nth-child(9) {
-  font-size: 12px;
+  font-size: 14px;
   color: #333;
   max-width: 150px;
   text-align: center;
 }
 
 .table-stat tbody td:nth-child(10) {
-  font-size: 13px;
+  font-size: 14px;
   color: #f5ca0b;
   font-weight: 500;
   text-align: center;
@@ -158,12 +164,12 @@
   padding: 4px 8px;
   border-radius: 12px;
   margin: 2px;
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .table-stat tbody td:nth-child(11) {
   max-width: 200px;
-  font-size: 12px;
+  font-size: 14px;
   text-align: center;
   font-weight: 500;
   color: #333;
@@ -214,7 +220,6 @@
   font-weight: bold;
 }
 
-/* Responsive design */
 @media (max-width: 1200px) {
   .table-stat {
     font-size: 12px;
@@ -273,4 +278,34 @@
     transform: none !important;
     box-shadow: none !important;
   }
+}
+
+.export-button-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.export-button {
+  background: var(--text-color);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.export-button:hover {
+
+  background: #06015d;
+
+}
+
+.export-button:active {
+  transform: translateY(0);
 }
