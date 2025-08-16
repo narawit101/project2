@@ -8,9 +8,9 @@ import "@/app/css/navbar.css";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false); 
-  const [isSearchOpen, setIsSearchOpen] = useState(false); 
-  const [isNotifyOpen, setIsNotifyOpen] = useState(false); 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isNotifyOpen, setIsNotifyOpen] = useState(false);
   const [isAuthDropdownOpen, setIsAuthDropdownOpen] = useState(false);
 
   const searchRef = useRef(null);
@@ -93,17 +93,17 @@ export default function Navbar() {
           <span className="bar" />
         </button>
       </div>
-
-      <Link href="/" className="logo">
-        <img
-          src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926494/logo2_jxtkqq.png"
-          alt="Sport-Hub Logo"
-          width="100"
-          height="70"
-          style={{ objectFit: "cover" }}
-        />
-      </Link>
-
+      <div className="mid-logo">
+        <Link href="/" className="logo">
+          <img
+            src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926494/logo2_jxtkqq.png"
+            alt="Sport-Hub Logo"
+            width="100"
+            height="70"
+            style={{ objectFit: "cover" }}
+          />
+        </Link>
+      </div>
       <div className="user">
         <div className="search-container" ref={searchRef}>
           <button

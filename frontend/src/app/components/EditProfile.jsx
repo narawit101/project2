@@ -107,11 +107,11 @@ export default function EditProfile() {
   const startEditing = (user_profile) => {
     setEditingField(user_profile);
   };
-  const MAX_FILE_SIZE = 5 * 1024 * 1024;
+  const MAX_FILE_SIZE = 8 * 1024 * 1024;
   const handleImgChange = (e) => {
     const file = e.target.files[0];
     if (file.size > MAX_FILE_SIZE) {
-      setMessage("ไฟล์รูปภาพมีขนาดใหญ่เกินไป (สูงสุด 5MB)");
+      setMessage("ไฟล์รูปภาพมีขนาดใหญ่เกินไป (สูงสุด 8MB)");
       setMessageType("error");
       e.target.value = null;
       return;
@@ -325,7 +325,7 @@ export default function EditProfile() {
             <div className="buttons-container">
               <button
                 type="submit"
-                className="save-btn"
+                className="save-btn-edit-profile"
                 style={{
                   cursor: startProcessLoad ? "not-allowed" : "pointer",
                 }}

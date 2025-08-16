@@ -2,7 +2,7 @@
   --text-color: #03045e;
 }
 .nav {
-  z-index: 10;
+  z-index: 20;
   position: fixed;
   top: 0;
   width: 100%;
@@ -13,6 +13,25 @@
   padding: 0 100px 0 100px;
   height: 70px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.mid-logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  z-index: 20;
+}
+
+.ullist {
+  flex: 0 0 auto;
+}
+.user {
+  flex: 0 0 auto;
 }
 
 .ullist {
@@ -40,8 +59,8 @@
 .logo {
   display: inline-flex;
   justify-content: center;
-  margin-left: 67px;
   align-items: center;
+  margin-left: 0px;
 }
 
 .user {
@@ -385,10 +404,19 @@
   }
 }
 @media (max-width: 640px) {
-  .logo {
-    margin-left: 50px;
-  }
   .nav {
     padding: 0 20px;
   }
+}
+@media (max-width: 430px) {
+  .search-box {
+    right: -190%;
+  }
+}
+@media (max-width: 350px) {
+  .search-box {
+    max-width: 200px;
+  }
+}
+@media (max-width: 300px) {
 }

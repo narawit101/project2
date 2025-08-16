@@ -139,7 +139,7 @@
   border-color: #6c757d;
 }
 
-.edit-f-l-name-row .save-btn {
+.edit-f-l-name-row .save-btn-edit-profile {
   background: var(--success-color);
   color: white;
   border: none;
@@ -156,11 +156,11 @@
   box-sizing: border-box;
 }
 
-.edit-f-l-name-row .save-btn:hover:not(:disabled) {
+.edit-f-l-name-row .-edit-profile:hover:not(:disabled) {
   background: #218838;
 }
 
-.edit-f-l-name-row .save-btn:disabled {
+.edit-f-l-name-row .save-btn-edit-profile:disabled {
   background: #6c757d;
   cursor: not-allowed;
   opacity: 0.7;
@@ -195,7 +195,6 @@
   align-items: stretch;
 }
 
-
 @media (min-width: 768px) {
   .edit-f-l-name-row {
     padding: 30px;
@@ -227,7 +226,7 @@
     gap: 20px;
   }
 
-  .edit-f-l-name-row .save-btn,
+  .edit-f-l-name-row .save-btn-edit-profile,
   .edit-f-l-name-row .change-password-link {
     flex: 1;
     width: auto;
@@ -297,8 +296,8 @@
 }
 
 .preview-container-user-profile {
-  width: 250px;
-  height: 250px;
+  width: 320px;
+  height: 320px;
   max-width: 100%;
   border-radius: 50%;
   display: flex;
@@ -307,6 +306,14 @@
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow);
   object-fit: cover;
+}
+
+.preview-container-user-profile img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
 }
 
 .btn-group-edit-profile {
@@ -340,6 +347,13 @@
   font-weight: 500;
   transition: all 0.3s ease;
   min-width: 120px;
+}
+
+.savebtn-edit-profile:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .savebtn-edit-profile:hover {
@@ -467,25 +481,6 @@
   box-shadow: none;
 }
 
-.preview-container-editfield {
-  width: 250px;
-  height: 250px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin: 20px auto;
-  border: 3px solid var(--border-color);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: var(--secondary-bg);
-  box-shadow: var(--shadow);
-}
-
-.preview-container-editfield img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 .file-input-edit-profile {
   display: flex;
   align-items: center;
@@ -493,6 +488,8 @@
 }
 
 .file-input-edit-profile {
+  width: auto;
+  margin: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -530,7 +527,7 @@
     padding: 20px;
   }
 
-  .edit-f-l-name-row .save-btn,
+  .edit-f-l-name-row .save-btn-edit-profile,
   .edit-f-l-name-row .change-password-link {
     min-width: auto;
     width: 100%;

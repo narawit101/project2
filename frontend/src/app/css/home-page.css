@@ -213,7 +213,7 @@
 
 .grid-home {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 24px;
   padding: 20px;
 }
@@ -525,7 +525,7 @@
     padding: 0.95rem;
   }
   .grid-home {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   }
 
   .card-img-home {
@@ -595,7 +595,7 @@
     font-size: 24px;
   }
   .grid-home {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   }
 
   .card-img-home {
@@ -708,7 +708,7 @@
     font-size: 22px;
   }
   .grid-home {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   }
   .card img {
     width: 100%;
@@ -730,7 +730,7 @@
 
 @media screen and (max-width: 799px) {
   .grid-home {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
   .section-title-home {
     padding: 0.65rem;
@@ -739,7 +739,7 @@
 
 @media screen and (max-width: 744px) {
   .grid-home {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
   .card-img-home {
     object-fit: contain;
@@ -756,7 +756,7 @@
   }
 
   .grid-home {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
   .card-img-home {
     object-fit: contain;
@@ -819,7 +819,7 @@
     padding: 0.65rem;
   }
   .grid-home {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   }
   .card-img-home {
     object-fit: contain;
