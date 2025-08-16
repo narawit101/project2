@@ -581,6 +581,13 @@ export default function Myorder() {
                       )
                     }
                   >
+                    <img
+                      src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1755269173/icon-park-outline--doc-detail_rufhhe.png"
+                      alt=""
+                      width={15}
+                      height={15}
+                      style={{ marginRight: "5px" }}
+                    />
                     ดูรายละเอียด
                   </button>
                   {user?.user_id === fieldOwnerId && (
