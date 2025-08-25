@@ -367,7 +367,7 @@ export default function CheckFieldDetail() {
 
           <div className="field-row-checkfield">
             <div className="field-details-checkfield">
-              <strong>เวลาที่ให้จอง:</strong>
+              <strong>แบ่งช่วงเวลาในการจอง ช่วงละ " 30 นาที " หรือ "ช่วงละ 1 ชั่วโมง" :</strong>
               <div className="field-value-checkfield">
                 {fieldData?.booking_duration
                   ? fieldData.booking_duration === 30

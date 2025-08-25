@@ -274,10 +274,10 @@ export default function Navbar() {
             ref={authButtonRef}
           >
             <img
-              src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1755157542/qlementine-icons--user-24_zre8k9.png"
+              src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1756123318/mdi--register_ndxxeb.png"
               alt="โปรไฟล์"
-              width={30}
-              height={30}
+              width={28}
+              height={28}
               // className="avatar"
             />
 
@@ -288,6 +288,10 @@ export default function Navbar() {
                     href="/login"
                     onClick={() => setIsAuthDropdownOpen(true)}
                   >
+                    <img
+                      src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1756123250/ic--baseline-login_gzhjrf.png"
+                      alt=""
+                    />
                     เข้าสู่ระบบ
                   </Link>
                 </li>
@@ -296,6 +300,10 @@ export default function Navbar() {
                     href="/register"
                     onClick={() => setIsAuthDropdownOpen(true)}
                   >
+                    <img
+                      src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1756123318/mdi--register_ndxxeb.png"
+                      alt=""
+                    />
                     สมัครสมาชิก
                   </Link>
                 </li>

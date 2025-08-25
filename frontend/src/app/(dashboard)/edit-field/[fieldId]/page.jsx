@@ -1015,9 +1015,12 @@ export default function CheckFieldDetail() {
     Sat: "เสาร์",
     Sun: "อาทิตย์",
   };
-  const dayCodes = Object.keys(daysInThai); 
+  const dayCodes = Object.keys(daysInThai);
   const weekdayOrder = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const sortDays = (arr) => arr.slice().sort((a, b) => weekdayOrder.indexOf(a) - weekdayOrder.indexOf(b));
+  const sortDays = (arr) =>
+    arr
+      .slice()
+      .sort((a, b) => weekdayOrder.indexOf(a) - weekdayOrder.indexOf(b));
 
   const handleDayToggle = (dayCode) => {
     setSelectedDays((prev) => {
@@ -1140,7 +1143,7 @@ export default function CheckFieldDetail() {
                   <div className="edit-field-inline">
                     <div className="days-checkbox-container">
                       {/* <div style={{display:"flex", gap:"8px", flexWrap:"wrap", width:"100%"}}> */}
-                        {/* <button
+                      {/* <button
                           type="button"
                           className="edit-btn-inline"
                           style={{background:selectedDays.length===7?"#16a34a":"#6c757d"}}
@@ -1202,12 +1205,33 @@ export default function CheckFieldDetail() {
                       style={{ marginBottom: "4px" }}
                     >
                       {field?.open_days && field.open_days.length > 0
-            ? (field.open_days.length === 7
-              ? "เปิดทุกวัน"
-              : field.open_days
-                .slice()
-                .sort((a,b)=>["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].indexOf(a)-["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].indexOf(b))
-                .map((d) => daysInThai[d]).join(", "))
+                        ? field.open_days.length === 7
+                          ? "เปิดทุกวัน"
+                          : field.open_days
+                              .slice()
+                              .sort(
+                                (a, b) =>
+                                  [
+                                    "Mon",
+                                    "Tue",
+                                    "Wed",
+                                    "Thu",
+                                    "Fri",
+                                    "Sat",
+                                    "Sun",
+                                  ].indexOf(a) -
+                                  [
+                                    "Mon",
+                                    "Tue",
+                                    "Wed",
+                                    "Thu",
+                                    "Fri",
+                                    "Sat",
+                                    "Sun",
+                                  ].indexOf(b)
+                              )
+                              .map((d) => daysInThai[d])
+                              .join(", ")
                         : "ไม่มีข้อมูล"}
                     </div>
                     <button
@@ -1228,9 +1252,12 @@ export default function CheckFieldDetail() {
 
           <div className="field-row-checkfield">
             <div className="field-details-checkfield">
-              <strong>เวลาที่ให้จอง:</strong>
+              <strong>
+                แบ่งช่วงเวลาในการจอง ช่วงละ " 30 นาที " หรือ "ช่วงละ 1 ชั่วโมง"
+                :
+              </strong>
               <div className="field-value-checkfield">
-                {editingField === "booking_slot" ? (
+                {editingField === "slot_duration" ? (
                   <div className="edit-field-inline">
                     <select
                       value={updatedValue}
@@ -1239,8 +1266,6 @@ export default function CheckFieldDetail() {
                     >
                       <option value="30">30 นาที</option>
                       <option value="60">1 ชั่วโมง</option>
-                      <option value="90">1.5 ชั่วโมง</option>
-                      <option value="120">2 ชั่วโมง</option>
                     </select>
                     <div className="inline-buttons">
                       <button
@@ -1249,7 +1274,7 @@ export default function CheckFieldDetail() {
                         }}
                         disabled={startProcessLoad}
                         className="savebtn-inline"
-                        onClick={() => saveField("booking_slot")}
+                        onClick={() => saveField("slot_duration")}
                       >
                         {startProcessLoad ? "..." : "✓"}
                       </button>
@@ -1267,14 +1292,22 @@ export default function CheckFieldDetail() {
                   </div>
                 ) : (
                   <div className="view-field-inline">
-                    <span>1 ชั่วโมง</span>
+                    <span>
+                      {Number(field?.slot_duration) === 30
+                        ? "30 นาที"
+                        : Number(field?.slot_duration) === 60
+                        ? "1 ชั่วโมง"
+                        : "ไม่มีข้อมูล"}
+                    </span>
                     <button
                       style={{
                         cursor: startProcessLoad ? "not-allowed" : "pointer",
                       }}
                       disabled={startProcessLoad}
                       className="edit-btn-inline"
-                      onClick={() => startEditing("booking_slot", "60")}
+                      onClick={() =>
+                        startEditing("slot_duration", field?.slot_duration)
+                      }
                     >
                       แก้ไข
                     </button>
@@ -1342,134 +1375,6 @@ export default function CheckFieldDetail() {
               </div>
             </div>
           </div>
-
-          <div className="field-row-checkfield">
-            <div className="field-details-checkfield">
-              <strong>ที่อยู่:</strong>
-              <div className="field-value-checkfield">
-                {editingField === "address" ? (
-                  <div className="edit-field-inline">
-                    <input
-                      maxLength={100}
-                      type="text"
-                      value={updatedValue}
-                      onChange={(e) => setUpdatedValue(e.target.value)}
-                      className="inline-input"
-                    />
-                    <div className="inline-buttons">
-                      <button
-                        style={{
-                          cursor: startProcessLoad ? "not-allowed" : "pointer",
-                        }}
-                        disabled={startProcessLoad}
-                        className="savebtn-inline"
-                        onClick={() => saveField("address")}
-                      >
-                        {startProcessLoad ? "..." : "✓"}
-                      </button>
-                      <button
-                        style={{
-                          cursor: startProcessLoad ? "not-allowed" : "pointer",
-                        }}
-                        disabled={startProcessLoad}
-                        className="canbtn-inline"
-                        onClick={cancelEditing}
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="view-field-inline">
-                    <span>{field?.address || "ไม่มีข้อมูล"}</span>
-                    <button
-                      style={{
-                        cursor: startProcessLoad ? "not-allowed" : "pointer",
-                      }}
-                      disabled={startProcessLoad}
-                      className="edit-btn-inline"
-                      onClick={() => startEditing("address", field?.address)}
-                    >
-                      แก้ไข
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="field-row-checkfield">
-            <div className="field-details-checkfield">
-              <strong>พิกัด GPS:</strong>
-              <div className="field-value-checkfield">
-                {editingField === "gps_location" ? (
-                  <div className="edit-field-inline">
-                    <input
-                      maxLength={200}
-                      type="text"
-                      value={updatedValue}
-                      onChange={(e) => setUpdatedValue(e.target.value)}
-                      className="inline-input"
-                    />
-                    <div className="inline-buttons">
-                      <button
-                        style={{
-                          cursor: startProcessLoad ? "not-allowed" : "pointer",
-                        }}
-                        disabled={startProcessLoad}
-                        className="savebtn-inline"
-                        onClick={() => saveField("gps_location")}
-                      >
-                        {startProcessLoad ? "..." : "✓"}
-                      </button>
-                      <button
-                        style={{
-                          cursor: startProcessLoad ? "not-allowed" : "pointer",
-                        }}
-                        disabled={startProcessLoad}
-                        className="canbtn-inline"
-                        onClick={cancelEditing}
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="view-field-inline">
-                    <span>
-                      {field?.gps_location ? (
-                        <a
-                          href={field.gps_location}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {field.gps_location}
-                        </a>
-                      ) : (
-                        "ไม่มีข้อมูล"
-                      )}
-                    </span>
-                    <button
-                      style={{
-                        cursor: startProcessLoad ? "not-allowed" : "pointer",
-                      }}
-                      disabled={startProcessLoad}
-                      className="edit-btn-inline"
-                      onClick={() =>
-                        startEditing("gps_location", field?.gps_location)
-                      }
-                    >
-                      แก้ไข
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ข้อมูลเวลาทำการและการตั้งค่าต่างๆ */}
-        <div className="check-field-info">
           <div className="field-row-checkfield">
             <div className="field-details-checkfield">
               <strong>เวลาเปิด:</strong>
@@ -1573,6 +1478,133 @@ export default function CheckFieldDetail() {
                       onClick={() =>
                         startEditing("close_hours", field?.close_hours)
                       }
+                    >
+                      แก้ไข
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ข้อมูลเวลาทำการและการตั้งค่าต่างๆ */}
+        <div className="check-field-info">
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>พิกัด GPS:</strong>
+              <div className="field-value-checkfield">
+                {editingField === "gps_location" ? (
+                  <div className="edit-field-inline">
+                    <input
+                      maxLength={200}
+                      type="text"
+                      value={updatedValue}
+                      onChange={(e) => setUpdatedValue(e.target.value)}
+                      className="inline-input"
+                    />
+                    <div className="inline-buttons">
+                      <button
+                        style={{
+                          cursor: startProcessLoad ? "not-allowed" : "pointer",
+                        }}
+                        disabled={startProcessLoad}
+                        className="savebtn-inline"
+                        onClick={() => saveField("gps_location")}
+                      >
+                        {startProcessLoad ? "..." : "✓"}
+                      </button>
+                      <button
+                        style={{
+                          cursor: startProcessLoad ? "not-allowed" : "pointer",
+                        }}
+                        disabled={startProcessLoad}
+                        className="canbtn-inline"
+                        onClick={cancelEditing}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="view-field-inline">
+                    <span>
+                      {field?.gps_location ? (
+                        <a
+                          href={field.gps_location}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {field.gps_location}
+                        </a>
+                      ) : (
+                        "ไม่มีข้อมูล"
+                      )}
+                    </span>
+                    <button
+                      style={{
+                        cursor: startProcessLoad ? "not-allowed" : "pointer",
+                      }}
+                      disabled={startProcessLoad}
+                      className="edit-btn-inline"
+                      onClick={() =>
+                        startEditing("gps_location", field?.gps_location)
+                      }
+                    >
+                      แก้ไข
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>ที่อยู่:</strong>
+              <div className="field-value-checkfield">
+                {editingField === "address" ? (
+                  <div className="edit-field-inline">
+                    <input
+                      maxLength={100}
+                      type="text"
+                      value={updatedValue}
+                      onChange={(e) => setUpdatedValue(e.target.value)}
+                      className="inline-input"
+                    />
+                    <div className="inline-buttons">
+                      <button
+                        style={{
+                          cursor: startProcessLoad ? "not-allowed" : "pointer",
+                        }}
+                        disabled={startProcessLoad}
+                        className="savebtn-inline"
+                        onClick={() => saveField("address")}
+                      >
+                        {startProcessLoad ? "..." : "✓"}
+                      </button>
+                      <button
+                        style={{
+                          cursor: startProcessLoad ? "not-allowed" : "pointer",
+                        }}
+                        disabled={startProcessLoad}
+                        className="canbtn-inline"
+                        onClick={cancelEditing}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="view-field-inline">
+                    <span>{field?.address || "ไม่มีข้อมูล"}</span>
+                    <button
+                      style={{
+                        cursor: startProcessLoad ? "not-allowed" : "pointer",
+                      }}
+                      disabled={startProcessLoad}
+                      className="edit-btn-inline"
+                      onClick={() => startEditing("address", field?.address)}
                     >
                       แก้ไข
                     </button>

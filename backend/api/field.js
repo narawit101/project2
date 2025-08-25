@@ -531,7 +531,7 @@ router.get("/:field_id", authMiddleware, async (req, res) => {
           f.field_id, f.field_name, f.address, f.gps_location, f.documents,
           f.open_hours, f.close_hours, f.img_field, f.name_bank, 
           f.number_bank, f.account_holder, f.status, f.price_deposit, 
-          f.open_days, f.field_description,f.cancel_hours,
+          f.open_days, f.field_description,f.cancel_hours,f.slot_duration,
           u.user_id, u.first_name, u.last_name, u.email,
           COALESCE(json_agg(
             DISTINCT jsonb_build_object(
@@ -913,7 +913,8 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
       documents,
       field_description,
       cancel_hours,
-  open_days,
+      open_days,
+      slot_duration,
     } = req.body;
 
     console.log("field_id ที่ได้รับ:", field_id);
@@ -939,7 +940,7 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
       console.log("Admin อัปเดตข้อมูลสนามกีฬา");
 
       const result = await pool.query(
-    `UPDATE field 
+        `UPDATE field 
      SET field_name = COALESCE($1, field_name), 
        address = COALESCE($2, address), 
        gps_location = COALESCE($3, gps_location),
@@ -953,8 +954,9 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
        documents = COALESCE($11, documents),
        field_description = COALESCE($12, field_description),
        cancel_hours = COALESCE($13, cancel_hours),
-       open_days = COALESCE($14, open_days)
-     WHERE field_id = $15
+       open_days = COALESCE($14, open_days),
+       slot_duration = COALESCE($15, slot_duration)
+     WHERE field_id = $16
      RETURNING *;`,
         [
           field_name,
@@ -970,8 +972,9 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
           documents,
           field_description,
           cancel_hours,
-      open_days,
-      field_id,
+          open_days,
+          slot_duration,
+          field_id,
         ]
       );
 
@@ -983,7 +986,7 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
       console.log("Field owner อัปเดตข้อมูลสนามกีฬา");
 
       const result = await pool.query(
-    `UPDATE field 
+        `UPDATE field 
      SET field_name = COALESCE($1, field_name), 
        address = COALESCE($2, address), 
        gps_location = COALESCE($3, gps_location),
@@ -997,8 +1000,9 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
        documents = COALESCE($11, documents),
        field_description = COALESCE($12, field_description),
        cancel_hours = COALESCE($13, cancel_hours),
-       open_days = COALESCE($14, open_days)
-     WHERE field_id = $15 AND user_id = $16
+       open_days = COALESCE($14, open_days),
+        slot_duration = COALESCE($15, slot_duration)
+     WHERE field_id = $16 AND user_id = $17
      RETURNING *;`,
         [
           field_name,
@@ -1014,9 +1018,10 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
           documents,
           field_description,
           cancel_hours,
-      open_days,
-      field_id,
-      user_id,
+          open_days,
+          field_id,
+          slot_duration,
+          user_id,
         ]
       );
 
@@ -1360,7 +1365,7 @@ router.get("/field-data/:sub_field_id", authMiddleware, async (req, res) => {
       f.field_id, f.field_name, f.address, f.gps_location, f.documents,
       f.open_hours, f.close_hours, f.img_field, f.name_bank, 
       f.number_bank, f.account_holder, f.status, f.price_deposit, 
-      f.open_days, f.field_description,
+      f.open_days, f.field_description,f.slot_duration,
       u.user_id, u.first_name, u.last_name, u.email,
       COALESCE(json_agg(
         DISTINCT jsonb_build_object(

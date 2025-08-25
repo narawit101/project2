@@ -60,6 +60,7 @@ export default function Booking() {
   const [bookTimeArr, setBookTimeArr] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  const [slot_duration, setSlotDuration] = useState(0);
   usePreventLeave(startProcessLoad);
   const searchParams = useSearchParams();
   const currentUrl = `/booking/${subFieldId}${
@@ -225,6 +226,7 @@ export default function Booking() {
           setOpenHours(fieldData.open_hours);
           setCloseHours(fieldData.close_hours);
           setPriceDeposit(fieldData.price_deposit);
+          setSlotDuration(fieldData.slot_duration);
           const mapDaysToNum = fieldData.open_days.map(
             (day) => daysNumbers[day]
           );
@@ -232,7 +234,8 @@ export default function Booking() {
 
           const calculatedSlots = slotTimes(
             fieldData.open_hours,
-            fieldData.close_hours
+            fieldData.close_hours,
+            fieldData.slot_duration
           );
           setSlots(calculatedSlots);
 
@@ -264,7 +267,7 @@ export default function Booking() {
     fetchData();
   }, [subFieldId]);
 
-  function slotTimes(openHours, closeHours) {
+  function slotTimes(openHours, closeHours, slot_duration) {
     const slots = [];
     let [openHour, openMinute] = openHours.split(":").map(Number);
     let [closeHour, closeMinute] = closeHours.split(":").map(Number);
@@ -293,7 +296,7 @@ export default function Booking() {
 
     while (currentTime < closeDate) {
       const nextTime = new Date(currentTime);
-      nextTime.setMinutes(currentTime.getMinutes() + 30);
+      nextTime.setMinutes(currentTime.getMinutes() + slot_duration);
 
       const slot = `${currentTime
         .getHours()
@@ -310,7 +313,7 @@ export default function Booking() {
         .padStart(2, "0")}`;
       slots.push(slot);
 
-      currentTime.setMinutes(currentTime.getMinutes() + 30);
+      currentTime.setMinutes(currentTime.getMinutes() + slot_duration);
     }
 
     return slots;
