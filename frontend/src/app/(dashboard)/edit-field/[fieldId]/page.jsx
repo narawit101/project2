@@ -28,10 +28,10 @@ export default function CheckFieldDetail() {
   const [subFields, setSubFields] = useState([]);
   const [addOnInputs, setAddOnInputs] = useState({});
   const [facilities, setFacilities] = useState([]);
-  const [allFacilities, setAllFacilities] = useState([]);
   const [selectedFacilities, setSelectedFacilities] = useState({});
   const [showNewFacilityInput, setShowNewFacilityInput] = useState(false);
-  const [newFacility, setNewFacility] = useState("");
+  const [newFac, setNewFac] = useState([]);
+  const [newFacilityPreview, setNewFacilityPreview] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedFacility, setSelectedFacility] = useState(null);
 
@@ -80,6 +80,144 @@ export default function CheckFieldDetail() {
     }
   }, [user, isLoading, router, userId]);
 
+  const [editingFacility, setEditingFacility] = useState(null);
+  const [editFacilityData, setEditFacilityData] = useState({
+    facility_name: "",
+    facility_price: "",
+    facility_count: "",
+    facility_description: "",
+    facility_image: null,
+  });
+
+  const handleEditFacility = (facility) => {
+    setEditingFacility(facility.field_fac_id);
+    setEditFacilityData({
+      facility_name: facility.fac_name,
+      facility_price: facility.fac_price,
+      facility_count: facility.quantity_total,
+      facility_description: facility.description || "",
+      facility_image: null,
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingFacility(null);
+    setEditFacilityData({
+      facility_name: "",
+      facility_price: "",
+      facility_count: "",
+      facility_description: "",
+      facility_image: null,
+    });
+  };
+
+  const handleSaveEditFacility = async () => {
+    if (
+      !editFacilityData.facility_name ||
+      !editFacilityData.facility_name.trim()
+    ) {
+      setMessage("กรุณาระบุชื่อสิ่งอำนวยความสะดวก");
+      setMessageType("error");
+      return;
+    }
+
+    if (
+      !editFacilityData.facility_price ||
+      editFacilityData.facility_price.toString().trim() === ""
+    ) {
+      setMessage("กรุณาระบุราคา");
+      setMessageType("error");
+      return;
+    }
+
+    if (
+      !editFacilityData.facility_count ||
+      editFacilityData.facility_count.toString().trim() === ""
+    ) {
+      setMessage("กรุณาระบุจำนวน");
+      setMessageType("error");
+      return;
+    }
+
+    SetstartProcessLoad(true);
+    try {
+      const formData = new FormData();
+
+      const dataToSend = {
+        fac_name: editFacilityData.facility_name.trim(),
+        fac_price: editFacilityData.facility_price,
+        quantity_total: editFacilityData.facility_count,
+        description: editFacilityData.facility_description || "",
+      };
+
+      console.log("Sending data:", dataToSend);
+
+      formData.append("data", JSON.stringify(dataToSend));
+
+      if (editFacilityData.facility_image) {
+        formData.append("facility_image", editFacilityData.facility_image);
+      }
+
+      const response = await fetch(
+        `${API_URL}/field/facility/${editingFacility}`,
+        {
+          method: "PUT",
+          credentials: "include",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage("แก้ไขสิ่งอำนวยความสะดวกสำเร็จ");
+        setMessageType("success");
+        setFacilities((prevFacilities) =>
+          prevFacilities.map((facility) =>
+            facility.field_fac_id === editingFacility
+              ? {
+                  ...facility,
+                  fac_name: data.facility.fac_name,
+                  fac_price: data.facility.fac_price,
+                  quantity_total: data.facility.quantity_total,
+                  description: data.facility.description,
+                  image_path: data.facility.image_path || facility.image_path,
+                }
+              : facility
+          )
+        );
+
+        handleCancelEdit();
+      } else {
+        setMessage(data.message || "เกิดข้อผิดพลาด");
+        setMessageType("error");
+      }
+    } catch (error) {
+      console.error("Edit facility error:", error);
+      setMessage("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
+      setMessageType("error");
+    } finally {
+      SetstartProcessLoad(false);
+    }
+  };
+
+  const handleEditInputChange = (field, value) => {
+    setEditFacilityData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleEditImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setEditFacilityData((prev) => ({
+        ...prev,
+        facility_image: file,
+      }));
+    }
+  };
+
   useEffect(() => {
     if (user) {
       if (isLoading) return;
@@ -110,6 +248,9 @@ export default function CheckFieldDetail() {
 
         setField(data);
         setSubFields(data.sub_fields || []);
+        if (Array.isArray(data.open_days)) {
+          setSelectedDays(data.open_days);
+        }
       } catch (error) {
         console.error("Error fetching field data:", error);
         setMessage("เกิดข้อผิดพลาดในการโหลดข้อมูลสนามกีฬา");
@@ -155,49 +296,26 @@ export default function CheckFieldDetail() {
   }, []);
 
   useEffect(() => {
-    const fetchFacilities = async () => {
+    if (!fieldId) return;
+    const fetchFieldFacilities = async () => {
       try {
-        const response = await fetch(`${API_URL}/facilities`, {
-          headers: {},
+        const res = await fetch(`${API_URL}/field/field-fac/${fieldId}`, {
+          method: "GET",
           credentials: "include",
         });
-
-        if (!response.ok) {
-          throw new Error("ไม่สามารถโหลดข้อมูลสิ่งอำนวยความสะดวกได้");
-        }
-
-        const data = await response.json();
-        setAllFacilities(data);
-      } catch (error) {
-        console.error("Error fetching facilities:", error);
-        setMessage("เกิดข้อผิดพลาดในการโหลดข้อมูล", error);
+        const j = await res.json().catch(() => null);
+        const rows = j && j.data ? j.data : Array.isArray(j) ? j : [];
+        setFacilities(rows);
+      } catch (err) {
+        console.error("fetchFieldFacilities error:", err);
+        setMessage("ไม่สามารถโหลดสิ่งอำนวยความสะดวกได้");
         setMessageType("error");
       } finally {
         setDataLoading(false);
       }
     };
-
-    fetchFacilities();
-  }, []);
-
-  const handleFacilityChange = (facId) => {
-    setSelectedFacilities((prev) => {
-      const updatedFacilities = { ...prev };
-      if (updatedFacilities[facId] !== undefined) {
-        delete updatedFacilities[facId];
-      } else {
-        updatedFacilities[facId] = "";
-      }
-      return updatedFacilities;
-    });
-  };
-
-  const handleFacilityPriceChange = (facId, price) => {
-    setSelectedFacilities((prev) => ({
-      ...prev,
-      [facId]: price,
-    }));
-  };
+    fetchFieldFacilities();
+  }, [fieldId, API_URL]);
 
   const handleSaveFacilities = async () => {
     if (!selectedFacilities || Object.keys(selectedFacilities).length === 0) {
@@ -243,10 +361,12 @@ export default function CheckFieldDetail() {
       SetstartProcessLoad(false);
     }
   };
+
   const handleConfirmDelete = (field_id, field_fac_id) => {
     setSelectedFacility({ field_id, field_fac_id });
     setShowModal(true);
   };
+
   const handleDeleteFacility = async () => {
     const { field_id, field_fac_id } = selectedFacility;
     SetstartProcessLoad(true);
@@ -266,7 +386,11 @@ export default function CheckFieldDetail() {
         setFacilities((prev) =>
           prev.filter((f) => f.field_fac_id !== field_fac_id)
         );
-        setMessage(result.message);
+        const message =
+          result.relatedRecordsDeleted > 0
+            ? `ลบสิ่งอำนวยความสะดวกสำเร็จ (ลบข้อมูลการจองที่เกี่ยวข้อง ${result.relatedRecordsDeleted} รายการ)`
+            : result.message || "ลบสิ่งอำนวยความสะดวกสำเร็จ";
+        setMessage(message);
         setMessageType("success");
         setShowModal(false);
       } else {
@@ -274,40 +398,215 @@ export default function CheckFieldDetail() {
         setMessageType("error");
       }
     } catch (err) {
-      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", err);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
     }
   };
 
-  const addNewFacility = async () => {
-    if (!newFacility.trim()) return;
+  const handleChange = (index, field, value) => {
+    if (field === "image_path") {
+      const file = value;
+      const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+
+      if (!file) {
+        setNewFac((prev) => {
+          const updated = [...prev];
+          if (updated[index]?.image_preview) {
+            try {
+              URL.revokeObjectURL(updated[index].image_preview);
+            } catch (e) {}
+          }
+          updated[index] = {
+            ...updated[index],
+            [field]: value,
+            image_preview: null,
+          };
+          return updated;
+        });
+        return;
+      }
+
+      if (file.size > MAX_IMAGE_SIZE) {
+        setMessage("ไฟล์รูปภาพมีขนาดใหญ่เกินไป (สูงสุด 5MB)");
+        setMessageType("error");
+        value = null;
+        return;
+      }
+
+      if (!file.type || !file.type.startsWith("image/")) {
+        setMessage("โปรดเลือกเฉพาะไฟล์รูปภาพเท่านั้น");
+        setMessageType("error");
+        value = null;
+        return;
+      }
+
+      const preview = URL.createObjectURL(file);
+      setNewFac((prev) => {
+        const updated = [...prev];
+        if (updated[index]?.image_preview) {
+          try {
+            URL.revokeObjectURL(updated[index].image_preview);
+          } catch (e) {}
+        }
+        updated[index] = {
+          ...updated[index],
+          [field]: file,
+          image_preview: preview,
+        };
+        return updated;
+      });
+      return;
+    }
+
+    setNewFac((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  };
+
+  const addNewFacility = () => {
+    setNewFac((prev) => [
+      ...prev,
+      {
+        fac_name: "",
+        fac_price: "",
+        quantity_total: "",
+        description: "",
+        image_path: null,
+      },
+    ]);
+  };
+
+  const handleToggleNewFacility = () => {
+    if (!showNewFacilityInput) {
+      setShowNewFacilityInput(true);
+      addNewFacility();
+    } else {
+      if (Array.isArray(newFac)) {
+        newFac.forEach((f) => {
+          if (f?.image_preview) {
+            try {
+              URL.revokeObjectURL(f.image_preview);
+            } catch (e) {}
+          }
+        });
+      }
+      setNewFac([]);
+      setShowNewFacilityInput(false);
+    }
+  };
+
+  const onSaveNewFac = async (index) => {
+    const fac = newFac[index];
+
+    if (!fac) {
+      setMessage("กรุณาลองใส่ข้อมูลสิ่งอำนวยความสะดวกให้ครบถ้วน");
+      setMessageType("error");
+      return;
+    }
+
+    if (!fac.fac_name || fac.fac_name.trim() === "") {
+      setMessage("กรุณาใส่ชื่อสิ่งอำนวยความสะดวก");
+      setMessageType("error");
+      return;
+    }
+
+    if (!fac.fac_price || fac.fac_price.toString().trim() === "") {
+      setMessage("กรุณาใส่ราคาสิ่งอำนวยความสะดวก");
+      setMessageType("error");
+      return;
+    }
+
+    if (!fac.quantity_total || fac.quantity_total.toString().trim() === "") {
+      setMessage("กรุณาใส่จำนวนทั้งหมด");
+      setMessageType("error");
+      return;
+    }
+
+    // if (!fac.description || fac.description.trim() === "") {
+    //   setMessage("กรุณาใส่รายละเอียดสิ่งอำนวยความสะดวก");
+    //   setMessageType("error");
+    //   return;
+    // }
+
+    // if (!fac.image_path) {
+    //   setMessage("กรุณาเลือกไฟล์รูปภาพสำหรับสิ่งอำนวยความสะดวก");
+    //   setMessageType("error");
+    //   return;
+    // }
+
+    const price = parseInt(fac.fac_price);
+    const quantity = parseInt(fac.quantity_total);
+
+    if (isNaN(price) || price < 0) {
+      setMessage("ราคาต้องเป็นตัวเลขที่มากกว่าหรือเท่ากับ 0");
+      setMessageType("error");
+      return;
+    }
+
+    if (isNaN(quantity) || quantity <= 0) {
+      setMessage("จำนวนต้องเป็นตัวเลขที่มากกว่า 0");
+      setMessageType("error");
+      return;
+    }
+
     SetstartProcessLoad(true);
+
+    const formData = new FormData();
+    formData.append("facility_image", fac.image_path);
+    formData.append(
+      "data",
+      JSON.stringify({
+        fac_name: fac.fac_name.trim(),
+        fac_price: price,
+        quantity_total: quantity,
+        description: fac.description.trim(),
+      })
+    );
+
     try {
-      const res = await fetch(`${API_URL}/facilities/add`, {
+      const res = await fetch(`${API_URL}/facilities/${fieldId}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         credentials: "include",
-        body: JSON.stringify({ fac_name: newFacility }),
+        body: formData,
       });
 
       const data = await res.json();
-      if (data.error) {
-        setMessage(data.error);
+
+      if (data.success) {
+        setMessage("บันทึกเรียบร้อย");
+        setMessageType("success");
+
+        setFacilities((prev) => [...prev, data.inserted]);
+
+        setNewFac((prev) => {
+          const item = prev[index];
+          if (item?.image_preview) {
+            try {
+              URL.revokeObjectURL(item.image_preview);
+            } catch (e) {
+              console.error("Failed to revoke object URL:", e);
+            }
+          }
+          const remaining = prev.filter((_, i) => i !== index);
+
+          if (remaining.length === 0) {
+            setShowNewFacilityInput(false);
+          }
+          return remaining;
+        });
+      } else {
+        setMessage(
+          "เกิดข้อผิดพลาด: " + (data.error || data.message || "ไม่ทราบสาเหตุ")
+        );
         setMessageType("error");
-        return;
       }
-      setAllFacilities((prev) => [...prev, data]);
-      SetstartProcessLoad(false);
-      setNewFacility("");
-      setMessage("เพิ่มสิ่งอำนวยความสะดวกสำเร็จ");
-      setMessageType("success");
     } catch (err) {
-      console.error("Fetch error:", err);
-      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      console.error("Save facility error:", err);
+      setMessage("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
@@ -331,6 +630,7 @@ export default function CheckFieldDetail() {
 
         const data = await response.json();
         setFacilities(data.data);
+        console.log("Fetched facilities:", data.data);
       } catch (err) {
         console.error(err);
         setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", err);
@@ -345,13 +645,11 @@ export default function CheckFieldDetail() {
 
   const startEditing = (fieldName, currentValue) => {
     setEditingField(fieldName);
+    setUpdatedValue(currentValue);
     if (fieldName === "open_days") {
-      setSelectedDays(
-        Array.isArray(field?.open_days) ? [...field.open_days] : []
-      );
-      setUpdatedValue("");
-    } else {
-      setUpdatedValue(currentValue);
+      if (field && Array.isArray(field.open_days)) {
+        setSelectedDays(field.open_days);
+      }
     }
   };
 
@@ -360,6 +658,25 @@ export default function CheckFieldDetail() {
       setMessage("กรุณาเลือกประเภทกีฬาก่อนบันทึก");
       setMessageType("error");
       return;
+    }
+    // Deposit constraint: existing deposit must not exceed cheapest sub-field price after this change
+    if (field && field.price_deposit != null) {
+      const deposit = Number(field.price_deposit) || 0; // 0 allowed
+      if (!isNaN(deposit) && deposit > 0) {
+        const prospectivePrices = (subFields || []).map((s) =>
+          Number(s.sub_field_id === sub_field_id ? updatedPrice : s.price)
+        ).filter((p) => !isNaN(p) && p >= 0);
+        if (prospectivePrices.length > 0) {
+          const newMin = Math.min(...prospectivePrices);
+          if (deposit > newMin) {
+            setMessage(
+              `ไม่สามารถตั้งราคานี้ได้ เพราะค่ามัดจำปัจจุบัน (${deposit} บาท) ต้องไม่มากกว่าราคาสนามย่อยที่ถูกที่สุดหลังแก้ไข (${newMin} บาท)`
+            );
+            setMessageType("error");
+            return;
+          }
+        }
+      }
     }
     SetstartProcessLoad(true);
     try {
@@ -410,7 +727,7 @@ export default function CheckFieldDetail() {
       }
     } catch (error) {
       console.error("Error saving sub-field:", error);
-      setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
@@ -425,7 +742,18 @@ export default function CheckFieldDetail() {
     setUpdatedSubFieldLength(sub.length_field);
     setUpdatedSubFieldFieldSurface(sub.field_surface);
     setUpdatedPrice(sub.price);
-    setUpdatedSportId(sub.sport_id);
+    let resolved = sub?.sport_id != null ? String(sub.sport_id) : "";
+    if (
+      (!resolved ||
+        !sportsCategories.some((c) => String(c.sport_id) === resolved)) &&
+      sub?.sport_name
+    ) {
+      const found = sportsCategories.find(
+        (c) => c.sport_name?.trim() === sub.sport_name?.trim()
+      );
+      if (found) resolved = String(found.sport_id);
+    }
+    setUpdatedSportId(resolved);
   };
 
   const startEditingAddon = (addon) => {
@@ -511,6 +839,53 @@ export default function CheckFieldDetail() {
     }
   };
 
+  const handleNewFacilityImageChange = (e) => {
+    const f = e.target.files?.[0] ?? null;
+    if (!f) {
+      if (newFacilityPreview) URL.revokeObjectURL(newFacilityPreview);
+      setNewFacilityImage(null);
+      setNewFacilityPreview(null);
+      return;
+    }
+
+    if (f.size > MAX_FILE_SIZE) {
+      setMessage("ไฟล์รูปภาพมีขนาดใหญ่เกินไป (สูงสุด 5MB)");
+      setMessageType("error");
+      e.target.value = null;
+      return;
+    }
+    if (!f.type.startsWith("image/")) {
+      setMessage("โปรดเลือกเฉพาะไฟล์รูปภาพเท่านั้น");
+      setMessageType("error");
+      e.target.value = null;
+      return;
+    }
+
+    if (newFacilityPreview) URL.revokeObjectURL(newFacilityPreview);
+    setNewFacilityImage(f);
+    setNewFacilityPreview(URL.createObjectURL(f));
+  };
+
+  useEffect(() => {
+    return () => {
+      if (newFacilityPreview) URL.revokeObjectURL(newFacilityPreview);
+    };
+  }, [newFacilityPreview]);
+
+  useEffect(() => {
+    return () => {
+      if (Array.isArray(newFac)) {
+        newFac.forEach((f) => {
+          if (f?.image_preview) {
+            try {
+              URL.revokeObjectURL(f.image_preview);
+            } catch (e) {}
+          }
+        });
+      }
+    };
+  }, [newFac]);
+
   const saveImageField = async () => {
     SetstartProcessLoad(true);
     try {
@@ -542,7 +917,7 @@ export default function CheckFieldDetail() {
       }
     } catch (error) {
       console.error("Error saving image field:", error);
-      setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
@@ -590,7 +965,7 @@ export default function CheckFieldDetail() {
       }
     } catch (error) {
       console.error("Error saving document field:", error);
-      setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
@@ -659,7 +1034,7 @@ export default function CheckFieldDetail() {
         }
       } catch (error) {
         console.error("Error saving field:", error);
-        setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+        setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
         setMessageType("error");
       } finally {
         SetstartProcessLoad(false);
@@ -671,6 +1046,28 @@ export default function CheckFieldDetail() {
       setMessage("ห้ามปล่อยค่าว่าง หรือ ลบออกทั้งหมด");
       setMessageType("error");
       return;
+    }
+
+    if (fieldName === "price_deposit") {
+      const deposit = Number(updatedValue);
+      if (isNaN(deposit) || deposit < 0) {
+        setMessage("ค่ามัดจำไม่ถูกต้อง");
+        setMessageType("error");
+        return;
+      }
+      const prices = (subFields || [])
+        .map((s) => Number(s.price))
+        .filter((p) => !isNaN(p) && p >= 0);
+      if (prices.length > 0) {
+        const minPrice = Math.min(...prices);
+        if (deposit > minPrice) {
+          setMessage(
+            `ค่ามัดจำต้องไม่มากกว่าราคาสนามย่อยที่ถูกที่สุด (${minPrice} บาท)`
+          );
+          setMessageType("error");
+          return;
+        }
+      }
     }
     SetstartProcessLoad(true);
     try {
@@ -701,7 +1098,7 @@ export default function CheckFieldDetail() {
       }
     } catch (error) {
       console.error("Error saving field:", error);
-      setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
@@ -714,6 +1111,28 @@ export default function CheckFieldDetail() {
       setMessageType("error");
       return;
     }
+
+    if (field && field.price_deposit != null) {
+      const deposit = Number(field.price_deposit) || 0;
+      if (!isNaN(deposit) && deposit > 0) {
+        const candidatePrice = Number(newSubField.price);
+        const prices = [
+          ...(subFields || []).map((s) => Number(s.price)),
+          candidatePrice,
+        ].filter((p) => !isNaN(p) && p >= 0);
+        if (prices.length > 0) {
+          const newMin = Math.min(...prices);
+          if (deposit > newMin) {
+            setMessage(
+              `ค่ามัดจำปัจจุบัน (${deposit} บาท) มากกว่าราคาสนามย่อยที่ถูกที่สุดหลังเพิ่ม (${newMin} บาท) กรุณาปรับราคาหรือแก้ไขค่ามัดจำ`
+            );
+            setMessageType("error");
+            return;
+          }
+        }
+      }
+    }
+    
     SetstartProcessLoad(true);
     try {
       const response = await fetch(`${API_URL}/field/subfield/${fieldId}`, {
@@ -759,7 +1178,7 @@ export default function CheckFieldDetail() {
       setMessageType("success");
     } catch (error) {
       console.error("Error: ", error);
-      setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
@@ -816,7 +1235,7 @@ export default function CheckFieldDetail() {
       }
     } catch (error) {
       console.error("Error deleting sub-field:", error);
-      setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
@@ -858,7 +1277,7 @@ export default function CheckFieldDetail() {
       }
     } catch (err) {
       console.error("ผิดพลาดขณะเพิ่ม Add-on:", err);
-      setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", err);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", err);
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
@@ -904,7 +1323,7 @@ export default function CheckFieldDetail() {
       }
     } catch (error) {
       console.error("Error deleting add-on:", error);
-      setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
@@ -954,7 +1373,7 @@ export default function CheckFieldDetail() {
       }
     } catch (error) {
       console.error("Error saving add-on:", error);
-      setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
@@ -1142,26 +1561,6 @@ export default function CheckFieldDetail() {
                 {editingField === "open_days" ? (
                   <div className="edit-field-inline">
                     <div className="days-checkbox-container">
-                      {/* <div style={{display:"flex", gap:"8px", flexWrap:"wrap", width:"100%"}}> */}
-                      {/* <button
-                          type="button"
-                          className="edit-btn-inline"
-                          style={{background:selectedDays.length===7?"#16a34a":"#6c757d"}}
-                          disabled={startProcessLoad}
-                          onClick={handleSelectAllDays}
-                        >
-                          เลือกทั้งหมด
-                        </button>
-                        <button
-                          type="button"
-                          className="canbtn-inline"
-                          style={{padding:"0.3rem 0.6rem"}}
-                          disabled={startProcessLoad || selectedDays.length===0}
-                          onClick={handleClearDays}
-                        >
-                          ล้าง
-                        </button> */}
-                      {/* </div> */}
                       {dayCodes.map((code) => (
                         <label key={code} className="day-checkbox">
                           <input
@@ -1184,7 +1583,15 @@ export default function CheckFieldDetail() {
                         className="savebtn-inline"
                         onClick={() => saveField("open_days")}
                       >
-                        {startProcessLoad ? "..." : "✓"}
+                        {startProcessLoad ? (
+                          <span className="dot-loading">
+                            <span className="dot one">●</span>
+                            <span className="dot two">●</span>
+                            <span className="dot three">●</span>
+                          </span>
+                        ) : (
+                          "บันทึก"
+                        )}
                       </button>
                       <button
                         style={{
@@ -1194,7 +1601,7 @@ export default function CheckFieldDetail() {
                         className="canbtn-inline"
                         onClick={cancelEditing}
                       >
-                        ✕
+                        ยกเลิก
                       </button>
                     </div>
                   </div>
@@ -1253,8 +1660,7 @@ export default function CheckFieldDetail() {
           <div className="field-row-checkfield">
             <div className="field-details-checkfield">
               <strong>
-                แบ่งช่วงเวลาในการจอง ช่วงละ " 30 นาที " หรือ "ช่วงละ 1 ชั่วโมง"
-                :
+                แบ่งช่วงเวลาในการจอง ช่วงละ " 30 นาที " หรือ "ช่วงละ 1 ชั่วโมง :
               </strong>
               <div className="field-value-checkfield">
                 {editingField === "slot_duration" ? (
@@ -1276,7 +1682,15 @@ export default function CheckFieldDetail() {
                         className="savebtn-inline"
                         onClick={() => saveField("slot_duration")}
                       >
-                        {startProcessLoad ? "..." : "✓"}
+                        {startProcessLoad ? (
+                          <span className="dot-loading">
+                            <span className="dot one">●</span>
+                            <span className="dot two">●</span>
+                            <span className="dot three">●</span>
+                          </span>
+                        ) : (
+                          "บันทึก"
+                        )}
                       </button>
                       <button
                         style={{
@@ -1286,7 +1700,7 @@ export default function CheckFieldDetail() {
                         className="canbtn-inline"
                         onClick={cancelEditing}
                       >
-                        ✕
+                        ยกเลิก
                       </button>
                     </div>
                   </div>
@@ -1341,7 +1755,15 @@ export default function CheckFieldDetail() {
                         className="savebtn-inline"
                         onClick={() => saveField("field_name")}
                       >
-                        {startProcessLoad ? "..." : "✓"}
+                        {startProcessLoad ? (
+                          <span className="dot-loading">
+                            <span className="dot one">●</span>
+                            <span className="dot two">●</span>
+                            <span className="dot three">●</span>
+                          </span>
+                        ) : (
+                          "บันทึก"
+                        )}
                       </button>
                       <button
                         style={{
@@ -1351,7 +1773,7 @@ export default function CheckFieldDetail() {
                         className="canbtn-inline"
                         onClick={cancelEditing}
                       >
-                        ✕
+                        ยกเลิก
                       </button>
                     </div>
                   </div>
@@ -1396,7 +1818,15 @@ export default function CheckFieldDetail() {
                         className="savebtn-inline"
                         onClick={() => saveField("open_hours")}
                       >
-                        {startProcessLoad ? "..." : "✓"}
+                        {startProcessLoad ? (
+                          <span className="dot-loading">
+                            <span className="dot one">●</span>
+                            <span className="dot two">●</span>
+                            <span className="dot three">●</span>
+                          </span>
+                        ) : (
+                          "บันทึก"
+                        )}
                       </button>
                       <button
                         style={{
@@ -1406,7 +1836,7 @@ export default function CheckFieldDetail() {
                         className="canbtn-inline"
                         onClick={cancelEditing}
                       >
-                        ✕
+                        ยกเลิก
                       </button>
                     </div>
                   </div>
@@ -1452,7 +1882,15 @@ export default function CheckFieldDetail() {
                         className="savebtn-inline"
                         onClick={() => saveField("close_hours")}
                       >
-                        {startProcessLoad ? "..." : "✓"}
+                        {startProcessLoad ? (
+                          <span className="dot-loading">
+                            <span className="dot one">●</span>
+                            <span className="dot two">●</span>
+                            <span className="dot three">●</span>
+                          </span>
+                        ) : (
+                          "บันทึก"
+                        )}
                       </button>
                       <button
                         style={{
@@ -1462,7 +1900,7 @@ export default function CheckFieldDetail() {
                         className="canbtn-inline"
                         onClick={cancelEditing}
                       >
-                        ✕
+                        ยกเลิก
                       </button>
                     </div>
                   </div>
@@ -1488,7 +1926,6 @@ export default function CheckFieldDetail() {
           </div>
         </div>
 
-        {/* ข้อมูลเวลาทำการและการตั้งค่าต่างๆ */}
         <div className="check-field-info">
           <div className="field-row-checkfield">
             <div className="field-details-checkfield">
@@ -1512,7 +1949,15 @@ export default function CheckFieldDetail() {
                         className="savebtn-inline"
                         onClick={() => saveField("gps_location")}
                       >
-                        {startProcessLoad ? "..." : "✓"}
+                        {startProcessLoad ? (
+                          <span className="dot-loading">
+                            <span className="dot one">●</span>
+                            <span className="dot two">●</span>
+                            <span className="dot three">●</span>
+                          </span>
+                        ) : (
+                          "บันทึก"
+                        )}
                       </button>
                       <button
                         style={{
@@ -1522,7 +1967,7 @@ export default function CheckFieldDetail() {
                         className="canbtn-inline"
                         onClick={cancelEditing}
                       >
-                        ✕
+                        ยกเลิก
                       </button>
                     </div>
                   </div>
@@ -1581,7 +2026,15 @@ export default function CheckFieldDetail() {
                         className="savebtn-inline"
                         onClick={() => saveField("address")}
                       >
-                        {startProcessLoad ? "..." : "✓"}
+                        {startProcessLoad ? (
+                          <span className="dot-loading">
+                            <span className="dot one">●</span>
+                            <span className="dot two">●</span>
+                            <span className="dot three">●</span>
+                          </span>
+                        ) : (
+                          "บันทึก"
+                        )}
                       </button>
                       <button
                         style={{
@@ -1591,7 +2044,7 @@ export default function CheckFieldDetail() {
                         className="canbtn-inline"
                         onClick={cancelEditing}
                       >
-                        ✕
+                        ยกเลิก
                       </button>
                     </div>
                   </div>
@@ -1649,7 +2102,15 @@ export default function CheckFieldDetail() {
                         className="savebtn-inline"
                         onClick={() => saveField("cancel_hours")}
                       >
-                        {startProcessLoad ? "..." : "✓"}
+                        {startProcessLoad ? (
+                          <span className="dot-loading">
+                            <span className="dot one">●</span>
+                            <span className="dot two">●</span>
+                            <span className="dot three">●</span>
+                          </span>
+                        ) : (
+                          "บันทึก"
+                        )}
                       </button>
                       <button
                         style={{
@@ -1659,7 +2120,7 @@ export default function CheckFieldDetail() {
                         className="canbtn-inline"
                         onClick={cancelEditing}
                       >
-                        ✕
+                        ยกเลิก
                       </button>
                     </div>
                   </div>
@@ -1719,7 +2180,15 @@ export default function CheckFieldDetail() {
                         className="savebtn-inline"
                         onClick={() => saveField("price_deposit")}
                       >
-                        {startProcessLoad ? "..." : "✓"}
+                        {startProcessLoad ? (
+                          <span className="dot-loading">
+                            <span className="dot one">●</span>
+                            <span className="dot two">●</span>
+                            <span className="dot three">●</span>
+                          </span>
+                        ) : (
+                          "บันทึก"
+                        )}
                       </button>
                       <button
                         style={{
@@ -1729,7 +2198,7 @@ export default function CheckFieldDetail() {
                         className="canbtn-inline"
                         onClick={cancelEditing}
                       >
-                        ✕
+                        ยกเลิก
                       </button>
                     </div>
                   </div>
@@ -1780,7 +2249,15 @@ export default function CheckFieldDetail() {
                         className="savebtn-inline"
                         onClick={() => saveField("name_bank")}
                       >
-                        {startProcessLoad ? "..." : "✓"}
+                        {startProcessLoad ? (
+                          <span className="dot-loading">
+                            <span className="dot one">●</span>
+                            <span className="dot two">●</span>
+                            <span className="dot three">●</span>
+                          </span>
+                        ) : (
+                          "บันทึก"
+                        )}
                       </button>
                       <button
                         style={{
@@ -1790,7 +2267,7 @@ export default function CheckFieldDetail() {
                         className="canbtn-inline"
                         onClick={cancelEditing}
                       >
-                        ✕
+                        ยกเลิก
                       </button>
                     </div>
                   </div>
@@ -1837,7 +2314,15 @@ export default function CheckFieldDetail() {
                         className="savebtn-inline"
                         onClick={() => saveField("account_holder")}
                       >
-                        {startProcessLoad ? "..." : "✓"}
+                        {startProcessLoad ? (
+                          <span className="dot-loading">
+                            <span className="dot one">●</span>
+                            <span className="dot two">●</span>
+                            <span className="dot three">●</span>
+                          </span>
+                        ) : (
+                          "บันทึก"
+                        )}
                       </button>
                       <button
                         style={{
@@ -1847,7 +2332,7 @@ export default function CheckFieldDetail() {
                         className="canbtn-inline"
                         onClick={cancelEditing}
                       >
-                        ✕
+                        ยกเลิก
                       </button>
                     </div>
                   </div>
@@ -1910,7 +2395,15 @@ export default function CheckFieldDetail() {
                         className="savebtn-inline"
                         onClick={() => saveField("number_bank")}
                       >
-                        {startProcessLoad ? "..." : "✓"}
+                        {startProcessLoad ? (
+                          <span className="dot-loading">
+                            <span className="dot one">●</span>
+                            <span className="dot two">●</span>
+                            <span className="dot three">●</span>
+                          </span>
+                        ) : (
+                          "บันทึก"
+                        )}
                       </button>
                       <button
                         style={{
@@ -1920,7 +2413,7 @@ export default function CheckFieldDetail() {
                         className="canbtn-inline"
                         onClick={cancelEditing}
                       >
-                        ✕
+                        ยกเลิก
                       </button>
                     </div>
                   </div>
@@ -1966,7 +2459,15 @@ export default function CheckFieldDetail() {
                         className="savebtn-inline"
                         onClick={() => saveField("field_description")}
                       >
-                        {startProcessLoad ? "..." : "✓"}
+                        {startProcessLoad ? (
+                          <span className="dot-loading">
+                            <span className="dot one">●</span>
+                            <span className="dot two">●</span>
+                            <span className="dot three">●</span>
+                          </span>
+                        ) : (
+                          "บันทึก"
+                        )}
                       </button>
                       <button
                         style={{
@@ -1976,7 +2477,7 @@ export default function CheckFieldDetail() {
                         className="canbtn-inline"
                         onClick={cancelEditing}
                       >
-                        ✕
+                        ยกเลิก
                       </button>
                     </div>
                   </div>
@@ -2026,7 +2527,15 @@ export default function CheckFieldDetail() {
                         className="savebtn-inline"
                         onClick={saveDocumentField}
                       >
-                        {startProcessLoad ? "..." : "✓"}
+                        {startProcessLoad ? (
+                          <span className="dot-loading">
+                            <span className="dot one">●</span>
+                            <span className="dot two">●</span>
+                            <span className="dot three">●</span>
+                          </span>
+                        ) : (
+                          "บันทึก"
+                        )}
                       </button>
                       <button
                         className="canbtn-inline"
@@ -2036,7 +2545,7 @@ export default function CheckFieldDetail() {
                         disabled={startProcessLoad}
                         onClick={cancelEditing}
                       >
-                        ✕
+                        ยกเลิก
                       </button>
                     </div>
                   </div>
@@ -2077,202 +2586,437 @@ export default function CheckFieldDetail() {
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="field-row-checkfield facilities-section">
-            <div className="field-details-checkfield">
-              <strong>สิ่งอำนวยความสะดวกในสนาม:</strong>
-              <div className="field-value-checkfield">
-                <div className="facilities-display">
-                  {Array.isArray(facilities) && facilities.length === 0 ? (
-                    <div className="no-facilities-message">
-                      <span>ยังไม่มีสิ่งอำนวยความสะดวกสำหรับสนามนี้</span>
-                    </div>
-                  ) : Array.isArray(facilities) && facilities.length > 0 ? (
-                    <div className="facilities-grid">
-                      {facilities.map((facility) => (
-                        <div
-                          className="facility-card"
-                          key={facility.field_fac_id}
-                        >
-                          <div className="facility-info">
-                            <h4
-                              className="facility-name"
-                              title={facility.fac_name}
-                            >
-                              {facility.fac_name.length > 20
-                                ? `${facility.fac_name.substring(0, 20)}...`
-                                : facility.fac_name}
-                            </h4>
-                            <p className="facility-price">
-                              {formatPrice(facility.fac_price)} บาท
-                            </p>
+        <div className="field-row-checkfield">
+          <div className="field-details-checkfield-fac">
+            <strong>สิ่งอำนวยความสะดวกในสนาม:</strong>
+            <div className="field-value-checkfield">
+              <div className="facilities-display">
+                {Array.isArray(facilities) && facilities.length === 0 ? (
+                  <div className="no-facilities-message">
+                    <span>ยังไม่มีสิ่งอำนวยความสะดวกสำหรับสนามนี้</span>
+                  </div>
+                ) : Array.isArray(facilities) && facilities.length > 0 ? (
+                  <div className="facilities-grid-simple">
+                    {facilities.map((facility) => (
+                      <div
+                        className="facility-card-simple"
+                        key={facility.field_fac_id}
+                      >
+                        {editingFacility === facility.field_fac_id ? (
+                          <div className="facility-edit-form">
+                            <div className="facility-image-simple">
+                              {facility.image_path &&
+                              !editFacilityData.facility_image ? (
+                                <img
+                                  src={facility.image_path}
+                                  alt={facility.fac_name}
+                                  onError={(e) => {
+                                    e.target.src =
+                                      "/images/placeholder-image.png";
+                                  }}
+                                />
+                              ) : editFacilityData.facility_image ? (
+                                <img
+                                  src={URL.createObjectURL(
+                                    editFacilityData.facility_image
+                                  )}
+                                  alt="Preview"
+                                />
+                              ) : (
+                                <div className="facility-no-image">
+                                  ยังไม่มีรูป
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="facility-edit-inputs">
+                              <div className="input-group-edit">
+                                <label htmlFor="facility-name">
+                                  ชื่อสิ่งอำนวยความสะดวก
+                                </label>
+                                <input
+                                  id="facility-name"
+                                  type="text"
+                                  placeholder="กรุณาใส่ชื่อสิ่งอำนวยความสะดวก"
+                                  value={editFacilityData.facility_name}
+                                  onChange={(e) =>
+                                    handleEditInputChange(
+                                      "facility_name",
+                                      e.target.value
+                                    )
+                                  }
+                                  maxLength={50}
+                                />
+                              </div>
+
+                              <div className="input-group-edit">
+                                <label htmlFor="facility-price">
+                                  ราคา (บาท)
+                                </label>
+                                <input
+                                  id="facility-price"
+                                  type="text"
+                                  inputMode="numeric"
+                                  pattern="[0-9]*"
+                                  maxLength={7}
+                                  placeholder="กรุณาใส่ราคา"
+                                  value={editFacilityData.facility_price}
+                                  onChange={(e) => {
+                                    let value = e.target.value.replace(
+                                      /\D/g,
+                                      ""
+                                    );
+                                    if (value >= 999999) {
+                                      setMessage("ใส่ได้ไม่เกิน 5 หลัก");
+                                      setMessageType("error");
+                                      return;
+                                    }
+                                    setMessage(null);
+                                    setMessageType("error");
+                                    handleEditInputChange(
+                                      "facility_price",
+                                      value
+                                    );
+                                  }}
+                                />
+                              </div>
+
+                              <div className="input-group-edit">
+                                <label htmlFor="facility-count">จำนวน</label>
+                                <input
+                                  id="facility-count"
+                                  type="text"
+                                  inputMode="numeric"
+                                  pattern="[0-9]*"
+                                  maxLength={7}
+                                  placeholder="กรุณาใส่จำนวน"
+                                  value={editFacilityData.facility_count}
+                                  onChange={(e) => {
+                                    let value = e.target.value.replace(
+                                      /\D/g,
+                                      ""
+                                    );
+                                    if (value >= 999999) {
+                                      setMessage("ใส่ได้ไม่เกิน 5 หลัก");
+                                      setMessageType("error");
+                                      return;
+                                    }
+                                    setMessage(null);
+                                    setMessageType("error");
+                                    handleEditInputChange(
+                                      "facility_count",
+                                      value
+                                    );
+                                  }}
+                                  min="1"
+                                />
+                              </div>
+
+                              <div className="input-group-edit">
+                                <label htmlFor="facility-description">
+                                  รายละเอียด 
+                                </label>
+                                <textarea
+                                  id="facility-description"
+                                  placeholder="ใส่รายละเอียดสิ่งอำนวยความสะดวก (ถ้ามี)"
+                                  value={editFacilityData.facility_description}
+                                  onChange={(e) =>
+                                    handleEditInputChange(
+                                      "facility_description",
+                                      e.target.value
+                                    )
+                                  }
+                                  rows="3"
+                                  maxLength={200}
+                                />
+                              </div>
+
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleEditImageChange}
+                                style={{ display: "none" }}
+                                className="file-label-fac"
+                                id={`facility-image-${facility.field_fac_id}`}
+                              />
+                              <label
+                                htmlFor={`facility-image-${facility.field_fac_id}`}
+                                className="facility-image-label"
+                              >
+                                {editFacilityData.facility_image
+                                  ? "เปลี่ยนรูปภาพ"
+                                  : "เปลี่ยนรูปภาพ"}
+                              </label>
+
+                              <div className="facility-edit-actions">
+                                <button
+                                  className="save-edit-btn"
+                                  onClick={handleSaveEditFacility}
+                                  disabled={startProcessLoad}
+                                >
+                                  {startProcessLoad ? (
+                                    <span className="dot-loading">
+                                      <span className="dot one">●</span>
+                                      <span className="dot two">●</span>
+                                      <span className="dot three">●</span>
+                                    </span>
+                                  ) : (
+                                    "บันทึก"
+                                  )}
+                                </button>
+                                <button
+                                  className="cancel-edit-btn"
+                                  onClick={handleCancelEdit}
+                                  disabled={startProcessLoad}
+                                >
+                                  ยกเลิก
+                                </button>
+                              </div>
+                            </div>
                           </div>
-                          <button
-                            style={{
-                              cursor: startProcessLoad
-                                ? "not-allowed"
-                                : "pointer",
-                            }}
-                            disabled={startProcessLoad}
-                            className="delete-facility-btn"
-                            onClick={() =>
-                              handleConfirmDelete(
-                                fieldId,
-                                facility.field_fac_id
-                              )
-                            }
-                            title="ลบสิ่งอำนวยความสะดวก"
-                          >
-                            ลบ
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="error-message">
-                      <span>ข้อมูลผิดพลาด</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
+                        ) : (
+                          <>
+                            <div className="facility-image-simple">
+                              {facility.image_path ? (
+                                <img
+                                  src={facility.image_path}
+                                  alt={facility.fac_name}
+                                  onError={(e) => {
+                                    e.target.src =
+                                      "/images/placeholder-image.png";
+                                  }}
+                                />
+                              ) : (
+                                <div className="facility-no-image">
+                                  ยังไม่มีรูป
+                                </div>
+                              )}
+                            </div>
+                            <div className="facility-info-simple">
+                              <h4 className="facility-name-simple">
+                                {facility.fac_name}
+                              </h4>
 
-          <div className="field-row-checkfield facilities-section">
-            <div className="field-details-checkfield">
-              <strong>เพิ่มสิ่งอำนวยความสะดวก:</strong>
-              <div className="field-value-checkfield">
-                <div className="facilities-selector">
-                  <div className="facilities-list">
-                    {allFacilities.map((fac) => (
-                      <div key={fac.fac_id} className="facility-selector-item">
-                        <div className="facility-checkbox-wrapper">
-                          <input
-                            type="checkbox"
-                            id={`facility-${fac.fac_id}`}
-                            checked={
-                              selectedFacilities[fac.fac_id] !== undefined
-                            }
-                            onChange={() => handleFacilityChange(fac.fac_id)}
-                          />
-                          <label
-                            htmlFor={`facility-${fac.fac_id}`}
-                            className="facility-label"
-                            title={fac.fac_name}
-                          >
-                            {fac.fac_name.length > 25
-                              ? `${fac.fac_name.substring(0, 25)}...`
-                              : fac.fac_name}
-                          </label>
-                        </div>
+                              <div className="facility-details-simple">
+                                <div className="detail-row">
+                                  <span>ราคา: </span>
+                                  <span>
+                                    {formatPrice(facility.fac_price)} บาท
+                                  </span>
+                                </div>
+                                <div className="detail-row">
+                                  <span>จำนวน: </span>
+                                  <span>{facility.quantity_total} ชิ้น</span>
+                                </div>
+                                <div className="detail-row">
+                                  <span>รายละเอียด: </span>
+                                  <span>
+                                    {facility.description && facility.description.trim() !== ""
+                                      ? facility.description
+                                      :
+                                       "ยังไม่มีรายละเอียด"}
+                                  </span>
+                                </div>
+                              </div>
 
-                        {selectedFacilities[fac.fac_id] !== undefined && (
-                          <div className="price-input-wrapper">
-                            <input
-                              type="text"
-                              inputMode="numeric"
-                              pattern="[0-9]*"
-                              maxLength={6}
-                              placeholder="ราคา (บาท)"
-                              value={selectedFacilities[fac.fac_id] || ""}
-                              onChange={(e) => {
-                                let value = e.target.value.replace(/\D/g, "");
-
-                                if (value > 999999) {
-                                  setMessage("ใส่ได้ไม่เกิน 6 หลัก ");
-                                  setMessageType("error");
-                                  return;
-                                }
-                                setMessage(null);
-                                setMessageType(null);
-                                if (value === "" || parseFloat(value) >= 0) {
-                                  handleFacilityPriceChange(fac.fac_id, value);
-                                } else {
-                                  handleFacilityPriceChange(fac.fac_id, 0);
-                                }
-                              }}
-                              className="price-input"
-                            />
-                          </div>
+                              <div className="facility-actions">
+                                <button
+                                  style={{
+                                    cursor: startProcessLoad
+                                      ? "not-allowed"
+                                      : "pointer",
+                                  }}
+                                  disabled={startProcessLoad}
+                                  className="edit-btn-inline"
+                                  onClick={() => handleEditFacility(facility)}
+                                  title="แก้ไขสิ่งอำนวยความสะดวก"
+                                >
+                                  แก้ไข
+                                </button>
+                                <button
+                                  style={{
+                                    cursor: startProcessLoad
+                                      ? "not-allowed"
+                                      : "pointer",
+                                  }}
+                                  disabled={startProcessLoad}
+                                  className="delete-facility-btn-simple"
+                                  onClick={() =>
+                                    handleConfirmDelete(
+                                      fieldId,
+                                      facility.field_fac_id
+                                    )
+                                  }
+                                  title="ลบสิ่งอำนวยความสะดวก"
+                                >
+                                  ลบ
+                                </button>
+                              </div>
+                            </div>
+                          </>
                         )}
                       </div>
                     ))}
                   </div>
-                  <div className="facilities-actions">
-                    <button
-                      style={{
-                        cursor: startProcessLoad ? "not-allowed" : "pointer",
-                      }}
-                      disabled={startProcessLoad}
-                      className="add-selected-facilities-btn"
-                      onClick={handleSaveFacilities}
-                    >
-                      เพิ่มไปยังสนาม
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="field-row-checkfield facilities-section">
-            <div className="field-details-checkfield">
-              <strong>เพิ่มสิ่งอำนวยความสะดวกใหม่:</strong>
-              <div className="field-value-checkfield">
-                {!showNewFacilityInput ? (
-                  <div className="add-new-facility-prompt">
-                    <button
-                      style={{
-                        cursor: startProcessLoad ? "not-allowed" : "pointer",
-                      }}
-                      disabled={startProcessLoad}
-                      className="add-new-facility-btn"
-                      type="button"
-                      onClick={() => setShowNewFacilityInput(true)}
-                    >
-                      สร้างสิ่งอำนวยความสะดวกใหม่
-                    </button>
-                  </div>
                 ) : (
-                  <div className="new-facility-form">
-                    <input
-                      maxLength={50}
-                      type="text"
-                      placeholder="ชื่อสิ่งอำนวยความสะดวกใหม่"
-                      value={newFacility}
-                      onChange={(e) => setNewFacility(e.target.value)}
-                      className="new-facility-input"
-                    />
-                    <div className="new-facility-actions">
-                      <button
-                        style={{
-                          cursor: startProcessLoad ? "not-allowed" : "pointer",
-                        }}
-                        disabled={startProcessLoad}
-                        className="save-new-facility-btn"
-                        type="button"
-                        onClick={addNewFacility}
-                      >
-                        {startProcessLoad ? "..." : "บันทึก"}
-                      </button>
-                      <button
-                        style={{
-                          cursor: startProcessLoad ? "not-allowed" : "pointer",
-                        }}
-                        disabled={startProcessLoad}
-                        className="cancel-new-facility-btn"
-                        type="button"
-                        onClick={() => setShowNewFacilityInput(false)}
-                      >
-                        ยกเลิก
-                      </button>
-                    </div>
+                  <div className="error-message">
+                    <span>ข้อมูลผิดพลาด</span>
                   </div>
                 )}
               </div>
             </div>
           </div>
         </div>
+
+        <div className="check-field-info">
+          <div className="field-row-checkfield">
+            <div className="field-details-checkfield">
+              <strong>เพิ่มสิ่งอำนวยความสะดวกใหม่:</strong>
+              <div className="field-value-checkfield">
+                <div className="btn-center-add-fac">
+                  <button
+                    type="button"
+                    className="toggle-addon-btn"
+                    onClick={handleToggleNewFacility}
+                    disabled={startProcessLoad}
+                  >
+                    {showNewFacilityInput
+                      ? "ยกเลิก"
+                      : "เพิ่มสิ่งอำนวยความสะดวกใหม่"}
+                  </button>
+                </div>
+                {newFac.map((fac, index) => (
+                  <div key={index} className="facility-form">
+                    <input
+                      placeholder="ชื่อสิ่งอำนวยความสะดวก"
+                      type="text"
+                      maxLength={50}
+                      value={fac.fac_name}
+                      onChange={(e) =>
+                        handleChange(index, "fac_name", e.target.value)
+                      }
+                    />
+                    <input
+                      placeholder="ราคา"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={7}
+                      value={fac.fac_price || ""}
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g, "");
+                        if (value >= 999999) {
+                          setMessage("ใส่ได้ไม่เกิน 5 หลัก");
+                          setMessageType("error");
+                          return;
+                        }
+                        setMessage(null);
+                        setMessageType("error");
+                        handleChange(index, "fac_price", value);
+                      }}
+                    />
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={7}
+                      placeholder="จำนวนทั้งหมด"
+                      value={fac.quantity_total}
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g, "");
+                        if (value >= 999999) {
+                          return;
+                        }
+                        setMessage(null);
+                        setMessageType("error");
+                        handleChange(index, "quantity_total", value);
+                      }}
+                    />
+                    <textarea
+                      maxLength={50}
+                      placeholder="รายละเอียด (ถ้ามี)"
+                      value={fac.description}
+                      onChange={(e) =>
+                        handleChange(index, "description", e.target.value)
+                      }
+                    />
+
+                    <div className="facility-image-input-row">
+                      <label className="file-label-fac">
+                        <input
+                          type="file"
+                          onChange={(e) =>
+                            handleChange(index, "image_path", e.target.files[0])
+                          }
+                          accept="image/*"
+                          className="file-input-hidden-fac"
+                          style={{ display: "none" }}
+                        />
+                        เลือกรูปภาพ (ถ้ามี)
+                      </label>
+                      {fac?.image_preview ? (
+                        <div className="fac-preview-wrap">
+                          <img
+                            src={fac.image_preview}
+                            alt={`preview-${index}`}
+                            className="fac-preview-img"
+                          />
+                          <button
+                            type="button"
+                            className="remove-fac-image-btn"
+                            onClick={() => {
+                              if (fac.image_preview) {
+                                try {
+                                  URL.revokeObjectURL(fac.image_preview);
+                                } catch (e) {}
+                              }
+                              setNewFac((prev) => {
+                                const updated = [...prev];
+                                updated[index] = {
+                                  ...updated[index],
+                                  image_path: null,
+                                  image_preview: null,
+                                };
+                                return updated;
+                              });
+                            }}
+                            title="ลบรูป"
+                          >
+                            ยกเลิก
+                          </button>
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="save-add-fac-edit-field">
+                      <button
+                        type="button"
+                        disabled={startProcessLoad}
+                        style={{
+                          cursor: startProcessLoad ? "not-allowed" : "pointer",
+                        }}
+                        className="save-btn-add-fac"
+                        onClick={() => onSaveNewFac(index)}
+                      >
+                        {startProcessLoad ? (
+                          <span className="dot-loading">
+                            <span className="dot one">●</span>
+                            <span className="dot two">●</span>
+                            <span className="dot three">●</span>
+                          </span>
+                        ) : (
+                          "บันทึกสิ่งอำนวยความสะดวก"
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="sub-fields-container-editfield">
           {subFields.map((sub, index) => (
             <div key={sub.sub_field_id} className="sub-field-card-editfield">
@@ -2328,13 +3072,13 @@ export default function CheckFieldDetail() {
                         value={updatedSubFieldPlayer || ""}
                         onChange={(e) => {
                           let value = e.target.value.replace(/\D/g, "");
-                          if (value > 24) {
-                            setMessage("ใส่ได้ไม่เกิน 24 คน");
+                          if (value >= 100) {
+                            setMessage("ใส่ได้ไม่เกิน 99 คน");
                             setMessageType("error");
                             return;
                           }
                           setMessage(null);
-                          setMessageType(null);
+                          setMessageType("error");
                           setUpdatedSubFieldPlayer(Math.abs(e.target.value));
                         }}
                         placeholder="จำนวนผู้เล่น"
@@ -2411,7 +3155,7 @@ export default function CheckFieldDetail() {
                         {sportsCategories.map((category) => (
                           <option
                             key={category.sport_id}
-                            value={category.sport_id}
+                            value={String(category.sport_id)}
                           >
                             {category.sport_name}
                           </option>
@@ -2481,13 +3225,13 @@ export default function CheckFieldDetail() {
 
                   <div className="sub-field-actions">
                     <button
-                      className="edit-btn"
+                      className="edit-btn-inline"
                       onClick={() => startEditingSubField(sub)}
                     >
                       แก้ไข
                     </button>
                     <button
-                      className="delete-btn"
+                      className="delete-facility-btn-simple"
                       onClick={() => handleDeleteClick(sub)}
                     >
                       ลบสนามย่อย
@@ -2612,7 +3356,7 @@ export default function CheckFieldDetail() {
                             </div>
                             <div className="addon-actions">
                               <button
-                                className="edit-btn"
+                                className="edit-btn-inline"
                                 onClick={() => startEditingAddon(addon)}
                               >
                                 แก้ไข
@@ -2624,7 +3368,7 @@ export default function CheckFieldDetail() {
                                     : "pointer",
                                 }}
                                 disabled={startProcessLoad}
-                                className="delete-btn"
+                                className="delete-facility-btn-simple"
                                 onClick={() => {
                                   setSelectedAddOn(addon);
                                   setShowDeleteAddOnModal(true);
@@ -2730,7 +3474,7 @@ export default function CheckFieldDetail() {
               เพิ่มสนามย่อย
             </button>
           ) : (
-            <div>
+            <div className="add-subfield-form-editfield">
               <div className="subfield-form-editfield">
                 <input
                   type="text"
@@ -2856,7 +3600,10 @@ export default function CheckFieldDetail() {
                 >
                   <option value="">เลือกประเภทกีฬา</option>
                   {sportsCategories.map((category) => (
-                    <option key={category.sport_id} value={category.sport_id}>
+                    <option
+                      key={category.sport_id}
+                      value={String(category.sport_id)}
+                    >
                       {category.sport_name}
                     </option>
                   ))}
@@ -2948,7 +3695,15 @@ export default function CheckFieldDetail() {
                   className="savebtn-editfield"
                   onClick={confirmDeleteSubField}
                 >
-                  ยืนยัน
+                  {startProcessLoad ? (
+                    <span className="dot-loading">
+                      <span className="dot one">●</span>
+                      <span className="dot two">●</span>
+                      <span className="dot three">●</span>
+                    </span>
+                  ) : (
+                    "ยืนยัน"
+                  )}
                 </button>
                 <button
                   className="canbtn-editfield"
@@ -2978,7 +3733,15 @@ export default function CheckFieldDetail() {
                   className="savebtn-editfield"
                   onClick={confirmDeleteAddOn}
                 >
-                  ยืนยัน
+                  {startProcessLoad ? (
+                    <span className="dot-loading">
+                      <span className="dot one">●</span>
+                      <span className="dot two">●</span>
+                      <span className="dot three">●</span>
+                    </span>
+                  ) : (
+                    "ยืนยัน"
+                  )}
                 </button>
                 <button
                   style={{
@@ -3001,13 +3764,37 @@ export default function CheckFieldDetail() {
           <div className="modal-overlay-editfield">
             <div className="modal-editfield">
               <h2>ยืนยันการลบ</h2>
-              {startProcessLoad && (
-                <div className="loading-overlay">
-                  <div className="loading-spinner"></div>
-                </div>
-              )}
-              <p>คุณแน่ใจหรือไม่ว่าต้องการลบสิ่งอำนวยความสะดวกนี้</p>
+              <p
+                style={{
+                  color: "#dc3545",
+                  fontSize: "16px",
+                  marginTop: "10px",
+                  marginBottom: "10px",
+                  fontWeight: "bold",
+                }}
+              >
+                หมายเหตุ:
+                การลบสิ่งอำนวยความสะดวกจะลบข้อมูลการจองที่เกี่ยวข้องด้วย
+              </p>
               <div className="modal-actions-editfield">
+                <button
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
+                  className="savebtn-editfield"
+                  onClick={handleDeleteFacility}
+                >
+                  {startProcessLoad ? (
+                    <span className="dot-loading">
+                      <span className="dot one">●</span>
+                      <span className="dot two">●</span>
+                      <span className="dot three">●</span>
+                    </span>
+                  ) : (
+                    "ลบ"
+                  )}
+                </button>
                 <button
                   style={{
                     cursor: startProcessLoad ? "not-allowed" : "pointer",
@@ -3017,16 +3804,6 @@ export default function CheckFieldDetail() {
                   onClick={() => setShowModal(false)}
                 >
                   ยกเลิก
-                </button>
-                <button
-                  style={{
-                    cursor: startProcessLoad ? "not-allowed" : "pointer",
-                  }}
-                  disabled={startProcessLoad}
-                  className="savebtn-editfield"
-                  onClick={handleDeleteFacility}
-                >
-                  ลบ
                 </button>
               </div>
             </div>

@@ -9,16 +9,58 @@ export default function RegisterFieldForm() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter("");
   const [sports, setSports] = useState([]);
-  const [facilities, setFacilities] = useState([]);
-  const [selectedFacilities, setSelectedFacilities] = useState({});
   const [subFields, setSubFields] = useState([]);
-  const [newFacility, setNewFacility] = useState("");
-  const [showNewFacilityInput, setShowNewFacilityInput] = useState(false);
+  const [otherChecked, setOtherChecked] = useState(false);
+  const [otherFacility, setOtherFacility] = useState({
+    name: "",
+    price: "",
+    quantity: "",
+  });
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const { user, isLoading } = useAuth();
   const [dataLoading, setDataLoading] = useState(true);
-  const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  const [startProcessLoad, setStartProcessLoad] = useState(false);
+  const DEFAULT_FACILITIES = [
+    { fac_name: "ห้องน้ำ" },
+    { fac_name: "ที่จอดรถ" },
+    { fac_name: "Wi-Fi" },
+    { fac_name: "โดม" },
+    { fac_name: "ร้านค้า" },
+    { fac_name: "ตู้แช่" },
+    { fac_name: "พัดลม" },
+    { fac_name: "แอร์" },
+    { fac_name: "ห้องแต่งตัว" },
+    { fac_name: "ลำโพง" },
+  ];
+  const [facilities, setFacilities] = useState(DEFAULT_FACILITIES);
+  const [selectedFacilities, setSelectedFacilities] = useState({});
+
+  const handleOtherFacilityConfirm = () => {
+    const name = otherFacility.name.trim();
+    if (!name) {
+      setMessage("กรุณากรอกชื่อสิ่งอำนวยความสะดวก");
+      setMessageType("error");
+      return;
+    }
+    if (!facilities.some((f) => f.fac_name === name)) {
+      setFacilities((prev) => [...prev, { fac_name: name }]);
+    }
+    setSelectedFacilities((prev) => ({
+      ...prev,
+      [name]: {
+        price: otherFacility.price,
+        quantity: otherFacility.quantity,
+        imageFile: null,
+        preview: null,
+      },
+    }));
+    setOtherFacility({ name: "", price: "", quantity: "" });
+    setOtherChecked(false);
+    setMessage("");
+    setMessageType("");
+  };
+
   usePreventLeave(startProcessLoad);
 
   useEffect(() => {
@@ -65,6 +107,7 @@ export default function RegisterFieldForm() {
     open_days: [],
     field_description: "",
     cancel_hours: 0,
+    slot_duration: "",
   });
 
   useEffect(() => {
@@ -95,37 +138,6 @@ export default function RegisterFieldForm() {
     fetchSports();
   }, []);
 
-  useEffect(() => {
-    const fetchFacilities = async () => {
-      try {
-        const res = await fetch(`${API_URL}/facilities`, {
-          credentials: "include",
-        });
-
-        const data = await res.json();
-
-        if (res.ok) {
-          setFacilities(data);
-        } else {
-          console.error(
-            "โหลดไม่สำเร็จ:",
-            data.error || "ไม่สามารถโหลดข้อมูลได้"
-          );
-          setMessage(data.error || "ไม่สามารถโหลดข้อมูลได้");
-          setMessageType("error");
-        }
-      } catch (error) {
-        console.error("เกิดข้อผิดพลาด:", error);
-        setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
-        setMessageType("error");
-      } finally {
-        setDataLoading(false);
-      }
-    };
-
-    fetchFacilities();
-  }, []);
-
   const handleFieldChange = (e) => {
     setFieldData({ ...fieldData, [e.target.name]: e.target.value });
   };
@@ -135,12 +147,22 @@ export default function RegisterFieldForm() {
     setFieldData({
       ...fieldData,
       depositChecked: checked,
-      price_deposit: checked ? fieldData.price_deposit : "0",
+      price_deposit: checked ? fieldData.price_deposit : "",
     });
   };
 
   const handlePriceChange = (e) => {
     let value = e.target.value;
+
+    if (value === "") {
+      setFieldData({
+        ...fieldData,
+        price_deposit: "",
+      });
+      setMessage("");
+      setMessageType("");
+      return;
+    }
 
     value = value.replace(/\D/g, "");
 
@@ -157,10 +179,10 @@ export default function RegisterFieldForm() {
   };
 
   useEffect(() => {
-    if (!fieldData.depositChecked && fieldData.price_deposit === "") {
+    if (!fieldData.depositChecked) {
       setFieldData((prevState) => ({
         ...prevState,
-        price_deposit: "0",
+        price_deposit: "",
       }));
     }
   }, [fieldData.depositChecked]);
@@ -230,62 +252,76 @@ export default function RegisterFieldForm() {
 
   const handleFacilityChange = (facId) => {
     setSelectedFacilities((prev) => {
-      const updatedFacilities = { ...prev };
-      if (updatedFacilities[facId] !== undefined) {
-        delete updatedFacilities[facId];
+      const copy = { ...prev };
+      if (copy[facId]) {
+        if (copy[facId].preview) URL.revokeObjectURL(copy[facId].preview);
+        delete copy[facId];
       } else {
-        updatedFacilities[facId] = "";
+        copy[facId] = {
+          price: "",
+          quantity: "",
+          imageFile: null,
+          preview: null,
+        };
       }
-      return updatedFacilities;
+      return copy;
     });
   };
-
-  const handleFacilityPriceChange = (facId, price) => {
-    setSelectedFacilities((prev) => ({
-      ...prev,
-      [facId]: price,
-    }));
-  };
-
-  const addNewFacility = async () => {
-    if (!newFacility.trim()) {
-      setMessage("กรุณากรอกชื่อสิ่งอำนวยความสะดวก");
+  const handleFacilityImageChange = (facId, file) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setMessage("กรุณาเลือกไฟล์รูปภาพเท่านั้น");
       setMessageType("error");
       return;
     }
-
-    try {
-      SetstartProcessLoad(true);
-      const res = await fetch(`${API_URL}/facilities/add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ fac_name: newFacility }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok || data.error) {
-        console.error("Error:", data.error);
-        setMessage(data.error || "สิ่งอำนวยความสะดวกนี้มีอยู่แล้ว");
-        setMessageType("error");
-        return;
-      }
-
-      setFacilities([...facilities, data]);
-      setNewFacility("");
-      setShowNewFacilityInput(false);
-      setMessage("เพิ่มสิ่งอำนวยความสะดวกสำเร็จ");
-      setMessageType("success");
-    } catch (error) {
-      console.error("เกิดข้อผิดพลาด:", error);
-      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage("รูปสูงสุด 5MB");
       setMessageType("error");
-    } finally {
-      SetstartProcessLoad(false);
+      return;
     }
+    setSelectedFacilities((prev) => {
+      const cur = prev[facId] || {
+        price: "",
+        quantity: "",
+        imageFile: null,
+        preview: null,
+      };
+      if (cur.preview) URL.revokeObjectURL(cur.preview);
+      return {
+        ...prev,
+        [facId]: {
+          ...cur,
+          imageFile: file,
+          preview: URL.createObjectURL(file),
+        },
+      };
+    });
+  };
+
+  const handleRemoveFacilityImage = (facId) => {
+    setSelectedFacilities((prev) => {
+      const cur = prev[facId];
+      if (!cur) return prev;
+      if (cur.preview) URL.revokeObjectURL(cur.preview);
+      return {
+        ...prev,
+        [facId]: { ...cur, imageFile: null, preview: null },
+      };
+    });
+  };
+
+  const handleFacilityPriceChange = (facId, value) => {
+    setSelectedFacilities((prev) => ({
+      ...prev,
+      [facId]: { ...(prev[facId] || { quantity: "" }), price: value },
+    }));
+  };
+
+  const handleFacilityQuantityChange = (facId, value) => {
+    setSelectedFacilities((prev) => ({
+      ...prev,
+      [facId]: { ...(prev[facId] || { price: "" }), quantity: value },
+    }));
   };
 
   const addSubField = () => {
@@ -314,6 +350,36 @@ export default function RegisterFieldForm() {
     updatedSubFields[index][key] = value;
     setSubFields(updatedSubFields);
   };
+
+  const checkDepositAmount = (updatedSubFields = subFields) => {
+    if (fieldData.depositChecked && fieldData.price_deposit) {
+      const depositAmount = parseFloat(fieldData.price_deposit);
+      const subFieldPrices = updatedSubFields
+        .map((sub) => parseFloat(sub.price) || 0)
+        .filter((price) => price > 0);
+
+      if (subFieldPrices.length > 0) {
+        const minSubFieldPrice = Math.min(...subFieldPrices);
+        if (depositAmount >= minSubFieldPrice) {
+          setMessage(
+            `ค่ามัดจำไม่สามารถเกินราคาสนามย่อยที่ถูกที่สุด (${minSubFieldPrice.toLocaleString()} บาท)`
+          );
+          setMessageType("error");
+          setFieldData({ ...fieldData, price_deposit: "" });
+        } else {
+          setMessage("");
+          setMessageType("");
+        }
+      } else {
+        setMessage("");
+        setMessageType("");
+      }
+    }
+  };
+
+  useEffect(() => {
+    checkDepositAmount();
+  }, [subFields, fieldData.price_deposit, fieldData.depositChecked]);
 
   const addAddOn = (subIndex) => {
     const updatedSubFields = [...subFields];
@@ -355,18 +421,76 @@ export default function RegisterFieldForm() {
     const userId = user.user_id;
 
     if (
-      !fieldData.field_name ||
-      !fieldData.address ||
-      !fieldData.gps_location ||
-      !fieldData.open_hours ||
-      !fieldData.close_hours ||
-      !fieldData.number_bank ||
-      !fieldData.account_holder ||
-      !fieldData.price_deposit ||
-      !fieldData.name_bank ||
-      !fieldData.field_description
+      fieldData.depositChecked &&
+      (!fieldData.price_deposit || fieldData.price_deposit === "")
     ) {
-      setMessage("กรุณากรอกข้อมูลให้ครบถ้วน");
+      setMessage("กรุณากำหนดค่ามัดจำ");
+      setMessageType("error");
+      return;
+    }
+
+    if (!fieldData.field_name) {
+      setMessage("กรุณากรอกชื่อสนามกีฬา");
+      setMessageType("error");
+      return;
+    }
+
+    if (!fieldData.address) {
+      setMessage("กรุณากรอกที่ตั้งสนาม");
+      setMessageType("error");
+      return;
+    }
+
+    if (!fieldData.gps_location) {
+      setMessage("กรุณากรอกพิกัด GPS");
+      setMessageType("error");
+      return;
+    }
+
+    if (!fieldData.open_hours) {
+      setMessage("กรุณาเลือกเวลาเปิด");
+      setMessageType("error");
+      return;
+    }
+
+    if (!fieldData.close_hours) {
+      setMessage("กรุณาเลือกเวลาปิด");
+      setMessageType("error");
+      return;
+    }
+
+    if (!fieldData.slot_duration) {
+      setMessage("กรุณาเลือกช่วงเวลาในการจอง");
+      setMessageType("error");
+      return;
+    }
+
+    if (!fieldData.account_type) {
+      setMessage("กรุณาเลือกประเภทบัญชี");
+      setMessageType("error");
+      return;
+    }
+
+    if (!fieldData.number_bank) {
+      setMessage("กรุณากรอกเลขบัญชีธนาคาร / พร้อมเพย์");
+      setMessageType("error");
+      return;
+    }
+
+    if (!fieldData.account_holder) {
+      setMessage("กรุณากรอกชื่อเจ้าของบัญชีธนาคาร");
+      setMessageType("error");
+      return;
+    }
+
+    if (!fieldData.name_bank) {
+      setMessage("กรุณากรอกชื่อธนาคาร");
+      setMessageType("error");
+      return;
+    }
+
+    if (!fieldData.field_description) {
+      setMessage("กรุณากรอกคำแนะนำของสนาม");
       setMessageType("error");
       return;
     }
@@ -377,53 +501,108 @@ export default function RegisterFieldForm() {
       return;
     }
 
-    if (fieldData.cancel_hours < 0 || fieldData.cancel_hours > 24) {
-      setMessage("กรุณากรอกจำนวนชั่วโมงยกเลิกการจองให้ถูกต้อง (0-24 ชั่วโมง)");
-      setMessageType("error");
-    }
+    for (let i = 0; i < subFields.length; i++) {
+      const sub = subFields[i];
+      const fieldNumber = i + 1;
 
-    for (let sub of subFields) {
-      if (
-        !sub.name ||
-        // !sub.price ||
-        !sub.sport_id ||
-        !sub.players_per_team ||
-        !sub.wid_field ||
-        !sub.length_field ||
-        !sub.field_surface
-      ) {
-        setMessage("กรุณากรอกข้อมูลให้ครบถ้วนสำหรับสนามย่อยทุกสนาม");
+      if (!sub.name) {
+        setMessage(`กรุณากรอกชื่อสนามย่อย (สนามที่ ${fieldNumber})`);
+        setMessageType("error");
+        return;
+      }
+
+      if (!sub.sport_id) {
+        setMessage(`กรุณาเลือกประเภทกีฬา (สนามที่ ${fieldNumber})`);
+        setMessageType("error");
+        return;
+      }
+
+      if (!sub.players_per_team) {
+        setMessage(`กรุณากรอกจำนวนผู้เล่นต่อฝั่ง (สนามที่ ${fieldNumber})`);
+        setMessageType("error");
+        return;
+      }
+
+      if (!sub.wid_field) {
+        setMessage(`กรุณากรอกความกว้างของสนาม (สนามที่ ${fieldNumber})`);
+        setMessageType("error");
+        return;
+      }
+
+      if (!sub.length_field) {
+        setMessage(`กรุณากรอกความยาวของสนาม (สนามที่ ${fieldNumber})`);
+        setMessageType("error");
+        return;
+      }
+
+      if (!sub.field_surface) {
+        setMessage(`กรุณากรอกประเภทพื้นสนาม (สนามที่ ${fieldNumber})`);
         setMessageType("error");
         return;
       }
     }
 
-    if (!fieldData.documents || !fieldData.img_field) {
-      setMessage("กรุณาเลือกเอกสารและรูปโปรไฟล์สนาม");
+    if (!fieldData.documents) {
+      setMessage("กรุณาเลือกเอกสาร");
       setMessageType("error");
       return;
     }
+
+    if (!fieldData.img_field) {
+      setMessage("กรุณาเลือกรูปโปรไฟล์สนาม");
+      setMessageType("error");
+      return;
+    }
+
     const selectedFacs = Object.keys(selectedFacilities);
     if (selectedFacs.length === 0) {
       setMessage("กรุณาเลือกสิ่งอำนวยความสะดวก");
       setMessageType("error");
       return;
     }
-    for (const facId of selectedFacs) {
-      if (selectedFacilities[facId] === "") {
-        setMessage(`กรุณากรอกราคาสำหรับสิ่งอำนวยความสะดวก`);
+
+    for (const id of selectedFacs) {
+      const fac = selectedFacilities[id];
+
+      if (fac.price === "") {
+        setMessage(`กรุณากรอกราคาสิ่งอำนวยความสะดวก: ${id}`);
+        setMessageType("error");
+        return;
+      }
+
+      if (fac.quantity === "") {
+        setMessage(`กรุณากรอกจำนวนสิ่งอำนวยความสะดวก: ${id}`);
         setMessageType("error");
         return;
       }
     }
 
+    const facilitiesPayload = {};
+    selectedFacs.forEach((id) => {
+      const { price, quantity } = selectedFacilities[id];
+      facilitiesPayload[id] = {
+        price: String(price),
+        quantity_total: String(quantity),
+      };
+    });
+
     const formData = new FormData();
+
     if (fieldData.documents && fieldData.documents.length > 0) {
       for (let i = 0; i < fieldData.documents.length; i++) {
         formData.append("documents", fieldData.documents[i]);
       }
     }
+
     formData.append("img_field", fieldData.img_field);
+
+    for (const id of selectedFacs) {
+      const f = selectedFacilities[id];
+      if (f.imageFile) {
+        formData.append(`facility_image_${id}`, f.imageFile);
+      }
+    }
+
     formData.append(
       "data",
       JSON.stringify({
@@ -435,22 +614,23 @@ export default function RegisterFieldForm() {
         close_hours: fieldData.close_hours,
         number_bank: fieldData.number_bank,
         account_holder: fieldData.account_holder,
-        price_deposit: fieldData.price_deposit,
+        price_deposit: fieldData.depositChecked ? fieldData.price_deposit : "0",
         name_bank: fieldData.name_bank,
         status: fieldData.status || "รอตรวจสอบ",
-        selectedFacilities,
+        selectedFacilities: facilitiesPayload,
         subFields: subFields,
         open_days: fieldData.open_days,
         field_description: fieldData.field_description,
-        cancel_hours: fieldData.cancel_hours,
+        cancel_hours: fieldData.cancel_hours || "0",
+        slot_duration: parseInt(fieldData.slot_duration, 10) || 0,
       })
     );
-    SetstartProcessLoad(true);
+
+    setStartProcessLoad(true);
     try {
       const res = await fetch(`${API_URL}/field/register`, {
         method: "POST",
         credentials: "include",
-
         body: formData,
       });
 
@@ -484,6 +664,7 @@ export default function RegisterFieldForm() {
       });
       setSubFields([]);
       setSelectedFacilities({});
+
       setTimeout(() => {
         setMessage("");
         router.replace("");
@@ -493,16 +674,15 @@ export default function RegisterFieldForm() {
       setMessage("เกิดข้อผิดพลาดในการส่งข้อมูล");
       setMessageType("error");
     } finally {
-      SetstartProcessLoad(false);
+      setStartProcessLoad(false);
     }
   };
-
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
         setMessage("");
         setMessageType("");
-      }, 3000);
+      }, 5000);
 
       return () => clearTimeout(timer);
     }
@@ -578,29 +758,46 @@ export default function RegisterFieldForm() {
               onChange={handleFieldChange}
             />
           </div>
-
           <div className="datetimecon">
-            <div className="time">
-              <div className="input-group-register-field">
-                <label>เวลาเปิด:</label>
-                <input
-                  type="time"
-                  name="open_hours"
-                  value={fieldData.open_hours}
-                  onChange={handleFieldChange}
-                />
-              </div>
+            <div className="openn-duration">
+              <div className="time">
+                <div className="input-group-register-field">
+                  <label>เวลาเปิด:</label>
+                  <input
+                    type="time"
+                    name="open_hours"
+                    value={fieldData.open_hours}
+                    onChange={handleFieldChange}
+                  />
+                </div>
 
-              <div className="input-group-register-field">
-                <label>เวลาปิด:</label>
-                <input
-                  type="time"
-                  name="close_hours"
-                  value={fieldData.close_hours}
-                  onChange={handleFieldChange}
-                />
+                <div className="input-group-register-field">
+                  <label>เวลาปิด:</label>
+                  <input
+                    type="time"
+                    name="close_hours"
+                    value={fieldData.close_hours}
+                    onChange={handleFieldChange}
+                  />
+                </div>
+              </div>
+              <div className="duration-time-container">
+                <div className="input-group-register-field">
+                  <label>แบ่งช่วงเวลาในการจอง:</label>
+                  <select
+                    name="slot_duration"
+                    className="select-slot-duration"
+                    value={fieldData.slot_duration}
+                    onChange={handleFieldChange}
+                  >
+                    <option value="">กรุณาเลือกช่วงเวลา</option>
+                    <option value="30">30 นาที</option>
+                    <option value="60">1 ชั่วโมง</option>
+                  </select>
+                </div>
               </div>
             </div>
+
             <div className="open-days-container">
               <div className="input-group-register-field">
                 <label style={{ textAlign: "center" }}>
@@ -609,37 +806,44 @@ export default function RegisterFieldForm() {
               </div>
               <div className="time-selection">
                 <div className="input-group-checkbox-register-field">
-                  {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
-                    (day, index) => (
-                      <label key={index} className="checkbox-label">
-                        <input
-                          type="checkbox"
-                          name="open_days"
-                          value={day}
-                          onChange={(e) => {
-                            const { value, checked } = e.target;
-                            setFieldData((prevData) => {
-                              const openDays = new Set(prevData.open_days);
-                              if (checked) {
-                                openDays.add(value);
-                              } else {
-                                openDays.delete(value);
-                              }
-                              return {
-                                ...prevData,
-                                open_days: Array.from(openDays),
-                              };
-                            });
-                          }}
-                        />
-                        {day}
-                      </label>
-                    )
-                  )}
+                  {[
+                    { key: "Mon", label: "จันทร์" },
+                    { key: "Tue", label: "อังคาร" },
+                    { key: "Wed", label: "พุธ" },
+                    { key: "Thu", label: "พฤหัสบดี" },
+                    { key: "Fri", label: "ศุกร์" },
+                    { key: "Sat", label: "เสาร์" },
+                    { key: "Sun", label: "อาทิตย์" },
+                  ].map((day, index) => (
+                    <label key={index} className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        name="open_days"
+                        value={day.key}
+                        onChange={(e) => {
+                          const { value, checked } = e.target;
+                          setFieldData((prevData) => {
+                            const openDays = new Set(prevData.open_days);
+                            if (checked) {
+                              openDays.add(value);
+                            } else {
+                              openDays.delete(value);
+                            }
+                            return {
+                              ...prevData,
+                              open_days: Array.from(openDays),
+                            };
+                          });
+                        }}
+                      />
+                      {day.label}
+                    </label>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
+
           <div className="input-group-register-field">
             <label>ยกเลิกการจองได้ภายใน (ชั่วโมง)</label>
             <input
@@ -652,8 +856,8 @@ export default function RegisterFieldForm() {
               value={fieldData.cancel_hours}
               onChange={(e) => {
                 let value = e.target.value.replace(/\D/g, "");
-                if (value > 24) {
-                  setMessage("ใส่ไม่เกินไม่เกิน 24 ชั่วโมง ");
+                if (value > 99) {
+                  setMessage("ใส่ไม่เกินไม่เกิน 99 ชั่วโมง ");
                   setMessageType("error");
                   return;
                 }
@@ -704,20 +908,23 @@ export default function RegisterFieldForm() {
 
                 <div className="input-group-register-field">
                   <label htmlFor="">ประเภทกีฬา</label>
-
-                  <select
-                    value={sub.sport_id}
-                    onChange={(e) =>
-                      updateSubField(subIndex, "sport_id", e.target.value)
-                    }
-                  >
-                    <option value="">เลือกประเภทกีฬา</option>
-                    {sports.map((sport) => (
-                      <option key={sport.sport_id} value={sport.sport_id}>
-                        {sport.sport_name}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="select-sport-register-field">
+                    <select
+                      value={sub.sport_id}
+                      onChange={(e) => {
+                        const sportId = e.target.value;
+                        updateSubField(subIndex, "sport_id", sportId);
+                        updateSubField(subIndex, "players_per_team", "");
+                      }}
+                    >
+                      <option value="">เลือกประเภทกีฬา</option>
+                      {sports.map((sport) => (
+                        <option key={sport.sport_id} value={sport.sport_id}>
+                          {sport.sport_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <div className="input-group-register-field">
                   <label htmlFor="">จำนวนผู้เล่นต่อฝั่ง</label>
@@ -725,16 +932,33 @@ export default function RegisterFieldForm() {
                     type="text"
                     inputMode="numeric"
                     pattern="[0-9]*"
-                    maxLength={2}
-                    placeholder="5, 7, 11"
+                    maxLength={3}
+                    placeholder="(คน)"
                     value={sub.players_per_team ?? ""}
                     onChange={(e) => {
                       let value = e.target.value.replace(/\D/g, "");
-                      if (value > 11) {
-                        setMessage("ใส่ได้ไม่เกิน 11 คน ");
+                      const selectedSport = sports.find(
+                        (sport) => sport.sport_id == sub.sport_id
+                      );
+                      const sportName = selectedSport
+                        ? selectedSport.sport_name
+                        : "";
+                      if (sportName === "ฟุตบอล" && value > 11) {
+                        setMessage("ฟุตบอลใส่ได้ไม่เกิน 11 คน");
                         setMessageType("error");
                         return;
                       }
+                      if (sportName === "ฟุตซอล" && value > 5) {
+                        setMessage("ฟุตซอลใส่ได้ไม่เกิน 5 คน");
+                        setMessageType("error");
+                        return;
+                      }
+                      if (sportName === "บาสเก็ตบอล" && value > 5) {
+                        setMessage("บาสเก็ตบอลใส่ได้ไม่เกิน 5 คน");
+                        setMessageType("error");
+                        return;
+                      }
+
                       updateSubField(subIndex, "players_per_team", value);
                     }}
                   />{" "}
@@ -871,8 +1095,18 @@ export default function RegisterFieldForm() {
           </div>
           <div className="input-group-register-field">
             <label htmlFor="img_field">รูปโปรไฟล์สนาม</label>
-
-            <input type="file" onChange={handleimgChange} accept="image/*" />
+            <label
+              style={{ textAlign: "center" }}
+              className="file-label-register-field"
+            >
+              <input
+                type="file"
+                style={{ display: "none" }}
+                onChange={handleimgChange}
+                accept="image/*"
+              />
+              เลือกรูปภาพสนาม
+            </label>
           </div>
 
           {fieldData.imgPreview && (
@@ -886,27 +1120,34 @@ export default function RegisterFieldForm() {
             <label htmlFor="documents">
               เอกสาร หรือรูป (เพิ่มได้สูงสุด 10 ไฟล์)
             </label>
-            <input
-              type="file"
-              onChange={handleFileChange}
-              accept="image/*,.pdf"
-              multiple
-            />
-          </div>
-
-          <div className="input-group-register-field">
-            <label htmlFor="account-type">เลือกประเภทบัญชี</label>
-            <select
-              name="account_type"
-              value={fieldData.account_type}
-              onChange={handleAccountTypeChange}
+            <label
+              style={{ textAlign: "center" }}
+              className="file-label-register-field"
             >
-              <option value="">กรุณาเลือกบัญชี</option>
-              <option value="ธนาคาร">ธนาคาร</option>
-              <option value="พร้อมเพย์">พร้อมเพย์</option>
-            </select>
+              <input
+                style={{ display: "none" }}
+                type="file"
+                onChange={handleFileChange}
+                accept="image/*,.pdf"
+                multiple
+              />
+              เลือกเอกสาร
+            </label>
           </div>
-
+          <div className="input-group-register-field">
+            <div className="acc-type">
+              <label htmlFor="account-type">เลือกประเภทบัญชี</label>
+              <select
+                name="account_type"
+                value={fieldData.account_type}
+                onChange={handleAccountTypeChange}
+              >
+                <option value="">กรุณาเลือกบัญชี</option>
+                <option value="ธนาคาร">ธนาคาร</option>
+                <option value="พร้อมเพย์">พร้อมเพย์</option>
+              </select>
+            </div>
+          </div>
           <div className="input-group-register-field">
             <label htmlFor="number_bank">เลขบัญชีธนาคาร / พร้อมเพย์</label>
             <input
@@ -1008,7 +1249,7 @@ export default function RegisterFieldForm() {
                     type="text"
                     name="price_deposit"
                     placeholder="กำหนดค่ามัดจำ"
-                    value={fieldData.price_deposit || "0"}
+                    value={fieldData.price_deposit || ""}
                     onChange={handlePriceChange}
                     maxLength={7}
                     inputMode="numeric"
@@ -1027,104 +1268,213 @@ export default function RegisterFieldForm() {
             <label>สิ่งอำนวยความสะดวก</label>
           </div>
           <div className="factcon-register-field">
-            {facilities.map((fac) => (
-              <div key={fac.fac_id} className="facility-item-register-field">
-                <div className="input-group-checkbox-register-field">
-                  <input
-                    type="checkbox"
-                    checked={selectedFacilities[fac.fac_id] !== undefined}
-                    onChange={() => handleFacilityChange(fac.fac_id)}
-                  />
-                  <label>{fac.fac_name}</label>
-                </div>
-
-                {selectedFacilities[fac.fac_id] !== undefined && (
-                  <div className="input-group-register-field">
-                    <div className="input-group-checkbox-register-field">
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        pattern="[0-9]*"
-                        maxLength={7}
-                        placeholder="กำหนดราคา ถ้าไม่มีใส่ '0'"
-                        value={selectedFacilities[fac.fac_id] || ""}
-                        onChange={(e) => {
-                          let value = e.target.value.replace(/\D/g, "");
-                          if (value > 999999) {
-                            setMessage("ใส่ได้ไม่เกิน 6 หลัก ");
-                            setMessageType("error");
-                            return;
-                          }
-                          if (value === "" || parseFloat(value) >= 0) {
-                            handleFacilityPriceChange(fac.fac_id, value);
-                          } else {
-                            handleFacilityPriceChange(fac.fac_id, 0);
-                          }
-                        }}
-                      />
-                    </div>
+            {facilities.map((fac) => {
+              const key = fac.fac_name;
+              const isSelected = selectedFacilities[key] !== undefined;
+              return (
+                <div
+                  key={key}
+                  className={`facility-item-register-field ${
+                    isSelected ? "selected" : ""
+                  }`}
+                >
+                  <div className="input-group-checkbox-register-field">
+                    <input
+                      type="checkbox"
+                      id={`facility-${key}`}
+                      checked={isSelected}
+                      onChange={() => handleFacilityChange(key)}
+                    />
+                    <label htmlFor={`facility-${key}`}>{fac.fac_name}</label>
                   </div>
-                )}
+                  {isSelected && (
+                    <div className="facility-inputs-container">
+                      <div className="facility-inputs-grid">
+                        <input
+                          type="text"
+                          className="facility-price-input"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          maxLength={7}
+                          placeholder="กำหนดราคา (ถ้าฟรีใส่ 0 )"
+                          value={selectedFacilities[key]?.price ?? ""}
+                          onChange={(e) => {
+                            let v = e.target.value
+                              .replace(/\D/g, "")
+                              .slice(0, 6);
+                            handleFacilityPriceChange(key, v);
+                          }}
+                        />
+                        <input
+                          type="text"
+                          className="facility-quantity-input"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          maxLength={3}
+                          min={1}
+                          placeholder="จำนวน"
+                          value={selectedFacilities[key]?.quantity ?? ""}
+                          onChange={(e) => {
+                            let v = e.target.value
+                              .replace(/\D/g, "")
+                              .slice(0, 3);
+                            if (v === "0") {
+                              setMessage("จำนวนต้องไม่น้อยกว่า 1");
+                              setMessageType("error");
+                              v = "";
+                              return;
+                            }
+                            handleFacilityQuantityChange(key, v);
+                          }}
+                        />
+                        <label className="file-label-register-field">
+                          เลืกรูป (ถ้ามี)
+                          <input
+                            style={{ display: "none" }}
+                            type="file"
+                            className="facility-file-input"
+                            accept="image/*"
+                            onChange={(e) =>
+                              handleFacilityImageChange(
+                                key,
+                                e.target.files?.[0]
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+                      {selectedFacilities[key]?.preview && (
+                        <div className="facility-image-preview">
+                          <img
+                            src={selectedFacilities[key].preview}
+                            alt={`รูป${fac.fac_name}`}
+                            className="facility-preview-img"
+                          />
+                          <button
+                            type="button"
+                            className="facility-remove-img-btn"
+                            onClick={() => handleRemoveFacilityImage(key)}
+                          >
+                            ลบรูป
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            <div className="other-facility-section">
+              <div className="input-group-checkbox-register-field">
+                <input
+                  type="checkbox"
+                  id="other-facility"
+                  checked={otherChecked}
+                  onChange={(e) => {
+                    setOtherChecked(e.target.checked);
+                    setMessage("");
+                    setMessageType("");
+                  }}
+                />
+                <label htmlFor="other-facility">สิ่งอำนวยความสะดวกอื่น ๆ</label>
               </div>
-            ))}
-          </div>
-          {!showNewFacilityInput ? (
-            <button
-              style={{
-                cursor: startProcessLoad ? "not-allowed" : "pointer",
-              }}
-              disabled={startProcessLoad}
-              className="addfac-regisfield"
-              type="button"
-              onClick={() => setShowNewFacilityInput(true)}
-            >
-              + เพิ่มสิ่งอำนวยความสะดวก
-            </button>
-          ) : (
-            <div className="input-group-register-field">
-              <input
-                type="text"
-                maxLength={100}
-                placeholder="ชื่อสิ่งอำนวยความสะดวก"
-                value={newFacility}
-                onChange={(e) => setNewFacility(e.target.value)}
-              />
-              <button
-                style={{
-                  cursor: startProcessLoad ? "not-allowed" : "pointer",
-                }}
-                disabled={startProcessLoad}
-                className="savebtn-regisfield"
-                type="button"
-                onClick={addNewFacility}
-              >
-                บันทึก
-              </button>
-              <button
-                style={{
-                  cursor: startProcessLoad ? "not-allowed" : "pointer",
-                }}
-                disabled={startProcessLoad}
-                className="canbtn-regisfield"
-                type="button"
-                onClick={() => setShowNewFacilityInput(false)}
-              >
-                ยกเลิก
-              </button>
-              {startProcessLoad && (
-                <div className="loading-overlay">
-                  <div className="loading-spinner"></div>
+              {otherChecked && (
+                <div
+                  className="other-facility-inputs"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px",
+                    marginTop: "10px",
+                    padding: "15px",
+                    border: "1px solid #ddd",
+                    borderRadius: "5px",
+                    backgroundColor: "#f9f9f9",
+                  }}
+                >
+                  <input
+                    type="text"
+                    maxLength={100}
+                    placeholder="ชื่อสิ่งอำนวยความสะดวก"
+                    value={otherFacility.name}
+                    onChange={(e) =>
+                      setOtherFacility((f) => ({ ...f, name: e.target.value }))
+                    }
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "10px",
+                      padding: "16px",
+                      backgroundColor: "white",
+                      border: "1px solid #e5e7ebc",
+                      borderRadius: "8px",
+                      fontSize: "14px",
+                    }}
+                  />
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={7}
+                    placeholder="ราคา (ใส่ 0 ถ้าฟรี)"
+                    value={otherFacility.price}
+                    onChange={(e) =>
+                      setOtherFacility((f) => ({
+                        ...f,
+                        price: e.target.value.replace(/\D/g, "").slice(0, 6),
+                      }))
+                    }
+                    style={{
+                      padding: "8px 12px",
+                      border: "1px solid #ccc",
+                      borderRadius: "4px",
+                      fontSize: "14px",
+                    }}
+                  />
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={3}
+                    placeholder="จำนวน"
+                    value={otherFacility.quantity}
+                    onChange={(e) =>
+                      setOtherFacility((f) => ({
+                        ...f,
+                        quantity: e.target.value.replace(/\D/g, "").slice(0, 3),
+                      }))
+                    }
+                    style={{
+                      padding: "8px 12px",
+                      border: "1px solid #ccc",
+                      borderRadius: "4px",
+                      fontSize: "14px",
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="other-facility-confirm-btn"
+                    disabled={startProcessLoad}
+                    onClick={handleOtherFacilityConfirm}
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                  >
+                    ยืนยัน
+                  </button>
                 </div>
               )}
             </div>
-          )}
+          </div>
+
           <div className="input-group-register-field">
             <label>คำแนะนำของสนาม</label>
             <div className="textarea">
               <textarea
                 maxLength={256}
                 name="field_description"
-                placeholder="ใส่รายละเอียดสนาม หมายเหตุต่างๆ เช่นสนามหญ้าเทียม 7 คน "
+                placeholder="ใส่รายละเอียดสนาม หมายเหตุต่างๆ เช่นสนามหญ้าเทียม 7 คน เบอร์ติดต่อฉุกเฉิน "
                 value={fieldData.field_description}
                 onChange={handleFieldChange}
               />

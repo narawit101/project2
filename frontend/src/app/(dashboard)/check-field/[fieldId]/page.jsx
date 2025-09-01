@@ -367,14 +367,16 @@ export default function CheckFieldDetail() {
 
           <div className="field-row-checkfield">
             <div className="field-details-checkfield">
-              <strong>แบ่งช่วงเวลาในการจอง ช่วงละ " 30 นาที " หรือ "ช่วงละ 1 ชั่วโมง" :</strong>
+              <strong>
+                แบ่งช่วงเวลาในการจอง ช่วงละ " 30 นาที " หรือ "ช่วงละ 1 ชั่วโมง :
+              </strong>
               <div className="field-value-checkfield">
-                {fieldData?.booking_duration
-                  ? fieldData.booking_duration === 30
+                {fieldData?.slot_duration
+                  ? Number(fieldData.slot_duration) === 30
                     ? "30 นาที"
-                    : fieldData.booking_duration === 60
+                    : Number(fieldData.slot_duration) === 60
                     ? "1 ชั่วโมง"
-                    : `${fieldData.booking_duration} นาที`
+                    : `${Number(fieldData.slot_duration)} นาที`
                   : "ไม่มีข้อมูล"}
               </div>
             </div>
@@ -436,48 +438,86 @@ export default function CheckFieldDetail() {
               </div>
             </div>
           </div>
-        </div>
-        <div className="doc-fac-conntainer-check-field">
-          <div className="documents-container-check-field">
-            <h1>เอกสาร: </h1>
-            {fieldData?.documents ? (
-              (Array.isArray(fieldData.documents)
-                ? fieldData.documents
-                : fieldData.documents.split(",")
-              ).map((doc, i) => (
-                <div className="document-container" key={i}>
-                  <a
-                    href={`${doc.trim()}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="document-link"
-                  >
-                    <p>{i + 1}</p>
-                  </a>
-                </div>
-              ))
-            ) : (
-              <p>ไม่มีเอกสารแนบ</p>
-            )}
-          </div>
-          <div className="field-facilities-check-field">
-            <h1>สิ่งอำนวยความสะดวก: </h1>
-            {facilities.length === 0 ? (
-              <p>ยังไม่มีสิ่งอำนวยความสะดวกสำหรับสนามนี้</p>
-            ) : (
-              <div className="facbox-checkfield">
-                {facilities.map((facility, index) => (
-                  <div
-                    className="facitem-checkfield"
-                    key={`${facility.fac_id}-${index}`}
-                  >
-                    <strong>{facility.fac_name}</strong>{" "}
-                    <p>{formatPrice(facility.fac_price)} บาท</p>
-                  </div>
-                ))}
+          <div className="field-row-checkfield">
+            <div className="doc-fac-conntainer-check-field">
+              <div className="documents-container-check-field">
+                <h1>เอกสาร: </h1>
+                {fieldData?.documents ? (
+                  (Array.isArray(fieldData.documents)
+                    ? fieldData.documents
+                    : fieldData.documents.split(",")
+                  ).map((doc, i) => (
+                    <div className="document-container" key={i}>
+                      <a
+                        href={`${doc.trim()}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="document-link"
+                      >
+                        <p>{i + 1}</p>
+                      </a>
+                    </div>
+                  ))
+                ) : (
+                  <p>ไม่มีเอกสารแนบ</p>
+                )}
               </div>
-            )}
+            </div>
           </div>
+        </div>
+
+        <div className="field-facilities-check-field">
+          <h1>สิ่งอำนวยความสะดวกในสนาม: </h1>
+          {facilities.length === 0 ? (
+            <p>ยังไม่มีสิ่งอำนวยความสะดวกสำหรับสนามนี้</p>
+          ) : (
+            <div className="facilities-grid-simple-checkfield">
+              {facilities.map((facility) => (
+                <div
+                  className="facility-card-simple-checkfield"
+                  key={facility.field_fac_id}
+                >
+                  <div className="facility-image-simple-checkfield">
+                    {facility.image_path ? (
+                      <img
+                        src={facility.image_path}
+                        alt={facility.fac_name}
+                        onError={(e) => {
+                          e.target.src = "/images/placeholder-image.png";
+                        }}
+                      />
+                    ) : (
+                      <div className="facility-no-image-checkfield">
+                        ยังไม่มีรูป
+                      </div>
+                    )}
+                  </div>
+                  <div className="facility-info-simple-checkfield">
+                    <h4 className="facility-name-simple-checkfield">
+                      {facility.fac_name}
+                    </h4>
+
+                    <div className="facility-details-simple-checkfield">
+                      <div className="detail-row">
+                        <span>ราคา: </span>
+                        <span>{formatPrice(facility.fac_price)} บาท</span>
+                      </div>
+                      <div className="detail-row">
+                        <span>จำนวน: </span>
+                        <span>{facility.quantity_total} ชิ้น</span>
+                      </div>
+                      {facility.description && (
+                        <div className="detail-row">
+                          <span>รายละเอียด: </span>
+                          <span>{facility.description}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         <div className="sub-fields-container-editfield">
           {fieldData?.sub_fields && fieldData.sub_fields.length > 0 ? (

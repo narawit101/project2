@@ -1,5 +1,15 @@
 :root {
   --text-color: #03045e;
+  --primary-bg: #ffffff;
+  --secondary-bg: #f8f9fa;
+  --border-color: #e9ecef;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --border-radius: 12px;
+  --spacing: 1.5rem;
+  --success-color: #28a745;
+  --hover-success-color: #177c2e;
+  --danger-color: #dc3545;
+  --hover-danger-color: #a32b37;
 }
 
 .heder {
@@ -10,7 +20,7 @@
 }
 .field-register-contianer {
   width: 100%;
-  max-width: 700px;
+  max-width: 1200px;
   margin: 100px auto;
   padding: 5px 15px 15px 15px;
   background: #ffffff;
@@ -30,8 +40,57 @@
   text-align: center;
   display: flex;
   justify-content: space-between;
-  gap: 40px;
+  gap: 5px;
   border-radius: 5px;
+}
+
+.time {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.open-days-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.time-selection .input-group-checkbox-register-field {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin: 10px auto;
+}
+
+.time-selection .checkbox-label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 8px 12px;
+  margin: 0;
+  width: 300px;
+  background-color: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  gap: 8px;
+}
+
+.time-selection .checkbox-label:hover {
+  background-color: #e3f2fd;
+}
+
+.time-selection .checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
 }
 
 .checkbox-label {
@@ -50,16 +109,8 @@
   border: #b3b3b3 solid 1px;
 }
 
-.subfieldcon:hover {
-  border: #21cd49 solid 1px;
-}
-
 .addoncon {
   padding: 20px;
-}
-
-.datetimecon:hover {
-  border: #21cd49 solid 1px;
 }
 
 .time-selection {
@@ -69,8 +120,8 @@
 }
 
 .input-group-register-field {
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin-top: 15px;
+  margin-bottom: 15px;
   text-align: left;
 }
 
@@ -81,7 +132,7 @@
   margin-bottom: 10px;
 }
 .factcon-register-field {
-  max-height: 300px;
+  max-height: 500px;
   overflow-y: auto;
   border-radius: 5px;
   margin-bottom: 10px;
@@ -119,7 +170,7 @@
   padding: 10px;
   width: 100%;
   height: auto;
-  max-width: 600px;
+  max-width: 400px;
   overflow: hidden;
   border-radius: 8px;
 }
@@ -142,7 +193,7 @@
 }
 
 .input-group-checkbox-register-field input[type="checkbox"] {
-  margin-right: 20px;
+  margin-right: 10px;
   width: 20px;
   height: 20px;
   accent-color: #333;
@@ -180,46 +231,46 @@
   outline: none;
 }
 .addbtn-regisfield {
-  background-color: #28a745;
+  background-color: var(--success-color);
   margin: 0px 0px 10px 0px;
 }
 .addbtn-regisfield:hover {
-  background: #21cd49;
+  background: var(--hover-success-color);
 }
 .delbtn-regisfield {
-  background-color: #dc3545;
+  background-color: var(--danger-color);
   margin: 0px 0px 10px 10px;
 }
 .delbtn-regisfield:hover {
-  background-color: rgba(255, 0, 0, 0.774);
+  background-color: var(--hover-danger-color);
 }
 .delevn {
   background-color: #dc3545;
   margin: 0px 0px 10px 0px;
 }
 .delevn:hover {
-  background-color: rgba(255, 0, 0, 0.774);
+  background-color: var(--hover-danger-color);
 }
 .addsubfield-regisfield {
-  background-color: #28a745;
-  margin: 10px 0px 10px 250px;
+  background-color: var(--success-color);
+  margin: 10px auto;
 }
 .addsubfield-regisfield:hover {
-  background: #21cd49;
+  background: var(--hover-success-color);
 }
 .addfac-regisfield {
-  background-color: #28a745;
+  background-color: var(--success-color);
   margin: 10px 0px 10px 0px;
 }
 .addfac-regisfield:hover {
-  background: #21cd49;
+  background: var(--hover-success-color);
 }
 .savebtn-regisfield {
-  background-color: #28a745;
+  background-color: var(--success-color);
   margin: 10px 0px 20px 0px;
 }
 .savebtn-regisfield:hover {
-  background: #21cd49;
+  background: var(--hover-success-color);
 }
 .canbtn-regisfield {
   background-color: #dc3545;
@@ -229,12 +280,12 @@
   background-color: rgba(255, 0, 0, 0.774);
 }
 .submitbtn-regisfield {
-  border-radius: 0px;
+  border-radius: 8px;
   margin: 10px 0px 10px 0px;
-  background-color: var(--text-color);
+  background-color: var(--success-color);
 }
 .submitbtn-regisfield:hover {
-  background-color: #02226c;
+  background-color: var(--hover-success-color);
 }
 
 .field-register-contianer button {
@@ -243,12 +294,29 @@
   padding: 12px;
   font-size: 16px;
   cursor: pointer;
-  border-radius: 20px;
+  border-radius: 8px;
   transition: 0.3s;
 }
-
-.field-register-contianer select {
-  appearance: none; 
+.select-sport-register-field select {
+  appearance: none;
+  background-color: white;
+  border-color: var(--text-color);
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  width: 100%;
+  outline: none;
+}
+.duration-time-container {
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  align-items: center;
+}
+.acc-type select {
+  appearance: none;
   background-color: white;
   border-color: var(--text-color);
   border-radius: 8px;
@@ -319,23 +387,47 @@
   resize: vertical;
   overflow: hidden;
 }
+.select-slot-duration {
+  appearance: none;
+  background-color: #f8f9fa;
+  border: 2px solid var(--text-color);
+  border-radius: 12px;
+  padding: 12px 40px 12px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-color);
+  cursor: pointer;
+  width: 100%;
+  max-width: 200px;
+  outline: none;
+  transition: all 0.3s ease;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='20' height='20' fill='%2303045e'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 20px;
+}
 
-@media screen and (max-width: 880px) {
-  .field-register-contianer {
-    width: 100%;
-    max-width: 500px;
-    margin: 100px auto;
-    padding: 20px;
+@media screen and (max-width: 1100px) {
+  .openn-duration {
+    margin: 10px auto;
   }
   .datetimecon {
     display: flex;
     flex-direction: column;
     gap: 0px;
   }
+}
+
+@media screen and (max-width: 880px) {
+  .field-register-contianer {
+    width: 100%;
+    max-width: 800px;
+    margin: 100px auto;
+    padding: 20px;
+  }
+
   .field-register-contianer input[type="time"] {
     width: 100%;
-    font-size: 10px;
-    transition: all 0.3s ease;
   }
   .open-days-container {
     margin-top: 0px;
@@ -344,10 +436,28 @@
     margin: 0px 0px 0px 0px;
   }
 }
+@media screen and (max-width: 680px) {
+  .time-selection .checkbox-label {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 8px 12px;
+    margin: 0;
+    width: 200px;
+    background-color: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    gap: 8px;
+  }
+}
 @media screen and (max-width: 550px) {
   .field-register-contianer {
     width: 100%;
-    max-width: 400px;
+    max-width: 600px;
     margin: 100px auto;
     padding: 20px;
   }
@@ -379,20 +489,28 @@
     display: flex;
     align-items: center;
     font-size: 14px;
-    width: 100%;
     margin: 10px 0px 0px 5px;
   }
+
+  .datetimecon {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .time,
+  .open-days-container {
+    flex: none;
+  }
+
+  .time-selection .input-group-checkbox-register-field {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
   .open-days-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 10px;
-  }
-
-  .time-selection {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
   }
 
   .input-group-checkbox-register-field {
@@ -401,7 +519,47 @@
     width: 100%;
   }
 }
+
+@media screen and (max-width: 768px) and (min-width: 481px) {
+  .datetimecon {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .time,
+  .open-days-container {
+    flex: none;
+  }
+
+  .time-selection .input-group-checkbox-register-field {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}
+.file-label-register-field {
+  text-align: center;
+  display: inline-block;
+  padding: 8px 16px;
+  color: #000;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  border: 1px solid #ccc;
+  transition: background 0.2s ease-in-out;
+}
 @media screen and (max-width: 420px) {
+  .facility-price-input,
+  .facility-quantity-input,
+  .facility-file-input {
+    margin: 0px auto;
+    width: 80%;
+    max-width: 240px;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+  }
   .heder {
     font-size: 12px;
     color: var(--text-color);
@@ -411,7 +569,7 @@
   }
   .field-register-contianer {
     width: 100%;
-    max-width: 280px;
+    max-width: 400px;
     margin: 100px auto;
     padding: 20px;
   }
@@ -421,12 +579,6 @@
     flex-direction: column;
     align-items: center;
     margin-top: 10px;
-  }
-
-  .time-selection {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
   }
 
   .input-group-checkbox-register-field {
@@ -455,5 +607,164 @@
   .input-group-register-field input::placeholder,
   .input-group-register-field select::placeholder {
     font-size: 12px;
+  }
+}
+
+.factcon-register-field {
+  padding: 20px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #fafafa;
+  margin: 15px 0;
+}
+
+.facility-item-register-field {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: border-color 0.2s ease;
+}
+
+.facility-item-register-field:hover {
+  border-color: var(--text-color);
+}
+
+.facility-item-register-field.selected {
+  border-color: var(--text-color);
+  background-color: #f8f9ff;
+}
+
+.input-group-checkbox-register-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.input-group-checkbox-register-field input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--text-color);
+  cursor: pointer;
+}
+
+.input-group-checkbox-register-field label {
+  font-weight: 500;
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.facility-inputs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.facility-price-input,
+.facility-quantity-input {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.facility-price-input:focus,
+.facility-quantity-input:focus {
+  outline: none;
+  border-color: var(--text-color);
+  box-shadow: 0 0 0 2px rgba(3, 4, 94, 0.1);
+}
+
+.facility-file-input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  max-width: 200px;
+}
+
+.facility-file-input:focus {
+  outline: none;
+  border-color: var(--text-color);
+}
+
+.facility-image-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 8px;
+  background-color: #f9fafb;
+  border-radius: 6px;
+}
+
+.facility-preview-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+}
+
+.facility-remove-img-btn {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.facility-remove-img-btn:hover {
+  background-color: #b91c1c;
+}
+
+.other-facility-section {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 16px;
+  margin-top: 16px;
+}
+
+.other-facility-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: white;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.other-facility-confirm-btn {
+  background-color: var(--success-color);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.other-facility-confirm-btn:hover {
+  background-color: var(--hover-success-color);
+}
+
+@media (max-width: 768px) {
+  .facility-inputs-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .facility-file-input {
+    max-width: 100%;
   }
 }

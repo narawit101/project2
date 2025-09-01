@@ -1,7 +1,5 @@
 const express = require("express");
 const multer = require("multer");
-// const path = require("path");
-// const fs = require("fs");
 const router = express.Router();
 const pool = require("../db");
 const authMiddleware = require("../middlewares/auth");
@@ -20,10 +18,8 @@ const storage = new CloudinaryStorage({
 
     if (file.fieldname === "documents") {
       folder = "documents";
-
       if (file.mimetype.startsWith("image/")) {
         resourceType = "image";
-        format = undefined;
       } else if (file.mimetype === "application/pdf") {
         resourceType = "raw";
         format = "pdf";
@@ -34,37 +30,33 @@ const storage = new CloudinaryStorage({
     } else if (file.fieldname === "img_field") {
       folder = "field-profile";
       resourceType = "image";
-      format = undefined;
+    } else if (
+      file.fieldname === "facility_image" ||
+      file.fieldname.startsWith("facility_image_")
+    ) {
+      folder = "field-facility-images";
+      resourceType = "image";
     }
 
     const config = {
-      folder: folder,
+      folder,
       resource_type: resourceType,
       public_id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     };
-
-    if (format) {
-      config.format = format;
-      console.log(`กำหนด format เป็น: ${format}`);
-    }
-
+    if (format) config.format = format;
     if (resourceType === "image") {
       config.transformation = [
         { quality: "auto:good" },
         { fetch_format: "auto" },
       ];
     }
-
     return config;
   },
 });
 
 const upload = multer({
-  storage: storage,
-  limits: {
-    files: 11,
-    fileSize: 8 * 1024 * 1024,
-  },
+  storage,
+  limits: { files: 30, fileSize: 8 * 1024 * 1024 },
 });
 
 async function deleteCloudinaryFile(fileUrl) {
@@ -78,12 +70,10 @@ async function deleteCloudinaryFile(fileUrl) {
       console.error("URL ไม่ถูกต้อง - ไม่มี 'upload'");
       return;
     }
-
     let pathStartIndex = uploadIndex + 1;
     if (urlParts[pathStartIndex] && urlParts[pathStartIndex].startsWith("v")) {
       pathStartIndex++;
     }
-
     const pathParts = urlParts.slice(pathStartIndex);
     const fullPath = pathParts.join("/");
 
@@ -116,7 +106,6 @@ async function deleteCloudinaryFile(fileUrl) {
       console.log(`ลบ Cloudinary สำเร็จ: ${publicId}`);
     } else if (result.result === "not found") {
       console.warn(`ไม่พบไฟล์: ${publicId} (${resourceType})`);
-
       const alternativeType = resourceType === "raw" ? "image" : "raw";
       console.log(`ลองลบด้วย resource_type: ${alternativeType}`);
 
@@ -153,16 +142,66 @@ async function deleteMultipleCloudinaryFiles(fileUrls) {
   }
 }
 
-router.post(
-  "/register",
-  upload.fields([
-    { name: "documents", maxCount: 10 },
-    { name: "img_field", maxCount: 1 },
-  ]),
-  authMiddleware,
-  async (req, res) => {
+router.post("/register", upload.any(), authMiddleware, async (req, res) => {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    console.log(
+      "REQ.FILES:",
+      (req.files || []).map((f) => f.fieldname)
+    );
+    console.log("REQ.BODY.DATA:", req.body.data);
+    let parsedData;
     try {
-      const {
+      parsedData = JSON.parse(req.body.data || "{}");
+    } catch (parseError) {
+      console.error("JSON Parse Error:", parseError);
+      await client.query("ROLLBACK");
+      return res.status(400).json({ error: "ข้อมูล JSON ไม่ถูกต้อง" });
+    }
+
+    const {
+      user_id,
+      field_name,
+      address,
+      gps_location,
+      open_hours,
+      close_hours,
+      number_bank,
+      account_holder,
+      price_deposit,
+      name_bank,
+      status,
+      selectedFacilities = {},
+      subFields = [],
+      open_days,
+      field_description,
+      cancel_hours,
+      slot_duration,
+    } = parsedData;
+
+    const filesArr = req.files || [];
+    const docFiles = filesArr.filter((f) => f.fieldname === "documents");
+    if (docFiles.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(400).json({ error: "กรุณาอัปโหลดเอกสาร" });
+    }
+    const documents = docFiles
+      .map((f) => f.path.replace(/\\/g, "/"))
+      .join(", ");
+
+    const imgFieldFile = filesArr.find((f) => f.fieldname === "img_field");
+    const imgField = imgFieldFile ? imgFieldFile.path : null;
+
+    const fieldResult = await client.query(
+      `INSERT INTO field (user_id, field_name, address, gps_location, open_hours, close_hours,
+                            number_bank, account_holder, price_deposit, name_bank, documents,
+                            img_field, status, open_days, field_description, cancel_hours, slot_duration)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
+         RETURNING field_id`,
+      [
         user_id,
         field_name,
         address,
@@ -171,208 +210,171 @@ router.post(
         close_hours,
         number_bank,
         account_holder,
-        price_deposit,
+        price_deposit || 0,
         name_bank,
-        status,
-        selectedFacilities,
-        subFields,
+        documents,
+        imgField,
+        status || "รอตรวจสอบ",
         open_days,
         field_description,
-        cancel_hours,
-      } = JSON.parse(req.body.data);
-      if (
-        !user_id ||
-        !field_name ||
-        !address ||
-        !gps_location ||
-        !close_hours ||
-        !number_bank ||
-        !account_holder ||
-        (!price_deposit && price_deposit !== 0) ||
-        !name_bank ||
-        !status ||
-        !selectedFacilities ||
-        Object.keys(selectedFacilities).length === 0 ||
-        !subFields ||
-        subFields.length === 0 ||
-        !open_days ||
-        open_days.length === 0 ||
-        !field_description ||
-        (!cancel_hours && cancel_hours !== 0)
-      ) {
-        return res.status(400).send({ error: "กรุณากรอกข้อมูลให้ครบถ้วน" });
-      }
-
-      const documents = req.files["documents"]
-        ? req.files["documents"]
-            .map((file) => file.path.replace(/\\/g, "/"))
-            .join(", ")
-        : [];
-
-      const imgField =
-        req.files["img_field"] && req.files["img_field"].length > 0
-          ? req.files["img_field"][0].path
-          : null;
-
-      if (documents.length === 0) {
-        return res.status(400).send({ error: "กรุณาอัปโหลดเอกสาร" });
-      }
-
-      const fieldResult = await pool.query(
-        `INSERT INTO field (user_id, field_name, address, gps_location, open_hours, close_hours, number_bank, account_holder, price_deposit, name_bank, documents, img_field, status, open_days, field_description,cancel_hours ) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15,$16) RETURNING field_id`,
+        cancel_hours || 0,
+        slot_duration,
+      ]
+    );
+    const field_id = fieldResult.rows[0].field_id;
+    console.log("Created field_id:", field_id);
+    for (const sub of subFields) {
+      const subRes = await client.query(
+        `INSERT INTO sub_field (field_id, sub_field_name, price, sport_id, user_id, 
+                                  wid_field, length_field, players_per_team, field_surface)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING sub_field_id`,
         [
+          field_id,
+          sub.name,
+          sub.price || 0,
+          sub.sport_id,
           user_id,
-          field_name,
-          address,
-          gps_location,
-          open_hours,
-          close_hours,
-          number_bank,
-          account_holder,
-          price_deposit,
-          name_bank,
-          documents,
-          imgField,
-          status || "รอตรวจสอบ",
-          open_days,
-          field_description,
-          cancel_hours,
+          sub.wid_field || 0,
+          sub.length_field || 0,
+          sub.players_per_team || 0,
+          sub.field_surface || "",
         ]
       );
+      const sub_field_id = subRes.rows[0].sub_field_id;
 
-      const field_id = fieldResult.rows[0].field_id;
-
-      for (const sub of subFields) {
-        const subFieldResult = await pool.query(
-          `INSERT INTO sub_field (field_id, sub_field_name, price, sport_id, user_id,wid_field,length_field,players_per_team,field_surface) 
-         VALUES ($1, $2, $3, $4, $5, $6, $7 ,$8, $9) RETURNING sub_field_id`,
-          [
-            field_id,
-            sub.name,
-            sub.price,
-            sub.sport_id,
-            user_id,
-            sub.wid_field,
-            sub.length_field,
-            sub.players_per_team,
-            sub.field_surface,
-          ]
-        );
-        const sub_field_id = subFieldResult.rows[0].sub_field_id;
-
-        for (const addon of sub.addOns) {
-          await pool.query(
-            `INSERT INTO add_on (sub_field_id, content, price) VALUES ($1, $2, $3) RETURNING add_on_id`,
-            [sub_field_id, addon.content, addon.price]
-          );
-        }
-      }
-
-      for (const facId in selectedFacilities) {
-        await pool.query(
-          `INSERT INTO field_facilities (field_id, facility_id, fac_price) 
-         VALUES ($1, $2, $3)`,
-          [field_id, facId, selectedFacilities[facId]]
+      for (const addon of sub.addOns || []) {
+        await client.query(
+          `INSERT INTO add_on (sub_field_id, content, price) VALUES ($1,$2,$3)`,
+          [sub_field_id, addon.content, addon.price || 0]
         );
       }
+    }
 
-      const userData = await pool.query(
-        "SELECT * FROM users WHERE user_id = $1",
-        [user_id]
+    const selectedFacIds = Object.keys(selectedFacilities);
+    for (const facId of selectedFacIds) {
+      const fac = selectedFacilities[facId] || {};
+      const facPrice = parseFloat(fac.price) || 0;
+      const quantity_total =
+        parseInt(fac.quantity_total ?? fac.quantity ?? 0, 10) || 0;
+      const description = fac.description
+        ? fac.description.toString().slice(0, 300)
+        : null;
+
+      const getFileUrl = (file) =>
+        file?.path || file?.secure_url || file?.url || null;
+
+      const facImgFile = filesArr.find(
+        (f) => f.fieldname === `facility_image_${facId}`
       );
+      const image_path = getFileUrl(facImgFile);
 
-      const userEmail = userData.rows[0].email;
-      const userfirstName = userData.rows[0].first_name;
+      await client.query(
+        `INSERT INTO field_facilities (field_id, fac_name, fac_price, quantity_total, description, image_path)
+           VALUES ($1,$2,$3,$4,$5,$6)`,
+        [field_id, facId, facPrice, quantity_total, description, image_path]
+      );
+    }
 
-      try {
-        const userEmailResult = await resend.emails.send({
-          from: process.env.Sender_Email,
-          to: userEmail,
-          subject: "การลงทะเบียนสนาม",
-          html: `
+    const userData = await client.query(
+      "SELECT * FROM users WHERE user_id = $1",
+      [user_id]
+    );
 
-<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align:center;">
+    if (userData.rows.length === 0) {
+      await client.query("ROLLBACK");
+      return res.status(404).json({ error: "ไม่พบข้อมูลผู้ใช้" });
+    }
+
+    const userEmail = userData.rows[0].email;
+    const userfirstName = userData.rows[0].first_name;
+
+    await client.query("COMMIT");
+    console.log("Transaction committed successfully");
+
+    try {
+      await resend.emails.send({
+        from: process.env.Sender_Email,
+        to: userEmail,
+        subject: "การลงทะเบียนสนาม",
+        html: `
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); text-align:center;">
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
       <td align="center">
-        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 300px; margin-bottom: 10px;" />
+        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" 
+             alt="Sport-Hub Online Logo" 
+             style="display: block; max-width: 300px; margin-bottom: 10px;" />
       </td>
     </tr>
   </table>
   <h1 style="color: #03045e; margin-bottom: 16px; text-align: center">การลงทะเบียนสนาม</h1>
-
   <p style="font-size: 16px; text-align: center; color: #9ca3af;">
-    <strong>คุณได้ลงทะเบียนสามเรียบร้อยแล้ว </br >กรุณารอผู้ดูแลระบบตรวจสอบ ขอบคุณที่ใช้บริการ</strong>
+    <strong>คุณได้ลงทะเบียนสนามเรียบร้อยแล้ว<br>กรุณารอผู้ดูแลระบบตรวจสอบ ขอบคุณที่ใช้บริการ</strong>
   </p>
   <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
-
-  <p style="font-size: 12px; color: #9ca3af;text-align: center ">
+  <p style="font-size: 12px; color: #9ca3af;text-align: center">
     หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
   </p>
 </div>`,
-        });
-        const adminEmailResult = await resend.emails.send({
-          from: process.env.Sender_Email,
-          to: process.env.Owner_Email,
-          subject: "มีการลงทะเบียนสนามกีฬาใหม่",
-          html: `
-      <div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align:center;">
+      });
+      await resend.emails.send({
+        from: process.env.Sender_Email,
+        to: process.env.Owner_Email,
+        subject: "มีการลงทะเบียนสนามกีฬาใหม่",
+        html: `
+<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); text-align:center;">
   <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
       <td align="center">
-        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 300px; margin-bottom: 10px;" />
+        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" 
+             alt="Sport-Hub Online Logo" 
+             style="display: block; max-width: 300px; margin-bottom: 10px;" />
       </td>
     </tr>
   </table>
   <h1 style="color: #03045e; margin-bottom: 16px;">การลงทะเบียนสนาม</h1>
-
-  <p style="font-size: 16px; color: #111827;">
-    <strong style="color: #0f172a;">
-
-    </strong>
   <p style="font-size: 20px;">
-  <h3>${userfirstName}</h3>
-  ได้ลงทะเบียนสนามกีฬา
+    <h3>${userfirstName}</h3>
+    ได้ลงทะเบียนสนามกีฬา
   </p>
-  </p>
-
   <div style="margin: 20px 0;">
-    <a href="${process.env.FONT_END_URL}/login?redirect=/check-field/${field_id}" style="display: inline-block; background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;
-                 width:160px;" target="_blank">
+    <a href="${process.env.FONT_END_URL}/login?redirect=/check-field/${field_id}" 
+       style="display: inline-block; background-color: #03045e; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; width:160px;" 
+       target="_blank">
       ตรวจสอบสนามกีฬา #${field_id}
     </a>
   </div>
-
   <p style="font-size: 14px; color: #6b7280;">
     กรุณาตรวจสอบและอัปเดตสถานะให้เสร็จสิ้น
   </p>
-
   <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
-
   <p style="font-size: 12px; color: #9ca3af;">
     หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
   </p>
-</div>
-      `,
-        });
+</div>`,
+      });
 
-        console.log("Email to user:", userEmailResult);
-        console.log("Email to admin:", adminEmailResult);
-      } catch (error) {
-        console.log("ส่งอีเมลไม่สำเร็จ:", error);
-        return res
-          .status(500)
-          .json({ error: "ไม่สามารถส่งอีเมลได้", details: error.message });
-      }
-      res.status(200).send({ message: "ลงทะเบียนสนามเรียบร้อย!", field_id });
-    } catch (error) {
-      console.error("Error:", error);
-      res.status(500).send({ error: "เกิดข้อผิดพลาดในการลงทะเบียนสนาม" });
+      console.log("อีเมลส่งสำเร็จ");
+    } catch (emailError) {
+      console.error("ส่งอีเมลไม่สำเร็จ:", emailError);
     }
-  }
-);
 
+    res.status(200).json({
+      message: "ลงทะเบียนสนามเรียบร้อย!",
+      field_id,
+      facilitiesCount: Object.keys(selectedFacilities).length,
+    });
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error("REGISTER ERROR:", error);
+    res.status(500).json({
+      error: "เกิดข้อผิดพลาดในการลงทะเบียนสนาม",
+      details: error.message,
+    });
+  } finally {
+    client.release();
+  }
+});
 router.put("/appeal/:field_id", authMiddleware, async (req, res) => {
   try {
     const { field_id } = req.params;
@@ -853,6 +855,19 @@ router.delete("/delete/field/:id", authMiddleware, async (req, res) => {
       if (img_field) {
         await deleteCloudinaryFile(img_field);
       }
+      const facImages = await client.query(
+        "SELECT image_path FROM field_facilities WHERE field_id = $1",
+        [fieldId]
+      );
+      if (facImages.rows.length > 0) {
+        const facPaths = facImages.rows
+          .map((row) => row.image_path)
+          .filter(Boolean);
+        await deleteMultipleCloudinaryFiles(facPaths);
+      }
+      await client.query("DELETE FROM field_facilities WHERE field_id = $1", [
+        fieldId,
+      ]);
 
       if (documents) {
         let docPaths = [];
@@ -1324,6 +1339,28 @@ router.delete(
     console.log("Received field_fac_id:", field_fac_id);
 
     try {
+      const q = await pool.query(
+        "SELECT image_path FROM field_facilities WHERE field_id = $1 AND field_fac_id = $2",
+        [field_id, field_fac_id]
+      );
+
+      if (q.rowCount === 0) {
+        return res
+          .status(404)
+          .json({ message: "ไม่พบสิ่งอำนวยความสะดวกนี้ในสนาม" });
+      }
+
+      const image_path = q.rows[0].image_path;
+
+      if (image_path) {
+        await deleteCloudinaryFile(image_path);
+      }
+
+      const bookingFacResult = await pool.query(
+        "DELETE FROM booking_fac WHERE field_fac_id = $1",
+        [field_fac_id]
+      );
+
       const result = await pool.query(
         "DELETE FROM field_facilities WHERE field_id = $1 AND field_fac_id = $2",
         [field_id, field_fac_id]
@@ -1335,7 +1372,12 @@ router.delete(
           .json({ message: "ไม่พบสิ่งอำนวยความสะดวกนี้ในสนาม" });
       }
 
-      res.status(200).json({ message: "ลบสิ่งอำนวยความสะดวกสำเร็จ" });
+      let message = "ลบสิ่งอำนวยความสะดวกสำเร็จ";
+      if (bookingFacResult.rowCount > 0) {
+        message += ` (ลบข้อมูลการจองที่เกี่ยวข้อง ${bookingFacResult.rowCount} รายการ)`;
+      }
+
+      res.status(200).json({ message });
     } catch (error) {
       console.error("Error deleting facility:", error);
       res.status(500).json({ message: "เกิดข้อผิดพลาดในการลบข้อมูล" });
@@ -1415,20 +1457,157 @@ router.get("/field-fac/:field_id", authMiddleware, async (req, res) => {
   const { field_id } = req.params;
   try {
     const result = await pool.query(
-      `SELECT fi.field_fac_id , fi.field_id , fi.facility_id , fi.fac_price ,fa.fac_name  
-        FROM field_facilities fi
-      INNER JOIN facilities fa ON fi.facility_id = fa.fac_id
-      WHERE fi.field_id = $1
-         `,
+      `SELECT field_fac_id,
+              field_id,
+              fac_name,
+              fac_price,
+              quantity_total,
+              description,
+              image_path
+       FROM field_facilities
+       WHERE field_id = $1
+       ORDER BY field_fac_id`,
       [field_id]
     );
+
     return res.status(200).json({
-      message: "get data successfully",
-      data: result.rows,
+      success: true,
+      data: Array.isArray(result.rows) ? result.rows : [],
+      message:
+        result.rows.length === 0 ? "No facilities for this field." : null,
     });
   } catch (error) {
-    return res.status(400).json({ message: "error" });
+    console.error("Error fetching field facilities:", error);
+    return res.status(500).json({
+      success: false,
+      data: [],
+      error: "Database error fetching field facilities",
+    });
   }
 });
+
+router.put(
+  "/facility/:field_fac_id",
+  upload.single("facility_image"),
+  authMiddleware,
+  async (req, res) => {
+    const { field_fac_id } = req.params;
+
+    let parsedData;
+    try {
+      if (req.body.data) {
+        parsedData = JSON.parse(req.body.data);
+      } else {
+        parsedData = req.body;
+      }
+    } catch (parseError) {
+      console.error("JSON Parse Error:", parseError);
+      return res.status(400).json({ error: "ข้อมูล JSON ไม่ถูกต้อง" });
+    }
+
+    const { fac_name, fac_price, quantity_total, description } = parsedData;
+
+    console.log("Received data:", {
+      fac_name,
+      fac_price,
+      quantity_total,
+      description,
+    });
+    console.log("Has file:", !!req.file);
+
+    try {
+      if (!fac_name || fac_name.toString().trim() === "") {
+        return res.status(400).json({
+          message: "กรุณาระบุชื่อสิ่งอำนวยความสะดวก",
+        });
+      }
+      // if (!description || description.toString().trim() === "") {
+      //   return res.status(400).json({
+      //     message: "กรุณาระบุรายละเอียด",
+      //   });
+      // }
+
+      if (fac_price === undefined || fac_price === null || fac_price === "") {
+        return res.status(400).json({
+          message: "กรุณาระบุราคา",
+        });
+      }
+
+      if (
+        quantity_total === undefined ||
+        quantity_total === null ||
+        quantity_total === ""
+      ) {
+        return res.status(400).json({
+          message: "กรุณาระบุจำนวน",
+        });
+      }
+
+      const priceValue = parseFloat(fac_price);
+      const quantityValue = parseInt(quantity_total);
+
+      if (isNaN(priceValue) || priceValue < 0) {
+        return res
+          .status(400)
+          .json({ message: "ราคาต้องเป็นตัวเลขที่ไม่ติดลบ" });
+      }
+
+      if (isNaN(quantityValue) || quantityValue < 1) {
+        return res
+          .status(400)
+          .json({ message: "จำนวนต้องเป็นตัวเลขที่มากกว่า 0" });
+      }
+
+      const checkFacility = await pool.query(
+        "SELECT field_fac_id, image_path FROM field_facilities WHERE field_fac_id = $1",
+        [field_fac_id]
+      );
+
+      if (checkFacility.rowCount === 0) {
+        return res.status(404).json({ message: "ไม่พบสิ่งอำนวยความสะดวกนี้" });
+      }
+
+      const oldImagePath = checkFacility.rows[0].image_path;
+      let newImagePath = oldImagePath;
+
+      if (req.file) {
+        newImagePath = req.file.path;
+
+        if (oldImagePath) {
+          console.log("กำลังลบรูปเดิม:", oldImagePath);
+          await deleteCloudinaryFile(oldImagePath);
+        }
+      }
+
+      const result = await pool.query(
+        `UPDATE field_facilities 
+         SET fac_name = $1, fac_price = $2, quantity_total = $3, description = $4, image_path = $5
+         WHERE field_fac_id = $6 
+         RETURNING *`,
+        [
+          fac_name.toString().trim(),
+          priceValue,
+          quantityValue,
+          description?.toString().trim() || "",
+          newImagePath,
+          field_fac_id,
+        ]
+      );
+
+      res.status(200).json({
+        message: "แก้ไขสิ่งอำนวยความสะดวกสำเร็จ",
+        facility: result.rows[0],
+      });
+    } catch (error) {
+      console.error("Error updating facility:", error);
+
+      if (req.file) {
+        await deleteCloudinaryFile(req.file.path);
+      }
+
+      res.status(500).json({ message: "เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+    }
+  }
+);
 
 module.exports = router;

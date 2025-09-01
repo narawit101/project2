@@ -979,16 +979,52 @@ export default function CheckFieldDetail() {
                 facilities.length === 0 ? (
                   <p>ยังไม่มีสิ่งอำนวยความสะดวกสำหรับสนามนี้</p>
                 ) : (
-                  <div className="facbox-profile">
-                    {facilities.map((facility, index) => (
-                      <div
-                        className="facitem-profile"
-                        key={`${facility.fac_id}-${index}`}
-                      >
-                        <strong>{facility.fac_name}</strong>:{" "}
-                        <span>{formatPrice(facility.fac_price)} บาท</span>
-                      </div>
-                    ))}
+                  <div className="facilities-carousel-container-profile">
+                    <div className="facilities-carousel-profile">
+                      {facilities.map((facility, index) => (
+                        <div
+                          key={`${facility.fac_id}-${index}`}
+                          className="facility-card-profile-vertical"
+                        >
+                          <div className="facility-image-container-profile-vertical">
+                            {facility.image_path ? (
+                              <img
+                                src={facility.image_path}
+                                alt={facility.fac_name}
+                                className="facility-image-profile-vertical"
+                                onError={(e) => {
+                                  e.target.style.display = "none";
+                                  e.target.nextSibling.style.display = "flex";
+                                }}
+                              />
+                            ) : null}
+                            <div
+                              className="facility-no-image-profile-vertical"
+                              style={{
+                                display: facility.image_path ? "none" : "flex",
+                              }}
+                            >
+                              <span>ไม่มีรูปภาพ</span>
+                            </div>
+                          </div>
+
+                          <div className="facility-info-profile-vertical">
+                            <h5 className="facility-name-profile-vertical">
+                              {facility.fac_name}
+                            </h5>
+                            <p className="facility-price-profile-vertical">
+                              ราคา: {formatPrice(facility.fac_price)} บาท
+                            </p>
+                            <p className="facility-quantity-profile-vertical">
+                              จำนวนทั้งหมด: {facility.quantity_total}
+                            </p>
+                            <p className="facility-quantity-profile-vertical">
+                              รายละเอียด: {facility.description}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )
               ) : (

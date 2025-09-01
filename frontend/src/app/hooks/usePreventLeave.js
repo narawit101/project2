@@ -2,13 +2,11 @@ import { useEffect } from "react";
 
 export const usePreventLeave = (startProcessLoad) => {
   useEffect(() => {
-    //รีเฟชหน้าหรือออกจากหน้าในขณะที่กำลังโหลดข้อมูล
     const handleBeforeUnload = (e) => {
       if (!startProcessLoad) return;
       e.preventDefault();
       e.returnValue = "";
     };
-    // กดปุ่มย้อนกลับในเบราว์เซอร์ขณะกำลังโหลดข้อมูล
     const handlePopState = (e) => {
       if (startProcessLoad) {
         const confirmed = window.confirm(

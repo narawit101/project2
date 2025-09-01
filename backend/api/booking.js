@@ -386,37 +386,92 @@ module.exports = function (io) {
         }
 
         const overlapResult = await client.query(
-          `SELECT * FROM bookings
-            WHERE sub_field_id = $1
-              AND status NOT IN ('rejected')
-              AND (
-                (start_date || ' ' || start_time)::timestamp < $3::timestamp
-                AND (end_date || ' ' || end_time)::timestamp > $2::timestamp
-              )
-            FOR UPDATE`,
-          [subFieldId, `${startDate} ${startTime}`, `${endDate} ${endTime}`]
+        `SELECT * FROM bookings
+          WHERE sub_field_id = $1
+            AND status NOT IN ('rejected')
+            AND (
+              (start_date || ' ' || start_time)::timestamp < $3::timestamp
+              AND (end_date || ' ' || end_time)::timestamp > $2::timestamp
+            )
+          FOR UPDATE`,
+        [subFieldId, `${startDate} ${startTime}`, `${endDate} ${endTime}`]
+      );
+
+      const timeNow = DateTime.now().setZone("Asia/Bangkok");
+      const timSubmit = `${startDate}T${startTime}`;
+      const timeSubmitDate = DateTime.fromISO(timSubmit, {
+        zone: "Asia/Bangkok",
+      });
+
+      if (timeSubmitDate < timeNow) {
+        await client.query("ROLLBACK");
+        return res.status(400).json({
+          success: false,
+          message: "ไม่สามารถเลือกเวลาที่ผ่านไปแล้วได้",
+        });
+      }
+
+      if (overlapResult.rows.length > 0) {
+        await client.query("ROLLBACK");
+        return res.status(400).json({
+          success: false,
+          message: "ช่วงเวลาที่เลือกมีผู้จองแล้ว กรุณาเลือกเวลาใหม่",
+        });
+      }
+
+      for (const facility of selectedFacilities || []) {
+
+        const facInfoRes = await client.query(
+          `SELECT field_fac_id, quantity_total, fac_name 
+           FROM field_facilities 
+           WHERE field_fac_id = $1 
+           FOR UPDATE`,
+          [facility.field_fac_id]
         );
 
-        const timeNow = DateTime.now().setZone("Asia/Bangkok");
-        const timSubmit = `${startDate}T${startTime}`;
-        const timeSubmitDate = DateTime.fromISO(timSubmit, {
-          zone: "Asia/Bangkok",
-        });
-        console.log("timeNow", timeNow.toISO());
-        console.log("timeSubmitDate", timeSubmitDate.toISO());
-        if (timeSubmitDate < timeNow) {
+        if (facInfoRes.rows.length === 0) {
+          await client.query("ROLLBACK");
           return res.status(400).json({
             success: false,
-            message: "ไม่สามารถเลือกเวลาที่ผ่านไปแล้วได้",
+            message: `ไม่พบสิ่งอำนวยความสะดวก "${facility.fac_name}" ในสนามนี้`,
           });
         }
 
-        if (overlapResult.rows.length > 0) {
+        const { field_fac_id, quantity_total, fac_name } = facInfoRes.rows[0];
+        const quantityTotal = parseInt(quantity_total || 1, 10);
+
+        const facBookedRes = await client.query(
+          `SELECT COALESCE(SUM(bf.quantity), 0) AS booked_qty
+           FROM booking_fac bf
+           JOIN bookings b ON bf.booking_id = b.booking_id
+           WHERE bf.field_fac_id = $1
+             AND b.field_id = $2
+             AND b.status NOT IN ('rejected')
+             AND (
+               (b.start_date || ' ' || b.start_time)::timestamp < $4::timestamp
+               AND (b.end_date || ' ' || b.end_time)::timestamp > $3::timestamp
+             )`,
+          [
+            field_fac_id,
+            fieldId,
+            `${startDate} ${startTime}`,
+            `${endDate} ${endTime}`,
+          ]
+        );
+
+        const bookedQty = parseInt(facBookedRes.rows[0]?.booked_qty || 0, 10);
+        const requestedQty = parseInt(facility.quantity || 1, 10);
+
+        if (bookedQty + requestedQty > quantityTotal) {
+          await client.query("ROLLBACK");
           return res.status(400).json({
             success: false,
-            message: "ช่วงเวลาที่เลือกมีผู้จองแล้ว กรุณาเลือกเวลาใหม่",
+            message: `สิ่งอำนวยความสะดวก "${fac_name}" ถูกจองเต็มจำนวนในช่วงเวลานี้แล้ว (${bookedQty}/${quantityTotal})`,
+            conflict_facility: fac_name,
           });
         }
+      }
+
 
         const bookingResult = await client.query(
           `INSERT INTO bookings (field_id, user_id, sub_field_id, booking_date, start_time, end_time, total_hours, total_price, pay_method, total_remaining, activity, status, start_date, end_date, selected_slots)
@@ -442,11 +497,11 @@ module.exports = function (io) {
 
         const bookingId = bookingResult.rows[0].booking_id;
 
-        for (const facility of selectedFacilities) {
+          for (const facility of selectedFacilities) {
           await client.query(
-            `INSERT INTO booking_fac (booking_id, field_fac_id, fac_name) 
-         VALUES ($1, $2, $3) `,
-            [bookingId, facility.field_fac_id, facility.fac_name]
+            `INSERT INTO booking_fac (booking_id, field_fac_id, fac_name, quantity) 
+         VALUES ($1, $2, $3, $4) `,
+            [bookingId, facility.field_fac_id, facility.fac_name, Number(facility.quantity || 1)]
           );
         }
 

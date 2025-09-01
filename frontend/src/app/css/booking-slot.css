@@ -1,8 +1,17 @@
 :root {
   --text-color: #03045e;
+  --primary-bg: #ffffff;
+  --secondary-bg: #f8f9fa;
+  --border-color: #e9ecef;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --border-radius: 12px;
+  --spacing: 1.5rem;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
 }
 
 .select-time-book {
+  width: 71%;
   text-align: center;
   font-size: 1.8rem;
   font-weight: 700;
@@ -376,7 +385,7 @@
 }
 
 .btn-submit-book {
-  background-color: var(--text-color);
+  background-color: var(--success-color);
   color: white;
   border: none;
   padding: 10px 18px;
@@ -654,7 +663,7 @@
   margin-right: 10px;
 }
 
-@media screen and (max-width: 1500px) {
+@media screen and (max-width: 1000px) {
   .container-bookings {
     display: flex;
     flex-direction: column;
@@ -726,5 +735,683 @@
     text-align: center;
     width: 100%;
     margin: 5px auto;
+  }
+}
+
+.booking-summary-section {
+  width: 100%;
+  margin: 0.5rem;
+  padding: 0;
+}
+
+.booking-summary-container {
+  margin: 0px 30px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 2px solid #e5e7eb;
+  overflow: hidden;
+  animation: slideDown-fade 0.5s ease-out;
+}
+
+@keyframes slideDown-fade {
+  from {
+    opacity: 0;
+    transform: translateY(0px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.summary-header {
+  color: var(--text-color);
+  padding: 1.2rem 2rem;
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.summary-details {
+  padding: 1.5rem 2rem;
+}
+
+.field-title-summary {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0 0 0.5rem 0;
+  text-align: center;
+}
+
+.sub-field-title-summary {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #666;
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+}
+
+.time-summary-info {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-row strong {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.summary-row span {
+  color: #333;
+  font-weight: 500;
+}
+
+.facilities-summary-section {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.facilities-summary-section h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 1rem 0;
+  text-align: center;
+}
+
+.facilities-toggle-section {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.facilities-carousel-container {
+  overflow: hidden;
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.facilities-carousel {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 0.8rem 0.2rem 1rem 0.2rem;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc #f8f9fa;
+  justify-content: center;
+  max-width: 100%;
+}
+
+.facilities-carousel::-webkit-scrollbar {
+  height: 6px;
+}
+
+.facilities-carousel::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 3px;
+}
+
+.facilities-carousel::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+.facilities-carousel::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.facility-card-summary {
+  flex: 0 0 260px;
+  max-width: 260px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.facility-card-summary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border-color: #ccc;
+}
+
+.facility-card-summary.selected {
+  border-color: var(--success-color);
+  background: #f8f9ff;
+  box-shadow: 0 4px 16px rgba(3, 4, 94, 0.15);
+}
+
+.facility-image-container {
+  width: 100%;
+  height: 140px;
+  position: relative;
+  overflow: hidden;
+  background: #f8f9fa;
+}
+
+.facility-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.facility-card-summary:hover .facility-image {
+  transform: scale(1.03);
+}
+
+.facility-no-image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  color: #666;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.facility-info-summary {
+  padding: 1.2rem;
+}
+
+.facility-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0 0 0.4rem 0;
+  line-height: 1.3;
+}
+
+.facility-price {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #22c55e;
+  margin: 0 0 0.4rem 0;
+}
+
+.facility-availability {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0 0 0.8rem 0;
+}
+
+.facility-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: center;
+  text-align: center;
+}
+
+.facility-select-btn {
+  width: 100%;
+  max-width: 120px;
+  padding: 0.6rem 1rem;
+  border: 2px solid var(--success-color);
+  border-radius: 8px;
+  background: white;
+  color: var(--text-color);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.facility-select-btn:hover {
+  background: var(--success-color);
+  color: white;
+}
+
+.facility-select-btn.selected {
+  background: var(--success-color);
+  color: white;
+  box-shadow: 0 2px 8px rgba(3, 4, 94, 0.3);
+}
+
+.facility-select-btn.selected:hover {
+  background: #218838;
+  border-color: #1e7e34;
+}
+
+.facility-checkbox {
+  margin-right: 0.4rem;
+  accent-color: var(--text-color);
+}
+
+.facility-label {
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.quantity-control label {
+  font-size: 0.85rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.quantity-input {
+  width: 50px;
+  padding: 0.4rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.selected-facilities-summary {
+  background: #f1fff0;
+  border: 1px solid var(--success-color);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.selected-facilities-summary h5 {
+  color: var(--text-color);
+  font-weight: 600;
+  margin: 0 0 0.6rem 0;
+  font-size: 1rem;
+}
+
+.selected-facility-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #dbeafe;
+  font-size: 0.9rem;
+}
+
+.selected-facility-item:last-child {
+  border-bottom: none;
+}
+
+.price-summary-section {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.2rem;
+  margin-top: 1.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.price-breakdown {
+  margin-bottom: 1rem;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.price-row:last-child {
+  border-bottom: none;
+}
+
+.price-row.total-row {
+  color: var(--success-color);
+  background: #f1fff0;
+  border: 1px solid var(--success-color);
+  margin: 0.4rem -0.4rem;
+  padding: 0.8rem;
+  border-radius: 8px;
+}
+
+.price-row.deposit-row {
+  color: var(--danger-color);
+}
+
+.price-row.remaining-row {
+  color: var(--text-color);
+}
+
+.payment-method-section {
+  margin-top: 1.2rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.payment-method-section h5 {
+  color: var(--text-color);
+  font-weight: 600;
+  margin: 0 0 0.8rem 0;
+  font-size: 1rem;
+}
+
+.payment-options {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.payment-option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.payment-option:hover {
+  border-color: #ccc;
+  background: #f8f9fa;
+}
+
+.payment-option input[type="radio"]:checked + span {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.payment-option input[type="radio"]:checked {
+  accent-color: var(--text-color);
+}
+
+.payment-option input[type="radio"] {
+  margin-right: 0.4rem;
+}
+
+.payment-option span {
+  font-weight: 500;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.summary-actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+  justify-content: center;
+}
+
+.btn-confirm-booking {
+  flex: 1;
+  max-width: 180px;
+  background-color: var(--success-color);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel-booking {
+  flex: 1;
+  max-width: 180px;
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .container-bookings {
+    flex-direction: column !important;
+    gap: 1rem;
+  }
+
+  .book-content {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .book-sider {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-top: 1rem;
+  }
+
+  .booking-summary-section {
+    margin: 1rem 0 0 0;
+    padding: 0 0.5rem;
+  }
+
+  .booking-summary-container {
+    border-radius: 12px;
+  }
+
+  .summary-header {
+    padding: 1rem 1.5rem;
+    font-size: 1.4rem;
+  }
+
+  .summary-details {
+    padding: 1rem 1.5rem;
+  }
+
+  .time-summary-info {
+    padding: 1rem;
+  }
+
+  .facilities-carousel {
+    padding: 0.6rem 0.2rem 0.8rem 0.2rem;
+  }
+
+  .facility-card-summary {
+    flex: 0 0 240px;
+    max-width: 240px;
+  }
+
+  .facility-image-container {
+    height: 120px;
+  }
+
+  .facility-info-summary {
+    padding: 1rem;
+  }
+
+  .facility-name {
+    font-size: 0.95rem;
+  }
+
+  .facility-price {
+    font-size: 0.9rem;
+  }
+
+  .facility-availability {
+    font-size: 0.8rem;
+  }
+
+  .price-summary-section {
+    padding: 1rem;
+  }
+
+  .summary-actions {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .btn-confirm-booking,
+  .btn-cancel-booking {
+    max-width: none;
+    padding: 0.7rem 1.2rem;
+  }
+
+  .payment-options {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .payment-option {
+    padding: 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-summary-section {
+    padding: 0 0.25rem;
+  }
+
+  .booking-summary-container {
+    border-radius: 8px;
+  }
+
+  .summary-header {
+    padding: 0.8rem 1rem;
+    font-size: 1.2rem;
+  }
+
+  .summary-details {
+    padding: 0.8rem 1rem;
+  }
+
+  .field-title-summary {
+    font-size: 1.2rem;
+  }
+
+  .sub-field-title-summary {
+    font-size: 1rem;
+  }
+
+  .time-summary-info {
+    padding: 0.8rem;
+  }
+
+  .facilities-carousel {
+    gap: 0.8rem;
+  }
+
+  .facility-card-summary {
+    flex: 0 0 200px;
+    max-width: 200px;
+  }
+
+  .facility-image-container {
+    height: 100px;
+  }
+
+  .facility-info-summary {
+    padding: 0.8rem;
+  }
+
+  .facility-name {
+    font-size: 0.9rem;
+  }
+
+  .facility-price {
+    font-size: 0.85rem;
+  }
+
+  .facility-availability {
+    font-size: 0.75rem;
+  }
+
+  .price-summary-section {
+    padding: 0.8rem;
+  }
+
+  .summary-row {
+    padding: 0.5rem 0;
+  }
+
+  .price-row {
+    padding: 0.5rem 0;
+  }
+
+  .payment-method-section h5 {
+    font-size: 0.95rem;
+  }
+
+  .btn-confirm-booking,
+  .btn-cancel-booking {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .booking-summary-container {
+    border-radius: 12px;
+  }
+
+  .summary-details {
+    padding: 1.5rem;
+  }
+
+  .facilities-carousel {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .facility-card-summary {
+    flex: 0 0 250px;
+    max-width: 250px;
+  }
+
+  .payment-options {
+    flex-direction: column;
+  }
+
+  .summary-actions {
+    flex-direction: column;
+  }
+
+  .btn-confirm-booking,
+  .btn-cancel-booking {
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .facility-card-summary {
+    flex: 0 0 220px;
+    max-width: 220px;
+  }
+
+  .facility-image-container {
+    height: 140px;
+  }
+
+  .facility-info-summary {
+    padding: 1rem;
   }
 }
