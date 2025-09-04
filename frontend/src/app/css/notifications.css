@@ -169,6 +169,7 @@
 }
 
 .noti-mark-all-btn {
+  height: 40px;
   border: 0;
   background: #f8fafc;
   padding: 8px 14px;
