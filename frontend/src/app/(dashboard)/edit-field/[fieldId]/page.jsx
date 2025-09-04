@@ -122,7 +122,6 @@ export default function CheckFieldDetail() {
     }
 
     if (
-      !editFacilityData.facility_price ||
       editFacilityData.facility_price.toString().trim() === ""
     ) {
       setMessage("กรุณาระบุราคา");
