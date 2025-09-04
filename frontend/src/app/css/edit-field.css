@@ -1151,7 +1151,7 @@
 }
 
 .editfield-container input {
-  width: 60%;
+  width: 100%;
   padding: 0.75rem;
   font-size: 1rem;
   display: flex;
