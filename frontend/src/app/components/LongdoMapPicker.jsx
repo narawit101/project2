@@ -116,8 +116,7 @@ export default function LongdoMapPicker({
     setTimeout(() => {
       try {
         map.resize();
-      } catch (e) {
-      }
+      } catch (e) {}
     }, 150);
   };
 
@@ -127,7 +126,7 @@ export default function LongdoMapPicker({
     const p = parseLocation(initialLocation);
     if (!p) return;
     const key = `${p.lat},${p.lon}`;
-    if (lastInitialApplied.current === key) return; 
+    if (lastInitialApplied.current === key) return;
     try {
       map.location(p, true);
     } catch (e) {
@@ -138,7 +137,7 @@ export default function LongdoMapPicker({
   }, [initialLocation]);
 
   const handleSearch = (keyword = searchKeyword) => {
-    if (readOnly) return; 
+    if (readOnly) return;
     const map = mapInstance.current;
     if (!map || !map.Search) return;
     const term = String(keyword || "").trim();
