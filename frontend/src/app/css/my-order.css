@@ -84,6 +84,15 @@
   margin-bottom: 1.3rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+}
+
+.booking-detail {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem; 
 }
 
 .hours-container-my-order {
@@ -94,24 +103,22 @@
   align-items: center;
   justify-content: center;
   margin-top: 0.5rem;
-  padding: 0.6rem;
+  padding: 0.9rem 1rem;
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 12px;
+  width: 100%;
 }
 
 .compact-price-box-order {
-  min-height: 220px;
-  max-height: 220px;
-  overflow-y: auto;
   font-size: 0.95rem;
   background: #fff;
   border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 1rem;
-  max-width: 320px;
-  margin: 1rem auto;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  width: 100%;
+  margin: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .line-item-order {
@@ -163,7 +170,7 @@
 }
 
 .detail-button {
-  margin: 20px auto;
+  margin-top: 12px;
   background: var(--text-color);
   color: white;
   padding: 0.5rem 1rem;
@@ -171,6 +178,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
+  align-self: center;
 }
 
 .detail-button:hover {
@@ -712,5 +720,76 @@
   }
   .myorder-container h1 {
     margin-top: 50px;
+  }
+}
+
+.skeleton-list {
+  gap: 1.5rem;
+}
+.skeleton-card {
+  position: relative;
+  overflow: hidden;
+}
+.skeleton-card::after,
+.skel-line::after,
+.skel-box::after,
+.skel-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.6) 45%,
+    rgba(255, 255, 255, 0) 90%
+  );
+  animation: skelShine 1.4s linear infinite;
+}
+.skel-line {
+  height: 14px;
+  background: #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.skel-box {
+  width: 100%;
+  height: 140px;
+  background: #e2e8f0;
+  border-radius: 14px;
+  margin: 4px 0 12px;
+  position: relative;
+}
+.skel-btn {
+  height: 40px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  margin-top: auto;
+  position: relative;
+}
+.skel-line.w80 {
+  width: 80%;
+}
+.skel-line.w70 {
+  width: 70%;
+}
+.skel-line.w60 {
+  width: 60%;
+}
+.skel-line.w50 {
+  width: 50%;
+}
+.skel-line.w40 {
+  width: 40%;
+}
+.skel-line.w30 {
+  width: 30%;
+}
+.skel-btn.w40 {
+  width: 40%;
+}
+@keyframes skelShine {
+  to {
+    transform: translateX(100%);
   }
 }

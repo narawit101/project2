@@ -17,6 +17,7 @@ export default function HomePage() {
   const [postData, setPostData] = useState([]);
   const [imageIndexes, setImageIndexes] = useState({});
   const [expandedPosts, setExpandedPosts] = useState({});
+  const [carouselProgress, setCarouselProgress] = useState(0); 
   const { user, isLoading } = useAuth();
   const [dataLoading, setDataLoading] = useState(true);
   const [message, setMessage] = useState("");
@@ -65,12 +66,16 @@ export default function HomePage() {
     fetchPosts();
   }, []);
 
+  const ROTATION_MS = 10000;
+  const TICK_MS = 100; 
+
   const handlePrev = (postId, length) => {
     setImageIndexes((prev) => ({
       ...prev,
       [postId]:
         (prev[postId] || 0) - 1 < 0 ? length - 1 : (prev[postId] || 0) - 1,
     }));
+    setCarouselProgress(0);
   };
 
   const handleNext = (postId, length) => {
@@ -78,6 +83,7 @@ export default function HomePage() {
       ...prev,
       [postId]: (prev[postId] || 0) + 1 >= length ? 0 : (prev[postId] || 0) + 1,
     }));
+    setCarouselProgress(0);
   };
 
   const scrollToBookingSection = () => {
@@ -94,20 +100,27 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    if (!postData || postData.length === 0) return;
     const interval = setInterval(() => {
-      setImageIndexes((prevIndexes) => {
-        const newIndexes = { ...prevIndexes };
-        postData.forEach((post) => {
-          const currentIdx = prevIndexes[post.post_id] || 0;
-          const total = post.images?.length || 0;
-          if (total > 0) {
-            newIndexes[post.post_id] = (currentIdx + 1) % total;
-          }
-        });
-        return newIndexes;
+      setCarouselProgress((prev) => {
+        const next = prev + TICK_MS;
+        if (next >= ROTATION_MS) {
+            setImageIndexes((prevIndexes) => {
+            const updated = { ...prevIndexes };
+            postData.forEach((post) => {
+              const total = post.images?.length || 0;
+              if (total > 1) {
+                const current = prevIndexes[post.post_id] || 0;
+                updated[post.post_id] = (current + 1) % total;
+              }
+            });
+            return updated;
+          });
+          return 0;
+        }
+        return next;
       });
-    }, 5000);
-
+    }, TICK_MS);
     return () => clearInterval(interval);
   }, [postData]);
 
@@ -151,11 +164,26 @@ export default function HomePage() {
             <h1>ประกาศ</h1>
           </div>
           {dataLoading && (
-            <div className="loading-data">
-              <div className="loading-data-spinner"></div>
+            <div className="news-skeleton-wrapper" aria-hidden="true">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="post-card-home skeleton-post">
+                  <div className="skeleton-header">
+                    <div className="skeleton-avatar" />
+                    <div className="skeleton-lines">
+                      <div className="skeleton-line w60" />
+                      <div className="skeleton-line w40" />
+                    </div>
+                  </div>
+                  <div className="skeleton-line w80" />
+                  <div className="skeleton-media" />
+                  <div className="skeleton-line w90" />
+                  <div className="skeleton-line w50" />
+                  <div className="skeleton-btn w30" />
+                </div>
+              ))}
             </div>
           )}
-          {postData.map((post) => (
+          {!dataLoading && postData.map((post) => (
             <div key={post.post_id} className="post-card-home">
               <div className="inline-name-field">
                 <img
@@ -181,13 +209,20 @@ export default function HomePage() {
                   <div className="ig-carousel-track-wrapper-home">
                     <div className="ig-carousel-track-home">
                       <img
-                        src={`${
-                          post.images[imageIndexes[post.post_id] || 0].image_url
-                        }`}
+                        key={`img-${post.post_id}-$${imageIndexes[post.post_id] || 0}`}
+                        src={`${post.images[imageIndexes[post.post_id] || 0].image_url}`}
                         alt="รูปโพสต์"
-                        className="ig-carousel-image-home"
+                        className="ig-carousel-image-home fade-swap"
                       />
                     </div>
+                    {post.images.length > 1 && (
+                      <div className="carousel-progress" aria-hidden="true">
+                        <div
+                          className="carousel-progress-bar"
+                          style={{ width: `${(carouselProgress / ROTATION_MS) * 100}%` }}
+                        />
+                      </div>
+                    )}
                     <button
                       className="arrow-btn left-home"
                       onClick={() =>

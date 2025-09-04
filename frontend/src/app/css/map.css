@@ -83,7 +83,6 @@
   margin-top: 2px;
 }
 
-/* New structured classes */
 .map-wrapper {
   width: 100%;
   display: flex;
@@ -157,7 +156,6 @@
   background: #f8fafc;
 }
 
-/* Dropdown refine */
 .search-dropdown {
   width: 100%;
   max-width: none;
@@ -176,7 +174,6 @@
   background: #e8f1ff;
 }
 
-/* Responsive breakpoints */
 @media (max-width: 768px) {
   .map-container {
     height: 340px;

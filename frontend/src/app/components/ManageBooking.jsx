@@ -213,6 +213,16 @@ export default function Mybooking() {
       return () => clearTimeout(timer);
     }
   }, [message]);
+  
+  useEffect(() => {
+    if (dataLoading) return;
+    requestAnimationFrame(() => {
+      const cards = document.querySelectorAll('.booking-list .booking-card');
+      let max = 0;
+      cards.forEach(c => { max = Math.max(max, c.offsetHeight); });
+      cards.forEach(c => { c.style.minHeight = max + 'px'; });
+    });
+  }, [currentBookings, dataLoading]);
 
   return (
     <>
@@ -253,11 +263,20 @@ export default function Mybooking() {
           </label>
         </div>
         {dataLoading ? (
-          <div className="load-container-order">
-            <div className="loading-data">
-              <div className="loading-data-spinner"></div>
-            </div>
-          </div>
+          <ul className="booking-list skeleton-list" aria-hidden="true">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <li key={i} className="booking-card skeleton-card">
+                <div className="skel-line w60" />
+                <div className="skel-line w40" />
+                <div className="skel-box" />
+                <div className="skel-line w80" />
+                <div className="skel-line w50" />
+                <div className="skel-line w70" />
+                <div className="skel-line w30" />
+                <div className="skel-btn w40" />
+              </li>
+            ))}
+          </ul>
         ) : currentBookings.length > 0 ? (
           <>
             <ul className="booking-list">

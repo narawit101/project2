@@ -10,6 +10,7 @@ import "dayjs/locale/th";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
+import LongdoMapPicker from "@/app/components/LongdoMapPicker";
 
 dayjs.extend(relativeTime);
 dayjs.locale("th");
@@ -385,7 +386,7 @@ export default function CheckFieldDetail() {
         setMessageType("error");
       }
     } catch (err) {
-      setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
@@ -417,7 +418,7 @@ export default function CheckFieldDetail() {
       }
     } catch (error) {
       console.error("Delete error:", error);
-      setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
       setMessageType("error");
     } finally {
       SetstartProcessLoad(false);
@@ -463,6 +464,15 @@ export default function CheckFieldDetail() {
       return `https://www.google.com/maps/search/?api=1&query=${cleaned}`;
     }
     return "#";
+  };
+
+  // เพิ่มฟังก์ชันสำหรับ Longdo Map
+  const getLongdoMapLink = (gpsLocation) => {
+    const coords = extractLatLngFromUrl(gpsLocation);
+    if (!coords) return null;
+
+    const [lat, lon] = coords.split(",");
+    return `https://map.longdo.com/search/${lat},${lon}`;
   };
 
   const formatPrice = (value) => new Intl.NumberFormat("th-TH").format(value);
@@ -953,17 +963,11 @@ export default function CheckFieldDetail() {
             </p>
 
             {fieldData?.gps_location ? (
-              <div style={{ marginTop: "10px" }}>
-                <iframe
-                  width="100%"
-                  height="250"
-                  style={{ border: 0, borderRadius: "8px" }}
-                  loading="lazy"
-                  allowFullScreen
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://www.google.com/maps/embed/v1/directions?key=${MAPS_EMBED_API}&destination=${coordinates}&origin=current+location`}
-                ></iframe>
-
+              <div style={{ marginTop: "20px" }}>
+                <LongdoMapPicker
+                  initialLocation={coordinates}
+                  readOnly={true}
+                />
                 <a
                   href={getGoogleMapsLink(fieldData.gps_location)}
                   target="_blank"
@@ -971,7 +975,7 @@ export default function CheckFieldDetail() {
                   style={{
                     display: "flex",
                     width: "160px",
-                    marginTop: "10px",
+                    marginTop: "30px",
                     marginLeft: "auto",
                     marginRight: "auto",
                     marginBottom: "30px",
@@ -986,7 +990,7 @@ export default function CheckFieldDetail() {
                     fontWeight: "bold",
                   }}
                 >
-                  เปิดใน Google Maps
+                  เปิดใน Google Map
                 </a>
               </div>
             ) : (

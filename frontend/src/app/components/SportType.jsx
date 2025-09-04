@@ -228,8 +228,16 @@ export default function HomePage() {
           </select>
         </div>
         {dataLoading ? (
-          <div className="loading-data">
-            <div className="loading-data-spinner"></div>
+          <div className="grid-home skeleton-field-grid" aria-hidden="true">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="card-home skeleton-field">
+                <div className="skeleton-field-img" />
+                <div className="skeleton-line w70" />
+                <div className="skeleton-line w50" />
+                <div className="skeleton-line w60" />
+                <div className="skeleton-line w40" />
+              </div>
+            ))}
           </div>
         ) : currentField.length > 0 ? (
           <div className="grid-home">
