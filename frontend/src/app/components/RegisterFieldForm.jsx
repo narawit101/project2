@@ -786,7 +786,7 @@ export default function RegisterFieldForm() {
                     display: "inline-flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    marginTop: 8,
+                    marginTop: 20,
                     padding: 8,
                     backgroundColor: "#beddf9ff",
                     borderRadius: 4,

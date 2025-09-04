@@ -172,8 +172,7 @@ export default function LongdoMapPicker({ onLocationSelect, initialLocation }) {
 
   // แก้ JSX ให้เรียก initMap เมื่อ script โหลด
   return (
-    <div>
-      {/* โหลด Longdo SDK */}
+    <div className="map-wrapper">
       <Script
         src={src}
         strategy="afterInteractive"
@@ -183,56 +182,49 @@ export default function LongdoMapPicker({ onLocationSelect, initialLocation }) {
           }
         }}
       />
-      {/* ค้นหา */}
-      <div style={{ marginBottom: 10, position: "relative" }}>
-        <input
-          type="text"
-          value={searchKeyword}
-          placeholder="ค้นหาสถานที่..."
-          style={{ padding: "6px", width: "250px" }}
-          onChange={handleInputChange}
-          onFocus={() => searchResults.length > 0 && setShowDropdown(true)}
-          onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
-        />
 
-        {/* ปุ่มหาตำแหน่งปัจจุบัน */}
+      <div className="map-search-bar">
+        <div className="map-search-group">
+          <input
+            type="text"
+            value={searchKeyword}
+            placeholder="ค้นหาสถานที่..."
+            className="map-search-input"
+            onChange={handleInputChange}
+            onFocus={() => searchResults.length > 0 && setShowDropdown(true)}
+            onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+            aria-label="ค้นหาสถานที่"
+          />
+          {showDropdown && searchResults.length > 0 && (
+            <div className="search-dropdown" role="listbox">
+              {searchResults.map((place, i) => (
+                <div
+                  key={i}
+                  className="dropdown-item"
+                  onClick={() => selectPlace(place)}
+                  role="option"
+                  tabIndex={0}
+                >
+                  <div className="place-name">{place.name}</div>
+                  {place.address && (
+                    <div className="place-address">{place.address}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
         <button
           onClick={getCurrentLocation}
           disabled={isGettingLocation}
-          style={{
-            marginLeft: 8,
-            padding: "6px 12px",
-            backgroundColor: "#4285f4",
-            color: "white",
-            border: "none",
-            borderRadius: 4,
-            cursor: isGettingLocation ? "not-allowed" : "pointer",
-          }}
+          className="map-current-btn"
+          aria-busy={isGettingLocation}
         >
           {isGettingLocation ? "กำลังหา..." : "ใช้ตำแหน่งของฉัน"}
         </button>
-
-        {/* Dropdown แสดงผลการค้นหา */}
-        {showDropdown && searchResults.length > 0 && (
-          <div className="search-dropdown">
-            {searchResults.map((place, i) => (
-              <div
-                key={i}
-                className="dropdown-item"
-                onClick={() => selectPlace(place)}
-              >
-                <div className="place-name">{place.name}</div>
-                {place.address && (
-                  <div className="place-address">{place.address}</div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
-      {/* แผนที่ */}
-      <div ref={mapRef} style={{ width: "100%", height: "400px" }} />
+      <div ref={mapRef} className="map-container" aria-label="Longdo map" />
     </div>
   );
 }
