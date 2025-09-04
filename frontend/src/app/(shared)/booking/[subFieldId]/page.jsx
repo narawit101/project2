@@ -559,7 +559,7 @@ export default function Booking() {
   const today = new Date();
 
   const maxDate = new Date();
-  maxDate.setDate(maxDate.getDate() + 30);
+  maxDate.setDate(maxDate.getDate() + 60);
 
   const tileClassName = ({ date, view }) => {
     const day = date.getDay();
@@ -622,9 +622,9 @@ export default function Booking() {
     setTimeout(() => {
       summaryRef.current?.scrollIntoView({
         behavior: "smooth",
-        block: "start",
+        block: "end",
       });
-    }, 100);
+    }, 120);
   };
 
   const handleSubmit = async () => {

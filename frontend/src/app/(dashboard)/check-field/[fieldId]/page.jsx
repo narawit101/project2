@@ -110,6 +110,35 @@ export default function CheckFieldDetail() {
   }, [user, isLoading, , router]);
 
   useEffect(() => {
+    const readNotifications = async () => {
+      if (!API_URL || !fieldId) return;
+      try {
+        const res = await fetch(`${API_URL}/notification/read-notification`, {
+          method: "PUT",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ key_id: Number(fieldId) }),
+        });
+
+        if (res.ok) {
+          console.log("Notifications marked as read for booking:", fieldId);
+          window.dispatchEvent(
+            new CustomEvent("notifications-marked-read", {
+              detail: { key_id: Number(fieldId) },
+            })
+          );
+        } else {
+          console.warn("Mark read failed:", await res.text());
+        }
+      } catch (error) {
+        console.error("Error marking notifications as read:", error);
+      }
+    };
+
+    readNotifications();
+  }, [API_URL, fieldId]);
+
+  useEffect(() => {
     const fetchFieldData = async () => {
       if (!fieldId) return;
       try {
@@ -627,6 +656,7 @@ export default function CheckFieldDetail() {
                 </button>
               )}
             </>
+            
           )}
         </div>
         {showConfirmModal && (

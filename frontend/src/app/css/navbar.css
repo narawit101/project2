@@ -1,5 +1,13 @@
 :root {
   --text-color: #03045e;
+  --primary-bg: #ffffff;
+  --secondary-bg: #f8f9fa;
+  --border-color: #e9ecef;
+  --shadow: 0 2px 1px rgba(0, 0, 0, 0.1);
+  --border-radius: 12px;
+  --spacing: 1.5rem;
+  --success-color: #28a745;
+  --danger-color: #dc3545;
 }
 .nav {
   z-index: 20;
@@ -350,7 +358,9 @@
   position: absolute;
   top: 120%;
   right: 0;
-  width: 280px;
+  width: 300px;
+  max-height: 650px;
+  overflow-y: auto;
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 12px;
@@ -359,6 +369,107 @@
   z-index: 110;
   transform-origin: top right;
   animation: dropDown 0.15s ease-out;
+}
+
+.notify-dropdown-header {
+  font-weight: 600;
+  font-size: 1.2rem;
+  padding: 6px 14px 10px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #111827;
+}
+
+.notification-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 540px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  position: relative;
+  padding: 10px 14px 12px 14px;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1.15rem;
+  border-bottom: 2px solid #d3d3d46b;
+  background: #fff;
+  transition: background 0.15s;
+  color: #1e293b;
+}
+.notification-item:hover {
+  background: #f1f5f9;
+}
+.notification-item.unread {
+  background: #f0f8ff;
+  font-weight: 500;
+  /* border-left: 3px solid #007bff; */
+  padding-left: 19px;
+}
+.notification-item.unread::before {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #3b82f6;
+  border-radius: 50%;
+  top: 8px;
+  left: 5px;
+}
+.notification-item:last-child {
+  border-bottom: none;
+}
+.notification-item.empty {
+  text-align: center;
+  color: #64748b;
+  font-weight: 400;
+}
+
+.notification-time {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.7rem;
+  color: #64748b;
+  text-align: right;
+}
+
+.notif-new_booking {
+  color: #0075c7;
+}
+
+.notif-approved {
+  color: #15803d;
+
+}
+.notif-rejected {
+  color: #b91c1c;
+}
+.notif-rejected-reson {
+  color: #b91c1c;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.notif-hint {
+  color: #008bdb;
+}
+
+.notify-view-all {
+  width: 100%;
+  border: 0;
+  background: #f8fafc;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #0369a1;
+  font-weight: 500;
+  border-top: 1px solid #e2e8f0;
+  border-radius: 0 0 12px 12px;
+  transition: background 0.15s, color 0.15s;
+}
+.notify-view-all:hover {
+  background: #e0f2fe;
+  color: #0c4a6e;
 }
 
 .notify-dropdown ul {

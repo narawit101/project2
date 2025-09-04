@@ -4,6 +4,7 @@ import "@/app/css/register-field-form.css";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
+import LongdoMapPicker from "./LongdoMapPicker";
 
 export default function RegisterFieldForm() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -35,6 +36,20 @@ export default function RegisterFieldForm() {
   ];
   const [facilities, setFacilities] = useState(DEFAULT_FACILITIES);
   const [selectedFacilities, setSelectedFacilities] = useState({});
+
+  const makeSafeKey = (name, fallback) => {
+    if (!name) return fallback || "fac" + Date.now();
+    let base = name
+      .toString()
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9\-]/g, (c) => c.charCodeAt(0).toString(16));
+    if (!base || base.replace(/-/g, "").length === 0) {
+      base = fallback || "fac" + Math.random().toString(36).slice(2, 8);
+    }
+    return base.slice(0, 40);
+  };
 
   const handleOtherFacilityConfirm = () => {
     const name = otherFacility.name.trim();
@@ -260,6 +275,7 @@ export default function RegisterFieldForm() {
         copy[facId] = {
           price: "",
           quantity: "",
+          description: "",
           imageFile: null,
           preview: null,
         };
@@ -321,6 +337,15 @@ export default function RegisterFieldForm() {
     setSelectedFacilities((prev) => ({
       ...prev,
       [facId]: { ...(prev[facId] || { price: "" }), quantity: value },
+    }));
+  };
+  const handleFacilityDescription = (facId, value) => {
+    setSelectedFacilities((prev) => ({
+      ...prev,
+      [facId]: {
+        ...(prev[facId] || { price: "", quantity: "" }),
+        description: value,
+      },
     }));
   };
 
@@ -578,11 +603,14 @@ export default function RegisterFieldForm() {
     }
 
     const facilitiesPayload = {};
-    selectedFacs.forEach((id) => {
-      const { price, quantity } = selectedFacilities[id];
+    selectedFacs.forEach((id, idx) => {
+      const { price, quantity, description } = selectedFacilities[id];
+      const safeKey = makeSafeKey(id, "fac" + idx);
       facilitiesPayload[id] = {
         price: String(price),
         quantity_total: String(quantity),
+        description: String(description),
+        _key: safeKey,
       };
     });
 
@@ -599,7 +627,8 @@ export default function RegisterFieldForm() {
     for (const id of selectedFacs) {
       const f = selectedFacilities[id];
       if (f.imageFile) {
-        formData.append(`facility_image_${id}`, f.imageFile);
+        const safeKey = facilitiesPayload[id]._key;
+        formData.append(`facility_image_${safeKey}`, f.imageFile);
       }
     }
 
@@ -730,33 +759,49 @@ export default function RegisterFieldForm() {
               onChange={handleFieldChange}
             />
           </div>
-          <div className="input-group-register-field">
-            <label>พิกัด GPS:(เช่น16.05xxxxx, 103.65xxxxx)</label>{" "}
-            <div className="exapmle-gps">
-              <a
-                href="https://support.google.com/maps/answer/18539?hl=th&co=GENIE.Platform%3DiOS&oco=0/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                วิธีเอาละติจูดและลองจิจูดใน Google Maps
-              </a>
-              <br />
-              <a
-                href="https://maps.google.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Google Maps
-              </a>
+          <div className="map-gps-container-register-field">
+            <div className="input-group-register-field">
+              <label>พิกัด GPS:</label>{" "}
+              <input
+                type="text"
+                maxLength={100}
+                name="gps_location"
+                placeholder="พิกัด"
+                value={fieldData.gps_location}
+                onChange={handleFieldChange}
+              />
+              {/* Map Component */}
+              <div style={{ marginTop: 20 }}>
+                <LongdoMapPicker
+                  onLocationSelect={(location) => {
+                    setFieldData({ ...fieldData, gps_location: location });
+                  }}
+                  initialLocation={fieldData.gps_location}
+                />
+              </div>
+              {fieldData.gps_location && (
+                <div
+                  style={{
+                    color: "#034078",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: 8,
+                    padding: 8,
+                    backgroundColor: "#beddf9ff",
+                    borderRadius: 4,
+                  }}
+                >
+                  <img
+                    width={20}
+                    height={20}
+                    src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1756972382/bxs--map_c0lmby.png"
+                    alt=""
+                  />
+                  {""} พิกัดที่เลือก: {fieldData.gps_location}
+                </div>
+              )}
             </div>
-            <input
-              type="text"
-              maxLength={100}
-              name="gps_location"
-              placeholder="พิกัด"
-              value={fieldData.gps_location}
-              onChange={handleFieldChange}
-            />
           </div>
           <div className="datetimecon">
             <div className="openn-duration">
@@ -1111,7 +1156,6 @@ export default function RegisterFieldForm() {
 
           {fieldData.imgPreview && (
             <div className="preview-container-regis-field">
-              <p>ตัวอย่างรูป:</p>
               <img src={fieldData.imgPreview} alt="Preview" />
             </div>
           )}
@@ -1134,6 +1178,18 @@ export default function RegisterFieldForm() {
               เลือกเอกสาร
             </label>
           </div>
+          {fieldData.documents && fieldData.documents.length > 0 && (
+            <div className="selected-documents">
+              <p className="selected-documents-title">
+                ไฟล์ที่เลือก ({fieldData.documents.length}):
+              </p>
+              <ul className="selected-documents-list">
+                {Array.from(fieldData.documents).map((file, idx) => (
+                  <li key={idx}>{file.name}</li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className="input-group-register-field">
             <div className="acc-type">
               <label htmlFor="account-type">เลือกประเภทบัญชี</label>
@@ -1296,7 +1352,7 @@ export default function RegisterFieldForm() {
                           inputMode="numeric"
                           pattern="[0-9]*"
                           maxLength={7}
-                          placeholder="กำหนดราคา (ถ้าฟรีใส่ 0 )"
+                          placeholder="กำหนดราคา"
                           value={selectedFacilities[key]?.price ?? ""}
                           onChange={(e) => {
                             let v = e.target.value
@@ -1327,21 +1383,33 @@ export default function RegisterFieldForm() {
                             handleFacilityQuantityChange(key, v);
                           }}
                         />
-                        <label className="file-label-register-field">
-                          เลืกรูป (ถ้ามี)
-                          <input
-                            style={{ display: "none" }}
-                            type="file"
-                            className="facility-file-input"
-                            accept="image/*"
-                            onChange={(e) =>
-                              handleFacilityImageChange(
-                                key,
-                                e.target.files?.[0]
-                              )
-                            }
-                          />
-                        </label>
+                        <textarea
+                          type="text"
+                          className="facility-description-input"
+                          maxLength={50}
+                          placeholder="รายละเอียดเพิ่มเติม (ถ้ามี)"
+                          value={selectedFacilities[key]?.description ?? ""}
+                          onChange={(e) => {
+                            handleFacilityDescription(key, e.target.value);
+                          }}
+                        ></textarea>
+                        <div className="faccility-image-section">
+                          <label className="file-label-register-field">
+                            เลืกรูป (ถ้ามี)
+                            <input
+                              style={{ display: "none" }}
+                              type="file"
+                              className="facility-file-input"
+                              accept="image/*"
+                              onChange={(e) =>
+                                handleFacilityImageChange(
+                                  key,
+                                  e.target.files?.[0]
+                                )
+                              }
+                            />
+                          </label>
+                        </div>
                       </div>
                       {selectedFacilities[key]?.preview && (
                         <div className="facility-image-preview">

@@ -358,7 +358,7 @@ export default function EditProfile() {
           </div>
           <div className="info-row">
             <p>
-              <strong>บทบาท:</strong>
+              <strong>ประเภทบัญชี:</strong>
               {currentUser?.role === "admin" ? (
                 <strong className="user-role-editprofile">ผู้ดูแลระบบ</strong>
               ) : currentUser?.role === "customer" ? (

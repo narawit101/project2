@@ -1,0 +1,87 @@
+/* ซ่อน crosshair ของ longdo (ถ้ามียัง) */
+.longdo-crosshair,
+.longdo-center,
+.longdo-overlay-crosshair,
+.ld-crosshair { display: none !important; }
+
+/* ปักหมุดแบบ custom (absolute center) */
+.map-pin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -100%); /* ให้ปลายปักชี้ตรงกลาง */
+  pointer-events: none; /* ให้คลิกทะลุไปที่แผนที่ได้ */
+  width: 28px;
+  height: 36px;
+  background: transparent;
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* รูปร่างหัวหมุด (แดง) */
+.map-pin::before{
+  content: "";
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50% 50% 50% 50%;
+  background: #e53935;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  border: 2px solid white;
+  transform: translateY(2px);
+}
+
+/* ปลายหมุด (สามเหลี่ยมเล็กๆ) */
+.map-pin::after{
+  content: "";
+  display:block;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 10px solid #e53935;
+  margin-top: -2px;
+}
+
+/* Dropdown styles */
+.search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 250px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dropdown-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.place-name {
+  font-weight: bold;
+  color: #1a73e8;
+}
+
+.place-address {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import NotFoundCard from "@/app/components/NotFoundCard";
 import "@/app/css/field-profile.css";
 import Post from "@/app/components/Post";
 import dayjs from "dayjs";
@@ -42,7 +43,9 @@ export default function CheckFieldDetail() {
   const [reviewData, setReviewData] = useState([]);
   const [selectedRating, setSelectedRating] = useState("ทั้งหมด");
   const [currentPage, setCurrentPage] = useState(1);
+  const [highlightMissing, setHighlightMissing] = useState(false);
   usePreventLeave(startProcessLoad);
+  const [notFoundFlag, setNotFoundFlag] = useState(false);
   const [showSubfieldModal, setShowSubfieldModal] = useState(false);
 
   useEffect(() => {
@@ -69,6 +72,37 @@ export default function CheckFieldDetail() {
   }, [isLoading, user, postData, highlightId, user]);
 
   useEffect(() => {
+    const readNotifications = async () => {
+      if (!API_URL || !fieldId) return;
+      try {
+        const keyToMark = highlightId ? Number(highlightId) : Number(fieldId);
+        if (!keyToMark) return;
+        const res = await fetch(`${API_URL}/notification/read-notification`, {
+          method: "PUT",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ key_id: keyToMark }),
+        });
+
+        if (res.ok) {
+          console.log("Notifications marked as read for key_id:", keyToMark);
+          window.dispatchEvent(
+            new CustomEvent("notifications-marked-read", {
+              detail: { key_id: keyToMark },
+            })
+          );
+        } else {
+          console.warn("Mark read failed:", await res.text());
+        }
+      } catch (error) {
+        console.error("Error marking notifications as read:", error);
+      }
+    };
+
+    readNotifications();
+  }, [API_URL, fieldId, highlightId]);
+
+  useEffect(() => {
     if (!fieldId) return;
 
     const fetchFieldData = async () => {
@@ -87,19 +121,19 @@ export default function CheckFieldDetail() {
 
         if (res.ok) {
           setFieldData(data.data);
+        } else if (res.status === 404) {
+          setNotFoundFlag(true);
+          return;
         } else {
           setMessage("ไม่สามารถดึงข้อมูลได้");
           setMessageType("error");
-          setTimeout(() => {
-            router.replace("/");
-          }, 2000);
           return;
         }
         const fieldName = sessionStorage.setItem(
           "field_name",
           data.data.field_name
         );
-        const fieldOwnerId = data.user_id;
+        const fieldOwnerId = data.data?.user_id;
         const currentUserId = user?.user_id;
         const currentUserRole = user?.role;
 
@@ -143,8 +177,15 @@ export default function CheckFieldDetail() {
         const data = await res.json();
         if (data.message === "ไม่มีโพส") {
           setPostData([]);
+          if (highlightId) setHighlightMissing(true);
         } else if (res.ok) {
           setPostData(data.data);
+          if (highlightId) {
+            const exists = data.data.some(
+              (p) => String(p.post_id) === String(highlightId)
+            );
+            if (!exists) setHighlightMissing(true);
+          }
           console.log(data.data);
         } else {
           console.error("Backend error:", data.error);
@@ -444,6 +485,19 @@ export default function CheckFieldDetail() {
       </div>
     );
 
+  if (!dataLoading && notFoundFlag) {
+    return (
+      <NotFoundCard
+        title="ไม่พบสนามนี้"
+        description={
+          "สนามที่คุณพยายามเข้าถึงอาจถูกลบ ปิดใช้งาน หรือไม่มีอยู่จริง\nหากมาจากการแจ้งเตือนเก่า สนามอาจถูกลบแล้ว"
+        }
+        primaryLabel="กลับหน้าแรก"
+        onPrimary={() => router.replace("/")}
+      />
+    );
+  }
+
   const handleFilterChange = (e) => {
     setSelectedRating(e.target.value);
   };
@@ -455,6 +509,13 @@ export default function CheckFieldDetail() {
 
   const handleCancel = () => {
     setShowSubfieldModal(false);
+  };
+
+  const clearHighlight = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("highlight");
+    router.replace(`?${params.toSwtring()}`, { scroll: false });
+    setHighlightMissing(false);
   };
 
   return (

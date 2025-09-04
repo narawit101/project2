@@ -2,8 +2,6 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const pool = require("../db");
-// const path = require("path");
-// const fs = require("fs");
 const authMiddleware = require("../middlewares/auth");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("../server");
@@ -71,7 +69,7 @@ async function deleteCloudinaryFile(fileUrl) {
 
     const resourceType = isRaw ? "raw" : "image";
     const lastDotIndex = fullPath.lastIndexOf(".");
-    const publicId = isRaw ? fullPath : fullPath.substring(0, lastDotIndex); 
+    const publicId = isRaw ? fullPath : fullPath.substring(0, lastDotIndex);
 
     const result = await cloudinary.uploader.destroy(publicId, {
       resource_type: resourceType,
@@ -113,7 +111,7 @@ router.post(
       await client.query("BEGIN");
 
       const newPost = await client.query(
-        `INSERT INTO posts (title, content, field_id) VALUES ($1, $2, $3) RETURNING post_id`, 
+        `INSERT INTO posts (title, content, field_id) VALUES ($1, $2, $3) RETURNING post_id`,
         [title, content, field_id]
       );
 
@@ -144,7 +142,37 @@ router.post(
          GROUP BY p.post_id`,
         [postId]
       );
-
+      try {
+        const allUser = await pool.query(
+          `SELECT user_id FROM users WHERE user_id != $1 `,
+          [user_id]
+        );
+        const io = req.app?.get("io") || req.io;
+        const fieldNameRes = await pool.query(
+          `SELECT field_name FROM field WHERE field_id = $1`,
+          [field_id]
+        );
+        const fieldName = fieldNameRes.rows[0]?.field_name || "มีโพสต์ใหม่";
+        for (const a of allUser.rows) {
+          await pool.query(
+            `INSERT INTO notifications (sender_id, recive_id, topic, messages, key_id, status)
+             VALUES ($1,$2,$3,$4,$5,'unread')`,
+            [user_id || null, a.user_id, "field_posted", fieldName, postId]
+          );
+          if (io) {
+            io.emit("new_notification", {
+              topic: "field_posted",
+              reciveId: a.user_id,
+              keyId: postId,
+            });
+          }
+        }
+      } catch (notifyErr) {
+        console.error(
+          "Create/send field_posted notification failed:",
+          notifyErr.message
+        );
+      }
       await client.query("COMMIT");
       res.status(201).json({
         message: "Post created successfully",
@@ -229,7 +257,6 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: "เกิดข้อผิดพลาดในการดึงข้อมูลโพส" });
   }
 });
-
 
 router.patch(
   "/update/:post_id",

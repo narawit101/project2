@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useRouter, useParams } from "next/navigation";
+import NotFoundCard from "@/app/components/NotFoundCard";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 
 import "@/app/css/order-detail.css";
@@ -107,6 +108,7 @@ export default function BookingDetail() {
   const [reviewData, setReviewData] = useState([]);
   const [qrCode, setQrCode] = useState(null);
   const [reasoning, setReasoning] = useState("");
+  const [notFoundFlag, setNotFoundFlag] = useState(false);
 
   usePreventLeave(startProcessLoad);
   useEffect(() => {
@@ -141,15 +143,53 @@ export default function BookingDetail() {
       if (res.ok) {
         setMybooking(data.data);
         console.log(" Booking Data:", data.data);
+      } else if (res.status === 404) {
+        setNotFoundFlag(true);
+      } else {
+        console.warn(
+          "Unexpected status while fetching booking:",
+          res.status,
+          data
+        );
       }
     } catch (error) {
       console.error("Fetch error:", error);
-      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
-      setMessageType("error");
+      // setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      // setMessageType("error");
     } finally {
       setDataLoading(false);
     }
   }, [booking_id, API_URL]);
+
+  useEffect(() => {
+    const readNotifications = async () => {
+      if (!API_URL || !booking_id) return;
+      try {
+        const res = await fetch(`${API_URL}/notification/read-notification`, {
+          method: "PUT",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ key_id: Number(booking_id) }),
+        });
+
+        if (res.ok) {
+          console.log("Notifications marked as read for booking:", booking_id);
+          // แจ้ง Navbar ให้รีโหลด (optional)
+          window.dispatchEvent(
+            new CustomEvent("notifications-marked-read", {
+              detail: { key_id: Number(booking_id) },
+            })
+          );
+        } else {
+          console.warn("Mark read failed:", await res.text());
+        }
+      } catch (error) {
+        console.error("Error marking notifications as read:", error);
+      }
+    };
+
+    readNotifications();
+  }, [API_URL, booking_id]);
 
   useEffect(() => {
     fetchData();
@@ -652,242 +692,343 @@ export default function BookingDetail() {
           <p>{message}</p>
         </div>
       )}
-      <div className="order-detail">
-        <h1 className="order-detail-title">รายละเอียดการจอง</h1>
-        {dataLoading ? (
-          <div className="loading-data">
-            <div className="loading-data-spinner"></div>
-          </div>
-        ) : Object.keys(booking).length > 0 ? (
-          <li className="booking-card-order-detail">
-            <p>
-              <strong>ชื่อผู้จอง:</strong> {booking.first_name}{" "}
-              {booking.last_name}
-            </p>
-            <p>
-              <strong>วันที่จอง:</strong> {formatDate(booking.start_date)}
-            </p>
-            <p>
-              <strong>สนาม:</strong> {booking.field_name}
-            </p>
-            <p>
-              <strong>สนามย่อย:</strong> {booking.sub_field_name}
-            </p>
-
-            <div className="hours-detail-box">
-              <div className="line-item-hours-detail">
-                <span>เวลาที่จอง:</span>
-                <span>
-                  {booking.start_time} - {booking.end_time} น.
-                </span>
-              </div>
-              <div className="line-item-hours-detail">
-                <span>รวมเวลา:</span>
-                <span>{calTotalHours(booking.total_hours)}</span>
-              </div>
-              <hr className="divider-hours-detail" />
-              <div className="line-item-hours-detail cancel-info">
-                <span>ยกเลิกได้ถึง:</span>
-                <span>
-                  {formatDate(booking.start_date)} เวลา:{" "}
-                  {getCancelDeadlineTime(
-                    booking.start_date,
-                    booking.start_time,
-                    booking.cancel_hours
-                  )}{" "}
-                  น.
-                </span>
-              </div>
+      {!dataLoading && notFoundFlag && (
+        <NotFoundCard
+          title="ไม่พบการจองนี้"
+          description={
+            "รายการจองที่คุณพยายามเข้าถึงอาจถูกลบ ยกเลิก หรือไม่มีอยู่จริง\nหากมาจากการแจ้งเตือนเก่า ข้อมูลอาจถูกลบแล้ว"
+          }
+          primaryLabel="ไปหน้าการจองของฉัน"
+          onPrimary={() => router.replace("/my-booking")}
+        />
+      )}
+      {notFoundFlag ? null : (
+        <div className="order-detail">
+          <h1 className="order-detail-title">รายละเอียดการจอง</h1>
+          {dataLoading ? (
+            <div className="loading-data">
+              <div className="loading-data-spinner"></div>
             </div>
-            <div className="booking-detail-box">
-              <div className="line-item-detail">
-                <span className="all-price-detail">กิจกรรม:</span>
-                <span className="all-price-detail">{booking.activity}</span>
-              </div>
-              <div className="line-item-detail">
-                <span className="all-price-detail">ราคาสนาม:</span>
-                <span className="all-price-detail">
-                  {new Intl.NumberFormat("th-TH").format(
-                    Number(booking.total_price || 0) -
-                      Number(booking.price_deposit || 0) -
-                      (booking.facilities?.reduce(
-                        (sum, f) => sum + Number(f.fac_price || 0),
-                        0
-                      ) || 0)
-                  )}{" "}
-                  บาท
-                </span>
-              </div>
+          ) : notFoundFlag ? null : Object.keys(booking).length > 0 ? (
+            <li className="booking-card-order-detail">
+              <p>
+                <strong>ชื่อผู้จอง:</strong> {booking.first_name}{" "}
+                {booking.last_name}
+              </p>
+              <p>
+                <strong>วันที่จอง:</strong> {formatDate(booking.start_date)}
+              </p>
+              <p>
+                <strong>สนาม:</strong> {booking.field_name}
+              </p>
+              <p>
+                <strong>สนามย่อย:</strong> {booking.sub_field_name}
+              </p>
 
-              {Array.isArray(booking.facilities) && (
-                <>
-                  <div className="line-item-detail">
-                    <span className="all-price-detail">
-                      สิ่งอำนวยความสะดวก:
-                    </span>
-                    <span></span>
-                  </div>
-                  <ul className="facility-list-detail">
-                    {booking.facilities.map((fac, index) => (
-                      <li key={index}>
-                        {fac.fac_name}{" "}
-                        <span>{formatPrice(fac.fac_price)} บาท</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="line-item-detail">
-                    <span className="all-price-detail">
-                      รวมราคาสิ่งอำนวยความสะดวก:
-                    </span>
-                    <span className="all-price-detail">
-                      {new Intl.NumberFormat("th-TH").format(
-                        booking.facilities.reduce(
+              <div className="hours-detail-box">
+                <div className="line-item-hours-detail">
+                  <span>เวลาที่จอง:</span>
+                  <span>
+                    {booking.start_time} - {booking.end_time} น.
+                  </span>
+                </div>
+                <div className="line-item-hours-detail">
+                  <span>รวมเวลา:</span>
+                  <span>{calTotalHours(booking.total_hours)}</span>
+                </div>
+                <hr className="divider-hours-detail" />
+                <div className="line-item-hours-detail cancel-info">
+                  <span>ยกเลิกได้ถึง:</span>
+                  <span>
+                    {formatDate(booking.start_date)} เวลา:{" "}
+                    {getCancelDeadlineTime(
+                      booking.start_date,
+                      booking.start_time,
+                      booking.cancel_hours
+                    )}{" "}
+                    น.
+                  </span>
+                </div>
+              </div>
+              <div className="booking-detail-box">
+                <div className="line-item-detail">
+                  <span className="all-price-detail">กิจกรรม:</span>
+                  <span className="all-price-detail">{booking.activity}</span>
+                </div>
+                <div className="line-item-detail">
+                  <span className="all-price-detail">ราคาสนาม:</span>
+                  <span className="all-price-detail">
+                    {new Intl.NumberFormat("th-TH").format(
+                      Number(booking.total_price || 0) -
+                        Number(booking.price_deposit || 0) -
+                        (booking.facilities?.reduce(
                           (sum, f) => sum + Number(f.fac_price || 0),
                           0
-                        )
-                      )}{" "}
-                      บาท
-                    </span>
-                  </div>
-                </>
-              )}
+                        ) || 0)
+                    )}{" "}
+                    บาท
+                  </span>
+                </div>
 
-              <hr className="divider-detail" />
+                {Array.isArray(booking.facilities) && (
+                  <>
+                    <div className="line-item-detail">
+                      <span className="all-price-detail">
+                        สิ่งอำนวยความสะดวก:
+                      </span>
+                      <span></span>
+                    </div>
+                    <ul className="facility-list-detail">
+                      {booking.facilities.map((fac, index) => (
+                        <li key={index}>
+                          {fac.fac_name}{" "}
+                          <span>{formatPrice(fac.fac_price)} บาท</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="line-item-detail">
+                      <span className="all-price-detail">
+                        รวมราคาสิ่งอำนวยความสะดวก:
+                      </span>
+                      <span className="all-price-detail">
+                        {new Intl.NumberFormat("th-TH").format(
+                          booking.facilities.reduce(
+                            (sum, f) => sum + Number(f.fac_price || 0),
+                            0
+                          )
+                        )}{" "}
+                        บาท
+                      </span>
+                    </div>
+                  </>
+                )}
 
-              <div className="line-item-detail highlight">
-                <span className="total-remianing-detail">
-                  รวมที่ต้องจ่าย: (ยอดคงเหลือ)
-                </span>
-                <span>+{booking.total_remaining} บาท</span>
+                <hr className="divider-detail" />
+
+                <div className="line-item-detail highlight">
+                  <span className="total-remianing-detail">
+                    รวมที่ต้องจ่าย: (ยอดคงเหลือ)
+                  </span>
+                  <span>+{booking.total_remaining} บาท</span>
+                </div>
+
+                <div className="line-item-detail plus">
+                  <span className="total-deposit-detail">มัดจำ:</span>
+                  <span>+{formatPrice(booking.price_deposit)} บาท</span>
+                </div>
+
+                <hr className="divider-detail" />
+
+                <div className="line-item-detail total">
+                  <span>ราคาสุทธิ:</span>
+                  <span>{formatPrice(booking.total_price)} บาท</span>
+                </div>
+
+                <div className="line-item-detail payment-method">
+                  <span>การชำระเงิน:</span>
+                  <span>{booking.pay_method}</span>
+                </div>
               </div>
 
-              <div className="line-item-detail plus">
-                <span className="total-deposit-detail">มัดจำ:</span>
-                <span>+{formatPrice(booking.price_deposit)} บาท</span>
-              </div>
+              {(() => {
+                const today = new Date();
+                const startDate = new Date(booking.start_date);
 
-              <hr className="divider-detail" />
+                today.setHours(0, 0, 0, 0);
+                startDate.setHours(0, 0, 0, 0);
 
-              <div className="line-item-detail total">
-                <span>ราคาสุทธิ:</span>
-                <span>{formatPrice(booking.total_price)} บาท</span>
-              </div>
+                if (startDate >= today) {
+                  if (
+                    booking?.status === "approved" ||
+                    booking?.status === "complete"
+                  ) {
+                    return (
+                      <div className="deposit-slip-container-order-detail">
+                        {booking.deposit_slip || booking.total_slip ? (
+                          <div>
+                            {booking.deposit_slip ? (
+                              <>
+                                <strong>สลิปมัดจำ</strong>
+                                <img
+                                  src={`${booking.deposit_slip}`}
+                                  alt="สลิปมัดจำ"
+                                  className="deposit-slip-order-detail"
+                                />
+                              </>
+                            ) : (
+                              <p>ไม่มีสลิปมัดจำ</p>
+                            )}
 
-              <div className="line-item-detail payment-method">
-                <span>การชำระเงิน:</span>
-                <span>{booking.pay_method}</span>
-              </div>
-            </div>
-
-            {(() => {
-              const today = new Date();
-              const startDate = new Date(booking.start_date);
-
-              today.setHours(0, 0, 0, 0);
-              startDate.setHours(0, 0, 0, 0);
-
-              if (startDate >= today) {
-                if (
-                  booking?.status === "approved" ||
-                  booking?.status === "complete"
-                ) {
-                  return (
-                    <div className="deposit-slip-container-order-detail">
-                      {booking.deposit_slip || booking.total_slip ? (
-                        <div>
-                          {booking.deposit_slip ? (
-                            <>
-                              <strong>สลิปมัดจำ</strong>
-                              <img
-                                src={`${booking.deposit_slip}`}
-                                alt="สลิปมัดจำ"
-                                className="deposit-slip-order-detail"
-                              />
-                            </>
-                          ) : (
-                            <p>ไม่มีสลิปมัดจำ</p>
-                          )}
-
-                          {booking.total_slip ? (
-                            <div>
-                              <strong>สลิปยอดที่โอนส่วนที่เหลือ</strong>
-                              <img
-                                src={`${booking.total_slip}`}
-                                alt="สลิปยอดคคงเหลือ"
-                                className="deposit-slip-order-detail"
-                              />
-                            </div>
-                          ) : (
-                            booking?.user_id === user?.user_id &&
-                            booking?.pay_method != "เงินสด" && (
+                            {booking.total_slip ? (
                               <div>
-                                <div className="create-qr-slip">
-                                  {booking?.name_bank === "พร้อมเพย์" && (
-                                    <button
-                                      style={{
-                                        cursor: qrCode
-                                          ? "not-allowed"
-                                          : "pointer",
-                                      }}
-                                      disabled={qrCode}
-                                      onClick={() =>
-                                        handleGenQR(
-                                          booking_id,
-                                          booking.total_remaining
-                                        )
-                                      }
-                                    >
-                                      สร้าง QR Code สำหรัับยอดคงเหลือ
-                                    </button>
-                                  )}
-                                  {qrCode && (
-                                    <div className="qr-code-container">
-                                      <span>
-                                        Qr Code ยอดคงเหลือ จำนวน {""}
-                                        {formatPrice(
-                                          booking.total_remaining
-                                        )}{" "}
-                                        บาท
-                                      </span>
+                                <strong>สลิปยอดที่โอนส่วนที่เหลือ</strong>
+                                <img
+                                  src={`${booking.total_slip}`}
+                                  alt="สลิปยอดคคงเหลือ"
+                                  className="deposit-slip-order-detail"
+                                />
+                              </div>
+                            ) : (
+                              booking?.user_id === user?.user_id &&
+                              booking?.pay_method != "เงินสด" && (
+                                <div>
+                                  <div className="create-qr-slip">
+                                    {booking?.name_bank === "พร้อมเพย์" && (
+                                      <button
+                                        style={{
+                                          cursor: qrCode
+                                            ? "not-allowed"
+                                            : "pointer",
+                                        }}
+                                        disabled={qrCode}
+                                        onClick={() =>
+                                          handleGenQR(
+                                            booking_id,
+                                            booking.total_remaining
+                                          )
+                                        }
+                                      >
+                                        สร้าง QR Code สำหรัับยอดคงเหลือ
+                                      </button>
+                                    )}
+                                    {qrCode && (
+                                      <div className="qr-code-container">
+                                        <span>
+                                          Qr Code ยอดคงเหลือ จำนวน {""}
+                                          {formatPrice(
+                                            booking.total_remaining
+                                          )}{" "}
+                                          บาท
+                                        </span>
+                                        <img
+                                          src={qrCode}
+                                          alt="QR Code"
+                                          className="qr-code-detail"
+                                        />
+                                      </div>
+                                    )}
+                                  </div>
+                                  <label className="file-label-order-detail">
+                                    <input
+                                      type="file"
+                                      onChange={handleTotalSlip}
+                                      accept="image/*"
+                                      className="file-input-hidden-order-detail"
+                                    />
+                                    อัปโหลดสลิปยอดคงเหลือ
+                                  </label>
+                                  <p>
+                                    <strong>ชื่อเจ้าของบัญชี</strong>{" "}
+                                    {booking.account_holder}
+                                  </p>
+                                  <p>
+                                    <strong>ชื่อธนาคาร</strong>{" "}
+                                    {booking.name_bank}
+                                  </p>
+                                  <p>
+                                    <strong>เลขบัญชี</strong>{" "}
+                                    {booking.number_bank}
+                                  </p>
+                                  {imgPreviewTotal && (
+                                    <div className="preview-container-order-detail">
                                       <img
-                                        src={qrCode}
-                                        alt="QR Code"
-                                        className="qr-code-detail"
+                                        src={imgPreviewTotal}
+                                        alt="preview"
+                                        className="deposit-slip-order-detail"
                                       />
                                     </div>
                                   )}
-                                </div>
-                                <label className="file-label-order-detail">
-                                  <input
-                                    type="file"
-                                    onChange={handleTotalSlip}
-                                    accept="image/*"
-                                    className="file-input-hidden-order-detail"
-                                  />
-                                  อัปโหลดสลิปยอดคงเหลือ
-                                </label>
-                                <p>
-                                  <strong>ชื่อเจ้าของบัญชี</strong>{" "}
-                                  {booking.account_holder}
-                                </p>
-                                <p>
-                                  <strong>ชื่อธนาคาร</strong>{" "}
-                                  {booking.name_bank}
-                                </p>
-                                <p>
-                                  <strong>เลขบัญชี</strong>{" "}
-                                  {booking.number_bank}
-                                </p>
-                                {imgPreviewTotal && (
-                                  <div className="preview-container-order-detail">
-                                    <img
-                                      src={imgPreviewTotal}
-                                      alt="preview"
-                                      className="deposit-slip-order-detail"
-                                    />
+                                  <div className="confirm-upload-slip">
+                                    <button
+                                      disabled={startProcessLoad}
+                                      style={{
+                                        cursor: startProcessLoad
+                                          ? "not-allowed"
+                                          : "pointer",
+                                      }}
+                                      onClick={uploadTotalSlip}
+                                    >
+                                      อัพโหลด
+                                    </button>
                                   </div>
-                                )}
-                                <div className="confirm-upload-slip">
+                                </div>
+                              )
+                            )}
+                          </div>
+                        ) : booking?.price_deposit !== 0 ? (
+                          booking?.user_id === user?.user_id ? (
+                            <div className="create-qr-slip">
+                              {booking?.name_bank === "พร้อมเพย์" && (
+                                <button
+                                  style={{
+                                    cursor: qrCode ? "not-allowed" : "pointer",
+                                  }}
+                                  disabled={qrCode}
+                                  onClick={() =>
+                                    handleGenQR(
+                                      booking_id,
+                                      booking.price_deposit
+                                    )
+                                  }
+                                >
+                                  สร้าง QR code สำหรับค่ามัดจำ
+                                </button>
+                              )}
+                              {qrCode && (
+                                <div className="qr-code-container">
+                                  <span>
+                                    Qr Code ค่ามัดจำ จำนวน {""}
+                                    {formatPrice(booking.price_deposit)} บาท
+                                  </span>
+                                  <img
+                                    src={qrCode}
+                                    alt="QR Code"
+                                    className="qr-code-detail"
+                                  />
+                                </div>
+                              )}
+                              {imgPreviewTotal && (
+                                <div className="preview-container-order-detail">
+                                  <img
+                                    src={imgPreviewTotal}
+                                    alt="preview"
+                                    className="deposit-slip-order-detail"
+                                  />
+                                </div>
+                              )}
+                              <p className="no-slip-message">
+                                ยังไม่ได้อัปโหลดสลิปมัดจำ
+                              </p>
+                              <label className="file-label-order-detail">
+                                <input
+                                  type="file"
+                                  onChange={handleDepositSlip}
+                                  accept="image/*"
+                                  className="file-input-hidden-order-detail"
+                                />
+                                อัปโหลดสลิปมัดจำ
+                              </label>
+                              {imgPreviewDeposit && (
+                                <div className="preview-container-order-detail">
+                                  <img
+                                    src={imgPreviewDeposit}
+                                    alt="preview"
+                                    className="deposit-slip-order-detail"
+                                  />
+                                </div>
+                              )}
+                              <p>
+                                <strong>ชื่อเจ้าของบัญชี</strong>{" "}
+                                {booking.account_holder}
+                              </p>
+                              <p>
+                                <strong>ชื่อธนาคาร</strong> {booking.name_bank}
+                              </p>
+                              <p>
+                                <strong>เลขบัญชี</strong> {booking.number_bank}
+                              </p>
+                              {canUploadslip && (
+                                <div>
                                   <button
                                     disabled={startProcessLoad}
                                     style={{
@@ -895,44 +1036,31 @@ export default function BookingDetail() {
                                         ? "not-allowed"
                                         : "pointer",
                                     }}
-                                    onClick={uploadTotalSlip}
+                                    onClick={uploadSlip}
                                   >
                                     อัพโหลด
                                   </button>
                                 </div>
-                              </div>
-                            )
-                          )}
-                        </div>
-                      ) : booking?.price_deposit !== 0 ? (
-                        booking?.user_id === user?.user_id ? (
-                          <div className="create-qr-slip">
-                            {booking?.name_bank === "พร้อมเพย์" && (
-                              <button
-                                style={{
-                                  cursor: qrCode ? "not-allowed" : "pointer",
-                                }}
-                                disabled={qrCode}
-                                onClick={() =>
-                                  handleGenQR(booking_id, booking.price_deposit)
-                                }
-                              >
-                                สร้าง QR code สำหรับค่ามัดจำ
-                              </button>
-                            )}
-                            {qrCode && (
-                              <div className="qr-code-container">
-                                <span>
-                                  Qr Code ค่ามัดจำ จำนวน {""}
-                                  {formatPrice(booking.price_deposit)} บาท
-                                </span>
-                                <img
-                                  src={qrCode}
-                                  alt="QR Code"
-                                  className="qr-code-detail"
-                                />
-                              </div>
-                            )}
+                              )}
+                            </div>
+                          ) : (
+                            <p className="no-slip-message">
+                              ยังไม่ได้อัปโหลดสลิป
+                            </p>
+                          )
+                        ) : booking.pay_method === "โอนจ่าย" &&
+                          booking.total_price > 0 &&
+                          booking.user_id === user?.user_id ? (
+                          <div>
+                            <label className="file-label-order-detail">
+                              <input
+                                type="file"
+                                onChange={handleTotalSlip}
+                                accept="image/*"
+                                className="file-input-hidden-order-detail"
+                              />
+                              อัปโหลดสลิปยอดคงเหลือ
+                            </label>
                             {imgPreviewTotal && (
                               <div className="preview-container-order-detail">
                                 <img
@@ -942,39 +1070,8 @@ export default function BookingDetail() {
                                 />
                               </div>
                             )}
-                            <p className="no-slip-message">
-                              ยังไม่ได้อัปโหลดสลิปมัดจำ
-                            </p>
-                            <label className="file-label-order-detail">
-                              <input
-                                type="file"
-                                onChange={handleDepositSlip}
-                                accept="image/*"
-                                className="file-input-hidden-order-detail"
-                              />
-                              อัปโหลดสลิปมัดจำ
-                            </label>
-                            {imgPreviewDeposit && (
-                              <div className="preview-container-order-detail">
-                                <img
-                                  src={imgPreviewDeposit}
-                                  alt="preview"
-                                  className="deposit-slip-order-detail"
-                                />
-                              </div>
-                            )}
-                            <p>
-                              <strong>ชื่อเจ้าของบัญชี</strong>{" "}
-                              {booking.account_holder}
-                            </p>
-                            <p>
-                              <strong>ชื่อธนาคาร</strong> {booking.name_bank}
-                            </p>
-                            <p>
-                              <strong>เลขบัญชี</strong> {booking.number_bank}
-                            </p>
                             {canUploadslip && (
-                              <div>
+                              <div className="confirm-upload-slip">
                                 <button
                                   disabled={startProcessLoad}
                                   style={{
@@ -982,7 +1079,7 @@ export default function BookingDetail() {
                                       ? "not-allowed"
                                       : "pointer",
                                   }}
-                                  onClick={uploadSlip}
+                                  onClick={uploadTotalSlip}
                                 >
                                   อัพโหลด
                                 </button>
@@ -990,266 +1087,226 @@ export default function BookingDetail() {
                             )}
                           </div>
                         ) : (
-                          <p className="no-slip-message">
-                            ยังไม่ได้อัปโหลดสลิป
-                          </p>
-                        )
-                      ) : booking.pay_method === "โอนจ่าย" &&
-                        booking.total_price > 0 &&
-                        booking.user_id === user?.user_id ? (
-                        <div>
-                          <label className="file-label-order-detail">
-                            <input
-                              type="file"
-                              onChange={handleTotalSlip}
-                              accept="image/*"
-                              className="file-input-hidden-order-detail"
-                            />
-                            อัปโหลดสลิปยอดคงเหลือ
-                          </label>
-                          {imgPreviewTotal && (
-                            <div className="preview-container-order-detail">
-                              <img
-                                src={imgPreviewTotal}
-                                alt="preview"
-                                className="deposit-slip-order-detail"
-                              />
-                            </div>
-                          )}
-                          {canUploadslip && (
-                            <div className="confirm-upload-slip">
-                              <button
-                                disabled={startProcessLoad}
-                                style={{
-                                  cursor: startProcessLoad
-                                    ? "not-allowed"
-                                    : "pointer",
-                                }}
-                                onClick={uploadTotalSlip}
-                              >
-                                อัพโหลด
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <p className="no-slip-message">ไม่ต้องจ่ายค่ามัดจำ</p>
-                      )}
+                          <p className="no-slip-message">ไม่ต้องจ่ายค่ามัดจำ</p>
+                        )}
+                      </div>
+                    );
+                  }
+                }
+
+                return null;
+              })()}
+
+              <p>
+                <strong>สถานะการจอง:</strong>{" "}
+                <span className={`status-text-order-detail ${booking.status}`}>
+                  {booking.status === "pending"
+                    ? "รอตรวจสอบ"
+                    : booking.status === "approved"
+                    ? "อนุมัติแล้ว"
+                    : booking.status === "rejected"
+                    ? "ไม่อนุมัติ"
+                    : booking.status === "complete"
+                    ? "การจองสำเร็จ"
+                    : "ไม่ทราบสถานะ"}
+                </span>
+              </p>
+              {booking.status === "complete" &&
+                booking.user_id === user?.user_id &&
+                !reviewData && (
+                  <button
+                    className="btn-review-detail"
+                    onClick={handleOpenReviewModal}
+                  >
+                    รีวิวการจองสนาม
+                  </button>
+                )}
+
+              {showReviewModal && (
+                <div className="review-inline-wrapper-detail">
+                  <h3 className="review-title-detail">ให้คะแนนการจองสนาม</h3>
+
+                  <div className="stars-detail">
+                    {[1, 2, 3, 4, 5].map((num) => (
+                      <span
+                        key={num}
+                        onClick={() => setRating(num)}
+                        className={`star-detail ${
+                          num <= rating ? "active" : ""
+                        }`}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+
+                  <textarea
+                    maxLength={255}
+                    rows={4}
+                    placeholder="แสดงความคิดเห็น..."
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    className="review-textarea-detail"
+                  />
+
+                  <div className="review-buttons-detail">
+                    <button
+                      style={{
+                        cursor: startProcessLoad ? "not-allowed" : "pointer",
+                      }}
+                      disabled={startProcessLoad}
+                      onClick={handleSubmitReview}
+                      className="review-submit-btn"
+                    >
+                      โพสต์รีวิว
+                    </button>
+                    <button
+                      style={{
+                        cursor: startProcessLoad ? "not-allowed" : "pointer",
+                      }}
+                      disabled={startProcessLoad}
+                      onClick={handleCloseReviewModal}
+                      className="review-cancel-btn"
+                    >
+                      ยกเลิก
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {reviewData && (
+                <div className="review-result-detail">
+                  <strong className="score-detail">
+                    คะแนนการจอง:
+                    {[1, 2, 3, 4, 5].map((num) => (
+                      <span
+                        key={num}
+                        className={`star-detail ${
+                          num <= reviewData.rating ? "active" : ""
+                        }`}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </strong>
+                  <strong className="comment-detail">
+                    ความคิดเห็น:
+                    <p> {reviewData.comment}</p>
+                  </strong>
+                </div>
+              )}
+
+              {startProcessLoad && (
+                <div className="loading-overlay">
+                  <div className="loading-spinner"></div>
+                </div>
+              )}
+              {(() => {
+                const today = new Date();
+                const startDate = new Date(booking.start_date);
+
+                today.setHours(0, 0, 0, 0);
+                startDate.setHours(0, 0, 0, 0);
+
+                if (
+                  startDate >= today &&
+                  user?.user_id === booking.field_user_id
+                ) {
+                  return (
+                    <div className="status-buttons-order-detail">
+                      {booking?.status !== "approved" &&
+                        booking?.status !== "complete" && (
+                          <button
+                            className="approve-btn-order-detail"
+                            style={{
+                              cursor: startProcessLoad
+                                ? "not-allowed"
+                                : "pointer",
+                            }}
+                            disabled={startProcessLoad}
+                            onClick={() => openConfirmModal("approved")}
+                          >
+                            อนุมัติ
+                          </button>
+                        )}
+                      {booking?.status !== "rejected" &&
+                        booking?.status !== "complete" && (
+                          <button
+                            className="reject-btn-order-detail"
+                            style={{
+                              cursor: startProcessLoad
+                                ? "not-allowed"
+                                : "pointer",
+                            }}
+                            disabled={startProcessLoad}
+                            onClick={() => openConfirmModal("rejected")}
+                          >
+                            ไม่อนุมัติ
+                          </button>
+                        )}
                     </div>
                   );
                 }
-              }
 
-              return null;
-            })()}
-
-            <p>
-              <strong>สถานะการจอง:</strong>{" "}
-              <span className={`status-text-order-detail ${booking.status}`}>
-                {booking.status === "pending"
-                  ? "รอตรวจสอบ"
-                  : booking.status === "approved"
-                  ? "อนุมัติแล้ว"
-                  : booking.status === "rejected"
-                  ? "ไม่อนุมัติ"
-                  : booking.status === "complete"
-                  ? "การจองสำเร็จ"
-                  : "ไม่ทราบสถานะ"}
-              </span>
-            </p>
-            {booking.status === "complete" &&
-              booking.user_id === user?.user_id &&
-              !reviewData && (
-                <button
-                  className="btn-review-detail"
-                  onClick={handleOpenReviewModal}
-                >
-                  รีวิวการจองสนาม
-                </button>
-              )}
-
-            {showReviewModal && (
-              <div className="review-inline-wrapper-detail">
-                <h3 className="review-title-detail">ให้คะแนนการจองสนาม</h3>
-
-                <div className="stars-detail">
-                  {[1, 2, 3, 4, 5].map((num) => (
-                    <span
-                      key={num}
-                      onClick={() => setRating(num)}
-                      className={`star-detail ${num <= rating ? "active" : ""}`}
-                    >
-                      ★
-                    </span>
-                  ))}
-                </div>
-
-                <textarea
-                  maxLength={255}
-                  rows={4}
-                  placeholder="แสดงความคิดเห็น..."
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  className="review-textarea-detail"
-                />
-
-                <div className="review-buttons-detail">
+                return null;
+              })()}
+              {booking?.status === "approved" &&
+                user?.user_id === booking.field_user_id && (
                   <button
+                    className="complete-btn-order-detail"
                     style={{
                       cursor: startProcessLoad ? "not-allowed" : "pointer",
                     }}
                     disabled={startProcessLoad}
-                    onClick={handleSubmitReview}
-                    className="review-submit-btn"
+                    onClick={() => openConfirmModal("complete")}
                   >
-                    โพสต์รีวิว
+                    การจองสำเร็จ
                   </button>
-                  <button
-                    style={{
-                      cursor: startProcessLoad ? "not-allowed" : "pointer",
-                    }}
-                    disabled={startProcessLoad}
-                    onClick={handleCloseReviewModal}
-                    className="review-cancel-btn"
-                  >
-                    ยกเลิก
-                  </button>
-                </div>
-              </div>
-            )}
+                )}
+              {(() => {
+                const today = new Date();
+                const startDate = new Date(booking.start_date);
+                today.setHours(0, 0, 0, 0);
+                startDate.setHours(0, 0, 0, 0);
 
-            {reviewData && (
-              <div className="review-result-detail">
-                <strong className="score-detail">
-                  คะแนนการจอง:
-                  {[1, 2, 3, 4, 5].map((num) => (
-                    <span
-                      key={num}
-                      className={`star-detail ${
-                        num <= reviewData.rating ? "active" : ""
-                      }`}
-                    >
-                      ★
-                    </span>
-                  ))}
-                </strong>
-                <strong className="comment-detail">
-                  ความคิดเห็น:
-                  <p> {reviewData.comment}</p>
-                </strong>
-              </div>
-            )}
-
-            {startProcessLoad && (
-              <div className="loading-overlay">
-                <div className="loading-spinner"></div>
-              </div>
-            )}
-            {(() => {
-              const today = new Date();
-              const startDate = new Date(booking.start_date);
-
-              today.setHours(0, 0, 0, 0);
-              startDate.setHours(0, 0, 0, 0);
-
-              if (
-                startDate >= today &&
-                user?.user_id === booking.field_user_id
-              ) {
-                return (
-                  <div className="status-buttons-order-detail">
-                    {booking?.status !== "approved" &&
-                      booking?.status !== "complete" && (
-                        <button
-                          className="approve-btn-order-detail"
-                          style={{
-                            cursor: startProcessLoad
-                              ? "not-allowed"
-                              : "pointer",
-                          }}
-                          disabled={startProcessLoad}
-                          onClick={() => openConfirmModal("approved")}
-                        >
-                          อนุมัติ
-                        </button>
-                      )}
-                    {booking?.status !== "rejected" &&
-                      booking?.status !== "complete" && (
-                        <button
-                          className="reject-btn-order-detail"
-                          style={{
-                            cursor: startProcessLoad
-                              ? "not-allowed"
-                              : "pointer",
-                          }}
-                          disabled={startProcessLoad}
-                          onClick={() => openConfirmModal("rejected")}
-                        >
-                          ไม่อนุมัติ
-                        </button>
-                      )}
-                  </div>
-                );
-              }
-
-              return null;
-            })()}
-            {booking?.status === "approved" &&
-              user?.user_id === booking.field_user_id && (
+                return startDate >= today;
+              })() && (
                 <button
-                  className="complete-btn-order-detail"
+                  className="cancel-booking-btn-order-detail"
                   style={{
                     cursor: startProcessLoad ? "not-allowed" : "pointer",
                   }}
                   disabled={startProcessLoad}
-                  onClick={() => openConfirmModal("complete")}
+                  onClick={() => setShowCancelModal(true)}
                 >
-                  การจองสำเร็จ
+                  ยกเลิกการจอง
                 </button>
               )}
-            {(() => {
-              const today = new Date();
-              const startDate = new Date(booking.start_date);
-              today.setHours(0, 0, 0, 0);
-              startDate.setHours(0, 0, 0, 0);
 
-              return startDate >= today;
-            })() && (
-              <button
-                className="cancel-booking-btn-order-detail"
-                style={{
-                  cursor: startProcessLoad ? "not-allowed" : "pointer",
-                }}
-                disabled={startProcessLoad}
-                onClick={() => setShowCancelModal(true)}
-              >
-                ยกเลิกการจอง
-              </button>
-            )}
-
-            {showConfirmModal && (
-              <StatusChangeModal
-                newStatus={newStatus}
-                onConfirm={() => {
-                  updateStatus(newStatus, booking.booking_id, reasoning);
-                  closeConfirmModal();
-                }}
-                reasoning={reasoning}
-                setReasoning={setReasoning}
-                onClose={closeConfirmModal}
-              />
-            )}
-            {showCancelModal && (
-              <CancelBookingModal
-                onConfirm={confirmCancelBooking}
-                onClose={() => setShowCancelModal(false)}
-              />
-            )}
-          </li>
-        ) : (
-          <p className="order-detail-empty">ไม่พบรายละเอียด</p>
-        )}
-      </div>
+              {showConfirmModal && (
+                <StatusChangeModal
+                  newStatus={newStatus}
+                  onConfirm={() => {
+                    updateStatus(newStatus, booking.booking_id, reasoning);
+                    closeConfirmModal();
+                  }}
+                  reasoning={reasoning}
+                  setReasoning={setReasoning}
+                  onClose={closeConfirmModal}
+                />
+              )}
+              {showCancelModal && (
+                <CancelBookingModal
+                  onConfirm={confirmCancelBooking}
+                  onClose={() => setShowCancelModal(false)}
+                />
+              )}
+            </li>
+          ) : (
+            <p className="order-detail-empty">ไม่พบรายละเอียด</p>
+          )}
+        </div>
+      )}
     </>
   );
 }

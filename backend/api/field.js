@@ -254,20 +254,20 @@ router.post("/register", upload.any(), authMiddleware, async (req, res) => {
     for (const facId of selectedFacIds) {
       const fac = selectedFacilities[facId] || {};
       const facPrice = parseFloat(fac.price) || 0;
-      const quantity_total =
-        parseInt(fac.quantity_total ?? fac.quantity ?? 0, 10) || 0;
-      const description = fac.description
-        ? fac.description.toString().slice(0, 300)
-        : null;
+      const quantity_total = parseInt(fac.quantity_total ?? fac.quantity ?? 0, 10) || 0;
+      const description = fac.description ? fac.description.toString().slice(0, 300) : null;
+      const safeKey = fac._key;
 
-      const getFileUrl = (file) =>
-        file?.path || file?.secure_url || file?.url || null;
-
+      const getFileUrl = (file) => file?.path || file?.secure_url || file?.url || null;
       const facImgFile = filesArr.find(
-        (f) => f.fieldname === `facility_image_${facId}`
+        (f) =>
+          (safeKey && f.fieldname === `facility_image_${safeKey}`) ||
+          f.fieldname === `facility_image_${facId}`
       );
+      if (!facImgFile) {
+        console.warn("[facility image missing] facId=", facId, "safeKey=", safeKey, "available=", filesArr.map(x=>x.fieldname));
+      }
       const image_path = getFileUrl(facImgFile);
-
       await client.query(
         `INSERT INTO field_facilities (field_id, fac_name, fac_price, quantity_total, description, image_path)
            VALUES ($1,$2,$3,$4,$5,$6)`,
@@ -355,6 +355,37 @@ router.post("/register", upload.any(), authMiddleware, async (req, res) => {
       });
 
       console.log("อีเมลส่งสำเร็จ");
+      try {
+        const admins = await pool.query(
+          `SELECT user_id FROM users WHERE role = 'admin'`
+        );
+        const io = req.app?.get("io") || req.io;
+        for (const a of admins.rows) {
+          await pool.query(
+            `INSERT INTO notifications (sender_id, recive_id, topic, messages, key_id, status)
+             VALUES ($1,$2,$3,$4,$5,'unread')`,
+            [
+              user_id || null,
+              a.user_id,
+              "field_registered",
+              "มีการลงทะเบียนสนามใหม่",
+              field_id,
+            ]
+          );
+          if (io) {
+            io.emit("new_notification", {
+              topic: "field_registered",
+              reciveId: a.user_id,
+              keyId: field_id,
+            });
+          }
+        }
+      } catch (notifyErr) {
+        console.error(
+          "Create/send field_registered notification failed:",
+          notifyErr.message
+        );
+      }
     } catch (emailError) {
       console.error("ส่งอีเมลไม่สำเร็จ:", emailError);
     }
@@ -498,6 +529,37 @@ router.put("/appeal/:field_id", authMiddleware, async (req, res) => {
 </div>
       `,
       });
+      try {
+        const admins = await pool.query(
+          `SELECT user_id FROM users WHERE role = 'admin'`
+        );
+        const io = req.app?.get("io") || req.io;
+        for (const a of admins.rows) {
+          await pool.query(
+            `INSERT INTO notifications (sender_id, recive_id, topic, messages, key_id, status)
+             VALUES ($1,$2,$3,$4,$5,'unread')`,
+            [
+              user_id || null,
+              a.user_id,
+              "field_appeal",
+              "ได้ส่งคำขอลงทะเบียนสนามกีฬาอีกครั้ง",
+              field_id,
+            ]
+          );
+          if (io) {
+            io.emit("new_notification", {
+              topic: "field_appeal",
+              reciveId: a.user_id,
+              keyId: field_id,
+            });
+          }
+        }
+      } catch (notifyErr) {
+        console.error(
+          "Create/send field_appeal notification failed:",
+          notifyErr.message
+        );
+      }
 
       console.log("Email sent successfully:", data);
 
@@ -677,27 +739,55 @@ router.put("/update-status/:field_id", authMiddleware, async (req, res) => {
           to: userData.rows[0].email,
           subject: "การอนุมัติสนามกีฬา",
           html: `
-<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align:center;">
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-    <tr>
-      <td align="center">
-        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 300px; margin-bottom: 10px;" />
-      </td>
-    </tr>
-  </table>
-  <h1 style="color: #347433; margin-bottom: 16px; text-align: center">สนามกีฬาได้รับการอนุมัติ</h1>
+        <div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align:center;">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td align="center">
+                <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 300px; margin-bottom: 10px;" />
+              </td>
+            </tr>
+          </table>
+          <h1 style="color: #347433; margin-bottom: 16px; text-align: center">สนามกีฬาได้รับการอนุมัติ</h1>
 
-  <p style="font-size: 16px; text-align: center; color: #333538ff;">
-    <strong> สนามกีฬาของคุณ ${userfirstName} ได้รับการอนุมัติเรียบร้อยแล้ว </br >ขอบคุณที่ใช้บริการ</strong>
-  </p>
-  <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+          <p style="font-size: 16px; text-align: center; color: #333538ff;">
+            <strong> สนามกีฬาของคุณ ${userfirstName} ได้รับการอนุมัติเรียบร้อยแล้ว </br >ขอบคุณที่ใช้บริการ</strong>
+          </p>
+          <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
 
-  <p style="font-size: 12px; color: #9ca3af;text-align: center ">
-    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
-  </p>
-</div>`,
+          <p style="font-size: 12px; color: #9ca3af;text-align: center ">
+            หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+          </p>
+        </div>`,
         });
         console.log("อีเมลส่งสำเร็จ:", resultEmail);
+        const io = req.app?.get("io") || req.io;
+
+        try {
+          const fieldOwnerId = checkField.rows[0].user_id;
+          if (io) {
+            io.emit("new_notification", {
+              topic: "field_approved",
+              reciveId: fieldOwnerId,
+              keyId: field_id,
+            });
+          }
+          await pool.query(
+            `INSERT INTO notifications (sender_id, recive_id, topic, messages, key_id, status)
+             VALUES ($1,$2,$3,$4,$5,'unread')`,
+            [
+              user_id || null,
+              fieldOwnerId,
+              "field_approved",
+              "สนามได้รับการอนุมัติ",
+              field_id,
+            ]
+          );
+        } catch (sockErr) {
+          console.error(
+            "Socket/notification field_approved error:",
+            sockErr.message
+          );
+        }
       } catch (error) {
         console.log("ส่งอีเมลไม่สำเร็จ:", error);
         return res
@@ -720,38 +810,67 @@ router.put("/update-status/:field_id", authMiddleware, async (req, res) => {
           to: userData.rows[0].email,
           subject: "การอนุมัติสนามกีฬา",
           html: `
-<div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align:center;">
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-    <tr>
-      <td align="center">
-        <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 300px; margin-bottom: 10px;" />
-      </td>
-    </tr>
-  </table>
-  <h1 style="color: #DC2525; margin-bottom: 16px; text-align: center">สนามกีฬาไม่ได้รับการอนุมัติ</h1>
+        <div style="font-family: 'Kanit', sans-serif; max-width: 600px; margin: 10px auto; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e7eb; margin-top:80px;box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); text-align:center;">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td align="center">
+                <img src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1750926689/logo2small_lzsrwa.png" alt="Sport-Hub Online Logo" style="display: block; max-width: 300px; margin-bottom: 10px;" />
+              </td>
+            </tr>
+          </table>
+          <h1 style="color: #DC2525; margin-bottom: 16px; text-align: center">สนามกีฬาไม่ได้รับการอนุมัติ</h1>
 
-  <p style="font-size: 16px; text-align: center; color: #333538ff;">
-  <strong>สนามกีฬาของคุณ ${userfirstName} ไม่ได้รับการอนุมัติ</strong><br/><br/>
-</p>
+          <p style="font-size: 16px; text-align: center; color: #333538ff;">
+          <strong>สนามกีฬาของคุณ ${userfirstName} ไม่ได้รับการอนุมัติ</strong><br/><br/>
+        </p>
 
-<div style="margin: 16px 0; text-align:center;font-size: 18px;">
-  <strong>เหตุผลที่ไม่ผ่านการอนุมัติ:</strong><br/>
-  ${reasoning ? reasoning : "ไม่มีการระบุเหตุผล"}
-</div>
+        <div style="margin: 16px 0; text-align:center;font-size: 18px;">
+          <strong>เหตุผลที่ไม่ผ่านการอนุมัติ:</strong><br/>
+          ${reasoning ? reasoning : "ไม่มีการระบุเหตุผล"}
+        </div>
 
-<p style="font-size: 16px; text-align: center; color: #333538ff;">
-  กรุณาตรวจสอบสนามกีฬาของคุณและส่งคำขอลงทะเบียนใหม่
-</p>
+        <p style="font-size: 16px; text-align: center; color: #333538ff;">
+          กรุณาตรวจสอบสนามกีฬาของคุณและส่งคำขอลงทะเบียนใหม่
+        </p>
 
-  <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+          <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
 
-  <p style="font-size: 12px; color: #9ca3af;text-align: center ">
-    หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
-  </p>
-</div>
-          `,
+          <p style="font-size: 12px; color: #9ca3af;text-align: center ">
+            หากคุณไม่ได้เป็นผู้ดำเนินการ กรุณาเพิกเฉยต่ออีเมลฉบับนี้
+          </p>
+        </div>
+                  `,
         });
         console.log("อีเมลส่งสำเร็จ:", resultEmail);
+        const io = req.app?.get("io") || req.io;
+
+        try {
+          const fieldOwnerId = checkField.rows[0].user_id;
+          if (io) {
+            io.emit("new_notification", {
+              topic: "field_rejected",
+              reciveId: fieldOwnerId,
+              keyId: field_id,
+              reasoning: reasoning || null,
+            });
+          }
+          await pool.query(
+            `INSERT INTO notifications (sender_id, recive_id, topic, messages, key_id, status)
+             VALUES ($1,$2,$3,$4,$5,'unread')`,
+            [
+              user_id || null,
+              fieldOwnerId,
+              "field_rejected",
+              reasoning || "สนามไม่ผ่านการอนุมัติ",
+              field_id,
+            ]
+          );
+        } catch (sockErr) {
+          console.error(
+            "Socket/notification field_rejected error:",
+            sockErr.message
+          );
+        }
       } catch (error) {
         console.log("ส่งอีเมลไม่สำเร็จ:", error);
         return res

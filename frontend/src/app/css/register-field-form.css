@@ -22,7 +22,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 100px auto;
-  padding: 5px 15px 15px 15px;
+  padding: 5px 25px 15px 25px;
   background: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
@@ -42,6 +42,14 @@
   justify-content: space-between;
   gap: 5px;
   border-radius: 5px;
+}
+.map-gps-container-register-field {
+  width: 100%;
+  padding: 15px;
+  border: #b3b3b3 solid 1px;
+  text-align: center;
+  border-radius: 5px;
+  margin: 15px auto 20px auto;
 }
 
 .time {
@@ -147,37 +155,21 @@
   text-align: left;
 }
 
-.exapmle-gps a {
-  display: inline-block;
-  margin: 6px 0;
-  font-size: 16px;
-  color: #1a73e8;
-  text-decoration: none;
-  transition: all 0.2s ease-in-out;
-  border-bottom: 1px dashed transparent;
-}
-
-.exapmle-gps a:hover {
-  color: #0b5ed7;
-  border-bottom: 1px dashed #0b5ed7;
-  transform: translateX(2px);
-}
 
 .preview-container-regis-field {
   margin: 0px auto 25px auto;
   text-align: center;
   border: 2px solid #ddd;
-  padding: 10px;
-  width: 100%;
-  height: auto;
-  max-width: 400px;
+  width: 400px;
+  height: 400px;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 50%;
 }
 
 .preview-container-regis-field img {
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 
 .facility-item-register-field {
@@ -659,9 +651,43 @@
 
 .facility-inputs-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 12px;
   align-items: start;
+}
+
+.facility-description-input {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-height: 90px;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  resize: vertical;
+  line-height: 1.4;
+  transition: border-color 0.2s ease;
+}
+
+.facility-description-input:focus {
+  outline: none;
+  border-color: var(--text-color);
+  box-shadow: 0 0 0 2px rgba(3, 4, 94, 0.1);
+}
+
+.facility-inputs-grid .file-label-register-field {
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: 260px;
+  justify-self: start;
+}
+
+.faccility-image-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px auto;
 }
 
 .facility-price-input,
@@ -767,4 +793,32 @@
   .facility-file-input {
     max-width: 100%;
   }
+}
+
+.selected-documents { 
+  margin-top: 4px; 
+  background: #beddf9ff; 
+  padding: 8px 12px; 
+  border: 1px solid #e2e8f0; 
+  color: #034078;
+  border-radius: 6px; 
+}
+.selected-documents-title { 
+  margin: 0 0 4px; 
+  font-weight: 600; 
+  font-size: 14px; 
+  color: var(--text-color); 
+}
+.selected-documents-list { 
+  list-style: disc; 
+  padding-inline-start: 20px; 
+  margin: 0; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 2px; 
+  font-size: 14px; 
+  word-break: break-all; 
+}
+.selected-documents-list li { 
+  line-height: 1.3; 
 }
