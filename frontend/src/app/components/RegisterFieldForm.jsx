@@ -783,10 +783,11 @@ export default function RegisterFieldForm() {
                 <div
                   style={{
                     color: "#034078",
-                    display: "inline-flex",
+                    display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    marginTop: 20,
+                    width: "50%",
+                    margin: " 20px auto",
                     padding: 8,
                     backgroundColor: "#beddf9ff",
                     borderRadius: 4,

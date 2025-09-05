@@ -1729,4 +1729,37 @@ router.put(
   }
 );
 
+router.put("/edit-location/:field_id",authMiddleware, async (req, res) => {
+  const { field_id } = req.params;
+  const { gps_location } = req.body;
+  console.log("file: field.js:573 ~ router.put ~ req.body:", req.body);
+
+  console.log("[EDIT-LOCATION] field_id:", field_id);
+  console.log("[EDIT-LOCATION] gps_location:", gps_location);
+
+  try {
+    const result = await pool.query(
+      "UPDATE field SET gps_location = $1 WHERE field_id = $2 RETURNING *",
+      [gps_location, field_id]
+    );
+
+    console.log("[EDIT-LOCATION] Query result:", result.rowCount);
+
+    if (result.rowCount === 0) {
+      console.warn("[EDIT-LOCATION] No field found with ID:", field_id);
+      return res.status(404).json({ message: "ไม่พบสนามนี้" });
+    }
+
+    console.log("[EDIT-LOCATION] Updated field:", result.rows[0]);
+    res.status(200).json({
+      message: "อัปเดตตำแหน่งสนามเรียบร้อย",
+      field: result.rows[0],
+    });
+  } catch (error) {
+    console.error("[EDIT-LOCATION] Database error:", error.message);
+    console.error("EDIT-LOCATION] Full error:", error);
+    res.status(500).json({ message: "เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์" });
+  }
+});
+
 module.exports = router;

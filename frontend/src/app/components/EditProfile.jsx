@@ -286,7 +286,6 @@ export default function EditProfile() {
           </div>
         )}
         <form onSubmit={handleUpdateProfile} className="editprofile-form">
-          {/* <label className="edit-profile-title">แก้ไขชื่อ-สนามสกุล</label> */}
           <div className="edit-f-l-name-row">
             <div className="name-fields-container">
               <div className="name-field-group">
@@ -350,14 +349,44 @@ export default function EditProfile() {
         <div className="user-info">
           <div className="info-row">
             <p>
+              <img
+                width={20}
+                height={20}
+                style={{
+                  marginRight: 8,
+                  verticalAlign: "middle",
+                }}
+                src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1755157542/qlementine-icons--user-24_zre8k9.png"
+                alt=""
+              />
               <strong>ชื่อผู้ใช้:</strong> {currentUser?.user_name}
             </p>
             <p>
+              <img
+                width={20}
+                height={20}
+                style={{
+                  marginRight: 8,
+                  verticalAlign: "middle",
+                }}
+                src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757077456/ic--outline-email_n4x6hb.png"
+                alt=""
+              />
               <strong>อีเมล:</strong> {currentUser?.email}
             </p>
           </div>
           <div className="info-row">
             <p>
+              <img
+                width={20}
+                height={20}
+                style={{
+                  marginRight: 8,
+                  verticalAlign: "middle",
+                }}
+                src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757081428/eos-icons--role-binding-outlined_ps5xfm.png"
+                alt=""
+              />
               <strong>ประเภทบัญชี:</strong>
               {currentUser?.role === "admin" ? (
                 <strong className="user-role-editprofile">ผู้ดูแลระบบ</strong>
@@ -372,6 +401,17 @@ export default function EditProfile() {
               )}
             </p>
             <p>
+              <img
+                width={20}
+                height={20}
+                style={{
+                  marginRight: 8,
+                  verticalAlign: "middle",
+                }}
+                //
+                src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757081429/material-symbols-light--verified-outline_ug65kg.png"
+                alt=""
+              />
               <strong>สถานะบัญชี:</strong>
               <strong
                 className={`status-text-manager ${
@@ -388,6 +428,16 @@ export default function EditProfile() {
           </div>
           <div className="info-row">
             <p>
+              <img
+                width={20}
+                height={20}
+                style={{
+                  marginRight: 8,
+                  verticalAlign: "middle",
+                }}
+                src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757081573/icon-park-outline--log_buq556.png"
+                alt=""
+              />
               <strong>วันที่สมัคร:</strong>{" "}
               {formatDateToThai(currentUser?.created_at)}
             </p>

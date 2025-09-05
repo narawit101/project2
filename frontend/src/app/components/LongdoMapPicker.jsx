@@ -8,7 +8,8 @@ export default function LongdoMapPicker({
   initialLocation,
   readOnly = false,
   zoom = 15,
-  height = 350,
+  height = 450,
+  onMapReady,
 }) {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
@@ -116,6 +117,9 @@ export default function LongdoMapPicker({
     setTimeout(() => {
       try {
         map.resize();
+        if (onMapReady) {
+          onMapReady();
+        }
       } catch (e) {}
     }, 150);
   };

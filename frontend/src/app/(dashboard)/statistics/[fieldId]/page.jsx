@@ -292,6 +292,7 @@ export default function Statistics() {
                 <option value="complete">การจองสำเร็จ</option>
               </select>
             </label>
+            <div className="btn-group-filter">
             <button onClick={clearFilters} className="clear-filters-btn">
               ล้างตัวกรอง
             </button>
@@ -314,6 +315,7 @@ export default function Statistics() {
             >
               {!useDateRange ? "ใช้วันที่อย่างเดียว" : "ใช้ช่วงวัน"}
             </button>
+            </div>
             {stats.totalRevenue >= 0 && (
               <div className="revenue-summary">
                 <div className="revenue-card">
