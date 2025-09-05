@@ -92,7 +92,7 @@
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem; 
+  gap: 0.2rem;
 }
 
 .hours-container-my-order {
@@ -677,11 +677,15 @@
 
 @media (max-width: 755px) {
   .booking-list {
+    padding: 0.5rem;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
 }
 
 @media (max-width: 675px) {
+  .myorder-container{
+    padding: 0.5rem;
+  }
   .myorder-container input[type="date"],
   .myorder-container select {
     width: 85%;
@@ -706,6 +710,9 @@
   }
   .booking-detail p {
     font-size: 0.8rem;
+  }
+  .myorder-container {
+    padding: 0.5rem;
   }
   .myorder-container input[type="date"],
   .myorder-container select {

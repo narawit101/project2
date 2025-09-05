@@ -46,7 +46,7 @@
 .field-image-profile {
   margin-top: 20px;
   width: 350px;
-  border-radius: 50%;
+  border-radius: 5%;
   height: 350px;
   object-fit: cover;
   transition: transform 0.3s ease;

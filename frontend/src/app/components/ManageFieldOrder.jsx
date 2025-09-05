@@ -550,13 +550,13 @@ export default function Myorder() {
                           ยอดคงเหลือ:
                         </span>
                         <span className="total-remaining-order">
-                          +{item.total_remaining} บาท
+                          {item.total_remaining} บาท
                         </span>
                       </div>
 
                       <div className="line-item-order plus">
                         <span className="total_deposit-order">มัดจำ:</span>
-                        <span>+{item.price_deposit} บาท</span>
+                        <span>{item.price_deposit} บาท</span>
                       </div>
 
                       <hr className="divider-order" />

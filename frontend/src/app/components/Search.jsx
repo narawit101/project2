@@ -144,8 +144,23 @@ export default function Search() {
           )}
         </div>
         {dataLoading ? (
-          <div className="loading-data">
-            <div className="loading-data-spinner"></div>
+          <div className="grid-search">
+            {Array.from({ length: 4 }, (_, index) => (
+              <div key={index} className="skeleton-field-search">
+                <div className="skeleton-field-img-search"></div>
+                <div className="skeleton-header-search">
+                  <div className="skeleton-lines-search">
+                    <div className="skeleton-line-search w90-search"></div>
+                    <div className="skeleton-line-search w70-search"></div>
+                  </div>
+                </div>
+                <div className="skeleton-lines-search">
+                  <div className="skeleton-line-search w80-search"></div>
+                  <div className="skeleton-line-search w60-search"></div>
+                  <div className="skeleton-line-search w50-search"></div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : currentField.length > 0 ? (
           <div className="grid-search">
@@ -227,8 +242,22 @@ export default function Search() {
             ))}
           </div>
         ) : (
-          <div className="no-fields-message-search">
-            ไม่พบคำค้นหา "<p>{query}</p>"
+          <div className="no-results-container-search">
+            <div className="no-results-icon-search">🔍</div>
+            <div className="no-results-message-search">
+              <h3>ไม่พบผลการค้นหา</h3>
+              <p>
+                ไม่พบสนามกีฬาที่ตรงกับ <span className="query-highlight-search">"{query}"</span>
+              </p>
+              <div className="search-suggestions-search">
+                <p>ลองค้นหาด้วยคำอื่น เช่น:</p>
+                <ul>
+                  <li>ชื่อสนามกีฬา</li>
+                  <li>ประเภทกีฬา (ฟุตบอล, บาสเกตบอล)</li>
+                  <li>วันที่เปิดให้บริการ (จันทร์, อังคาร)</li>
+                </ul>
+              </div>
+            </div>
           </div>
         )}
       </div>

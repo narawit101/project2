@@ -387,7 +387,6 @@ export default function Navbar() {
                 const query = e.currentTarget.value.trim();
                 if (query)
                   router.push(`/search?query=${encodeURIComponent(query)}`);
-                setIsSearchOpen(false);
               }
             }}
           />

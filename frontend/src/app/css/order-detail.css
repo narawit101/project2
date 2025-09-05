@@ -6,7 +6,7 @@
   min-height: 700px;
   padding: 2rem;
   max-width: 800px;
-  margin: 100px auto 40px auto;
+  margin: 80px auto 40px auto;
   background-color: #fff;
   border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
@@ -42,8 +42,10 @@
 }
 
 .status-buttons-order-detail {
-  margin: 1px auto;
+  width: 50%;
+  margin: 5px auto;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 1rem;
@@ -230,6 +232,7 @@
 }
 
 .cancel-booking-btn-order-detail {
+  width: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -686,24 +689,71 @@
   resize: none;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 802px) {
+  .line-item-hours-detail.cancel-info span:last-child {
+    font-size: 0.7rem;
+  }
+  .line-item-hours-detail span:last-child {
+    font-size: 0.7rem;
+  }
+  .line-item-detail.plus span:last-child {
+    font-size: 1rem;
+  }
+  .line-item-detail.highlight span:last-child {
+    font-size: 1rem;
+  }
   .order-detail {
-    padding: 1rem;
+    padding: 0.5rem;
+  }
+  .booking-card-order-detail {
+    padding: 0.5rem;
+  }
+  .booking-card-order-detail {
+    font-weight: 700;
+    margin: 0.6rem 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #333;
+  }
+}
+
+@media (max-width: 600px) {
+  .line-item-hours-detail span {
+    font-size: 0.9rem;
+  }
+  .line-item-detail span {
+    font-size: 1rem;
   }
 
   .status-buttons-order-detail {
-    flex-direction: column;
     align-items: stretch;
+    width: auto;
   }
 
   .approve-btn-order-detail,
   .reject-btn-order-detail,
-  .complete-btn-order-detail,
-  .cancel-booking-btn-order-detail {
+  .complete-btn-order-detail {
     width: 100%;
   }
 }
 @media (max-width: 370px) {
+  .line-item-detail.highlight span:last-child {
+    font-weight: 600;
+    font-size: 0.7rem;
+    color: var(--text-color);
+  }
+  .line-item-detail.plus span:last-child {
+    font-size: 0.7rem;
+  }
+  .line-item-detail span {
+    font-size: 0.7rem;
+  }
+  .hours-detail-box span {
+    font-size: 0.7rem;
+  }
+  .line-item-detail span {
+    font-size: 0.7rem;
+  }
   .booking-card-order-detail p {
     font-size: 1rem;
   }

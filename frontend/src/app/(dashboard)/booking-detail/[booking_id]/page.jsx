@@ -809,12 +809,12 @@ export default function BookingDetail() {
                   <span className="total-remianing-detail">
                     รวมที่ต้องจ่าย: (ยอดคงเหลือ)
                   </span>
-                  <span>+{booking.total_remaining} บาท</span>
+                  <span>{booking.total_remaining} บาท</span>
                 </div>
 
                 <div className="line-item-detail plus">
                   <span className="total-deposit-detail">มัดจำ:</span>
-                  <span>+{formatPrice(booking.price_deposit)} บาท</span>
+                  <span>{formatPrice(booking.price_deposit)} บาท</span>
                 </div>
 
                 <hr className="divider-detail" />

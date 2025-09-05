@@ -156,19 +156,53 @@
 }
 
 .preview-container-regis-field {
-  margin: 0px auto 25px auto;
+  margin: 0 auto 25px auto;
   text-align: center;
   border: 2px solid #ddd;
-  width: 400px;
-  height: 400px;
+  width: 100%;
+  max-width: 100%;
+  height: clamp(250px, 40vw, 400px);
   overflow: hidden;
-  border-radius: 50%;
+  border-radius: 16px;
+  box-sizing: border-box;
 }
 
 .preview-container-regis-field img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+}
+
+@media (max-width: 1200px) {
+  .preview-container-regis-field {
+    height: clamp(220px, 35vw, 350px);
+    border-radius: 14px;
+  }
+}
+
+@media (max-width: 880px) {
+  .preview-container-regis-field {
+    height: clamp(200px, 45vw, 320px);
+    border-radius: 12px;
+    margin: 0 auto 20px auto;
+  }
+}
+
+@media (max-width: 550px) {
+  .preview-container-regis-field {
+    height: clamp(180px, 50vw, 280px);
+    border-radius: 10px;
+    border-width: 1.5px;
+  }
+}
+
+@media (max-width: 420px) {
+  .preview-container-regis-field {
+    height: clamp(160px, 55vw, 240px);
+    border-radius: 8px;
+    margin: 0 auto 15px auto;
+  }
 }
 
 .facility-item-register-field {
@@ -494,7 +528,6 @@
     grid-template-columns: 1fr;
     gap: 8px;
   }
-
   .open-days-container {
     display: flex;
     flex-direction: column;
