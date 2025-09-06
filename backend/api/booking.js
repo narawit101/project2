@@ -600,7 +600,9 @@ module.exports = function (io) {
             subFieldId: subFieldId,
             bookingDate: bookingDate,
           });
-
+        }
+        
+        if(req.io){
           req.io.emit("new_notification", {
             notifyId: notifyData.rows[0].notify_id,
             topic: "new_booking",
