@@ -601,8 +601,8 @@ module.exports = function (io) {
             bookingDate: bookingDate,
           });
         }
-        
-        if(req.io){
+
+        if (req.io) {
           req.io.emit("new_notification", {
             notifyId: notifyData.rows[0].notify_id,
             topic: "new_booking",
@@ -1273,13 +1273,13 @@ LIMIT 1;
     }
   );
 
-router.delete(
+  router.delete(
     "/cancel-bookings/:booking_id",
     authMiddleware,
     async (req, res) => {
       const { booking_id } = req.params;
       const { cancel_time } = req.body;
-      const  user_id  = req.user.user_id;
+      const user_id = req.user.user_id;
 
       try {
         if (!cancel_time) {
@@ -1302,13 +1302,14 @@ router.delete(
 
         const fieldDataResult = await pool.query(
           `
-        SELECT f.cancel_hours, b.start_date, b.start_time, b.end_time, f.field_name,f.user_id as owner_id
+        SELECT f.cancel_hours, b.start_date, b.start_time, b.end_time, f.field_name, f.user_id as owner_id, b.user_id, u.email as user_email, u.first_name, u.last_name
         FROM bookings b
         JOIN field f ON b.field_id = f.field_id
+        JOIN users u ON u.user_id = b.user_id
         WHERE b.booking_id = $1
       `,
           [booking_id]
-        ); 
+        );
 
         if (fieldDataResult.rowCount === 0) {
           return res.status(404).json({
@@ -1328,9 +1329,19 @@ router.delete(
           return new Intl.DateTimeFormat("th-TH", options).format(parsedDate);
         };
 
-        const { cancel_hours, start_date, start_time, end_time, field_name, owner_id } =
-          fieldDataResult.rows[0];
-          console.log("owner_id:", owner_id, " user_id:", user_id);
+        const {
+          cancel_hours,
+          start_date,
+          start_time,
+          end_time,
+          field_name,
+          owner_id,
+          user_email,
+          first_name,
+          last_name,
+        } = fieldDataResult.rows[0];
+        const booking_user_id = fieldDataResult.rows[0].user_id; 
+        console.log("owner_id:", owner_id, " user_id:", user_id);
 
         let startDateStr;
         try {
@@ -1406,7 +1417,36 @@ router.delete(
           ]);
           await pool.query(`DELETE FROM bookings WHERE booking_id = $1`, [
             booking_id,
-          ]);
+          ]);   
+
+          try {
+            const notifyData = await pool.query(
+              `INSERT INTO notifications (sender_id, recive_id, topic, messages, key_id, status)
+   VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+              [
+                owner_id,
+                booking_user_id, 
+                "booking_cancelled",
+                "การจองของคุณถูกยกเลิก",
+                booking_id,
+                "unread",
+              ]
+            );
+
+            if (req.io) {
+              req.io.emit("new_notification", {
+                notifyId: notifyData.rows[0].notify_id,
+                topic: "booking_cancelled",
+                reciveId: booking_user_id, 
+                keyId: booking_id,
+              });
+            }
+          } catch (notifyErr) {
+            console.error(
+              "Insert booking_cancelled notification failed:",
+              notifyErr.message
+            );
+          }
 
           return res.status(200).json({
             status: 1,
@@ -1449,6 +1489,34 @@ router.delete(
             req.io.emit("slot_booked", {
               bookingId: booking_id,
             });
+          }
+          try {
+            const notifyData = await pool.query(
+              `INSERT INTO notifications (sender_id, recive_id, topic, messages, key_id, status)
+   VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+              [
+                booking_user_id, 
+                owner_id, 
+                "cancel_booking_by_customer",
+                "ลูกค้ายกเลิกการจองสนามของคุณ",
+                booking_id,
+                "unread",
+              ]
+            );
+
+            if (req.io) {
+              req.io.emit("new_notification", {
+                notifyId: notifyData.rows[0].notify_id,
+                topic: "cancel_booking_by_customer",
+                reciveId: owner_id, // ส่งให้เจ้าของสนาม
+                keyId: booking_id,
+              });
+            }
+          } catch (notifyErr) {
+            console.error(
+              "Insert cancel_booking_by_customer notification failed:",
+              notifyErr.message
+            );
           }
 
           return res.status(200).json({

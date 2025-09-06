@@ -221,6 +221,7 @@ export default function Navbar() {
         "booking_complete",
         "deposit_payment_uploaded",
         "total_slip_payment_uploaded",
+        "booking_cancelled",
       ].includes(currentTopic)
     ) {
       if (currentKeyId) {
@@ -842,6 +843,34 @@ export default function Navbar() {
                             )}
                           </>
                         )}
+                        {notification.topic === "booking_cancelled" && (
+                          <>
+                            <strong className="notif-new_booking">
+                              การจองถูกยกเลิกโดยเจ้าของสนาม
+                            </strong>
+                            <br />
+                            <small>หมายเลข: #{notification.keyId}</small>
+                            <br />
+                            <small>
+                              ผู้จอง: {notification.reciveName || "-"}
+                            </small>
+                            <br />
+                            <small>
+                              สนาม: {notification.fieldName || "-"}
+                              <br />
+                              สนามย่อย: {notification.subFieldName || "-"}
+                            </small>
+                            <br />
+                            {notification.bookingDate && (
+                              <small>
+                                วันที่: {formatDate(notification.bookingDate)}
+                                <br />
+                                เวลา: {notification.startTime} -{" "}
+                                {notification.endTime}
+                              </small>
+                            )}
+                          </>
+                        )}
                         {![
                           "new_booking",
                           "booking_approved",
@@ -855,6 +884,7 @@ export default function Navbar() {
                           "field_rejected",
                           "field_appeal",
                           "field_posted",
+                          "booking_cancelled",
                         ].includes(notification.topic) && (
                           <>
                             <strong>การแจ้งเตือน</strong>

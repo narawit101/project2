@@ -136,6 +136,7 @@ export default function Page() {
         "booking_complete",
         "deposit_payment_uploaded",
         "total_slip_payment_uploaded",
+        "booking_cancelled",
       ].includes(topic)
     ) {
       if (keyId) router.push(`/booking-detail/${keyId}`);
@@ -350,6 +351,9 @@ export default function Page() {
                   <img
                     width={15}
                     height={15}
+                    style={{
+                      display: "block",
+                    }}
                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAR1JREFUSEvNlusRwiAQhG870U5MJ6YStRLTiXZiOjmzGXAQjofJMCO/HDzug7tlCaQwVPUgIhcRORths5sbAPjfSRgqgIeInEoxC3wGcMzF1ADKhQCSOHe6VzcAwaqa3YA/0bozVW0pRaVSyd9r6Tzgnmnkr0nD+CeAodiDPdm/ShQmUlVKkvLcMliWKVxoqYPK2ApIFGcB9jQ8uROtAN7U+FTW3NrYWoliRa2LIilbc8w7ARhrgKvzHx/3V4Db4irc4GdYPaBMWaYtJxhbZEr3pJK6AagW3oUtgGP8NpRsuA+AWb0NO0Kziqx3wzQ7VQ3togsgtAsPsKDhnPl05k4Q+1GLVSQ2wRLnAPFdaLHu5JKVAKXPFQuWeJAPegM03+AZ7kVVEgAAAABJRU5ErkJggg=="
                     alt=""
                   />
@@ -586,6 +590,31 @@ export default function Page() {
                     )}
                   </>
                 )}
+                {n.topic === "booking_cancelled" && (
+                  <>
+                    <strong className="notif-new_booking">
+                      การจองถูกยกเลิกโดยเจ้าของสนาม
+                    </strong>
+                    <br />
+                    <small>หมายเลข: #{n.keyId}</small>
+                    <br />
+                    <small>ผู้จอง: {n.reciveName || "-"}</small>
+                    <br />
+                    <small>
+                      สนาม: {n.fieldName || "-"}
+                      <br />
+                      สนามย่อย: {n.subFieldName || "-"}
+                    </small>
+                    <br />
+                    {n.bookingDate && (
+                      <small>
+                        วันที่: {formatDate(n.bookingDate)}
+                        <br />
+                        เวลา: {n.startTime} - {n.endTime}
+                      </small>
+                    )}
+                  </>
+                )}
                 {![
                   "new_booking",
                   "booking_approved",
@@ -599,6 +628,7 @@ export default function Page() {
                   "field_rejected",
                   "field_appeal",
                   "field_posted",
+                  "booking_cancelled",
                 ].includes(n.topic) && (
                   <>
                     <strong>การแจ้งเตือน</strong>
