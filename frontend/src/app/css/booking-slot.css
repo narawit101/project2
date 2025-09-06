@@ -400,7 +400,7 @@
   justify-content: center;
 }
 
-.payment-method {
+.payment-method-section .payment-method {
   align-items: center;
   font-size: 16px;
   margin: 7px auto;

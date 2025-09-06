@@ -735,7 +735,7 @@ module.exports = function (io) {
         i++;
       }
 
-      query += ` ORDER BY b.booking_date ASC, b.start_time ASC`;
+      query += ` ORDER BY b.booking_date DESC, b.start_time ASC`;
 
       const bookingResult = await pool.query(query, values);
 
@@ -844,7 +844,7 @@ WHERE b.field_id = $1
         paramIndex++;
       }
 
-      query += ` ORDER BY b.booking_date ASC, b.start_time ASC`;
+      query += ` ORDER BY b.booking_date DESC, b.start_time ASC`;
 
       const result = await pool.query(query, values);
 
@@ -1271,12 +1271,13 @@ LIMIT 1;
     }
   );
 
-  router.delete(
+router.delete(
     "/cancel-bookings/:booking_id",
     authMiddleware,
     async (req, res) => {
       const { booking_id } = req.params;
       const { cancel_time } = req.body;
+      const  user_id  = req.user.user_id;
 
       try {
         if (!cancel_time) {
@@ -1299,13 +1300,13 @@ LIMIT 1;
 
         const fieldDataResult = await pool.query(
           `
-        SELECT f.cancel_hours, b.start_date, b.start_time, b.end_time, f.field_name
+        SELECT f.cancel_hours, b.start_date, b.start_time, b.end_time, f.field_name,f.user_id as owner_id
         FROM bookings b
         JOIN field f ON b.field_id = f.field_id
         WHERE b.booking_id = $1
       `,
           [booking_id]
-        );
+        ); 
 
         if (fieldDataResult.rowCount === 0) {
           return res.status(404).json({
@@ -1325,8 +1326,9 @@ LIMIT 1;
           return new Intl.DateTimeFormat("th-TH", options).format(parsedDate);
         };
 
-        const { cancel_hours, start_date, start_time, end_time, field_name } =
+        const { cancel_hours, start_date, start_time, end_time, field_name, owner_id } =
           fieldDataResult.rows[0];
+          console.log("owner_id:", owner_id, " user_id:", user_id);
 
         let startDateStr;
         try {
@@ -1382,7 +1384,7 @@ LIMIT 1;
         console.log("startDateStr:", startDateStr);
         console.log("start_time:", start_time);
 
-        if (cancel_hours === null) {
+        if (cancel_hours === null || owner_id === user_id) {
           const paymentResult = await pool.query(
             `SELECT deposit_slip, total_slip FROM payment WHERE booking_id = $1`,
             [booking_id]
@@ -1440,6 +1442,7 @@ LIMIT 1;
           await pool.query(`DELETE FROM bookings WHERE booking_id = $1`, [
             booking_id,
           ]);
+
           if (req.io) {
             req.io.emit("slot_booked", {
               bookingId: booking_id,
