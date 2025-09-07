@@ -1537,6 +1537,7 @@
   background-color: var(--hover-success-color);
 }
 .head-subtitle-profile {
+  margin: 10px;
   gap: 5px;
   display: flex;
   color: var(--text-color);
