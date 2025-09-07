@@ -21,6 +21,8 @@ export default function LongdoMapPicker({
   const [showDropdown, setShowDropdown] = useState(false);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [scriptReady, setScriptReady] = useState(false);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
   const src = `https://api.longdo.com/map/?key=${process.env.NEXT_PUBLIC_LONGDO_KEY}`;
 
   const parseLocation = (loc) => {
@@ -123,6 +125,16 @@ export default function LongdoMapPicker({
       } catch (e) {}
     }, 150);
   };
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage("");
+        setMessageType("");
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
 
   useEffect(() => {
     const map = mapInstance.current;
@@ -186,7 +198,8 @@ export default function LongdoMapPicker({
   const getCurrentLocation = () => {
     if (readOnly) return;
     if (!navigator.geolocation) {
-      alert("เบราว์เซอร์ไม่รองรับการหาตำแหน่ง");
+      setMessage("เบราว์เซอร์ไม่รองรับการหาตำแหน่ง");
+      setMessageType("error");
       return;
     }
     setIsGettingLocation(true);
@@ -207,7 +220,8 @@ export default function LongdoMapPicker({
       },
       (err) => {
         console.error("geolocation error", err);
-        alert("ไม่สามารถหาตำแหน่งได้");
+        setMessage("ไม่สามารถหาตำแหน่งได้");
+        setMessageType("error");
         setIsGettingLocation(false);
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
@@ -222,6 +236,11 @@ export default function LongdoMapPicker({
 
   return (
     <div className="map-wrapper" style={{ position: "relative" }}>
+      {message && (
+        <div className={`message-box ${messageType}`}>
+          <p>{message}</p>
+        </div>
+      )}
       <Script
         src={src}
         strategy="afterInteractive"

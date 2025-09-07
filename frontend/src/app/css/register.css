@@ -37,7 +37,7 @@
 
 .input-group-register input {
   width: 100%;
-  padding: 10px;  
+  padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 14px;
@@ -66,16 +66,16 @@
 }
 
 .register-container .error-message {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: #d90429;
+  padding: 4px;
+  background: #f8f9fa;
+  text-align: center;
   font-size: 14px;
-  margin-top: 5px;
+  margin-top: 10px;
 }
 
-.register-container .error-message i {
-  color: #d90429;
+.register-container .error-message {
+  background: #fff5f5;
+  color: #e53e3e;
 }
 
 .input-group-register input.errors {
@@ -121,4 +121,9 @@
 .login-title a:hover {
   background-color: #cdcccc;
   cursor: pointer;
+}
+.icon-label-container-register {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
 }

@@ -68,6 +68,7 @@ const reviews = require("./api/reviews");
 const statistics = require("./api/statistics");
 const search = require("./api/search");
 const notification = require("./api/notification");
+const following = require("./api/following");
 app.get("/", (req, res) => {
   res.send("Welcome to the API");
 });
@@ -87,6 +88,7 @@ app.use("/reviews", reviews);
 app.use("/statistics", statistics);
 app.use("/search", search);
 app.use("/notification", notification);
+app.use("/following", following);
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 

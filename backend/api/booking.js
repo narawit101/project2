@@ -252,22 +252,23 @@ module.exports = function (io) {
 
         const expired = await pool.query(
           `
-            DELETE FROM bookings b
-            USING users u, field f
-            WHERE b.user_id = u.user_id
-              AND b.field_id = f.field_id
-              AND b.status IN ('approved', 'complete')
-              AND f.price_deposit > 0
-              AND b.booking_id NOT IN (SELECT booking_id FROM payment)
-              AND (
-                $1 > b.updated_at + INTERVAL '60 minutes'
-                OR (
-                  b.updated_at > (b.start_date || ' ' || b.start_time)::timestamp - INTERVAL '10 minutes'
-                  AND $1 >= (b.start_date || ' ' || b.start_time)::timestamp
-                )
-              )
-            RETURNING b.booking_id, u.email, f.field_name, b.start_time, b.start_date;
-`,
+    UPDATE bookings b
+    SET status = 'rejected'
+    FROM users u, field f
+    WHERE b.user_id = u.user_id
+      AND b.field_id = f.field_id
+      AND b.status IN ('approved', 'complete')
+      AND f.price_deposit > 0
+      AND b.booking_id NOT IN (SELECT booking_id FROM payment)
+      AND (
+        $1 > b.updated_at + INTERVAL '60 minutes'
+        OR (
+          b.updated_at > (b.start_date || ' ' || b.start_time)::timestamp - INTERVAL '10 minutes'
+          AND $1 >= (b.start_date || ' ' || b.start_time)::timestamp
+        )
+      )
+    RETURNING b.booking_id, u.email, f.field_name, b.start_time, b.start_date;
+  `,
           [now.toISO()]
         );
 
@@ -1273,7 +1274,7 @@ LIMIT 1;
     }
   );
 
-  router.delete(
+  router.put(
     "/cancel-bookings/:booking_id",
     authMiddleware,
     async (req, res) => {
@@ -1340,7 +1341,7 @@ LIMIT 1;
           first_name,
           last_name,
         } = fieldDataResult.rows[0];
-        const booking_user_id = fieldDataResult.rows[0].user_id; 
+        const booking_user_id = fieldDataResult.rows[0].user_id;
         console.log("owner_id:", owner_id, " user_id:", user_id);
 
         let startDateStr;
@@ -1415,9 +1416,10 @@ LIMIT 1;
           await pool.query(`DELETE FROM booking_fac WHERE booking_id = $1`, [
             booking_id,
           ]);
-          await pool.query(`DELETE FROM bookings WHERE booking_id = $1`, [
-            booking_id,
-          ]);   
+          await pool.query(
+            `UPDATE bookings SET status = 'rejected' WHERE booking_id = $1`,
+            [booking_id]
+          );
 
           try {
             const notifyData = await pool.query(
@@ -1425,7 +1427,7 @@ LIMIT 1;
    VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
               [
                 owner_id,
-                booking_user_id, 
+                booking_user_id,
                 "booking_cancelled",
                 "การจองของคุณถูกยกเลิก",
                 booking_id,
@@ -1437,7 +1439,7 @@ LIMIT 1;
               req.io.emit("new_notification", {
                 notifyId: notifyData.rows[0].notify_id,
                 topic: "booking_cancelled",
-                reciveId: booking_user_id, 
+                reciveId: booking_user_id,
                 keyId: booking_id,
               });
             }
@@ -1495,8 +1497,8 @@ LIMIT 1;
               `INSERT INTO notifications (sender_id, recive_id, topic, messages, key_id, status)
    VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
               [
-                booking_user_id, 
-                owner_id, 
+                booking_user_id,
+                owner_id,
                 "cancel_booking_by_customer",
                 "ลูกค้ายกเลิกการจองสนามของคุณ",
                 booking_id,

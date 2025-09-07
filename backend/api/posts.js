@@ -144,8 +144,8 @@ router.post(
       );
       try {
         const allUser = await pool.query(
-          `SELECT user_id FROM users WHERE user_id != $1 `,
-          [user_id]
+          `SELECT fo.user_id FROM following fo WHERE fo.field_id = $1`,
+          [field_id]
         );
         const io = req.app?.get("io") || req.io;
         const fieldNameRes = await pool.query(

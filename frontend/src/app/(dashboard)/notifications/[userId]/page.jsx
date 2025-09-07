@@ -172,6 +172,15 @@ export default function Page() {
       }
       return;
     }
+    if (["new_following"].includes(topic)) {
+      if (keyId) {
+        router.push(`/profile/${keyId}`);
+      } else {
+        setMessage("ไม่พบข้อมูลสนามนี้");
+        setMessageType("error");
+      }
+      return;
+    }
   };
 
   const deleteNotification = async (notificationId) => {
@@ -580,7 +589,7 @@ export default function Page() {
                 {n.topic === "field_posted" && (
                   <>
                     <strong className="notif-new_booking-all">
-                      มีโพสต์ใหม่
+                      มีโพสต์ใหม่จากสนามที่คุณติดตาม
                     </strong>
                     <br />
                     {n.fieldName && <small>สนาม: {n.fieldName || "-"}</small>}
@@ -615,6 +624,24 @@ export default function Page() {
                     )}
                   </>
                 )}
+                {n.topic === "new_following" && (
+                  <>
+                    <strong className="notif-new_booking">
+                      มีผู้ติดตามใหม่ในสนามของคุณ
+                    </strong>
+                    <br />
+                    <small>ผู้ติดตาม: {n.senderName || "-"}</small>
+                    <br />
+                    <br />
+                    {n.bookingDate && (
+                      <small>
+                        วันที่: {formatDate(n.bookingDate)}
+                        <br />
+                        เวลา: {n.startTime} - {n.endTime}
+                      </small>
+                    )}
+                  </>
+                )}
                 {![
                   "new_booking",
                   "booking_approved",
@@ -629,6 +656,7 @@ export default function Page() {
                   "field_appeal",
                   "field_posted",
                   "booking_cancelled",
+                  "new_following",
                 ].includes(n.topic) && (
                   <>
                     <strong>การแจ้งเตือน</strong>

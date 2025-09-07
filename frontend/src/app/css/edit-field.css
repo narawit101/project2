@@ -344,8 +344,7 @@
   width: 100%;
 }
 
-.no-facilities-message,
-.error-message {
+.no-facilities-message {
   padding: 16px;
   border-radius: 8px;
   background: #f8f9fa;
@@ -353,12 +352,6 @@
   color: #6c757d;
   text-align: center;
   font-style: italic;
-}
-
-.error-message {
-  background: #fff5f5;
-  border-color: #fed7d7;
-  color: #e53e3e;
 }
 
 .facilities-grid {

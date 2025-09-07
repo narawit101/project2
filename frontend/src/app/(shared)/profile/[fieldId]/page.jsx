@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import NotFoundCard from "@/app/components/NotFoundCard";
 import "@/app/css/field-profile.css";
@@ -11,13 +11,13 @@ import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 import LongdoMapPicker from "@/app/components/LongdoMapPicker";
+import { io } from "socket.io-client";
 
 dayjs.extend(relativeTime);
 dayjs.locale("th");
 
 export default function CheckFieldDetail() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const MAPS_EMBED_API = process.env.NEXT_PUBLIC_MAPS_EMBED_API;
   const searchParams = useSearchParams();
   const highlightId = searchParams.get("highlight");
   const { fieldId } = useParams();
@@ -35,6 +35,7 @@ export default function CheckFieldDetail() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [showModalFollower, setShowModalFollower] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
   const [expandedPosts, setExpandedPosts] = useState({});
   const { user, isLoading } = useAuth();
@@ -48,6 +49,33 @@ export default function CheckFieldDetail() {
   usePreventLeave(startProcessLoad);
   const [notFoundFlag, setNotFoundFlag] = useState(false);
   const [showSubfieldModal, setShowSubfieldModal] = useState(false);
+  const [userFollowing, setUserFollowing] = useState(false);
+  const [followers, setFollowers] = useState([]);
+  const [dataFollowers, setDataFollowers] = useState([]);
+  const socketRef = useRef(null);
+
+  useEffect(() => {
+    const socket = io(API_URL, {
+      transports: ["websocket"],
+      withCredentials: true,
+    });
+    console.log("Socket initialized:", socket);
+    socketRef.current = socket;
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+    });
+    socket.on("following", (data) => {
+      if (
+        data.fieldId === Number(fieldId) &&
+        data.userId === Number(user?.user_id)
+      ) {
+        fetchFollowing();
+      }
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, [API_URL, fieldId, user]);
 
   useEffect(() => {
     if (isLoading) return;
@@ -204,6 +232,57 @@ export default function CheckFieldDetail() {
 
     fetchPosts();
   }, [fieldId, router]);
+
+  const fetchFollowing = async () => {
+    const res = await fetch(
+      `${API_URL}/following/get-following/${user?.user_id}/${fieldId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = await res.json();
+    console.log("following", data);
+    if (res.ok) {
+      if (data.following === 1) {
+        setUserFollowing(true);
+        console.log("set true");
+      } else {
+        setUserFollowing(false);
+        console.log("set false");
+      }
+    }
+  };
+
+  const fetchFollowerAll = async () => {
+    try {
+      const res = await fetch(`${API_URL}/following/all-followers/${fieldId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await res.json();
+      console.log("followers", data);
+      if (res.ok) {
+        setFollowers(data.countFollowers || 0);
+        setDataFollowers(data.data || []);
+        console.log("set followers", data.countFollowers);
+        console.log("set data followers", data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching followers:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFollowing();
+    fetchFollowerAll();
+  }, [user, router, userFollowing]);
 
   useEffect(() => {
     window.scrollTo({ top: 900, behavior: "smooth" });
@@ -466,15 +545,6 @@ export default function CheckFieldDetail() {
     return "#";
   };
 
-  // เพิ่มฟังก์ชันสำหรับ Longdo Map
-  const getLongdoMapLink = (gpsLocation) => {
-    const coords = extractLatLngFromUrl(gpsLocation);
-    if (!coords) return null;
-
-    const [lat, lon] = coords.split(",");
-    return `https://map.longdo.com/search/${lat},${lon}`;
-  };
-
   const formatPrice = (value) => new Intl.NumberFormat("th-TH").format(value);
 
   useEffect(() => {
@@ -528,6 +598,64 @@ export default function CheckFieldDetail() {
     setHighlightMissing(false);
   };
 
+  const handleFollow = async () => {
+    try {
+      SetstartProcessLoad(true);
+      const res = await fetch(`${API_URL}/following/add-following`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ fieldId: fieldId, userId: user?.user_id }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setMessage("ติดตามสนามเรียบร้อย");
+        setMessageType("success");
+      } else {
+        setMessage(data.message || "เกิดข้อผิดพลาดในการติดตาม");
+        setMessageType("error");
+      }
+    } catch (error) {
+      console.error("Follow error:", error);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      setMessageType("error");
+    } finally {
+      SetstartProcessLoad(false);
+    }
+  };
+
+  const cancelFollow = async () => {
+    try {
+      SetstartProcessLoad(true);
+      const res = await fetch(`${API_URL}/following/cancel-following`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        ceildentials: "include",
+        body: JSON.stringify({ fieldId, userId: user?.user_id }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setMessage("เลิกติดตามสนามเรียบร้อย");
+        setMessageType("success");
+      } else {
+        setMessage(data.message || "เกิดข้อผิดพลาดในการติดตาม");
+        setMessageType("error");
+      }
+    } catch (error) {
+      console.error("Follow error:", error);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      setMessageType("error");
+    } finally {
+      SetstartProcessLoad(false);
+    }
+  };
+
   return (
     <>
       {message && (
@@ -540,20 +668,68 @@ export default function CheckFieldDetail() {
           <div className="loading-data-spinner"></div>
         </div>
       )}
+
       {selectedImage && (
         <div className="lightbox-overlay" onClick={handleCloseLightbox}>
           <img src={selectedImage} alt="Zoomed" className="lightbox-image" />
         </div>
       )}
+
       {fieldData?.img_field.length ? (
         <div className="image-container-profile">
+          <div className="head-title-profile">
+            <strong> {fieldData?.field_name}</strong>
+          </div>
           <img
             src={`${fieldData.img_field}`}
             alt="รูปสนามกีฬา"
             className="field-image-profile"
           />
-          <div className="head-title-profile">
-            <strong> {fieldData?.field_name}</strong>
+
+          {user &&
+            (userFollowing ? (
+              <button
+                disabled={startProcessLoad}
+                style={{ cursor: startProcessLoad ? "not-allowed" : "pointer" }}
+                className="follow-btn-profile"
+                onClick={cancelFollow}
+              >
+                {startProcessLoad ? (
+                  <span className="dot-loading">
+                    <span className="dot one">●</span>
+                    <span className="dot two">●</span>
+                    <span className="dot three">●</span>
+                  </span>
+                ) : (
+                  "ติดตามแล้ว"
+                )}
+              </button>
+            ) : (
+              <button
+                style={{ cursor: startProcessLoad ? "not-allowed" : "pointer" }}
+                disabled={startProcessLoad}
+                className="follow-btn-profile"
+                onClick={handleFollow}
+              >
+                {startProcessLoad ? (
+                  <span className="dot-loading">
+                    <span className="dot one">●</span>
+                    <span className="dot two">●</span>
+                    <span className="dot three">●</span>
+                  </span>
+                ) : (
+                  "ติดตาม"
+                )}
+              </button>
+            ))}
+          <div
+            onClick={() => setShowModalFollower(true)}
+            style={{ cursor: "pointer" }}
+            className="head-subtitle-profile"
+          >
+            <strong>ผู้ติดตาม </strong>
+            <p>{formatPrice(followers)} </p>
+            <strong>คน </strong>
           </div>
         </div>
       ) : (
@@ -1188,6 +1364,51 @@ export default function CheckFieldDetail() {
             </div>
           </div>
         </div>
+      )}
+      {showModalFollower && (
+        <>
+          <div className="modal-overlay-profile-follower">
+            <div className="modal-post-profile-follower">
+              <div className="modal-header-follower">
+                <h2>ผู้ติดตาม </h2>
+                <button
+                  className="close-modal-btn"
+                  onClick={() => setShowModalFollower(false)}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="followers-list">
+                {dataFollowers && dataFollowers.length > 0 ? (
+                  dataFollowers.map((follower, index) => (
+                    <div
+                      key={follower.user_id || index}
+                      className="follower-item"
+                    >
+                      <img
+                        className="follower-avatar"
+                        src={
+                          follower.user_profile ||
+                          "https://res.cloudinary.com/dlwfuul9o/image/upload/v1755157542/qlementine-icons--user-24_zre8k9.png"
+                        }
+                        alt={`${follower.first_name} ${follower.last_name}`}
+                      />
+                      <div className="follower-info">
+                        <span className="follower-name">
+                          {follower.first_name} {follower.last_name}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-followers">
+                    <p>ยังไม่มีผู้ติดตาม</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </>
   );

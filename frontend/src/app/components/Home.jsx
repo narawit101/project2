@@ -261,11 +261,11 @@ export default function HomePage() {
                 </div>
               )}
 
-              {post.title.length > 40 ? (
+              {post.title.length > 100 ? (
                 <p className="post-text-home">
                   {expandedPosts[post.post_id]
                     ? post.title
-                    : `${post.title.substring(0, 40).trim()}... `}
+                    : `${post.title.substring(0, 100).trim()}... `}
                   <span
                     onClick={() => toggleExpanded(post.post_id)}
                     className="see-more-button-home"

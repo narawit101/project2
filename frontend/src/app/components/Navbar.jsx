@@ -262,6 +262,15 @@ export default function Navbar() {
       }
       return;
     }
+    if (["new_following"].includes(currentTopic)) {
+      if (currentKeyId) {
+        router.push(`/profile/${currentKeyId}`);
+      } else {
+        setMessage("ไม่พบข้อมูลสนามนี้");
+        setMessageType("error");
+      }
+      return;
+    }
     router.push(`/notifications/${user?.user_id}`);
   };
 
@@ -822,7 +831,7 @@ export default function Navbar() {
                         {notification.topic === "field_posted" && (
                           <>
                             <strong className="notif-new_booking">
-                              มีโพสต์ใหม่
+                              มีโพสต์ใหม่จากสนามที่คุณติดตาม
                             </strong>
                             <br />
                             {notification.fieldName && (
@@ -871,6 +880,27 @@ export default function Navbar() {
                             )}
                           </>
                         )}
+                        {notification.topic === "new_following" && (
+                          <>
+                            <strong className="notif-new_booking">
+                              มีผู้ติดตามใหม่ในสนามของคุณ
+                            </strong>
+                            <br />
+                            <small>
+                              ผู้ติดตาม: {notification.senderName || "-"}
+                            </small>
+                            <br />
+                            <br />
+                            {notification.bookingDate && (
+                              <small>
+                                วันที่: {formatDate(notification.bookingDate)}
+                                <br />
+                                เวลา: {notification.startTime} -{" "}
+                                {notification.endTime}
+                              </small>
+                            )}
+                          </>
+                        )}
                         {![
                           "new_booking",
                           "booking_approved",
@@ -885,6 +915,7 @@ export default function Navbar() {
                           "field_appeal",
                           "field_posted",
                           "booking_cancelled",
+                          "new_following",
                         ].includes(notification.topic) && (
                           <>
                             <strong>การแจ้งเตือน</strong>

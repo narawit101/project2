@@ -24,14 +24,16 @@ export default function RegisterFieldForm() {
   const [startProcessLoad, setStartProcessLoad] = useState(false);
   const DEFAULT_FACILITIES = [
     { fac_name: "ห้องน้ำ" },
+    { fac_name: "ห้องแต่งตัว" },
+    { fac_name: "ตู้ล็อคเกอร์" },
+    { fac_name: "ห้องอาบน้ำ" },
     { fac_name: "ที่จอดรถ" },
     { fac_name: "Wi-Fi" },
-    { fac_name: "โดม" },
+    { fac_name: "รองเท้า" },
     { fac_name: "ร้านค้า" },
     { fac_name: "ตู้แช่" },
     { fac_name: "พัดลม" },
     { fac_name: "แอร์" },
-    { fac_name: "ห้องแต่งตัว" },
     { fac_name: "ลำโพง" },
   ];
   const [facilities, setFacilities] = useState(DEFAULT_FACILITIES);
@@ -737,8 +739,16 @@ export default function RegisterFieldForm() {
         </div>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="input-group-register-field">
-            {" "}
-            <label>ชื่อสนามกีฬา:</label>
+            <div className="icon-label-container">
+              <label>ชื่อสนามกีฬา:</label>
+              <img
+                width={20}
+                height={20}
+                src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757239976/material-symbols--stadium-rounded_qz7gby.png"
+                alt=""
+                style={{ verticalAlign: "middle" }}
+              />
+            </div>
             <input
               type="text"
               maxLength={100}
@@ -749,7 +759,16 @@ export default function RegisterFieldForm() {
             />
           </div>
           <div className="input-group-register-field">
-            <label>ที่ตั้งสนาม:</label>
+            <div className="icon-label-container">
+              <label>ที่ตั้งสนาม:</label>
+              <img
+                width={20}
+                height={20}
+                src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757240000/mynaui--pin-solid_q6964o.png"
+                alt=""
+                style={{ verticalAlign: "middle" }}
+              />
+            </div>
             <input
               type="text"
               maxLength={100}
@@ -761,7 +780,16 @@ export default function RegisterFieldForm() {
           </div>
           <div className="map-gps-container-register-field">
             <div className="input-group-register-field">
-              <label>พิกัด GPS:</label>{" "}
+              <div className="icon-label-container">
+                <label>พิกัด GPS:</label>{" "}
+                <img
+                  width={20}
+                  height={20}
+                  src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1756972382/bxs--map_c0lmby.png"
+                  alt=""
+                  style={{ verticalAlign: "middle" }}
+                />
+              </div>
               <input
                 type="text"
                 maxLength={100}
@@ -770,7 +798,6 @@ export default function RegisterFieldForm() {
                 value={fieldData.gps_location}
                 onChange={handleFieldChange}
               />
-              {/* Map Component */}
               <div style={{ marginTop: 20 }}>
                 <LongdoMapPicker
                   onLocationSelect={(location) => {
@@ -816,7 +843,6 @@ export default function RegisterFieldForm() {
                     onChange={handleFieldChange}
                   />
                 </div>
-
                 <div className="input-group-register-field">
                   <label>เวลาปิด:</label>
                   <input
@@ -829,7 +855,16 @@ export default function RegisterFieldForm() {
               </div>
               <div className="duration-time-container">
                 <div className="input-group-register-field">
-                  <label>แบ่งช่วงเวลาในการจอง:</label>
+                  <div className="icon-label-days-container">
+                    <label>แบ่งช่วงเวลาในการจอง:</label>
+                    <img
+                      width={20}
+                      height={20}
+                      src="data:image/png;base64,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"
+                      alt=""
+                      style={{ verticalAlign: "middle" }}
+                    />
+                  </div>
                   <select
                     name="slot_duration"
                     className="select-slot-duration"
@@ -846,9 +881,18 @@ export default function RegisterFieldForm() {
 
             <div className="open-days-container">
               <div className="input-group-register-field">
-                <label style={{ textAlign: "center" }}>
-                  เลือกวันเปิดบริการ:
-                </label>
+                <div className="icon-label-days-container">
+                  <label style={{ textAlign: "center" }}>
+                    เลือกวันเปิดบริการ:
+                  </label>
+                  <img
+                    style={{ verticalAlign: "middle" }}
+                    src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757240847/solar--calendar-bold_eiv9sp.png"
+                    width={20}
+                    height={20}
+                    alt=""
+                  />
+                </div>
               </div>
               <div className="time-selection">
                 <div className="input-group-checkbox-register-field">
@@ -891,7 +935,16 @@ export default function RegisterFieldForm() {
           </div>
 
           <div className="input-group-register-field">
-            <label>ยกเลิกการจองได้ภายใน (ชั่วโมง)</label>
+            <div className="icon-label-container">
+              <label>ยกเลิกการจองได้ภายใน (ชั่วโมง): </label>
+              <img
+                style={{ verticalAlign: "middle" }}
+                src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757241407/pajamas--time-out_j4mrua.png"
+                width={20}
+                height={20}
+                alt=""
+              />
+            </div>
             <input
               type="text"
               inputMode="numeric"
@@ -914,12 +967,32 @@ export default function RegisterFieldForm() {
               }}
             />
           </div>
-
+          <div className="input-group-register-field">
+            <div className="icon-label-container">
+              <label>สนามย่อย: </label>
+              <img
+                width={25}
+                height={25}
+                style={{ verticalAlign: "middle" }}
+                src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757259877/mingcute--playground-fill_v8ekao.png"
+                alt=""
+              />
+            </div>
+          </div>
           <div className="subfieldcon">
             {subFields.map((sub, subIndex) => (
               <div key={subIndex}>
                 <div className="input-group-register-field">
-                  <label htmlFor="">ชื่อสนามย่อย</label>
+                  <div className="icon-label-container">
+                    <label htmlFor="">ชื่อสนามย่อย:</label>
+                    <img
+                      src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757254986/fluent--form-24-filled_bngilf.png"
+                      width={20}
+                      height={20}
+                      style={{ verticalAlign: "middle" }}
+                      alt=""
+                    />
+                  </div>
                   <input
                     type="text"
                     maxLength={20}
@@ -930,9 +1003,17 @@ export default function RegisterFieldForm() {
                     }
                   />
                 </div>
-
                 <div className="input-group-register-field">
-                  <label htmlFor="">ราคา/ชั่วโมง</label>
+                  <div className="icon-label-container">
+                    <label>ราคา/ชั่วโมง: </label>
+                    <img
+                      width={20}
+                      height={20}
+                      style={{ verticalAlign: "middle" }}
+                      src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757254913/icomoon-free--price-tag_khbaj4.png"
+                      alt=""
+                    />
+                  </div>
                   <input
                     type="text"
                     inputMode="numeric"
@@ -953,7 +1034,17 @@ export default function RegisterFieldForm() {
                 </div>
 
                 <div className="input-group-register-field">
-                  <label htmlFor="">ประเภทกีฬา</label>
+                  <div className="icon-label-container">
+                    <label htmlFor="">ประเภทกีฬา:</label>
+                    <img
+                      width={20}
+                      height={20}
+                      style={{ verticalAlign: "middle" }}
+                      src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757259220/fluent--sport-16-filled_gmsj8t.png"
+                      alt=""
+                    />
+                  </div>
+
                   <div className="select-sport-register-field">
                     <select
                       value={sub.sport_id}
@@ -973,7 +1064,16 @@ export default function RegisterFieldForm() {
                   </div>
                 </div>
                 <div className="input-group-register-field">
-                  <label htmlFor="">จำนวนผู้เล่นต่อฝั่ง</label>
+                  <div className="icon-label-container">
+                    <label htmlFor="">จำนวนผู้เล่นต่อฝั่ง:</label>
+                    <img
+                      width={20}
+                      height={20}
+                      style={{ verticalAlign: "middle" }}
+                      src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757259443/rivet-icons--user-group-solid_ijtvb3.png"
+                      alt=""
+                    />
+                  </div>
                   <input
                     type="text"
                     inputMode="numeric"
@@ -1010,7 +1110,16 @@ export default function RegisterFieldForm() {
                   />{" "}
                 </div>
                 <div className="input-group-register-field">
-                  <label>ความกว้างของสนาม</label>
+                  <div className="icon-label-container">
+                    <label>ความกว้างของสนาม:</label>
+                    <img
+                      width={20}
+                      height={20}
+                      style={{ verticalAlign: "middle" }}
+                      src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757259593/streamline-plump--fit-to-width-square-solid_xro2je.png"
+                      alt=""
+                    />
+                  </div>
                   <input
                     type="text"
                     inputMode="numeric"
@@ -1030,7 +1139,16 @@ export default function RegisterFieldForm() {
                   />
                 </div>
                 <div className="input-group-register-field">
-                  <label>ความยาวของสนาม</label>
+                  <div className="icon-label-container">
+                    <label>ความยาวของสนาม:</label>
+                    <img
+                      width={20}
+                      height={20}
+                      style={{ verticalAlign: "middle" }}
+                      src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757259596/streamline-plump--fit-height-solid_hy5hmo.png"
+                      alt=""
+                    />
+                  </div>
                   <input
                     type="text"
                     inputMode="numeric"
@@ -1050,7 +1168,18 @@ export default function RegisterFieldForm() {
                   />
                 </div>
                 <div className="input-group-register-field">
-                  <label>พื้นสนาม</label>
+                  <div className="icon-label-container">
+                    <div className="icon-label-container">
+                      <label>พื้นสนาม</label>
+                      <img
+                        width={20}
+                        height={20}
+                        style={{ verticalAlign: "middle" }}
+                        src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757260059/hugeicons--background_qpzudp.png"
+                        alt=""
+                      />
+                    </div>
+                  </div>
                   <input
                     maxLength={20}
                     type="text"
@@ -1081,6 +1210,24 @@ export default function RegisterFieldForm() {
                 <div className="addoncon">
                   {sub.addOns.map((addon, addOnIndex) => (
                     <div key={addOnIndex}>
+                      <div className="icon-label-container">
+                        <label
+                          htmlFor=""
+                          style={{
+                            fontWeight: "bold",
+                            color: "#03045e",
+                          }}
+                        >
+                          กิจกรรมพิเศษ:
+                        </label>
+                        <img
+                          width={20}
+                          height={20}
+                          style={{ verticalAlign: "middle" }}
+                          src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757260382/zondicons--add-solid_hmeqxs.png"
+                          alt=""
+                        />
+                      </div>
                       <div className="input-group-register-field">
                         <input
                           type="text"
@@ -1140,7 +1287,16 @@ export default function RegisterFieldForm() {
             </button>
           </div>
           <div className="input-group-register-field">
-            <label htmlFor="img_field">รูปโปรไฟล์สนาม</label>
+            <div className="icon-label-container">
+              <label htmlFor="img_field">รูปโปรไฟล์สนาม:</label>
+              <img
+                width={20}
+                height={20}
+                style={{ verticalAlign: "middle" }}
+                src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757260568/streamline--user-profile-focus-solid_bkna8e.png"
+                alt=""
+              />
+            </div>
             <label
               style={{ textAlign: "center" }}
               className="file-label-register-field"
@@ -1162,9 +1318,18 @@ export default function RegisterFieldForm() {
           )}
 
           <div className="input-group-register-field">
-            <label htmlFor="documents">
-              เอกสาร หรือรูป (เพิ่มได้สูงสุด 10 ไฟล์)
-            </label>
+            <div className="icon-label-container">
+              <label htmlFor="documents">
+                เอกสาร หรือรูป (เพิ่มได้สูงสุด 10 ไฟล์):
+              </label>
+              <img
+                width={20}
+                height={20}
+                style={{ verticalAlign: "middle" }}
+                src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757260641/material-symbols--lab-profile-sharp_rlwd0x.png"
+                alt=""
+              />
+            </div>
             <label
               style={{ textAlign: "center" }}
               className="file-label-register-field"
@@ -1193,7 +1358,16 @@ export default function RegisterFieldForm() {
           )}
           <div className="input-group-register-field">
             <div className="acc-type">
-              <label htmlFor="account-type">เลือกประเภทบัญชี</label>
+              <div className="icon-label-container">
+                <label htmlFor="account-type">เลือกประเภทบัญชี:</label>
+                <img
+                  width={20}
+                  height={20}
+                  style={{ verticalAlign: "middle" }}
+                  src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757260760/streamline--bank-remix_jjilhx.png"
+                  alt=""
+                />
+              </div>
               <select
                 name="account_type"
                 value={fieldData.account_type}
@@ -1206,7 +1380,17 @@ export default function RegisterFieldForm() {
             </div>
           </div>
           <div className="input-group-register-field">
-            <label htmlFor="number_bank">เลขบัญชีธนาคาร / พร้อมเพย์</label>
+            <div className="icon-label-container">
+              <label htmlFor="number_bank">เลขบัญชีธนาคาร / พร้อมเพย์</label>
+              <img
+                width={20}
+                height={20}
+                style={{ verticalAlign: "middle" }}
+                src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757261101/f7--number_owq9iu.png"
+                alt=""
+              />
+            </div>
+
             <input
               type="text"
               maxLength={13}
@@ -1249,7 +1433,16 @@ export default function RegisterFieldForm() {
 
           {fieldData.account_type === "ธนาคาร" && (
             <div className="input-group-register-field">
-              <label htmlFor="bank">ชื่อธนาคาร</label>
+              <div className="icon-label-container">
+                <label htmlFor="bank">ชื่อธนาคาร</label>
+                <img
+                  width={20}
+                  height={20}
+                  style={{ verticalAlign: "middle" }}
+                  src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757261308/icon-park-solid--bank-card_cbiyno.png"
+                  alt=""
+                />
+              </div>
               <input
                 type="text"
                 maxLength={50}
@@ -1263,7 +1456,16 @@ export default function RegisterFieldForm() {
 
           {fieldData.account_type === "พร้อมเพย์" && (
             <div className="input-group-register-field">
-              <label htmlFor="bank">ชื่อธนาคาร</label>
+              <div className="icon-label-container">
+                <label htmlFor="bank">ชื่อธนาคาร</label>
+                <img
+                  width={20}
+                  height={20}
+                  style={{ verticalAlign: "middle" }}
+                  src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757260760/streamline--bank-remix_jjilhx.png"
+                  alt=""
+                />
+              </div>
               <input
                 type="text"
                 maxLength={50}
@@ -1275,7 +1477,16 @@ export default function RegisterFieldForm() {
           )}
 
           <div className="input-group-register-field">
-            <label htmlFor="bank">ชื่อเจ้าของบัญชีธนาคาร</label>
+            <div className="icon-label-container">
+              <label htmlFor="bank">ชื่อเจ้าของบัญชีธนาคาร</label>
+              <img
+                width={20}
+                height={20}
+                style={{ verticalAlign: "middle" }}
+                src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1755157542/qlementine-icons--user-24_zre8k9.png"
+                alt=""
+              />
+            </div>
             <input
               type="text"
               maxLength={50}
@@ -1287,7 +1498,16 @@ export default function RegisterFieldForm() {
           </div>
           <div>
             <div className="input-group-register-field">
-              <label>ค่ามัดจำ</label>
+              <div className="icon-label-container">
+                <label>ค่ามัดจำ</label>
+                <img
+                  height={20}
+                  width={20}
+                  style={{ verticalAlign: "middle" }}
+                  src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757261552/vaadin--money-deposit_h34fs8.png"
+                  alt=""
+                />
+              </div>
             </div>
             <div className="depositcon-regisfield">
               <div className="input-group-checkbox-register-field">
@@ -1322,7 +1542,16 @@ export default function RegisterFieldForm() {
             </div>
           </div>
           <div className="input-group-register-field">
-            <label>สิ่งอำนวยความสะดวก</label>
+            <div className="icon-label-container">
+              <label>สิ่งอำนวยความสะดวก</label>
+              <img
+                width={20}
+                height={20}
+                style={{ verticalAlign: "middle" }}
+                src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757260382/zondicons--add-solid_hmeqxs.png"
+                alt=""
+              />
+            </div>
           </div>
           <div className="factcon-register-field">
             {facilities.map((fac) => {
@@ -1538,7 +1767,16 @@ export default function RegisterFieldForm() {
           </div>
 
           <div className="input-group-register-field">
-            <label>คำแนะนำของสนาม</label>
+            <div className="icon-label-container">
+              <label>คำแนะนำของสนาม</label>
+              <img
+                width={20}
+                height={20}
+                style={{ verticalAlign: "middle" }}
+                src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757261993/streamline-plump--description-solid_ct73qk.png"
+                alt=""
+              />
+            </div>
             <div className="textarea">
               <textarea
                 maxLength={256}

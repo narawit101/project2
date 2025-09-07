@@ -112,8 +112,7 @@
 
 .subfieldcon {
   align-items: center;
-  padding: 15px;
-  margin-top: 20px;
+  padding: 0px 15px 15px 15px;
   border: #b3b3b3 solid 1px;
 }
 
@@ -588,7 +587,7 @@
     justify-content: center;
     text-align: center;
   }
-  
+
   .field-register-contianer {
     width: 100%;
     max-width: 400px;
@@ -850,4 +849,16 @@
 }
 .selected-documents-list li {
   line-height: 1.3;
+}
+
+.icon-label-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.icon-label-days-container {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
 }

@@ -399,7 +399,7 @@ export default function BookingDetail() {
       const res = await fetch(
         `${API_URL}/booking/cancel-bookings/${booking.booking_id}`,
         {
-          method: "DELETE",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },

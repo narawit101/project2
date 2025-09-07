@@ -1,3 +1,17 @@
+:root {
+  --text-color: #03045e;
+  --primary-bg: #ffffff;
+  --secondary-bg: #f8f9fa;
+  --border-color: #e9ecef;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --border-radius: 12px;
+  --spacing: 1.5rem;
+  --success-color: #28a745;
+  --hover-success-color: #177c2e;
+  --danger-color: #dc3545;
+  --hover-danger-color: #a32b37;
+}
+
 .post-container {
   max-width: 600px;
   margin: 5px auto;
@@ -51,8 +65,7 @@
 .submit-btn-post {
   width: 100%;
   padding: 12px;
-  background: var(--text-color);
-
+  background: var(--success-color);
   color: white;
   font-size: 16px;
   border: none;
@@ -61,8 +74,8 @@
   transition: background 0.3s ease-in-out;
 }
 
-.submit-btn-psot:hover {
-  background: #061996;
+.submit-btn-post:hover {
+  background: var(--hover-success-color);
 }
 
 .add-post-button {
@@ -85,7 +98,7 @@
   width: 100%;
   margin-top: 10px;
   padding: 10px 20px;
-  background-color: #aaa;
+  background-color: var(--danger-color);
   color: white;
   border: none;
   border-radius: 5px;
@@ -94,7 +107,7 @@
 }
 
 .cancel-btn:hover {
-  background-color: #8b8b8b;
+  background-color: var(--hover-danger-color);
 }
 
 .image-preview-container-post {

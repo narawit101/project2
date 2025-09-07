@@ -46,7 +46,7 @@ router.get("/all/:userId", authMiddleware, async (req, res) => {
       FROM notifications n
       LEFT JOIN users u_sender ON n.sender_id = u_sender.user_id
       LEFT JOIN users u_recive ON n.recive_id = u_recive.user_id
-      LEFT JOIN bookings b ON n.topic IN ('new_booking','booking_approved','booking_rejected','booking_complete','deposit_payment_uploaded','total_slip_payment_uploaded') AND n.key_id = b.booking_id
+      LEFT JOIN bookings b ON n.topic IN ('new_booking','booking_approved','booking_rejected','booking_complete','deposit_payment_uploaded','total_slip_payment_uploaded','booking_cancelled') AND n.key_id = b.booking_id
       LEFT JOIN field fb ON b.field_id = fb.field_id
       LEFT JOIN posts p ON n.topic = 'field_posted' AND n.key_id = p.post_id
       LEFT JOIN field fp ON p.field_id = fp.field_id
