@@ -387,6 +387,20 @@
   font-size: 16px;
 }
 
+.savebtn-edit-post-profile {
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  background-color: var(--success-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+.savebtn-edit-post-profile:hover {
+  background-color: var(--hover-success-color);
+}
+
 .add-post-button:hover {
   background-color: #45a049;
 }
@@ -623,20 +637,14 @@
   font-weight: bold;
   padding: 12px 24px;
   border: none;
-  border-radius: 25px;
+  border-radius: 15px;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
   box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
   outline: none;
 }
 
 .profile-btn button:hover {
-  background: linear-gradient(135deg, #055199, #1b0ed4);
-  transform: scale(1.05);
-}
-
-.profile-btn button:active {
-  transform: scale(0.95);
+  background: #1b0ed4;
 }
 
 .field-facilities-profile p.no-facilities {
@@ -1522,7 +1530,8 @@
 }
 
 .follow-btn-profile {
-  background-color: var(--success-color);
+  background: linear-gradient(135deg, #1b0ed4, #055199);
+  box-shadow: 0 4px 15px rgba(135, 126, 255, 0.3);
   color: white;
   border: none;
   border-radius: 5px;
@@ -1531,11 +1540,12 @@
   padding: 10px 20px;
   margin-top: 18px;
   margin-bottom: 18px;
-  transition: background-color 0.3s ease;
 }
+
 .follow-btn-profile:hover {
-  background-color: var(--hover-success-color);
+  background: #1b0ed4;
 }
+
 .head-subtitle-profile {
   margin: 10px;
   gap: 5px;

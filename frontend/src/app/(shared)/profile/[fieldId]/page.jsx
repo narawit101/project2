@@ -937,6 +937,7 @@ export default function CheckFieldDetail() {
                     ))}
                   </div>
                   <button
+                  className="savebtn-edit-post-profile"
                     type="submit"
                     style={{
                       cursor: startProcessLoad ? "not-allowed" : "pointer",

@@ -493,17 +493,6 @@ export default function Navbar() {
                         จัดการสนามกีฬา
                       </Link>
                     </li>
-                    {/* <li>
-                      <Link href="/manage-facility">
-                        <img
-                          src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1755270985/fluent-emoji-high-contrast--running-shoe_c5koea.png"
-                          width={20}
-                          height={20}
-                          alt=""
-                        />
-                        จัดการสิ่งอำนวยความสะดวก
-                      </Link>
-                    </li> */}
                     <li>
                       <Link href="/manage-sport-type">
                         <img
