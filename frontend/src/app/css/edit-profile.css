@@ -3,11 +3,15 @@
   --primary-bg: #ffffff;
   --secondary-bg: #f8f9fa;
   --border-color: #e9ecef;
-  --shadow: 0 2px 1px rgba(0, 0, 0, 0.1);
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   --border-radius: 12px;
   --spacing: 1.5rem;
   --success-color: #28a745;
+  --hover-success-color: #177c2e;
   --danger-color: #dc3545;
+  --hover-danger-color: #a32b37;
+  --edit-color: #2f2a2a9a;
+  --hover-edit-color: #4c4444;
 }
 
 .edit-profile-container {
@@ -427,7 +431,7 @@
 }
 
 .editbtn-editfield-profile {
-  background: var(--text-color);
+  background: var(--edit-color);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -444,7 +448,7 @@
 }
 
 .editbtn-editfield-profile:hover {
-  background: #020438;
+  background:var(--hover-edit-color);
 }
 
 .editbtn-editfield-center {
