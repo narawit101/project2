@@ -1189,7 +1189,7 @@
 .preview-container-editfield {
   width: 250px;
   height: 250px;
-  border-radius: 50%;
+  border-radius: 25px;
   overflow: hidden;
   margin: 20px auto;
   border: 3px solid var(--border-color);
