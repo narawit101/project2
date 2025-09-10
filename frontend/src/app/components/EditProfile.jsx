@@ -49,12 +49,18 @@ export default function EditProfile() {
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    SetstartProcessLoad(true);
+
+    if (!updatedUser.first_name.trim() || !updatedUser.last_name.trim()) {
+      setMessage("ไม่สามารถใส่ชื่อหรือนามสกุลที่ว่างเปล่าได้");
+      setMessageType("error");
+      return;
+    }
     if (!currentUser || !currentUser.user_id) {
       setMessage("ไม่พบข้อมูลผู้ใช้");
       setMessageType("error");
       return;
     }
+    SetstartProcessLoad(true);
 
     try {
       const response = await fetch(

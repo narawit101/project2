@@ -158,7 +158,11 @@ export default function AdminManager() {
 
   const handleUpdateUser = async (e) => {
     e.preventDefault();
-
+    if (!selectedUser.first_name.trim() || !selectedUser.last_name.trim()) {
+      setMessage("ไม่สามารถใส่ชื่อหรือนามสกุลที่เป็นค่าว่างได้");
+      setMessageType("error");
+      return;
+    }
     SetstartProcessLoad(true);
     try {
       const response = await fetch(`${API_URL}/users/${selectedUser.user_id}`, {
