@@ -656,9 +656,9 @@ export default function CheckFieldDetail() {
       setMessageType("error");
       return;
     }
-    // Deposit constraint: existing deposit must not exceed cheapest sub-field price after this change
+   
     if (field && field.price_deposit != null) {
-      const deposit = Number(field.price_deposit) || 0; // 0 allowed
+      const deposit = Number(field.price_deposit) || 0; 
       if (!isNaN(deposit) && deposit > 0) {
         const prospectivePrices = (subFields || [])
           .map((s) =>
@@ -676,6 +676,26 @@ export default function CheckFieldDetail() {
           }
         }
       }
+    }
+    if (!updatedSubFieldName || updatedSubFieldName.trim() === "") {
+      setMessage("กรุณาระบุชื่อสนามย่อย");
+      setMessageType("error");
+      return;
+    }
+    if (!updatedSubFieldPlayer || isNaN(updatedSubFieldPlayer)) {
+      setMessage("กรุณาระบุจำนวนผู้เล่นต่อทีมเป็นตัวเลข");
+      setMessageType("error");
+      return;
+    }
+    if (!updatedSubFieldWid || isNaN(updatedSubFieldWid)) {
+      setMessage("กรุณาระบุความกว้างของสนามเป็นตัวเลข");
+      setMessageType("error");
+      return;
+    }
+    if (!updatedSubFieldLength || isNaN(updatedSubFieldLength)) {
+      setMessage("กรุณาระบุความยาวของสนามเป็นตัวเลข");
+      setMessageType("error");
+      return;
     }
     SetstartProcessLoad(true);
     try {
