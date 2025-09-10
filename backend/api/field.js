@@ -254,18 +254,29 @@ router.post("/register", upload.any(), authMiddleware, async (req, res) => {
     for (const facId of selectedFacIds) {
       const fac = selectedFacilities[facId] || {};
       const facPrice = parseFloat(fac.price) || 0;
-      const quantity_total = parseInt(fac.quantity_total ?? fac.quantity ?? 0, 10) || 0;
-      const description = fac.description ? fac.description.toString().slice(0, 300) : null;
+      const quantity_total =
+        parseInt(fac.quantity_total ?? fac.quantity ?? 0, 10) || 0;
+      const description = fac.description
+        ? fac.description.toString().slice(0, 300)
+        : null;
       const safeKey = fac._key;
 
-      const getFileUrl = (file) => file?.path || file?.secure_url || file?.url || null;
+      const getFileUrl = (file) =>
+        file?.path || file?.secure_url || file?.url || null;
       const facImgFile = filesArr.find(
         (f) =>
           (safeKey && f.fieldname === `facility_image_${safeKey}`) ||
           f.fieldname === `facility_image_${facId}`
       );
       if (!facImgFile) {
-        console.warn("[facility image missing] facId=", facId, "safeKey=", safeKey, "available=", filesArr.map(x=>x.fieldname));
+        console.warn(
+          "[facility image missing] facId=",
+          facId,
+          "safeKey=",
+          safeKey,
+          "available=",
+          filesArr.map((x) => x.fieldname)
+        );
       }
       const image_path = getFileUrl(facImgFile);
       await client.query(
@@ -639,7 +650,7 @@ router.get("/:field_id", authMiddleware, async (req, res) => {
           f.field_id, f.field_name, f.address, f.gps_location, f.documents,
           f.open_hours, f.close_hours, f.img_field, f.name_bank, 
           f.number_bank, f.account_holder, f.status, f.price_deposit, 
-          f.open_days, f.field_description,
+          f.open_days, f.field_description,f.slot_duration,
           u.user_id, u.first_name, u.last_name, u.email,
           COALESCE(json_agg(
             DISTINCT jsonb_build_object(
@@ -1153,9 +1164,9 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
           field_description,
           cancel_hours,
           open_days,
-          field_id,
-          slot_duration,
-          user_id,
+          slot_duration, 
+          field_id, 
+          user_id, 
         ]
       );
 
@@ -1729,7 +1740,7 @@ router.put(
   }
 );
 
-router.put("/edit-location/:field_id",authMiddleware, async (req, res) => {
+router.put("/edit-location/:field_id", authMiddleware, async (req, res) => {
   const { field_id } = req.params;
   const { gps_location } = req.body;
   console.log("file: field.js:573 ~ router.put ~ req.body:", req.body);

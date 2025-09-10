@@ -888,7 +888,7 @@ export default function BookingDetail() {
                                           )
                                         }
                                       >
-                                        สร้าง QR Code สำหรัับยอดคงเหลือ
+                                        สร้าง QR Code สำหรับยอดคงเหลือ
                                       </button>
                                     )}
                                     {qrCode && (

@@ -1132,6 +1132,9 @@ export default function Booking() {
                               <p className="facility-availability">
                                 เหลือ {availableQty} จาก {fac.quantity_total}{" "}
                               </p>
+                              <p className="facility-availability">
+                                รายละเอียด: {fac.description}{" "}
+                              </p>
 
                               <div className="facility-controls">
                                 <button
