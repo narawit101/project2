@@ -1781,7 +1781,7 @@ export default function RegisterFieldForm() {
               <textarea
                 maxLength={256}
                 name="field_description"
-                placeholder="ใส่รายละเอียดสนาม หมายเหตุต่างๆ เช่นสนามหญ้าเทียม 7 คน เบอร์ติดต่อฉุกเฉิน "
+                placeholder="ใส่รายละเอียดสนาม ช่องทางการติดต่อ หมายเหตุต่างๆ เช่นสนามหญ้าเทียม 7 คน"
                 value={fieldData.field_description}
                 onChange={handleFieldChange}
               />

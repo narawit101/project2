@@ -137,6 +137,7 @@ export default function Page() {
         "deposit_payment_uploaded",
         "total_slip_payment_uploaded",
         "booking_cancelled",
+        "cancel_booking_by_customer",
       ].includes(topic)
     ) {
       if (keyId) router.push(`/booking-detail/${keyId}`);
@@ -605,9 +606,42 @@ export default function Page() {
                       การจองถูกยกเลิกโดยเจ้าของสนาม
                     </strong>
                     <br />
+                    <small className="notif-rejected-all-reson">
+                      เหตุผล: {n.rawMessage}
+                    </small>
+                    <br />
                     <small>หมายเลข: #{n.keyId}</small>
                     <br />
                     <small>ผู้จอง: {n.reciveName || "-"}</small>
+                    <br />
+                    <small>
+                      สนาม: {n.fieldName || "-"}
+                      <br />
+                      สนามย่อย: {n.subFieldName || "-"}
+                    </small>
+                    <br />
+                    {n.bookingDate && (
+                      <small>
+                        วันที่: {formatDate(n.bookingDate)}
+                        <br />
+                        เวลา: {n.startTime} - {n.endTime}
+                      </small>
+                    )}
+                  </>
+                )}
+                {n.topic === "cancel_booking_by_customer" && (
+                  <>
+                    <strong className="notif-new_booking">
+                      การจองถูกยกเลิกโดยลูกค้า
+                    </strong>
+                    <br />
+                    <small className="notif-rejected-all-reson">
+                      เหตุผล: {n.rawMessage}
+                    </small>
+                    <br />
+                    <small>หมายเลข: #{n.keyId}</small>
+                    <br />
+                    <small>ผู้จอง: {n.senderName || "-"}</small>
                     <br />
                     <small>
                       สนาม: {n.fieldName || "-"}
@@ -656,6 +690,7 @@ export default function Page() {
                   "field_appeal",
                   "field_posted",
                   "booking_cancelled",
+                  "cancel_booking_by_customer",
                   "new_following",
                 ].includes(n.topic) && (
                   <>

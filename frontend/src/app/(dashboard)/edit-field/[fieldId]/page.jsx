@@ -656,9 +656,9 @@ export default function CheckFieldDetail() {
       setMessageType("error");
       return;
     }
-   
+
     if (field && field.price_deposit != null) {
-      const deposit = Number(field.price_deposit) || 0; 
+      const deposit = Number(field.price_deposit) || 0;
       if (!isNaN(deposit) && deposit > 0) {
         const prospectivePrices = (subFields || [])
           .map((s) =>

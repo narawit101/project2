@@ -277,7 +277,9 @@
   gap: 20px;
   display: flex;
 }
+
 .clear-filters-btn {
+  margin-top: 10px;
   width: auto;
   height: 50px;
   display: flex;
@@ -298,6 +300,7 @@
 }
 
 .swip-mode-order {
+  margin-top: 10px;
   width: auto;
   height: 50px;
   display: flex;

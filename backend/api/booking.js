@@ -252,9 +252,8 @@ module.exports = function (io) {
 
         const expired = await pool.query(
           `
-    UPDATE bookings b
-    SET status = 'rejected'
-    FROM users u, field f
+    DELETE FROM bookings b
+    USING users u, field f
     WHERE b.user_id = u.user_id
       AND b.field_id = f.field_id
       AND b.status IN ('approved', 'complete')
@@ -1279,7 +1278,7 @@ LIMIT 1;
     authMiddleware,
     async (req, res) => {
       const { booking_id } = req.params;
-      const { cancel_time } = req.body;
+      const { cancel_time, reasoning } = req.body;
       const user_id = req.user.user_id;
 
       try {
@@ -1416,10 +1415,9 @@ LIMIT 1;
           await pool.query(`DELETE FROM booking_fac WHERE booking_id = $1`, [
             booking_id,
           ]);
-          await pool.query(
-            `UPDATE bookings SET status = 'rejected' WHERE booking_id = $1`,
-            [booking_id]
-          );
+          await pool.query(`DELETE FROM bookings WHERE booking_id = $1`, [
+            booking_id,
+          ]);
 
           try {
             const notifyData = await pool.query(
@@ -1429,7 +1427,7 @@ LIMIT 1;
                 owner_id,
                 booking_user_id,
                 "booking_cancelled",
-                "การจองของคุณถูกยกเลิก",
+                `${reasoning}`,
                 booking_id,
                 "unread",
               ]
@@ -1500,7 +1498,7 @@ LIMIT 1;
                 booking_user_id,
                 owner_id,
                 "cancel_booking_by_customer",
-                "ลูกค้ายกเลิกการจองสนามของคุณ",
+                `${reasoning}`,
                 booking_id,
                 "unread",
               ]
@@ -1510,7 +1508,7 @@ LIMIT 1;
               req.io.emit("new_notification", {
                 notifyId: notifyData.rows[0].notify_id,
                 topic: "cancel_booking_by_customer",
-                reciveId: owner_id, // ส่งให้เจ้าของสนาม
+                reciveId: owner_id,
                 keyId: booking_id,
               });
             }

@@ -76,6 +76,47 @@ const StatusChangeModal = ({
   );
 };
 
+const CancelBookingModal = ({
+  onConfirm,
+  onClose,
+  reasoningCancel,
+  setReasoningCancel,
+}) => (
+  <div className="modal-overlay-order-detail">
+    <div className="modal-content-order-detail">
+      <div className="modal-header-order-detail">
+        <h2>ยกเลิกการจอง</h2>
+      </div>
+      <div className="resoning-booking-detail">
+        <textarea
+          placeholder="กรุณาใส่เหตุผลที่ยกเลิกการจอง"
+          required
+          maxLength={300}
+          value={reasoningCancel}
+          onChange={(e) => {
+            setReasoningCancel(e.target.value);
+          }}
+        />
+      </div>
+      <div className="modal-actions-order-detail">
+        <button
+          className="modal-confirm-btn-order-detail"
+          style={{
+            cursor: reasoningCancel.length === 0 ? "not-allowed" : "pointer",
+          }}
+          disabled={reasoningCancel.length === 0}
+          onClick={onConfirm}
+        >
+          ยืนยัน
+        </button>
+        <button className="modal-cancel-btn-order-detail" onClick={onClose}>
+          ยกเลิก
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
 export default function BookingDetail() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const { user, isLoading } = useAuth();
@@ -108,6 +149,7 @@ export default function BookingDetail() {
   const [reviewData, setReviewData] = useState([]);
   const [qrCode, setQrCode] = useState(null);
   const [reasoning, setReasoning] = useState("");
+  const [reasoningCancel, setReasoningCancel] = useState("");
   const [notFoundFlag, setNotFoundFlag] = useState(false);
 
   usePreventLeave(startProcessLoad);
@@ -174,7 +216,6 @@ export default function BookingDetail() {
 
         if (res.ok) {
           console.log("Notifications marked as read for booking:", booking_id);
-          // แจ้ง Navbar ให้รีโหลด (optional)
           window.dispatchEvent(
             new CustomEvent("notifications-marked-read", {
               detail: { key_id: Number(booking_id) },
@@ -361,38 +402,6 @@ export default function BookingDetail() {
     }
   };
 
-  const CancelBookingModal = ({ onConfirm, onClose }) => (
-    <div className="modal-overlay-order-detail">
-      <div className="modal-content-order-detail">
-        <div className="modal-header-order-detail">
-          <h2>ยกเลิกการจอง</h2>
-        </div>
-        <div className="modal-actions-order-detail">
-          <button
-            className="modal-confirm-btn-order-detail"
-            style={{
-              cursor: startProcessLoad ? "not-allowed" : "pointer",
-            }}
-            disabled={startProcessLoad}
-            onClick={onConfirm}
-          >
-            ยืนยัน
-          </button>
-          <button
-            className="modal-cancel-btn-order-detail"
-            style={{
-              cursor: startProcessLoad ? "not-allowed" : "pointer",
-            }}
-            disabled={startProcessLoad}
-            onClick={onClose}
-          >
-            ยกเลิก
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
   const confirmCancelBooking = async () => {
     SetstartProcessLoad(true);
     try {
@@ -405,6 +414,7 @@ export default function BookingDetail() {
           },
           body: JSON.stringify({
             cancel_time: new Date().toISOString(),
+            reasoning: reasoningCancel,
           }),
           credentials: "include",
         }
@@ -416,7 +426,7 @@ export default function BookingDetail() {
         setMessage(data.message);
         setMessageType("success");
         setTimeout(() => {
-          window.location.reload();
+          router.push("/");
         }, 3000);
       } else {
         setMessage(data.message || "ยกเลิกไม่สำเร็จ");
@@ -1299,6 +1309,8 @@ export default function BookingDetail() {
                 <CancelBookingModal
                   onConfirm={confirmCancelBooking}
                   onClose={() => setShowCancelModal(false)}
+                  reasoningCancel={reasoningCancel}
+                  setReasoningCancel={setReasoningCancel}
                 />
               )}
             </li>

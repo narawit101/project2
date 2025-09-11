@@ -222,6 +222,7 @@ export default function Navbar() {
         "deposit_payment_uploaded",
         "total_slip_payment_uploaded",
         "booking_cancelled",
+        "cancel_booking_by_customer",
       ].includes(currentTopic)
     ) {
       if (currentKeyId) {
@@ -847,10 +848,47 @@ export default function Navbar() {
                               การจองถูกยกเลิกโดยเจ้าของสนาม
                             </strong>
                             <br />
+                            <small className="notif-rejected-reson">
+                              เหตุผล: {notification.rawMessage}
+                            </small>
+                            <br />
                             <small>หมายเลข: #{notification.keyId}</small>
                             <br />
                             <small>
                               ผู้จอง: {notification.reciveName || "-"}
+                            </small>
+                            <br />
+                            <small>
+                              สนาม: {notification.fieldName || "-"}
+                              <br />
+                              สนามย่อย: {notification.subFieldName || "-"}
+                            </small>
+                            <br />
+                            {notification.bookingDate && (
+                              <small>
+                                วันที่: {formatDate(notification.bookingDate)}
+                                <br />
+                                เวลา: {notification.startTime} -{" "}
+                                {notification.endTime}
+                              </small>
+                            )}
+                          </>
+                        )}
+                        {notification.topic ===
+                          "cancel_booking_by_customer" && (
+                          <>
+                            <strong className="notif-new_booking">
+                              การจองถูกยกเลิกโดยลูกค้า
+                            </strong>
+                            <br />
+                            <small className="notif-rejected-reson">
+                              เหตุผล: {notification.rawMessage}
+                            </small>
+                            <br />
+                            <small>หมายเลข: #{notification.keyId}</small>
+                            <br />
+                            <small>
+                              ผู้จอง: {notification.senderName || "-"}
                             </small>
                             <br />
                             <small>
@@ -904,6 +942,7 @@ export default function Navbar() {
                           "field_appeal",
                           "field_posted",
                           "booking_cancelled",
+                          "cancel_booking_by_customer",
                           "new_following",
                         ].includes(notification.topic) && (
                           <>
