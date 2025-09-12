@@ -293,28 +293,28 @@ export default function Statistics() {
               </select>
             </label>
             <div className="btn-group-filter">
-            <button onClick={clearFilters} className="clear-filters-btn">
-              ล้างตัวกรอง
-            </button>
-            <button
-              className="swip-mode-order"
-              type="button"
-              onClick={() => {
-                setUseDateRange((prev) => !prev);
-                setFilters({
-                  bookingDate: "",
-                  startDate: "",
-                  endDate: "",
-                  status: "",
-                });
-                setCurrentPage(1);
-                setTimeout(() => {
-                  fetchData();
-                }, 0);
-              }}
-            >
-              {!useDateRange ? "ใช้วันที่อย่างเดียว" : "ใช้ช่วงวัน"}
-            </button>
+              <button onClick={clearFilters} className="clear-filters-btn">
+                ล้างตัวกรอง
+              </button>
+              <button
+                className="swip-mode-order"
+                type="button"
+                onClick={() => {
+                  setUseDateRange((prev) => !prev);
+                  setFilters({
+                    bookingDate: "",
+                    startDate: "",
+                    endDate: "",
+                    status: "",
+                  });
+                  setCurrentPage(1);
+                  setTimeout(() => {
+                    fetchData();
+                  }, 0);
+                }}
+              >
+                {!useDateRange ? "ใช้วันที่อย่างเดียว" : "ใช้ช่วงวัน"}
+              </button>
             </div>
             {stats.totalRevenue >= 0 && (
               <div className="revenue-summary">
@@ -509,7 +509,8 @@ export default function Statistics() {
                     <td>{item.field_name}</td>
                     <td>{item.sub_field_name}</td>
                     <td>
-                      {item.start_time} - {item.end_time}
+                      {item.start_time.substring(0, 5)} -{" "}
+                      {item.end_time.substring(0, 5)}
                     </td>
                     <td>{item.activity}</td>
                     <td>{item.price_deposit}</td>

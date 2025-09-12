@@ -42,6 +42,8 @@ export default function Register() {
     serverError: "",
   });
   const [successMessage, setSuccessMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -325,13 +327,22 @@ export default function Register() {
 
         <div className="input-group-register">
           <label>รหัสผ่าน:</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className={errors.passwordLength ? "errors" : ""}
-          />
+          <div className="password-wrapper-register">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className={errors.passwordLength ? "errors" : ""}
+            />
+            <button
+              type="button"
+              className="toggle-password-btn-register"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "ซ่อน" : "แสดง"}
+            </button>
+          </div>
           {errors.passwordLength && (
             <p className="error-message">
               <i className="fas fa-exclamation-circle"></i>{" "}
@@ -345,13 +356,22 @@ export default function Register() {
 
         <div className="input-group-register">
           <label>ยืนยันรหัสผ่าน:</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            className={errors.passwordMatch ? "errors" : ""}
-          />
+          <div className="password-wrapper-register">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className={errors.passwordMatch ? "errors" : ""}
+            />
+            <button
+              type="button"
+              className="toggle-password-btn-register"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? "ซ่อน" : "แสดง"}
+            </button>
+          </div>
           {errors.passwordMatch && (
             <p className="error-message">
               <i className="fas fa-exclamation-circle"></i>{" "}

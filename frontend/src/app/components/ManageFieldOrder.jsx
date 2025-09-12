@@ -492,7 +492,8 @@ export default function Myorder() {
                       <div className="total-hours-order">
                         <p>
                           <strong> เวลาที่จอง: </strong>
-                          {item.start_time} - {item.end_time}
+                          {item.start_time.substring(0, 5)} -{" "}
+                          {item.end_time.substring(0, 5)} น.
                         </p>
                         <p>
                           <strong> สามารถยกเลิกก่อนเวลาเริ่ม: </strong>

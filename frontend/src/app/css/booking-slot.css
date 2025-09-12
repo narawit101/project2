@@ -669,7 +669,9 @@
     flex-direction: column;
     width: 100%;
   }
-
+  .date-select-label h2 {
+    font-size: 20px;
+  }
   .book-content {
     width: 100%;
     margin-bottom: 10px;
@@ -701,6 +703,9 @@
 @media screen and (max-width: 450px) {
   .confirm-header-book {
     margin-top: 20px;
+  }
+  .date-select-label h2 {
+    font-size: 16px;
   }
   .countdown-timer-book {
     width: 40%;
@@ -1194,9 +1199,13 @@
 }
 
 @media (max-width: 768px) {
+  .booking-summary-container {
+    margin: 5px;
+  }
   .container-bookings {
     flex-direction: column !important;
     gap: 1rem;
+    padding: 5px;
   }
 
   .book-content {
@@ -1290,8 +1299,14 @@
   .booking-summary-section {
     padding: 0 0.25rem;
   }
-
+  .container-bookings {
+    padding: 0;
+  }
+  .book-sum-box {
+    padding: 10px;
+  }
   .booking-summary-container {
+    margin: 0 0 10px 0;
     border-radius: 8px;
   }
 

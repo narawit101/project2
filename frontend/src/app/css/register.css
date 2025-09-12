@@ -127,3 +127,35 @@
   gap: 8px;
   margin-bottom: 8px;
 }
+
+.password-wrapper-register {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper-register input {
+  width: 100%;
+  padding: 10px 60px 10px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.toggle-password-btn-register {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 5px;
+  border-radius: 3px;
+  transition: background-color 0.3s;
+}
+
+.toggle-password-btn-register:hover {
+  background-color: rgba(3, 4, 94, 0.1);
+}

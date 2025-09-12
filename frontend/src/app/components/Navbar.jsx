@@ -74,8 +74,8 @@ export default function Navbar() {
             fieldId: notification.field_id || null,
             subFieldName: notification.sub_field_name || "",
             bookingDate: notification.booking_date || null,
-            startTime: notification.start_time || null,
-            endTime: notification.end_time || null,
+            startTime: `${notification.start_time}`.substring(0, 5) || null,
+            endTime: `${notification.end_time}`.substring(0, 5) || null,
             rawMessage: notification.messages || "",
             postContent: notification.content || "",
             created_at: notification.created_at,
@@ -195,7 +195,6 @@ export default function Navbar() {
   };
 
   const handleNotificationClick = (notification) => {
-    // Optimistically mark as read only if currently unread
     if (!notification.isRead) {
       setNotifications((prev) =>
         prev.map((n) =>
@@ -227,6 +226,7 @@ export default function Navbar() {
     ) {
       if (currentKeyId) {
         router.push(`/booking-detail/${currentKeyId}`);
+        setIsNotifyOpen(false);
       } else {
         setMessage("ไม่พบข้อมูลการจองนี้");
         setMessageType("error");
@@ -244,6 +244,7 @@ export default function Navbar() {
     ) {
       if (currentKeyId) {
         router.push(`/check-field/${currentKeyId}`);
+        setIsNotifyOpen(false);
       } else {
         setMessage("ไม่พบข้อมูลสนามนี้");
         setMessageType("error");
@@ -257,6 +258,7 @@ export default function Navbar() {
             notification.fieldId || notification.field_id || ""
           }?highlight=${currentKeyId}`
         );
+        setIsNotifyOpen(false);
       } else {
         setMessage("ไม่พบข้อมูลโพสต์นี้");
         setMessageType("error");
@@ -266,6 +268,7 @@ export default function Navbar() {
     if (["new_following"].includes(currentTopic)) {
       if (currentKeyId) {
         router.push(`/profile/${currentKeyId}`);
+        setIsNotifyOpen(false);
       } else {
         setMessage("ไม่พบข้อมูลสนามนี้");
         setMessageType("error");
@@ -273,6 +276,7 @@ export default function Navbar() {
       return;
     }
     router.push(`/notifications/${user?.user_id}`);
+    setIsNotifyOpen(false);
   };
 
   useEffect(() => {
@@ -776,7 +780,7 @@ export default function Navbar() {
                             </strong>
                             <br />
                             <small>
-                              เจ้าของสนาม: {notification.senderName || "-"}
+                              เจ้าของสนาม: {notification.reciveName || "-"}
                             </small>
                           </>
                         )}
@@ -787,7 +791,7 @@ export default function Navbar() {
                             </strong>
                             <br />
                             <small>
-                              เจ้าของสนาม: {notification.senderName || "-"}
+                              เจ้าของสนาม: {notification.reciveName || "-"}
                             </small>
                           </>
                         )}
@@ -798,7 +802,7 @@ export default function Navbar() {
                             </strong>
                             <br />
                             <small>
-                              เจ้าของสนาม: {notification.senderName || "-"}
+                              เจ้าของสนาม: {notification.reciveName || "-"}
                             </small>
                           </>
                         )}

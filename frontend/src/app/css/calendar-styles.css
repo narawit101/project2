@@ -248,6 +248,9 @@
   }
 }
 @media screen and (max-width: 550px) {
+  .calendar-toggle-btn {
+    font-size: 14px;
+  }
   .react-calendar {
     width: 100%;
     margin: 10px auto;

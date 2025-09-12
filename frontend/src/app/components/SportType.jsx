@@ -138,14 +138,20 @@ export default function HomePage() {
       Sun: "อาทิตย์",
     };
 
+    const dayOrder = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+    let dayArray;
     if (Array.isArray(days)) {
-      return days.map((day) => dayMapping[day] || day).join(" ");
+      dayArray = days;
+    } else {
+      dayArray = days.split(" ");
     }
 
-    return days
-      .split(" ")
-      .map((day) => dayMapping[day] || day)
-      .join(" ");
+    const sortedDays = dayArray.sort((a, b) => {
+      return dayOrder.indexOf(a) - dayOrder.indexOf(b);
+    });
+
+    return sortedDays.map((day) => dayMapping[day] || day).join(" ");
   };
 
   const handleSportChange = (e) => {

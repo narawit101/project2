@@ -929,7 +929,6 @@ router.delete("/delete/field/:id", authMiddleware, async (req, res) => {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-
     const subFields = await client.query(
       "SELECT sub_field_id FROM sub_field WHERE field_id = $1",
       [fieldId]

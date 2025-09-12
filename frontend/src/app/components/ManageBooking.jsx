@@ -213,14 +213,18 @@ export default function Mybooking() {
       return () => clearTimeout(timer);
     }
   }, [message]);
-  
+
   useEffect(() => {
     if (dataLoading) return;
     requestAnimationFrame(() => {
-      const cards = document.querySelectorAll('.booking-list .booking-card');
+      const cards = document.querySelectorAll(".booking-list .booking-card");
       let max = 0;
-      cards.forEach(c => { max = Math.max(max, c.offsetHeight); });
-      cards.forEach(c => { c.style.minHeight = max + 'px'; });
+      cards.forEach((c) => {
+        max = Math.max(max, c.offsetHeight);
+      });
+      cards.forEach((c) => {
+        c.style.minHeight = max + "px";
+      });
     });
   }, [currentBookings, dataLoading]);
 
@@ -303,7 +307,7 @@ export default function Mybooking() {
                       <div className="total-hours-order">
                         <p>
                           <strong> เวลาที่จอง: </strong>
-                          {item.start_time} - {item.end_time}
+                          {item.start_time.substring(0, 5)} - {(item.end_time).substring(0, 5)} น.
                         </p>
                         {item.cancel_hours > 0 && (
                           <p>

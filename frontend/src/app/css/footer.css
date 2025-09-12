@@ -21,3 +21,12 @@ footer {
   margin: 10px auto;
   font-weight: 300;
 }
+@media screen and (max-width: 600px) {
+  footer {
+    height: auto;
+  }
+  .p {
+    font-size: 12px;
+    margin: 5px 10px;
+  }
+}

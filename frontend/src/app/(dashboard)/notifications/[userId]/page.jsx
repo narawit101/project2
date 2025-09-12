@@ -70,8 +70,8 @@ export default function Page() {
             fieldId: notification.field_id || notification.fieldId || null,
             subFieldName: notification.sub_field_name || "",
             bookingDate: notification.booking_date || null,
-            startTime: notification.start_time || null,
-            endTime: notification.end_time || null,
+            startTime: `${notification.start_time}`.substring(0, 5) || null,
+            endTime: `${notification.end_time}`.substring(0, 5) || null,
             rawMessage: notification.messages || "",
             postContent: notification.content || "",
             created_at: notification.created_at,
@@ -546,7 +546,7 @@ export default function Page() {
                     </strong>
                     <br />
                     {n.senderName && (
-                      <small>เจ้าของสนาม: {n.senderName || "-"}</small>
+                      <small>เจ้าของสนาม: {n.reciveName || "-"}</small>
                     )}
                   </>
                 )}
@@ -557,7 +557,7 @@ export default function Page() {
                     </strong>
                     <br />
                     {n.senderName && (
-                      <small>เจ้าของสนาม: {n.senderName || "-"}</small>
+                      <small>เจ้าของสนาม: {n.reciveName || "-"}</small>
                     )}
                   </>
                 )}
@@ -568,7 +568,7 @@ export default function Page() {
                     </strong>
                     <br />
                     {n.senderName && (
-                      <small>เจ้าของสนาม: {n.senderName || "-"}</small>
+                      <small>เจ้าของสนาม: {n.reciveName || "-"}</small>
                     )}
                   </>
                 )}
@@ -583,7 +583,7 @@ export default function Page() {
                     </small>
                     <br />
                     {n.senderName && (
-                      <small>เจ้าของสนาม: {n.senderName || "-"}</small>
+                      <small>เจ้าของสนาม: {n.reciveName || "-"}</small>
                     )}
                   </>
                 )}
@@ -666,14 +666,6 @@ export default function Page() {
                     <br />
                     <small>ผู้ติดตาม: {n.senderName || "-"}</small>
                     <br />
-                    <br />
-                    {n.bookingDate && (
-                      <small>
-                        วันที่: {formatDate(n.bookingDate)}
-                        <br />
-                        เวลา: {n.startTime} - {n.endTime}
-                      </small>
-                    )}
                   </>
                 )}
                 {![
