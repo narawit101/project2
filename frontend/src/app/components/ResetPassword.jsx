@@ -133,7 +133,7 @@ export default function ResetPassword() {
         setMessageType("success");
         setTimeout(() => {
           router.replace("/confirm-reset-password");
-        }, 1500);
+        }, 1000);
       } else {
         setMessage(result.message);
         setMessageType("error");

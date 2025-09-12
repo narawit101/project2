@@ -10,6 +10,8 @@ export default function ConfirmResetPassword() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter("");
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
   usePreventLeave(startProcessLoad);
@@ -137,21 +139,47 @@ export default function ConfirmResetPassword() {
         >
           <label className="newpassword-title">รหัสใหม่</label>
           <div className="input-comfirm-resert">
-            <input
-              maxLength={50}
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
+            <div className="password-wrapper-confirm">
+              <input
+                maxLength={50}
+                type={showPassword ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="toggle-password-btn-confirm"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "ซ่อน" : "แสดง"}
+              </button>
+            </div>
           </div>
+
           <label className="newpassword-title">ยืนยันรหัสใหม่</label>
           <div className="input-comfirm-resert">
-            <input
-              maxLength={50}
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
+            <div className="password-wrapper-confirm">
+              <input
+                maxLength={50}
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="toggle-password-btn-confirm"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? "ซ่อน" : "แสดง"}
+              </button>
+            </div>
+          </div>
+
+          <div className="icon-lock-input-reset-password">
+            <p>
+              รหัสผ่านใหม่ต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z],
+              ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*] 10 ตัวขึ้นไป
+            </p>
           </div>
           <div className="btn-confirm-reset-password">
             <button
