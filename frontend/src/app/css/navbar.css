@@ -148,6 +148,7 @@
   align-items: center;
   cursor: pointer;
 }
+
 .avatar {
   border-radius: 50%;
   width: 40px;
@@ -440,7 +441,6 @@
 
 .notif-approved {
   color: #15803d;
-
 }
 .notif-rejected {
   color: #b91c1c;
@@ -493,6 +493,12 @@
   font-size: 12px;
   color: #6b7280;
   margin-top: 2px;
+}
+.caret-icon {
+  margin-left: 4px;
+  margin-top: 3px;
+  background: "#cbcbcbff";
+  border-radius: 50%;
 }
 
 @keyframes dropDown {

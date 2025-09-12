@@ -430,6 +430,16 @@ export default function Navbar() {
                   : "https://res.cloudinary.com/dlwfuul9o/image/upload/v1755157542/qlementine-icons--user-24_zre8k9.png"
               }
             />
+            <img
+              className="caret-icon"
+              style={{
+                transform: isDropdownOpen ? "rotate(180deg)" : "none",
+              }}
+              src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757648907/ph--caret-down-bold_o92my3.png"
+              width={15}
+              height={15}
+              alt=""
+            />
 
             <div className="dropdown" ref={dropdownRef}>
               <ul>
