@@ -1742,7 +1742,9 @@
   display: flex;
   flex-direction: column;
 }
+
 .fac-preview-img {
+  object-fit: contain;
   width: 200px;
   height: 200px;
   display: flex;
@@ -1757,6 +1759,7 @@
   display: inline-block;
   margin: 10px auto;
 }
+
 .remove-fac-image-btn {
   position: absolute;
   top: -8px;
