@@ -478,16 +478,14 @@
     max-width: 600px;
     padding: 20px;
   }
-  .field-register-contianer button {
-    color: white;
-    border: none;
-    padding: 8px;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 20px;
-    transition: 0.3s;
+  .addbtn-regisfield {
+    width: 100%;
+  }
+  .addsubfield-regisfield{
+    width: 100%;
   }
   .delbtn-regisfield {
+    width: 100%;
     margin: 0px 0px 0px 0px;
   }
   .delevn {

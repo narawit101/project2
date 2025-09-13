@@ -1048,11 +1048,11 @@ export default function CheckFieldDetail() {
                       </div>
                     </div>
                   )}
-                  {post.title.length > 40 ? (
+                  {post.title.length > 100 ? (
                     <p className="post-text">
                       {expandedPosts[post.post_id]
                         ? post.title
-                        : `${post.title.substring(0, 40).trim()}... `}
+                        : `${post.title.substring(0, 100).trim()}... `}
                       <span
                         onClick={() => toggleExpanded(post.post_id)}
                         className="see-more-button-post"

@@ -66,7 +66,7 @@ export default function HomePage() {
     fetchPosts();
   }, []);
 
-  const ROTATION_MS = 10000;
+  const ROTATION_MS = 15000;
   const TICK_MS = 100; 
 
   const handlePrev = (postId, length) => {

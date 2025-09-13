@@ -105,7 +105,7 @@ export default function Register() {
         setErrors((prevErrors) => ({
           ...prevErrors,
           password:
-            "*รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]",
+            "*รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*] ความยาว 10 ตัวอักษร",
         }));
       } else {
         setErrors((prevErrors) => ({
@@ -114,7 +114,16 @@ export default function Register() {
         }));
       }
     }
-
+    if (name === "user_name" && value.length > 0) {
+      const userNameRegex = /^[a-zA-Z0-9_]+$/;
+      if (!userNameRegex.test(value)) {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          user_name:
+            "*ชื่อผู้ใช้สามารถมีได้เฉพาะภาษาอังกฤษ, ตัวเลข และขีดล่าง(_)",
+        }));
+      }
+    }
     if (name === "user_name" || name === "email") {
       clearTimeout(window.checkDuplicateTimeout);
       window.checkDuplicateTimeout = setTimeout(async () => {
@@ -149,6 +158,10 @@ export default function Register() {
         newErrors[field] = "*กรุณากรอกข้อมูลในช่องนี้";
       }
     });
+    if (formData.user_name && !/^[a-zA-Z0-9_]+$/.test(formData.user_name)) {
+      newErrors.user_name =
+        "*ชื่อผู้ใช้สามารถมีได้เฉพาะภาษาอังกฤษ, ตัวเลข และขีดล่าง(_)";
+    }
 
     if (formData.password.length < 10) {
       newErrors.passwordLength = "*รหัสผ่านต้องมีอย่างน้อย 10 ตัวอักษร";
@@ -163,7 +176,7 @@ export default function Register() {
 
     if (!passwordRegex.test(formData.password)) {
       newErrors.password =
-        "*รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*]";
+        "*รหัสผ่านต้องประกอบด้วยตัวอักษรพิมพ์ใหญ่[A-Z], พิมพ์เล็ก[a-z], ตัวเลข[0-9] และอักขระพิเศษ[!@#$%^&*] ความยาว 10 ตัวอักษร";
     }
 
     const allowDomain = ["@gmail.com", "@hotmail.com", "@rmuti.ac.th"];

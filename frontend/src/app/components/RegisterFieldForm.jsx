@@ -813,7 +813,7 @@ export default function RegisterFieldForm() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    width: "50%",
+                    width: "100%",
                     margin: " 20px auto",
                     padding: 8,
                     backgroundColor: "#beddf9ff",

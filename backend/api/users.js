@@ -193,7 +193,7 @@ router.get("/", authMiddleware, async (req, res) => {
               WHEN 'field_owner' THEN 3
             ELSE 4
             END,
-            user_id ASC;
+            user_id DESC;
 `);
     res.status(200).json(result.rows);
   } catch (error) {
