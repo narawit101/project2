@@ -790,7 +790,7 @@ export default function Navbar() {
                             </strong>
                             <br />
                             <small>
-                              เจ้าของสนาม: {notification.reciveName || "-"}
+                              เจ้าของสนาม: {notification.senderName || "-"}
                             </small>
                           </>
                         )}
@@ -812,7 +812,7 @@ export default function Navbar() {
                             </strong>
                             <br />
                             <small>
-                              เจ้าของสนาม: {notification.reciveName || "-"}
+                              เจ้าของสนาม: {notification.senderName || "-"}
                             </small>
                           </>
                         )}

@@ -546,7 +546,7 @@ export default function Page() {
                     </strong>
                     <br />
                     {n.senderName && (
-                      <small>เจ้าของสนาม: {n.reciveName || "-"}</small>
+                      <small>เจ้าของสนาม: {n.senderName || "-"}</small>
                     )}
                   </>
                 )}
@@ -568,7 +568,7 @@ export default function Page() {
                     </strong>
                     <br />
                     {n.senderName && (
-                      <small>เจ้าของสนาม: {n.reciveName || "-"}</small>
+                      <small>เจ้าของสนาม: {n.senderName || "-"}</small>
                     )}
                   </>
                 )}
