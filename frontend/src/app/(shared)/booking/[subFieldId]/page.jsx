@@ -27,7 +27,7 @@ export default function Booking() {
   const [price, setPrice] = useState(0);
   const [newPrice, setNewPrice] = useState(0);
   const [addOns, setAddOns] = useState([]);
-  const [activity, setActivity] = useState("ราคาปกติ");
+  const [activity, setActivity] = useState("เล่นกีฬา");
   const [facilities, setFacilities] = useState([]);
   const [selectPrice, setSelectPrice] = useState("subFieldPrice");
   const [selectedFacilities, setSelectedFacilities] = useState([]);
@@ -914,8 +914,14 @@ export default function Booking() {
                     key={index}
                     className={slotClass}
                     onClick={() => {
-                      if (!isBooked && !isPast && bookingDate)
-                        toggleSelectSlot(index);
+                      if (!isBooked && !isPast) {
+                        if (!bookingDate) {
+                          setMessage("กรุณาเลือกวันที่ก่อน");
+                          setMessageType("error");
+                        } else {
+                          toggleSelectSlot(index);
+                        }
+                      }
                     }}
                     style={{
                       cursor:
@@ -959,7 +965,7 @@ export default function Booking() {
                     handlePriceOnChange({ target: { value: "subFieldPrice" } })
                   }
                 >
-                  <p className="addon-content-book">ปกติ</p>
+                  <p className="addon-content-book">เล่นกีฬา</p>
                   <p className="addon-price-book">
                     {formatPrice(price)} บาท/ชม.
                   </p>
