@@ -225,12 +225,18 @@ export default function EditProfile() {
               {previewUrl && <img src={previewUrl} alt="preview" />}
             </div>
             <div>
-              <div className="file-input-edit-profile">
-                <input
-                  type="file"
-                  onChange={handleImgChange}
-                  accept="image/*"
-                />
+              <div>
+                <div className="file-input-edit-profile">
+                  <label className="user-profile-image-label">
+                    <input
+                      style={{ display: "none" }}
+                      type="file"
+                      onChange={handleImgChange}
+                      accept="image/*"
+                    />
+                    เลือกรูปภาพ
+                  </label>
+                </div>
               </div>
               <div className="btn-group-edit-profile">
                 <button

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import "@/app/css/home-page.css";
 import { useAuth } from "@/app/contexts/AuthContext";
@@ -7,6 +7,7 @@ import Category from "@/app/components/SportType";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/th";
+import { io } from "socket.io-client";
 
 dayjs.extend(relativeTime);
 dayjs.locale("th");
@@ -22,6 +23,61 @@ export default function HomePage() {
   const [dataLoading, setDataLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
+  const socketRef = useRef(null);
+
+  // Socket connection สำหรับ real-time updates
+  useEffect(() => {
+    const socket = io(API_URL, {
+      transports: ["websocket"],
+      withCredentials: true,
+    });
+    console.log("Home Socket initialized:", socket);
+    socketRef.current = socket;
+    
+    socket.on("connect", () => {
+      console.log("Home Socket connected:", socket.id);
+    });
+
+    // รับฟัง Socket Event สำหรับโพสใหม่
+    socket.on("home_new_post", (newPost) => {
+      console.log("=== HOME NEW POST EVENT RECEIVED ===");
+      console.log("Received new post for home:", newPost);
+      
+      setPostData((prevPosts) => {
+        // เพิ่มโพสใหม่ลงในด้านบนสุด และจำกัดให้แสดงแค่ 5 โพส (ตาม LIMIT ใน backend)
+        const updatedPosts = [newPost, ...prevPosts].slice(0, 5);
+        console.log("Updated home posts count:", updatedPosts.length);
+        return updatedPosts;
+      });
+    });
+
+    // รับฟัง Socket Event สำหรับการลบโพส
+    socket.on("home_post_deleted", (data) => {
+      console.log("=== HOME POST DELETED EVENT RECEIVED ===");
+      console.log("Post to delete from home:", data.postId);
+      
+      setPostData((prevPosts) => {
+        const filteredPosts = prevPosts.filter((post) => post.post_id !== data.postId);
+        console.log("Home posts after deletion:", filteredPosts.length);
+        
+        // ถ้าโพสถูกลบจนเหลือน้อยกว่า 5 โพส ให้ fetch โพสเพิ่ม
+        if (filteredPosts.length < 5) {
+          setTimeout(() => {
+            fetchPosts();
+          }, 1000);
+        }
+        return filteredPosts;
+      });
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error("Home Socket error:", err.message);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [API_URL]);
 
   useEffect(() => {
     if (isLoading) return;
@@ -34,7 +90,10 @@ export default function HomePage() {
   }, [user, isLoading, router]);
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    fetchPosts();
+  }, []);
+
+  const fetchPosts = async () => {
       try {
         const res = await fetch(`${API_URL}/posts`, {
           method: "GET",
@@ -63,6 +122,7 @@ export default function HomePage() {
       }
     };
 
+  useEffect(() => {
     fetchPosts();
   }, []);
 

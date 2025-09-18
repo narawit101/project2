@@ -348,7 +348,6 @@
 }
 
 .savebtn-edit-profile:disabled {
-  background: #6c757d;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -448,7 +447,7 @@
 }
 
 .editbtn-editfield-profile:hover {
-  background:var(--hover-edit-color);
+  background: var(--hover-edit-color);
 }
 
 .editbtn-editfield-center {
@@ -491,6 +490,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.user-profile-image-label {
+  display: block;
+  padding: 10px 14px;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+.user-profile-image-label:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
 }
 
 @media screen and (max-width: 620px) {

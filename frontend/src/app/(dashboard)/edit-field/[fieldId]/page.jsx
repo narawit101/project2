@@ -1512,11 +1512,16 @@ export default function CheckFieldDetail() {
                 {previewUrl && <img src={previewUrl} alt="preview" />}
               </div>
               <div>
-                <input
-                  type="file"
-                  onChange={handleImgChange}
-                  accept="image/*"
-                />
+                <label className="field-image-label-editfield">
+                  <input
+                    style={{ display: "none" }}
+                    type="file"
+                    onChange={handleImgChange}
+                    accept="image/*"
+                  />
+                  เลือกรูปภาพใหม่
+                </label>
+
                 <div className="btn-group-editfield">
                   <button
                     className="savebtn-editfield"

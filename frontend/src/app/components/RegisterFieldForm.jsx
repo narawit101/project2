@@ -1625,7 +1625,7 @@ export default function RegisterFieldForm() {
                         ></textarea>
                         <div className="faccility-image-section">
                           <label className="file-label-register-field">
-                            เลืกรูป (ถ้ามี)
+                            เลือกรูปภาพ (ถ้ามี)
                             <input
                               style={{ display: "none" }}
                               type="file"

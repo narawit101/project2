@@ -61,6 +61,16 @@ export function AuthProvider({ children }) {
       }
     });
 
+    socket.on("profile_updated", (data) => {
+      if (user && parseInt(user.user_id) === parseInt(data.userId)) {
+        setUser(prevUser => ({
+          ...prevUser,
+          user_profile: data.user_profile
+        }));
+        console.log("Profile updated:", data.user_profile);
+      }
+    });
+
     socket.on("connect_error", (err) => {
       console.error("Socket error:", err.message);
     });

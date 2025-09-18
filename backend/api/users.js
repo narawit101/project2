@@ -301,6 +301,16 @@ router.put(
         }
       }
 
+      if (req.io) {
+        req.io.emit("profile_updated", {
+          userId: id,
+          user_profile: user_profile,
+        });
+        console.log("ส่งข้อมูลรูปโปรไฟล์ไปยังผู้ใช้ที่เกี่ยวข้อง:", id);
+      } else {
+        console.log("ไม่พบ req.io เพื่อส่งข้อมูลไปยังผู้ใช้");
+      }
+
       console.log("ข้อมูลอัปเดตสำเร็จ");
 
       res.status(200).json({

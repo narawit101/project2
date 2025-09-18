@@ -72,6 +72,28 @@ export default function CheckFieldDetail() {
         fetchFollowing();
       }
     });
+
+    socket.on("new_post_created", (data) => {
+      if (data.fieldId === Number(fieldId)) {
+        setPostData((prevPosts) => {
+          console.log("Previous posts count:", prevPosts.length);
+          const newPosts = [data.post, ...prevPosts];
+          console.log("New posts count:", newPosts.length);
+          return newPosts;
+        });
+        setCurrentPage(1);
+      }
+    });
+    socket.on("post_deleted", (data) => {
+      if (data.fieldId === Number(fieldId)) {
+        setPostData((prevPosts) => {
+          const filteredPosts = prevPosts.filter(
+            (post) => post.post_id !== data.postId
+          );
+          return filteredPosts;
+        });
+      }
+    });
     return () => {
       socket.disconnect();
     };
@@ -487,9 +509,8 @@ export default function CheckFieldDetail() {
       if (res.ok) {
         setMessage("ลบโพสต์เรียบร้อย");
         setMessageType("success");
-        setPostData((prev) =>
-          prev.filter((post) => post.post_id !== postToDelete)
-        );
+        // โพสจะถูกลบผ่าน Socket Event แล้ว ไม่ต้องลบที่นี่
+        console.log("โพสถูกลบแล้ว Socket จะจัดการให้");
         setShowModal(false);
       } else {
         setMessage("เกิดข้อผิดพลาดในการลบโพสต์" || error);
@@ -881,7 +902,8 @@ export default function CheckFieldDetail() {
               setCurrentPage={setCurrentPage}
               fieldId={fieldId}
               onPostSuccess={(newPost) => {
-                setPostData((prev) => [newPost, ...prev]);
+                // โพสจะถูกเพิ่มผ่าน Socket Event แล้ว ไม่ต้องเพิ่มที่นี่
+                console.log("โพสใหม่ถูกสร้างแล้ว Socket จะจัดการให้:", newPost);
               }}
             />
           )}
@@ -937,7 +959,7 @@ export default function CheckFieldDetail() {
                     ))}
                   </div>
                   <button
-                  className="savebtn-edit-post-profile"
+                    className="savebtn-edit-post-profile"
                     type="submit"
                     style={{
                       cursor: startProcessLoad ? "not-allowed" : "pointer",

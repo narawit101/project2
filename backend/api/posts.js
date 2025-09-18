@@ -142,12 +142,40 @@ router.post(
          GROUP BY p.post_id`,
         [postId]
       );
+
+      const fieldNameRes = await client.query(
+        `SELECT field_name, img_field FROM field WHERE field_id = $1`,
+        [field_id]
+      );
+      const fieldInfo = fieldNameRes.rows[0];
+
+      const io = req.app?.get("io") || req.io;
+      if (io) {
+        console.log("ส่ง socket event: new_post_created", {
+          fieldId: field_id,
+          post: insertedPost.rows[0],
+        });
+
+        io.emit("new_post_created", {
+          fieldId: Number(field_id),
+          post: insertedPost.rows[0],
+        });
+
+        io.emit("home_new_post", {
+          ...insertedPost.rows[0],
+          field_name: fieldInfo?.field_name || "Unknown Field",
+          img_field: fieldInfo?.img_field || null,
+        });
+
+        console.log("ส่ง socket event สำเร็จสำหรับสนาม", field_id);
+      } else {
+        console.log("ไม่พบ io socket connection");
+      }
       try {
         const allUser = await pool.query(
           `SELECT fo.user_id FROM following fo WHERE fo.field_id = $1`,
           [field_id]
         );
-        const io = req.app?.get("io") || req.io;
         const fieldNameRes = await pool.query(
           `SELECT field_name FROM field WHERE field_id = $1`,
           [field_id]
@@ -354,6 +382,32 @@ router.delete("/delete/:post_id", authMiddleware, async (req, res) => {
 
     await pool.query(`DELETE FROM post_images WHERE post_id = $1`, [post_id]);
     await pool.query(`DELETE FROM posts WHERE post_id = $1`, [post_id]);
+
+    const io = req.app?.get("io") || req.io;
+    if (io) {
+      console.log("ส่ง socket event: post_deleted", {
+        fieldId: post.field_id,
+        postId: Number(post_id),
+      });
+
+      io.emit("post_deleted", {
+        fieldId: Number(post.field_id),
+        postId: Number(post_id),
+      });
+
+      io.emit("home_post_deleted", {
+        postId: Number(post_id),
+      });
+
+      console.log(
+        "ส่ง socket event การลบโพสสำเร็จ สนาม:",
+        post.field_id,
+        "โพส:",
+        post_id
+      );
+    } else {
+      console.log("ไม่พบ io socket connection สำหรับการลบโพส");
+    }
 
     res.status(200).json({ message: "Post deleted" });
   } catch (err) {

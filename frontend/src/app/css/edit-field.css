@@ -1725,15 +1725,17 @@
 }
 
 .file-label-fac {
+  display: block;
+  padding: 10px 14px;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
   text-align: center;
-  display: inline-block;
-  padding: 8px 16px;
-  color: #000;
-  border-radius: 6px;
   cursor: pointer;
-  font-weight: 600;
-  border: 1px solid #ccc;
-  transition: background 0.2s ease-in-out;
+  font-size: 14px;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  font-weight: 500;
 }
 .file-input-hidden-fac {
   display: none;
@@ -2048,6 +2050,28 @@
 
 .editfield-container button:active {
   transform: scale(0.98);
+}
+.field-image-label-editfield {
+  width: 50%;
+  justify-content: center;
+  align-self:center;
+  margin: 10px auto;
+  display: block;
+  padding: 10px 14px;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.field-image-label-editfield:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
 }
 
 .editbtn-editfield {
