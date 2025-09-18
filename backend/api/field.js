@@ -925,14 +925,27 @@ router.put("/update-status/:field_id", authMiddleware, async (req, res) => {
 
 router.delete("/delete/field/:id", authMiddleware, async (req, res) => {
   const { id: fieldId } = req.params;
+  const { role } = req.user;
 
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
+
+    const checkBooking = await client.query(
+      `SELECT b.booking_id FROM bookings b WHERE  b.field_id = $1 AND b.status IN ('approved')`,
+      [fieldId]
+    );
+
     const subFields = await client.query(
       "SELECT sub_field_id FROM sub_field WHERE field_id = $1",
       [fieldId]
     );
+    if (checkBooking.rows.length > 0 && role !== "admin") {
+      return res.status(400).json({
+        message:
+          "ไม่สามารถลบสนามได้เนื่องจากมีการจองสนามอยู่ กรุณาติดต่อผู้ดูแลระบบ",
+      });
+    }
     for (const sub of subFields.rows) {
       await client.query("DELETE FROM add_on WHERE sub_field_id = $1", [
         sub.sub_field_id,
@@ -994,6 +1007,10 @@ router.delete("/delete/field/:id", authMiddleware, async (req, res) => {
           .filter(Boolean);
         await deleteMultipleCloudinaryFiles(facPaths);
       }
+      await client.query(
+        "DELETE FROM booking_fac WHERE field_fac_id IN (SELECT field_fac_id FROM field_facilities WHERE field_id = $1)",
+        [fieldId]
+      );
       await client.query("DELETE FROM field_facilities WHERE field_id = $1", [
         fieldId,
       ]);
@@ -1163,9 +1180,9 @@ router.put("/edit/:field_id", authMiddleware, async (req, res) => {
           field_description,
           cancel_hours,
           open_days,
-          slot_duration, 
-          field_id, 
-          user_id, 
+          slot_duration,
+          field_id,
+          user_id,
         ]
       );
 

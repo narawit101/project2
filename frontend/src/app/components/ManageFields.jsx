@@ -116,19 +116,28 @@ export default function MyFieldPage() {
         }
       );
 
-      if (!res.ok) {
-        throw new Error("Failed to delete field");
-      }
+      const data = await res.json();
 
-      setMyFields(
-        myFields.filter((field) => field.field_id !== fieldIdToDelete)
-      );
-      setFilteredFields(
-        filteredFields.filter((field) => field.field_id !== fieldIdToDelete)
-      );
-      setShowDeleteModal(false);
-      setMessage("ลบสนามเรียบร้อย");
-      setMessageType("success");
+      if (res.ok) {
+        setMyFields(
+          myFields.filter((field) => field.field_id !== fieldIdToDelete)
+        );
+        setFilteredFields(
+          filteredFields.filter((field) => field.field_id !== fieldIdToDelete)
+        );
+        setShowDeleteModal(false);
+        setMessage("ลบสนามเรียบร้อยแล้ว");
+        setMessageType("success");
+      } else {
+        setMessage(data.message || "เกิดข้อผิดพลาดในการลบสนาม");
+        setMessageType("error");
+        setShowDeleteModal(false);
+        setTimeout(() => {
+          setMessage("");
+          setMessageType("");
+          router.replace("contact");
+        }, 3000);
+      }
     } catch (error) {
       console.error("Error deleting field:", error);
       setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
@@ -143,7 +152,7 @@ export default function MyFieldPage() {
       const timer = setTimeout(() => {
         setMessage("");
         setMessageType("");
-      }, 3000);
+      }, 5000);
 
       return () => clearTimeout(timer);
     }
@@ -313,7 +322,8 @@ export default function MyFieldPage() {
                 พิมพ์ชื่อสนาม <strong>{fieldNameToDelete}</strong>{" "}
                 เพื่อยืนยันการลบ
                 <br />
-                การลบนี้ไม่สามารถย้อนกลับได้ รวมถึงข้อมูลการจองและข้อมูลอื่น ๆ ของสนามกีฬา
+                การลบนี้ไม่สามารถย้อนกลับได้ รวมถึงข้อมูลการจองและข้อมูลอื่น ๆ
+                ของสนามกีฬา
               </p>
               <div className="input-confirmdelete-myfield">
                 <input
