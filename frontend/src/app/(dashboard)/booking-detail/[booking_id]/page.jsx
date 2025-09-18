@@ -739,7 +739,8 @@ export default function BookingDetail() {
                 <div className="line-item-hours-detail">
                   <span>เวลาที่จอง:</span>
                   <span>
-                    {(booking.start_time).substring(0,5)} - {(booking.end_time).substring(0,5)} น.
+                    {booking.start_time.substring(0, 5)} -{" "}
+                    {booking.end_time.substring(0, 5)} น.
                   </span>
                 </div>
                 <div className="line-item-hours-detail">
@@ -958,7 +959,15 @@ export default function BookingDetail() {
                                       }}
                                       onClick={uploadTotalSlip}
                                     >
-                                      อัพโหลด
+                                      {startProcessLoad ? (
+                                        <span className="dot-loading">
+                                          <span className="dot one">●</span>
+                                          <span className="dot two">●</span>
+                                          <span className="dot three">●</span>
+                                        </span>
+                                      ) : (
+                                        "อัพโหลด"
+                                      )}
                                     </button>
                                   </div>
                                 </div>
@@ -1048,7 +1057,15 @@ export default function BookingDetail() {
                                     }}
                                     onClick={uploadSlip}
                                   >
-                                    อัพโหลด
+                                    {startProcessLoad ? (
+                                      <span className="dot-loading">
+                                        <span className="dot one">●</span>
+                                        <span className="dot two">●</span>
+                                        <span className="dot three">●</span>
+                                      </span>
+                                    ) : (
+                                      "อัพโหลด"
+                                    )}
                                   </button>
                                 </div>
                               )}
@@ -1091,7 +1108,15 @@ export default function BookingDetail() {
                                   }}
                                   onClick={uploadTotalSlip}
                                 >
-                                  อัพโหลด
+                                  {startProcessLoad ? (
+                                    <span className="dot-loading">
+                                      <span className="dot one">●</span>
+                                      <span className="dot two">●</span>
+                                      <span className="dot three">●</span>
+                                    </span>
+                                  ) : (
+                                    "อัพโหลด"
+                                  )}
                                 </button>
                               </div>
                             )}
