@@ -346,7 +346,13 @@ router.put("/update-profile/:id", authMiddleware, async (req, res) => {
       "UPDATE users SET first_name = $1, last_name = $2 WHERE user_id = $3",
       [first_name, last_name, id]
     );
-
+    if (req.io) {
+      req.io.emit("profile_updated", {
+        userId: id,
+        first_name: first_name,
+        last_name: last_name,
+      });
+    }
     console.log("ข้อมูลอัปเดตสำเร็จ:", first_name, last_name);
 
     res.status(200).json({ message: "User updated successfully" });
