@@ -566,6 +566,20 @@ export default function CheckFieldDetail() {
     return "#";
   };
 
+  const getLongdoMapsLink = (gpsLocation) => {
+    if (!gpsLocation) return "#";
+
+    const cleaned = gpsLocation.replace(/\s+/g, "");
+
+    if (cleaned.startsWith("http")) return cleaned;
+
+    if (/^-?[0-9.]+,-?[0-9.]+$/.test(cleaned)) {
+      const [lat, lng] = cleaned.split(",");
+      return `https://map.longdo.com/?lat=${lat}&lon=${lng}`;
+    }
+    return "#";
+  };
+
   const formatPrice = (value) => new Intl.NumberFormat("th-TH").format(value);
 
   useEffect(() => {
@@ -1168,7 +1182,7 @@ export default function CheckFieldDetail() {
                   readOnly={true}
                 />
                 <a
-                  href={getGoogleMapsLink(fieldData.gps_location)}
+                  href={getLongdoMapsLink(fieldData.gps_location)}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
@@ -1189,7 +1203,7 @@ export default function CheckFieldDetail() {
                     fontWeight: "bold",
                   }}
                 >
-                  เปิดใน Google Map
+                  เปิดใน LONGDO MAP
                 </a>
               </div>
             ) : (
