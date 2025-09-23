@@ -370,6 +370,10 @@ router.delete("/:id", authMiddleware, async (req, res) => {
       return res.status(403).json({ message: "คุณไม่มีสิทธิ์ลบผู้ใช้นี้" });
     }
 
+    await pool.query("DELETE FROM notifications WHERE sender_id = $1", [id]);
+    
+    await pool.query("DELETE FROM notifications WHERE recive_id = $1", [id]);
+
     await pool.query("DELETE FROM users WHERE user_id = $1", [id]);
 
     res.status(200).json({ message: "User deleted successfully" });
