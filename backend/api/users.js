@@ -365,17 +365,70 @@ router.delete("/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const currentUser = req.user;
 
+  const client = await pool.connect();
+
   try {
     if (currentUser.role !== "admin") {
       return res.status(403).json({ message: "คุณไม่มีสิทธิ์ลบผู้ใช้นี้" });
     }
 
-    await pool.query("DELETE FROM users WHERE user_id = $1", [id]);
+    // เริ่ม transaction
+    await client.query('BEGIN');
+
+    // ลบข้อมูลที่เกี่ยวข้องตามลำดับ foreign key constraints
+    
+    // ลบ notifications ที่ผู้ใช้นี้เป็น sender
+    await client.query("DELETE FROM notifications WHERE sender_id = $1", [id]);
+    
+    // ลบ notifications ที่ผู้ใช้นี้เป็น recipient
+    await client.query("DELETE FROM notifications WHERE user_id = $1", [id]);
+
+    // ลบ password reset tokens
+    await client.query("DELETE FROM password_reset WHERE user_id = $1", [id]);
+
+    // ลบ following/followers ที่เกี่ยวข้อง
+    await client.query("DELETE FROM following WHERE user_id = $1", [id]);
+
+    // ลบ reviews ที่ผู้ใช้นี้เขียน
+    await client.query("DELETE FROM reviews WHERE user_id = $1", [id]);
+
+    // ลบ posts ที่เกี่ยวข้อง (และ post_images จะถูกลบแบบ cascade)
+    await client.query("DELETE FROM posts WHERE user_id = $1", [id]);
+
+    // ลบ bookings และ booking_fac ที่เกี่ยวข้อง
+    const bookings = await client.query("SELECT booking_id FROM bookings WHERE user_id = $1", [id]);
+    if (bookings.rows.length > 0) {
+      const bookingIds = bookings.rows.map(row => row.booking_id);
+      // ลบ booking_fac ก่อน
+      await client.query("DELETE FROM booking_fac WHERE booking_id = ANY($1)", [bookingIds]);
+      // ลบ payment records
+      await client.query("DELETE FROM payment WHERE booking_id = ANY($1)", [bookingIds]);
+      // ลบ bookings
+      await client.query("DELETE FROM bookings WHERE user_id = $1", [id]);
+    }
+
+    // ลบ fields ที่ผู้ใช้เป็นเจ้าของ (และข้อมูลที่เกี่ยวข้องจะถูกลบแบบ cascade)
+    await client.query("DELETE FROM field WHERE user_id = $1", [id]);
+
+    // สุดท้าย ลบผู้ใช้
+    const deleteResult = await client.query("DELETE FROM users WHERE user_id = $1", [id]);
+
+    if (deleteResult.rowCount === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ message: "ไม่พบผู้ใช้ที่ต้องการลบ" });
+    }
+
+    // commit transaction
+    await client.query('COMMIT');
 
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
+    // rollback ถ้าเกิด error
+    await client.query('ROLLBACK');
     console.error("Error deleting user:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
+  } finally {
+    client.release();
   }
 });
 

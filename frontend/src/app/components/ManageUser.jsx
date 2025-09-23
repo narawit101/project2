@@ -141,7 +141,7 @@ export default function AdminManager() {
       });
 
       if (!response.ok) {
-        throw new Error("ลบผู้ใช้นี้ไม่ได้ ยังมีสนามที่ลงทะเบียนอยู่");
+        throw new Error("ลบผู้ใช้นี้ไม่ได้");
       }
 
       setUsers(users.filter((user) => user.user_id !== id));
