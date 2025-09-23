@@ -926,6 +926,7 @@ router.put("/update-status/:field_id", authMiddleware, async (req, res) => {
 router.delete("/delete/field/:id", authMiddleware, async (req, res) => {
   const { id: fieldId } = req.params;
   const { role } = req.user;
+  const { user_id } = req.user;
 
   const client = await pool.connect();
   try {
@@ -1042,7 +1043,26 @@ router.delete("/delete/field/:id", authMiddleware, async (req, res) => {
 
     await client.query("DELETE FROM field WHERE field_id = $1", [fieldId]);
 
+    const allField = await client.query("SELECT FROM field WHERE user_id =$1", [
+      user_id,
+    ]);
+
+    if (allField.rows.length == 0) {
+      await client.query("UPDATE users SET role = $1 WHERE user_id=$2", [
+        "customer",
+        user_id,
+      ]);
+    }
+
     await client.query("COMMIT");
+    if (req.io) {
+      req.io.emit("updated_status", {
+        userId: user_id,
+      });
+      console.log("ส่งข้อมูลไปยังผู้ใช้ที่เกี่ยวข้อง:", user_id);
+    } else {
+      console.log("ไม่พบ req.io เพื่อส่งข้อมูลไปยังผู้ใช้");
+    }
     res.status(200).json({
       message:
         "Field, subfields, addons, posts, and images deleted successfully",
