@@ -1182,7 +1182,7 @@ export default function CheckFieldDetail() {
                   readOnly={true}
                 />
                 <a
-                  href={getLongdoMapsLink(fieldData.gps_location)}
+                  href={getGoogleMapsLink(fieldData.gps_location)}
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
@@ -1203,7 +1203,7 @@ export default function CheckFieldDetail() {
                     fontWeight: "bold",
                   }}
                 >
-                  เปิดใน LONGDO MAP
+                  เปิดใน GOOGLE MAP
                 </a>
               </div>
             ) : (
