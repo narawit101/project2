@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
 import LongdoMapPicker from "./LongdoMapPicker";
+import { Editor } from "@tinymce/tinymce-react";
 
 export default function RegisterFieldForm() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -22,7 +23,9 @@ export default function RegisterFieldForm() {
   const { user, isLoading } = useAuth();
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, setStartProcessLoad] = useState(false);
-  const DEFAULT_FACILITIES = [
+  const [showPreview, setShowPreview] = useState(false);
+
+  const AVAILABLE_FACILITIES = [
     { fac_name: "ห้องน้ำ" },
     { fac_name: "ห้องแต่งตัว" },
     { fac_name: "ตู้ล็อคเกอร์" },
@@ -36,8 +39,26 @@ export default function RegisterFieldForm() {
     { fac_name: "แอร์" },
     { fac_name: "ลำโพง" },
   ];
-  const [facilities, setFacilities] = useState(DEFAULT_FACILITIES);
+  const [facilities, setFacilities] = useState(AVAILABLE_FACILITIES);
   const [selectedFacilities, setSelectedFacilities] = useState({});
+  const getDefaultBanks = () => [
+    { code: "bbl", name: "ธนาคารกรุงเทพ" },
+    { code: "kbank", name: "ธนาคารกสิกรไทย" },
+    { code: "scb", name: "ธนาคารไทยพาณิชย์" },
+    { code: "ktb", name: "ธนาคารกรุงไทย" },
+    { code: "tmb", name: "ธนาคารทหารไทย" },
+    { code: "bay", name: "ธนาคารกรุงศรีอยุธยา" },
+    { code: "gsb", name: "ธนาคารออมสิน" },
+    { code: "uob", name: "ธนาคาร ยูโอบี" },
+    { code: "lhfg", name: "ธนาคารแลนด์ แอนด์ เฮ้าส์" },
+    { code: "tisco", name: "ธนาคารทิสโก้" },
+    { code: "kk", name: "ธนาคารเกียรตินาคิน" },
+    { code: "ttb", name: "ธนาคาร ทีทีบี" },
+    { code: "baac", name: "ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร" },
+  ];
+
+  const [banks, setBanks] = useState(getDefaultBanks());
+  const [loadingBanks, setLoadingBanks] = useState(false);
 
   const makeSafeKey = (name, fallback) => {
     if (!name) return fallback || "fac" + Date.now();
@@ -123,7 +144,7 @@ export default function RegisterFieldForm() {
     depositChecked: false,
     open_days: [],
     field_description: "",
-    cancel_hours: 0,
+    cancel_hours: "",
     slot_duration: "",
   });
 
@@ -155,8 +176,95 @@ export default function RegisterFieldForm() {
     fetchSports();
   }, []);
 
+  const fetchBanks = async () => {
+    setLoadingBanks(true);
+    try {
+      const response = await fetch("https://api.omise.co/capability", {
+        headers: {
+          Authorization: `Basic ${btoa(
+            process.env.NEXT_PUBLIC_OMISE_PUBLIC_KEY + ":"
+          )}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log(" Omise API Status:", response.status);
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(" Omise API Response:", data);
+
+        if (data.banks && Array.isArray(data.banks)) {
+          const bankList = data.banks
+            .filter((bank) => bank !== "test")
+            .map((bank) => ({
+              code: bank,
+              name: getBankName(bank),
+            }));
+          console.log("ธนาคารจาก Omise:", bankList);
+          setBanks(bankList);
+        } else {
+          console.warn("ไม่พบข้อมูลธนาคารใน Omise response, ใช้ default banks");
+        }
+      } else {
+        console.warn("Omise API response ไม่สำเร็จ, ใช้ default banks");
+      }
+    } catch (error) {
+      console.warn("Error จาก Omise API, ใช้ default banks:", error.message);
+    } finally {
+      setLoadingBanks(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBanks();
+  }, []);
+
+  const getBankName = (code) => {
+    const bankNames = {
+      bbl: "ธนาคารกรุงเทพ",
+      kbank: "ธนาคารกสิกรไทย",
+      scb: "ธนาคารไทยพาณิชย์",
+      ktb: "ธนาคารกรุงไทย",
+      tmb: "ธนาคารทหารไทย",
+      bay: "ธนาคารกรุงศรีอยุธยา",
+      gsb: "ธนาคารออมสิน",
+      uob: "ธนาคาร ยูโอบี",
+      tisco: "ธนาคารทิสโก้",
+      kk: "ธนาคารเกียรตินาคิน",
+      ttb: "ธนาคาร ทีทีบี",
+      baac: "ธนาคารเพื่อการเกษตรและสหกรณ์การเกษตร",
+      rbs: "Royal Bank of Scotland",
+      jpm: "JPMorgan Chase Bank",
+      mufg: "MUFG Bank",
+      citi: "ธนาคารซิตี้แบงก์",
+      smbc: "Sumitomo Mitsui Banking Corporation",
+      sc: "ธนาคารสแตนดาร์ดชาร์เตอร์ด",
+      cimb: "ธนาคาร ซีไอเอ็มบี ไทย",
+      mega: "Mega International Commercial Bank",
+      boa: "Bank of America",
+      cacib: "Crédit Agricole Corporate and Investment Bank",
+      hsbc: "ธนาคารเอชเอสบีซี",
+      db: "Deutsche Bank",
+      ghb: "ธนาคารอาคารสงเคราะห์",
+      mb: "ธนาคารพาณิชย์",
+      bnp: "BNP Paribas",
+      ibank: "ธนาคารอิสลาม",
+      icbc: "ธนาคาร ไอซีบีซี (ไทย)",
+      tcrb: "ธนาคารไทยเครดิต",
+      lhb: "ธนาคารแลนด์ แอนด์ เฮ้าส์",
+      lhfg: "ธนาคารแลนด์ แอนด์ เฮ้าส์",
+      tbank: "ธนาคารธนชาต",
+    };
+    return bankNames[code] || `ธนาคาร ${code.toUpperCase()}`;
+  };
+
   const handleFieldChange = (e) => {
     setFieldData({ ...fieldData, [e.target.name]: e.target.value });
+  };
+
+  const handleEditorChange = (content) => {
+    setFieldData({ ...fieldData, field_description: content });
   };
 
   const handleCheckboxChange = (e) => {
@@ -436,12 +544,185 @@ export default function RegisterFieldForm() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  // ฟังก์ชันแสดง Preview Modal
+  const handlePreview = (e) => {
     e.preventDefault();
 
+    // ทำการตรวจสอบข้อมูลก่อนแสดง preview
+    if (!validateForm()) {
+      return; // หยุดถ้าข้อมูลไม่ถูกต้อง
+    }
+
+    setShowPreview(true);
+  };
+
+  // ฟังก์ชันตรวจสอบข้อมูลฟอร์ม
+  const validateForm = () => {
     if (!user) {
       setMessage("กรุณาเข้าสู่ระบบก่อน!");
       setMessageType("error");
+      return false;
+    }
+
+    if (
+      fieldData.depositChecked &&
+      (!fieldData.price_deposit || fieldData.price_deposit === "")
+    ) {
+      setMessage("กรุณากำหนดค่ามัดจำ");
+      setMessageType("error");
+      return false;
+    }
+
+    if (!fieldData.field_name) {
+      setMessage("กรุณากรอกชื่อสนามกีฬา");
+      setMessageType("error");
+      return false;
+    }
+
+    if (!fieldData.address) {
+      setMessage("กรุณากรอกที่ตั้งสนาม");
+      setMessageType("error");
+      return false;
+    }
+
+    if (!fieldData.gps_location) {
+      setMessage("กรุณากรอกพิกัด GPS");
+      setMessageType("error");
+      return false;
+    }
+
+    if (!fieldData.open_hours) {
+      setMessage("กรุณาเลือกเวลาเปิด");
+      setMessageType("error");
+      return false;
+    }
+
+    if (!fieldData.close_hours) {
+      setMessage("กรุณาเลือกเวลาปิด");
+      setMessageType("error");
+      return false;
+    }
+
+    if (!fieldData.slot_duration) {
+      setMessage("กรุณาเลือกช่วงเวลาในการจอง");
+      setMessageType("error");
+      return false;
+    }
+
+    if (!fieldData.account_type) {
+      setMessage("กรุณาเลือกประเภทบัญชี");
+      setMessageType("error");
+      return false;
+    }
+
+    if (!fieldData.number_bank) {
+      setMessage("กรุณากรอกเลขบัญชีธนาคาร / พร้อมเพย์");
+      setMessageType("error");
+      return false;
+    }
+
+    if (!fieldData.account_holder) {
+      setMessage("กรุณากรอกชื่อเจ้าของบัญชีธนาคาร");
+      setMessageType("error");
+      return false;
+    }
+
+    if (!fieldData.name_bank) {
+      setMessage("กรุณาเลือกธนาคาร");
+      setMessageType("error");
+      return false;
+    }
+
+    const stripHtml = (html) => {
+      const tmp = document.createElement("div");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    };
+
+    if (
+      !fieldData.field_description ||
+      stripHtml(fieldData.field_description).trim() === ""
+    ) {
+      setMessage("กรุณากรอกคำแนะนำของสนาม");
+      setMessageType("error");
+      return false;
+    }
+
+    if (!fieldData.cancel_hours || fieldData.cancel_hours === "") {
+      setMessage("กรุณากรอกระยะเวลายกเลิกการจองล่วงหน้า");
+      setMessageType("error");
+      return false;
+    }
+
+    if (fieldData.open_days.length === 0) {
+      setMessage("กรุณาเลือกวันเปิดบริการ");
+      setMessageType("error");
+      return false;
+    }
+
+    for (let i = 0; i < subFields.length; i++) {
+      const sub = subFields[i];
+      const fieldNumber = i + 1;
+
+      if (!sub.name) {
+        setMessage(`กรุณากรอกชื่อสนาม ${fieldNumber}`);
+        setMessageType("error");
+        return false;
+      }
+
+      if (!sub.sport_id) {
+        setMessage(`กรุณาเลือกประเภทกีฬาในสนาม ${fieldNumber}`);
+        setMessageType("error");
+        return false;
+      }
+
+      if (!sub.players_per_team) {
+        setMessage(`กรุณากรอกจำนวนผู้เล่นต่อทีมในสนาม ${fieldNumber}`);
+        setMessageType("error");
+        return false;
+      }
+    }
+
+    if (!fieldData.documents) {
+      setMessage("กรุณาอัพโหลดเอกสารประกอบ");
+      setMessageType("error");
+      return false;
+    }
+
+    if (!fieldData.img_field) {
+      setMessage("กรุณาอัพโหลดรูปสนาม");
+      setMessageType("error");
+      return false;
+    }
+
+    const selectedFacs = Object.keys(selectedFacilities);
+    if (selectedFacs.length === 0) {
+      setMessage("กรุณาเลือกสิ่งอำนวยความสะดวก");
+      setMessageType("error");
+      return false;
+    }
+
+    for (const id of selectedFacs) {
+      const facility = selectedFacilities[id];
+      if (!facility.price || facility.price === "") {
+        setMessage(`กรุณากรอกราคาสิ่งอำนวยความสะดวก: ${id}`);
+        setMessageType("error");
+        return false;
+      }
+      if (!facility.quantity || facility.quantity === "") {
+        setMessage(`กรุณากรอกจำนวนสิ่งอำนวยความสะดวก: ${id}`);
+        setMessageType("error");
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
       return;
     }
 
@@ -511,13 +792,28 @@ export default function RegisterFieldForm() {
     }
 
     if (!fieldData.name_bank) {
-      setMessage("กรุณากรอกชื่อธนาคาร");
+      setMessage("กรุณาเลือกธนาคาร");
       setMessageType("error");
       return;
     }
 
-    if (!fieldData.field_description) {
+    const stripHtml = (html) => {
+      const tmp = document.createElement("div");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    };
+
+    if (
+      !fieldData.field_description ||
+      stripHtml(fieldData.field_description).trim() === ""
+    ) {
       setMessage("กรุณากรอกคำแนะนำของสนาม");
+      setMessageType("error");
+      return;
+    }
+
+    if (!fieldData.cancel_hours || fieldData.cancel_hours === "") {
+      setMessage("กรุณากรอกระยะเวลายกเลิกการจองล่วงหน้า");
       setMessageType("error");
       return;
     }
@@ -652,7 +948,7 @@ export default function RegisterFieldForm() {
         subFields: subFields,
         open_days: fieldData.open_days,
         field_description: fieldData.field_description,
-        cancel_hours: fieldData.cancel_hours || "0",
+        cancel_hours: parseInt(fieldData.cancel_hours, 10) || 0,
         slot_duration: parseInt(fieldData.slot_duration, 10) || 0,
       })
     );
@@ -695,7 +991,7 @@ export default function RegisterFieldForm() {
       });
       setSubFields([]);
       setSelectedFacilities({});
-
+      setShowPreview(false);
       setTimeout(() => {
         setMessage("");
         router.replace("");
@@ -705,6 +1001,7 @@ export default function RegisterFieldForm() {
       setMessage("เกิดข้อผิดพลาดในการส่งข้อมูล");
       setMessageType("error");
     } finally {
+      setShowPreview(false);
       setStartProcessLoad(false);
     }
   };
@@ -951,7 +1248,7 @@ export default function RegisterFieldForm() {
               pattern="[0-9]*"
               maxLength={3}
               name="cancel_hours"
-              placeholder="เช่น 2 = ยกเลิกได้ก่อน 2 ชม."
+              placeholder="กรอกจำนวนชั่วโมง เช่น 2 = ยกเลิกได้ก่อน 2 ชม. หรือ 0 = สามารถยกเลิกได้ตลอดเวลา"
               value={fieldData.cancel_hours}
               onChange={(e) => {
                 let value = e.target.value.replace(/\D/g, "");
@@ -962,7 +1259,7 @@ export default function RegisterFieldForm() {
                 }
                 setFieldData({
                   ...fieldData,
-                  cancel_hours: isNaN(value) ? 0 : value,
+                  cancel_hours: isNaN(value) ? "" : value,
                 });
               }}
             />
@@ -1379,6 +1676,59 @@ export default function RegisterFieldForm() {
               </select>
             </div>
           </div>
+
+          {fieldData.account_type === "ธนาคาร" && (
+            <div className="input-group-register-field">
+              <div className="icon-label-container">
+                <label htmlFor="bank">ชื่อธนาคาร</label>
+                <img
+                  width={20}
+                  height={20}
+                  style={{ verticalAlign: "middle" }}
+                  src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757261308/icon-park-solid--bank-card_cbiyno.png"
+                  alt=""
+                />
+              </div>
+              {loadingBanks ? (
+                <div>กำลังโหลดรายชื่อธนาคารจาก Omise</div>
+              ) : (
+                <select
+                  name="name_bank"
+                  value={fieldData.name_bank}
+                  onChange={handleFieldChange}
+                >
+                  <option value="">เลือกธนาคาร ({banks.length} รายการ)</option>
+                  {banks.map((bank, index) => (
+                    <option key={bank.code || index} value={bank.name}>
+                      {bank.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+          )}
+
+          {fieldData.account_type === "พร้อมเพย์" && (
+            <div className="input-group-register-field">
+              <div className="icon-label-container">
+                <label htmlFor="bank">ชื่อธนาคาร</label>
+                <img
+                  width={20}
+                  height={20}
+                  style={{ verticalAlign: "middle" }}
+                  src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757260760/streamline--bank-remix_jjilhx.png"
+                  alt=""
+                />
+              </div>
+              <input
+                type="text"
+                maxLength={50}
+                name="name_bank"
+                value="พร้อมเพย์"
+                disabled
+              />
+            </div>
+          )}
           <div className="input-group-register-field">
             <div className="icon-label-container">
               <label htmlFor="number_bank">เลขบัญชีธนาคาร / พร้อมเพย์</label>
@@ -1430,52 +1780,6 @@ export default function RegisterFieldForm() {
               }}
             />
           </div>
-
-          {fieldData.account_type === "ธนาคาร" && (
-            <div className="input-group-register-field">
-              <div className="icon-label-container">
-                <label htmlFor="bank">ชื่อธนาคาร</label>
-                <img
-                  width={20}
-                  height={20}
-                  style={{ verticalAlign: "middle" }}
-                  src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757261308/icon-park-solid--bank-card_cbiyno.png"
-                  alt=""
-                />
-              </div>
-              <input
-                type="text"
-                maxLength={50}
-                name="name_bank"
-                placeholder="ชื่อธนาคาร"
-                value={fieldData.name_bank}
-                onChange={handleFieldChange}
-              />
-            </div>
-          )}
-
-          {fieldData.account_type === "พร้อมเพย์" && (
-            <div className="input-group-register-field">
-              <div className="icon-label-container">
-                <label htmlFor="bank">ชื่อธนาคาร</label>
-                <img
-                  width={20}
-                  height={20}
-                  style={{ verticalAlign: "middle" }}
-                  src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757260760/streamline--bank-remix_jjilhx.png"
-                  alt=""
-                />
-              </div>
-              <input
-                type="text"
-                maxLength={50}
-                name="name_bank"
-                value="พร้อมเพย์"
-                disabled
-              />
-            </div>
-          )}
-
           <div className="input-group-register-field">
             <div className="icon-label-container">
               <label htmlFor="bank">ชื่อเจ้าของบัญชีธนาคาร</label>
@@ -1552,6 +1856,17 @@ export default function RegisterFieldForm() {
                 alt=""
               />
             </div>
+            <small
+              style={{
+                color: "#666",
+                fontSize: "14px",
+                marginTop: "5px",
+                display: "block",
+              }}
+            >
+              ✓ เลือกเฉพาะสิ่งอำนวยความสะดวกที่สนามของคุณมีจริง
+              หากต้องการเพิ่มสิ่งอำนวยอื่นๆ ให้กดเพิ่มเองด้านล่าง
+            </small>
           </div>
           <div className="factcon-register-field">
             {facilities.map((fac) => {
@@ -1675,8 +1990,22 @@ export default function RegisterFieldForm() {
                     setMessageType("");
                   }}
                 />
-                <label htmlFor="other-facility">สิ่งอำนวยความสะดวกอื่น ๆ</label>
+                <label htmlFor="other-facility">
+                  เพิ่มสิ่งอำนวยความสะดวกอื่น ๆ ที่ไม่มีในรายการข้างต้น
+                </label>
               </div>
+              <small
+                style={{
+                  color: "#666",
+                  fontSize: "12px",
+                  marginLeft: "20px",
+                  display: "block",
+                  fontStyle: "italic",
+                }}
+              >
+                กรณีที่สนามมีสิ่งอำนวยความสะดวกพิเศษที่ไม่มีในรายการ
+                ให้เพิ่มเองที่นี่
+              </small>
               {otherChecked && (
                 <div
                   className="other-facility-inputs"
@@ -1777,36 +2106,302 @@ export default function RegisterFieldForm() {
                 alt=""
               />
             </div>
-            <div className="textarea">
-              <textarea
-                maxLength={256}
-                name="field_description"
-                placeholder="ใส่รายละเอียดสนาม ช่องทางการติดต่อ หมายเหตุต่างๆ เช่นสนามหญ้าเทียม 7 คน"
+            <div className="tinymce-editor">
+              <Editor
+                apiKey={process.env.NEXT_PUBLIC_TINYMCE_KEY}
                 value={fieldData.field_description}
-                onChange={handleFieldChange}
+                onEditorChange={handleEditorChange}
+                init={{
+                  height: 350,
+                  menubar: false,
+                  plugins: [
+                    "advlist",
+                    "autolink",
+                    "lists",
+                    "link",
+                    "charmap",
+                    "anchor",
+                    "searchreplace",
+                    "visualblocks",
+                    "code",
+                    "insertdatetime",
+                    "table",
+                    "help",
+                    "wordcount",
+                  ],
+                  toolbar:
+                    "undo redo | blocks | bold italic underline strikethrough | " +
+                    "alignleft aligncenter alignright alignjustify | " +
+                    "bullist numlist outdent indent | removeformat | link | forecolor backcolor",
+                  content_style:
+                    "body { font-family: Kanit, sans-serif; font-size: 14px; line-height: 1.6; }",
+                  placeholder:
+                    "ใส่รายละเอียดสนาม ช่องทางการติดต่อ หมายเหตุต่างๆ เช่น: สนามหญ้าเทียม 7 คน",
+                  max_chars: 1000,
+                  setup: function (editor) {
+                    editor.on("init", function () {
+                      editor.getContainer().style.transition =
+                        "border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out";
+                    });
+                  },
+                }}
               />
             </div>
           </div>
           <button
-            className="submitbtn-regisfield"
+            className="submitbtn-regisfield preview-btn"
             style={{
               cursor: startProcessLoad ? "not-allowed" : "pointer",
             }}
             disabled={startProcessLoad}
-            type="submit"
+            type="button"
+            onClick={handlePreview}
           >
-            {startProcessLoad ? (
-              <span className="dot-loading">
-                <span className="dot one">●</span>
-                <span className="dot two">●</span>
-                <span className="dot three">● </span>
-              </span>
-            ) : (
-              "บันทึก"
-            )}
+            ตรวจสอบข้อมูล
           </button>
         </form>
       </div>
+
+      {showPreview && (
+        <div className="preview-modal-overlay">
+          <div className="preview-modal">
+            <div className="preview-modal-header">
+              <h2>ตรวจสอบข้อมูลก่อนลงทะเบียน</h2>
+              <button
+                disabled={startProcessLoad}
+                style={{ cursor: startProcessLoad ? "not-allowed" : "pointer" }}
+                className="close-modal-btn"
+                onClick={() => setShowPreview(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="preview-modal-content">
+              <div className="preview-section">
+                <div className="preview-section">
+                  <div className="icon-label-container">
+                    <h3>รูปโปรไฟล์สนาม:</h3>
+
+                    <img
+                      width={20}
+                      height={20}
+                      style={{ verticalAlign: "middle" }}
+                      src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757260568/streamline--user-profile-focus-solid_bkna8e.png"
+                      alt=""
+                    />
+                    {fieldData.img_field?.name || "ไม่ได้เลือก"}
+                  </div>
+                  <div className="preview-item"></div>
+                  {fieldData.imgPreview && (
+                    <div className="preview-container-regis-field">
+                      <img src={fieldData.imgPreview} alt="Preview" />
+                    </div>
+                  )}
+                  <div className="preview-item">
+                    <div className="icon-label-container">
+                      <h3>เอกสาร :</h3>
+                      <img
+                        width={20}
+                        height={20}
+                        style={{ verticalAlign: "middle", marginTop: "4px" }}
+                        src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757260641/material-symbols--lab-profile-sharp_rlwd0x.png"
+                        alt=""
+                      />
+                    </div>
+                    {fieldData.documents
+                      ? `${fieldData.documents.length} ไฟล์`
+                      : "ไม่ได้เลือก"}
+                    <div className="preview-subfield">
+                      {Array.from(fieldData.documents).map((file, idx) => (
+                        <div className="sub-detail" key={idx}>
+                          {file.name}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="icon-label-container">
+                  <h3>ข้อมูลสนามกีฬา</h3>
+                  <img
+                    width={20}
+                    height={20}
+                    src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757239976/material-symbols--stadium-rounded_qz7gby.png"
+                    alt=""
+                    style={{ verticalAlign: "middle" }}
+                  />
+                </div>
+                <div className="preview-item">
+                  <strong>ชื่อสนาม:</strong> {fieldData.field_name}
+                </div>
+                <div className="preview-item">
+                  <strong>ที่อยู่:</strong> {fieldData.address}
+                </div>
+                <div className="preview-item">
+                  <strong>พิกัด GPS:</strong> {fieldData.gps_location}
+                </div>
+                <div className="preview-item">
+                  <strong>เวลาเปิด-ปิด:</strong> {fieldData.open_hours} -{" "}
+                  {fieldData.close_hours}
+                </div>
+                <div className="preview-item">
+                  <strong>ช่วงเวลาจอง:</strong> {fieldData.slot_duration} นาที
+                </div>
+                <div className="preview-item">
+                  <strong>ยกเลิกการจองได้ก่อน:</strong> {fieldData.cancel_hours}{" "}
+                  ชั่วโมง
+                </div>
+                <div className="preview-item">
+                  <strong>วันเปิดบริการ:</strong>{" "}
+                  {fieldData.open_days.join(", ")}
+                </div>
+                <div className="preview-section">
+                  <div className="icon-label-container">
+                    <h3 style={{ marginTop: "20px" }}>ข้อมูลสนามย่อย: </h3>
+                    <img
+                      width={25}
+                      height={25}
+                      style={{ verticalAlign: "middle", marginTop: "20px" }}
+                      src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757259877/mingcute--playground-fill_v8ekao.png"
+                      alt=""
+                    />
+                  </div>
+                  {subFields.map((sub, index) => (
+                    <div key={index} className="preview-subfield">
+                      <strong>ชื่อสนาม:</strong> {sub.name}
+                      <br />
+                      <span className="sub-detail">
+                        ประเภทกีฬา:{" "}
+                        {sports.find(
+                          (s) => s.sport_id === parseInt(sub.sport_id)
+                        )?.sport_name || "ไม่ระบุ"}
+                        {sub.price && ` | ราคา: ${sub.price} บาท`}/ชั่วโมง
+                        {sub.field_surface &&
+                          ` | พื้นสนาม: ${sub.field_surface}`}
+                        {sub.wid_field && ` | ความกว้าง: ${sub.wid_field}`}
+                        {sub.length_field && ` | ความยาว: ${sub.length_field}`}
+                        {sub.players_per_team &&
+                          ` | ผู้เล่น: ${sub.players_per_team} คน/ทีม`}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="preview-section">
+                  <div className="icon-label-container">
+                    <h3>คำแนะนำของสนาม</h3>
+                    <img
+                      width={20}
+                      height={20}
+                      style={{ verticalAlign: "middle" }}
+                      src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757261993/streamline-plump--description-solid_ct73qk.png"
+                      alt=""
+                    />
+                  </div>
+                  <div
+                    className="preview-description"
+                    dangerouslySetInnerHTML={{
+                      __html: fieldData.field_description,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="preview-section">
+                <div className="icon-label-container">
+                  <h3>ข้อมูลการเงิน:</h3>
+                  <img
+                    width={20}
+                    height={20}
+                    style={{ verticalAlign: "middle" }}
+                    src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757260760/streamline--bank-remix_jjilhx.png"
+                    alt=""
+                  />
+                </div>
+                <div className="preview-item">
+                  <strong>ประเภทบัญชี:</strong> {fieldData.account_type}
+                </div>
+                <div className="preview-item">
+                  <strong>ธนาคาร:</strong> {fieldData.name_bank}
+                </div>
+                <div className="preview-item">
+                  <strong>เลขบัญชี:</strong> {fieldData.number_bank}
+                </div>
+                <div className="preview-item">
+                  <strong>ชื่อเจ้าของบัญชี:</strong> {fieldData.account_holder}
+                </div>
+                {fieldData.depositChecked && (
+                  <div className="preview-item">
+                    <strong>ค่ามัดจำ:</strong> {fieldData.price_deposit} บาท
+                  </div>
+                )}
+              </div>
+
+              <div className="preview-section">
+                <div className="icon-label-container">
+                  <h3>สิ่งอำนวยความสะดวก</h3>
+                  <img
+                    width={20}
+                    height={20}
+                    style={{ verticalAlign: "middle" }}
+                    src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757260382/zondicons--add-solid_hmeqxs.png"
+                    alt=""
+                  />
+                </div>
+                {Object.entries(selectedFacilities).map(
+                  ([facName, facData]) => (
+                    <div key={facName} className="preview-facility">
+                      <div className="facility-info">
+                        <strong>{facName}:</strong>
+                        {facData.price && ` ${facData.price} บาท`}
+                        {facData.quantity && ` | จำนวน: ${facData.quantity}`}
+                        {facData.description &&
+                          ` | คำอธิบาย: ${facData.description}`}
+                      </div>
+                      {facData.preview && (
+                        <div className="facility-image-preview">
+                          <img
+                            src={facData.preview}
+                            alt={`รูป${facName}`}
+                            className="facility-preview-img"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
+
+            <div className="preview-modal-footer">
+              <button
+                className="confirm-submit-btn"
+                onClick={(e) => {
+                  // setShowPreview(false);
+                  handleSubmit(e);
+                }}
+                disabled={startProcessLoad}
+              >
+                {startProcessLoad ? (
+                  <span className="dot-loading">
+                    <span className="dot one">●</span>
+                    <span className="dot two">●</span>
+                    <span className="dot three">● </span>
+                  </span>
+                ) : (
+                  "ลงทะเบียนสนาม"
+                )}
+              </button>
+              <button
+                className="cancel-preview-btn"
+                onClick={() => setShowPreview(false)}
+                disabled={startProcessLoad}
+              >
+                แก้ไขข้อมูล
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

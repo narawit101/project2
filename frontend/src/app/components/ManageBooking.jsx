@@ -265,6 +265,17 @@ export default function Mybooking() {
               <option value="complete">การจองสำเร็จ</option>
             </select>
           </label>
+          <div className="button-clear-order">
+            <button
+              className="clear-filters-btn-date"
+              onClick={() => {
+                setFilters({ date: "", status: "" });
+                setCurrentPage(1);
+              }}
+            >
+              ล้างตัวกรอง
+            </button>
+          </div>
         </div>
         {dataLoading ? (
           <ul className="booking-list skeleton-list" aria-hidden="true">
@@ -307,7 +318,8 @@ export default function Mybooking() {
                       <div className="total-hours-order">
                         <p>
                           <strong> เวลาที่จอง: </strong>
-                          {item.start_time.substring(0, 5)} - {(item.end_time).substring(0, 5)} น.
+                          {item.start_time.substring(0, 5)} -{" "}
+                          {item.end_time.substring(0, 5)} น.
                         </p>
                         {item.cancel_hours > 0 && (
                           <p>
