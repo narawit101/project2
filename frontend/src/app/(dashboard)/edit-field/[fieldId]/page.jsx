@@ -527,7 +527,6 @@ export default function CheckFieldDetail() {
       return;
     }
 
-
     const price = parseInt(fac.fac_price);
     const quantity = parseInt(fac.quantity_total);
 
@@ -1058,7 +1057,7 @@ export default function CheckFieldDetail() {
     const file = e.target.files[0];
     if (!file) return;
 
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; 
+    const MAX_FILE_SIZE = 5 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
       setMessage("ไฟล์มีขนาดใหญ่เกินไป (สูงสุด 5MB)");
       setMessageType("error");
@@ -1542,6 +1541,18 @@ export default function CheckFieldDetail() {
     } finally {
       SetstartProcessLoad(false);
     }
+  };
+  const getGoogleMapsLink = (gpsLocation) => {
+    if (!gpsLocation) return "#";
+
+    const cleaned = gpsLocation.replace(/\s+/g, "");
+
+    if (cleaned.startsWith("http")) return cleaned;
+
+    if (/^-?[0-9.]+,-?[0-9.]+$/.test(cleaned)) {
+      return `https://www.google.com/maps/search/?api=1&query=${cleaned}`;
+    }
+    return "#";
   };
 
   const handleAddOnInputChange = (subFieldId, key, value) => {
@@ -2145,7 +2156,7 @@ export default function CheckFieldDetail() {
                     <span>
                       {field?.gps_location ? (
                         <a
-                          href={field.gps_location}
+                          href={getGoogleMapsLink(field.gps_location)}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -2842,9 +2853,7 @@ export default function CheckFieldDetail() {
                         <div className="document-icon">
                           {fileExt === "pdf" ? (
                             <div className="pdf-icon-display">
-                              <div className="pdf-icon-large">
-                                📄
-                              </div>
+                              <div className="pdf-icon-large">📄</div>
                               <div className="pdf-text">PDF</div>
                             </div>
                           ) : fileExt === "jpg" ||
@@ -2874,7 +2883,6 @@ export default function CheckFieldDetail() {
                               </div>
                             </div>
                           ) : (
-                     
                             <span
                               className={`file-icon ${
                                 fileExt === "doc" || fileExt === "docx"

@@ -172,6 +172,19 @@ export default function CheckFieldDetail() {
     fetchFieldData();
   }, [fieldId, router]);
 
+  const getGoogleMapsLink = (gpsLocation) => {
+    if (!gpsLocation) return "#";
+
+    const cleaned = gpsLocation.replace(/\s+/g, "");
+
+    if (cleaned.startsWith("http")) return cleaned;
+
+    if (/^-?[0-9.]+,-?[0-9.]+$/.test(cleaned)) {
+      return `https://www.google.com/maps/search/?api=1&query=${cleaned}`;
+    }
+    return "#";
+  };
+
   useEffect(() => {
     const fetchFacilities = async () => {
       try {
@@ -353,7 +366,7 @@ export default function CheckFieldDetail() {
               <div className="field-value-checkfield">
                 {fieldData?.gps_location ? (
                   <a
-                    href={fieldData.gps_location}
+                    href={getGoogleMapsLink(fieldData.gps_location)}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -489,18 +502,14 @@ export default function CheckFieldDetail() {
                   <div className="document-card" key={i}>
                     <div className="document-icon">
                       {fileExt === "pdf" ? (
-                        // แสดงไอคอน PDF
                         <div className="pdf-icon-display">
-                          <div className="pdf-icon-large">
-                            📄
-                          </div>
+                          <div className="pdf-icon-large">📄</div>
                           <div className="pdf-text">PDF</div>
                         </div>
-                      ) : (fileExt === "jpg" ||
-                          fileExt === "jpeg" ||
-                          fileExt === "png" ||
-                          fileExt === "gif") ? (
-                        // แสดงรูปภาพ
+                      ) : fileExt === "jpg" ||
+                        fileExt === "jpeg" ||
+                        fileExt === "png" ||
+                        fileExt === "gif" ? (
                         <div className="image-preview">
                           <img
                             src={docUrl}
@@ -509,14 +518,14 @@ export default function CheckFieldDetail() {
                               width: "100%",
                               height: "100%",
                               objectFit: "cover",
-                              borderRadius: "4px"
+                              borderRadius: "4px",
                             }}
                             onError={(e) => {
                               e.target.style.display = "none";
                               e.target.nextSibling.style.display = "flex";
                             }}
                           />
-                          <div 
+                          <div
                             className="file-fallback"
                             style={{ display: "none" }}
                           >
@@ -524,10 +533,9 @@ export default function CheckFieldDetail() {
                           </div>
                         </div>
                       ) : (
-                        // สำหรับไฟล์ประเภทอื่นๆ
                         <span
                           className={`file-icon ${
-                            (fileExt === "doc" || fileExt === "docx")
+                            fileExt === "doc" || fileExt === "docx"
                               ? "doc-icon"
                               : "file-icon"
                           }`}
@@ -547,25 +555,34 @@ export default function CheckFieldDetail() {
                     </div>
                     <div className="document-info">
                       <h4 className="document-name">
-                        เอกสาร {i + 1} 
-                        <span className={`file-type-inline ${
-                          fileExt === "pdf" 
-                            ? "pdf-type" 
-                            : (fileExt === "jpg" || fileExt === "jpeg" || fileExt === "png" || fileExt === "gif")
-                            ? "image-type"
-                            : (fileExt === "doc" || fileExt === "docx")
-                            ? "doc-type"
-                            : "file-type"
-                        }`}>
+                        เอกสาร {i + 1}
+                        <span
+                          className={`file-type-inline ${
+                            fileExt === "pdf"
+                              ? "pdf-type"
+                              : fileExt === "jpg" ||
+                                fileExt === "jpeg" ||
+                                fileExt === "png" ||
+                                fileExt === "gif"
+                              ? "image-type"
+                              : fileExt === "doc" || fileExt === "docx"
+                              ? "doc-type"
+                              : "file-type"
+                          }`}
+                        >
                           {fileExt === "pdf" && "PDF"}
-                          {(fileExt === "jpg" || fileExt === "jpeg" || fileExt === "png" || fileExt === "gif") && "รูป"}
+                          {(fileExt === "jpg" ||
+                            fileExt === "jpeg" ||
+                            fileExt === "png" ||
+                            fileExt === "gif") &&
+                            "รูป"}
                           {(fileExt === "doc" || fileExt === "docx") && "DOC"}
                           {![
                             "pdf",
-                            "jpg", 
+                            "jpg",
                             "jpeg",
                             "png",
-                            "gif", 
+                            "gif",
                             "doc",
                             "docx",
                           ].includes(fileExt) && "FILE"}
