@@ -462,9 +462,10 @@ export default function CheckFieldDetail() {
           <div className="field-row-checkfield">
             <div className="field-details-checkfield">
               <strong>รายละเอียดสนาม:</strong>
-              <div className="field-value-checkfield">
-                {fieldData?.field_description || "ไม่มีข้อมูล"}
-              </div>
+              <div 
+                className="field-value-checkfield"
+                dangerouslySetInnerHTML={{ __html: fieldData?.field_description || "ไม่มีข้อมูล" }}
+              />
             </div>
           </div>
           <div className="field-row-checkfield">

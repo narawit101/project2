@@ -500,6 +500,12 @@
   background: "#cbcbcbff";
   border-radius: 50%;
 }
+.contact-field-lasted{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
 
 @keyframes dropDown {
   0% {

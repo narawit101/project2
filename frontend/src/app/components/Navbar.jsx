@@ -19,7 +19,8 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotifyOpen, setIsNotifyOpen] = useState(false);
   const [isAuthDropdownOpen, setIsAuthDropdownOpen] = useState(false);
-
+  const fieldId = sessionStorage.getItem("field_id") || null;
+  const fieldName = sessionStorage.getItem("field_name") || null;
   const searchRef = useRef(null);
   const dropdownRef = useRef(null);
   const userProfileRef = useRef(null);
@@ -1038,6 +1039,25 @@ export default function Navbar() {
               สนามกีฬาทั้งหมด
             </Link>
           </li>
+
+          {user && (
+            <li>
+              <Link
+                className={pathname === "/register-field" ? "active" : ""}
+                href="/register-field"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <img
+                  src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1755163884/register-svgrepo-com_szyit9.png"
+                  alt=""
+                  width={30}
+                  height={30}
+                />
+                ลงทะเบียนสนามกีฬา
+              </Link>
+            </li>
+          )}
+
           {user && (
             <li>
               <Link
@@ -1055,21 +1075,25 @@ export default function Navbar() {
               </Link>
             </li>
           )}
-
-          {user && (
+          {user && fieldId && (
             <li>
               <Link
-                className={pathname === "/register-field" ? "active" : ""}
-                href="/register-field"
+                className={pathname === "/profile" ? "active" : ""}
+                href={`profile/${fieldId}?showDescription=true`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 <img
-                  src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1755163884/register-svgrepo-com_szyit9.png"
-                  alt=""
+                  src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1758739454/fluent--chat-help-20-regular_knlirt.png"
+                  alt="ติดต่อสนามกีฬาล่าสุด"
                   width={30}
                   height={30}
                 />
-                ลงทะเบียนสนามกีฬา
+                <div className="contact-field-lasted">
+                  ติดต่อสนามกีฬาที่ดูล่าสุด
+                  <ul>
+                    <li> สนาม: {''}{fieldName}</li>
+                  </ul>
+                </div>
               </Link>
             </li>
           )}

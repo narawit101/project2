@@ -352,6 +352,7 @@
   border-radius: 12px;
   padding: 10px 20px;
   margin: 5px 10px;
+  line-height: 1.6;
 }
 
 .divider-hours-profile {
@@ -1330,7 +1331,59 @@
   border-radius: 50%;
   object-fit: cover;
 }
-/* Facilities Carousel Styles for Profile Page */
+
+.description-profile {
+  cursor: pointer;
+  background: #f9f9fb;
+  border: 3px solid #6d919f7d;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.description-profile:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.detail-field {
+  background: #f9f9fb;
+  border: 3px solid #6d919f7d;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.detail-field:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.location-section-profile {
+  background: #f9f9fb;
+  border: 3px solid #6d919f7d;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.location-section-profile:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.description-text {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 5px 20px 20px 20px;
+  font-size: 16px;
+}
 .facilities-carousel-container-profile {
   overflow: hidden;
   margin: 1rem 0;

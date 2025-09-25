@@ -36,6 +36,7 @@ export default function CheckFieldDetail() {
   const [messageType, setMessageType] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showModalFollower, setShowModalFollower] = useState(false);
+  const [showModalDescription, setShowModalDescription] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
   const [expandedPosts, setExpandedPosts] = useState({});
   const { user, isLoading } = useAuth();
@@ -305,6 +306,18 @@ export default function CheckFieldDetail() {
     fetchFollowing();
     fetchFollowerAll();
   }, [user, router, userFollowing]);
+
+  // ตรวจสอบ query parameter showDescription สำหรับเปิดโมดัลคำแนะนำสนาม
+  useEffect(() => {
+    const showDescription = searchParams.get("showDescription");
+    if (showDescription === "true") {
+      setShowModalDescription(true);
+      // ลบ parameter ออกจาก URL หลังจากเปิดโมดัล
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("showDescription");
+      router.replace(`?${params.toString()}`, { scroll: false });
+    }
+  }, [searchParams, router]);
 
   useEffect(() => {
     window.scrollTo({ top: 900, behavior: "smooth" });
@@ -1162,90 +1175,102 @@ export default function CheckFieldDetail() {
 
         <aside className="aside">
           <div className="field-info-profile">
-            <strong>แนะนำสนาม</strong>
-            <div className="detail-profile">{fieldData?.field_description}</div>
-            <hr className="divider-hours-profile" />
+            <div
+              onClick={() => setShowModalDescription(true)}
+              className="description-profile"
+            >
+              <strong>แนะนำสนาม</strong>
+              <div
+                className="detail-profile"
+                dangerouslySetInnerHTML={{
+                  __html: fieldData?.field_description || "ไม่มีข้อมูล",
+                }}
+              />
+            </div>
+            {/* <hr className="divider-hours-profile" /> */}
             {dataLoading && (
               <div className="loading-data">
                 <div className="loading-data-spinner"></div>
               </div>
             )}
-            <h1>ตำแหน่งสนาม</h1>
-            <p>
-              <strong>ที่อยู่:</strong> {fieldData?.address}
-            </p>
+            <div className="location-section-profile">
+              <h1>ตำแหน่งสนาม</h1>
+              <p>
+                <strong>ที่อยู่:</strong> {fieldData?.address}
+              </p>
 
-            {fieldData?.gps_location ? (
-              <div style={{ marginTop: "20px" }}>
-                <LongdoMapPicker
-                  initialLocation={coordinates}
-                  readOnly={true}
-                />
-                <a
-                  href={getGoogleMapsLink(fieldData.gps_location)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: "flex",
-                    width: "160px",
-                    marginTop: "30px",
-                    marginLeft: "auto",
-                    marginRight: "auto",
-                    marginBottom: "30px",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: "6px 12px",
-                    backgroundColor: "#e0f2fe",
-                    color: "#03045e",
-                    borderRadius: "999px",
-                    fontSize: "14px",
-                    textDecoration: "none",
-                    fontWeight: "bold",
-                  }}
-                >
-                  เปิดใน GOOGLE MAP
-                </a>
-              </div>
-            ) : (
-              <p style={{ color: "gray" }}>ไม่มีพิกัด GPS</p>
-            )}
-
-            <h1>รายละเอียดสนาม</h1>
-            <p>
-              <strong>วันที่เปิดสนาม</strong>
-            </p>
-            {fieldData?.open_days?.length > 0 ? (
-              fieldData.open_days.map((day, index) => (
-                <div className="opendays" key={index}>
-                  {daysInThai[day] || day}
+              {fieldData?.gps_location ? (
+                <div style={{ marginTop: "20px" }}>
+                  <LongdoMapPicker
+                    initialLocation={coordinates}
+                    readOnly={true}
+                  />
+                  <a
+                    href={getGoogleMapsLink(fieldData.gps_location)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "flex",
+                      width: "160px",
+                      marginTop: "30px",
+                      marginLeft: "auto",
+                      marginRight: "auto",
+                      marginBottom: "30px",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "6px 12px",
+                      backgroundColor: "#e0f2fe",
+                      color: "#03045e",
+                      borderRadius: "999px",
+                      fontSize: "14px",
+                      textDecoration: "none",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    เปิดใน GOOGLE MAP
+                  </a>
                 </div>
-              ))
-            ) : (
-              <div>ไม่มีข้อมูลวันเปิดสนาม</div>
-            )}
+              ) : (
+                <p style={{ color: "gray" }}>ไม่มีพิกัด GPS</p>
+              )}
+            </div>
+            <div className="detail-field">
+              <h1>รายละเอียดสนาม</h1>
+              <p>
+                <strong>วันที่เปิดสนาม</strong>
+              </p>
+              {fieldData?.open_days?.length > 0 ? (
+                fieldData.open_days.map((day, index) => (
+                  <div className="opendays" key={index}>
+                    {daysInThai[day] || day}
+                  </div>
+                ))
+              ) : (
+                <div>ไม่มีข้อมูลวันเปิดสนาม</div>
+              )}
 
-            <p>
-              <strong>เวลาเปิด-ปิด:</strong> {fieldData?.open_hours} -{" "}
-              {fieldData?.close_hours}
-            </p>
-            <p>
-              <strong>ยกเลิกการจองได้ก่อน: </strong>
-              {fieldData?.cancel_hours} ชม.
-            </p>
-            <p>
-              <strong>ค่ามัดจำ:</strong> {formatPrice(fieldData?.price_deposit)}{" "}
-              บาท
-            </p>
-            <p>
-              <strong>ธนาคาร:</strong> {fieldData?.name_bank}
-            </p>
-            <p>
-              <strong>ชื่อเจ้าของบัญชี:</strong> {fieldData?.account_holder}
-            </p>
-            <p>
-              <strong>เลขบัญชีธนาคาร:</strong> {fieldData?.number_bank}
-            </p>
-
+              <p>
+                <strong>เวลาเปิด-ปิด:</strong> {fieldData?.open_hours} -{" "}
+                {fieldData?.close_hours}
+              </p>
+              <p>
+                <strong>ยกเลิกการจองได้ก่อน: </strong>
+                {fieldData?.cancel_hours} ชม.
+              </p>
+              <p>
+                <strong>ค่ามัดจำ:</strong>{" "}
+                {formatPrice(fieldData?.price_deposit)} บาท
+              </p>
+              <p>
+                <strong>ธนาคาร:</strong> {fieldData?.name_bank}
+              </p>
+              <p>
+                <strong>ชื่อเจ้าของบัญชี:</strong> {fieldData?.account_holder}
+              </p>
+              <p>
+                <strong>เลขบัญชีธนาคาร:</strong> {fieldData?.number_bank}
+              </p>
+            </div>
             <h1 className="fac-profile">สิ่งอำนวยความสะดวก</h1>
             {dataLoading && (
               <div className="loading-data">
@@ -1446,6 +1471,35 @@ export default function CheckFieldDetail() {
             </div>
           </div>
         </>
+      )}
+      {showModalDescription && (
+        <div className="modal-overlay-profile-follower">
+          <div className="modal-post-profile-follower">
+            <div className="modal-header-follower">
+              <h2>แนะนำสนาม</h2>
+              <button
+                className="close-modal-btn"
+                onClick={() => setShowModalDescription(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="field-info-section">
+              {/* <h1 className="field-name-modal">{fieldData?.field_name}</h1> */}
+            </div>
+
+            <div className="field-description-content">
+              <div
+                className="description-text"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    fieldData?.field_description || "ไม่มีข้อมูลคำแนะนำสนาม",
+                }}
+              />
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

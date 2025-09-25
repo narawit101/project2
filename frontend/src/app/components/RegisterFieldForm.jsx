@@ -13,6 +13,16 @@ export default function RegisterFieldForm() {
   const [sports, setSports] = useState([]);
   const [subFields, setSubFields] = useState([]);
   const [otherChecked, setOtherChecked] = useState(false);
+
+  const daysInThai = {
+    Mon: "จันทร์",
+    Tue: "อังคาร",
+    Wed: "พุธ",
+    Thu: "พฤหัสบดี",
+    Fri: "ศุกร์",
+    Sat: "เสาร์",
+    Sun: "อาทิตย์",
+  };
   const [otherFacility, setOtherFacility] = useState({
     name: "",
     price: "",
@@ -1997,7 +2007,7 @@ export default function RegisterFieldForm() {
               <small
                 style={{
                   color: "#666",
-                  fontSize: "12px",
+                  fontSize: "14px",
                   marginLeft: "20px",
                   display: "block",
                   fontStyle: "italic",
@@ -2253,7 +2263,9 @@ export default function RegisterFieldForm() {
                 </div>
                 <div className="preview-item">
                   <strong>วันเปิดบริการ:</strong>{" "}
-                  {fieldData.open_days.join(", ")}
+                  {fieldData.open_days
+                    .map((day) => daysInThai[day] || day)
+                    .join(", ")}
                 </div>
                 <div className="preview-section">
                   <div className="icon-label-container">
@@ -2283,8 +2295,74 @@ export default function RegisterFieldForm() {
                         {sub.players_per_team &&
                           ` | ผู้เล่น: ${sub.players_per_team} คน/ทีม`}
                       </span>
+                      <div className="addon-section-preview">
+                        <strong className="addon-title-preview">
+                          กิจกรรมพิเศษ:
+                        </strong>
+                        {sub.addOns && sub.addOns.length > 0 ? (
+                          <div className="addons-list-preview">
+                            {sub.addOns.map((addon, addonIndex) => (
+                              <div
+                                key={addonIndex}
+                                className="addon-item-preview"
+                              >
+                                <span className="sub-detail">
+                                  • {addon.content} -{" "}
+                                  <strong className="addon-price-preview">
+                                    {addon.price && parseInt(addon.price) > 0
+                                      ? `${parseInt(
+                                          addon.price
+                                        ).toLocaleString()} บาท`
+                                      : "ฟรี"}
+                                  </strong>
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="no-addons-preview">
+                            <span className="no-addons-text-preview">
+                              ไม่มีกิจกรรมพิเศษ
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ))}
+                </div>
+                <div className="preview-section">
+                  <div className="icon-label-container">
+                    <h3>สิ่งอำนวยความสะดวก</h3>
+                    <img
+                      width={20}
+                      height={20}
+                      style={{ verticalAlign: "middle" }}
+                      src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757260382/zondicons--add-solid_hmeqxs.png"
+                      alt=""
+                    />
+                  </div>
+                  {Object.entries(selectedFacilities).map(
+                    ([facName, facData]) => (
+                      <div key={facName} className="preview-facility">
+                        <div className="facility-info">
+                          <strong>{facName}:</strong>
+                          {facData.price && ` ${facData.price} บาท`}
+                          {facData.quantity && ` | จำนวน: ${facData.quantity}`}
+                          {facData.description &&
+                            ` | คำอธิบาย: ${facData.description}`}
+                        </div>
+                        {facData.preview && (
+                          <div className="facility-image-preview">
+                            <img
+                              src={facData.preview}
+                              alt={`รูป${facName}`}
+                              className="facility-preview-img"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )
+                  )}
                 </div>
                 <div className="preview-section">
                   <div className="icon-label-container">
@@ -2333,41 +2411,6 @@ export default function RegisterFieldForm() {
                   <div className="preview-item">
                     <strong>ค่ามัดจำ:</strong> {fieldData.price_deposit} บาท
                   </div>
-                )}
-              </div>
-
-              <div className="preview-section">
-                <div className="icon-label-container">
-                  <h3>สิ่งอำนวยความสะดวก</h3>
-                  <img
-                    width={20}
-                    height={20}
-                    style={{ verticalAlign: "middle" }}
-                    src="https://res.cloudinary.com/dlwfuul9o/image/upload/v1757260382/zondicons--add-solid_hmeqxs.png"
-                    alt=""
-                  />
-                </div>
-                {Object.entries(selectedFacilities).map(
-                  ([facName, facData]) => (
-                    <div key={facName} className="preview-facility">
-                      <div className="facility-info">
-                        <strong>{facName}:</strong>
-                        {facData.price && ` ${facData.price} บาท`}
-                        {facData.quantity && ` | จำนวน: ${facData.quantity}`}
-                        {facData.description &&
-                          ` | คำอธิบาย: ${facData.description}`}
-                      </div>
-                      {facData.preview && (
-                        <div className="facility-image-preview">
-                          <img
-                            src={facData.preview}
-                            alt={`รูป${facName}`}
-                            className="facility-preview-img"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  )
                 )}
               </div>
             </div>

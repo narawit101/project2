@@ -1173,3 +1173,38 @@
     max-height: 120px;
   }
 }
+
+.addon-section-preview {
+  margin-top: 10px;
+}
+
+.addon-title-preview {
+  color: #28a745;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.addons-list-preview {
+  margin-top: 5px;
+  padding-left: 15px;
+}
+
+.addon-item-preview {
+  margin-bottom: 3px;
+}
+
+.addon-price-preview {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.no-addons-preview {
+  margin-top: 5px;
+  padding-left: 15px;
+}
+
+.no-addons-text-preview {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 13px;
+}

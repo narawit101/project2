@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import "@/app/css/edit-field.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
+import { Editor } from '@tinymce/tinymce-react';
 
 export default function CheckFieldDetail() {
   const { fieldId } = useParams();
@@ -62,6 +63,7 @@ export default function CheckFieldDetail() {
   const { user, isLoading } = useAuth();
   const [dataLoading, setDataLoading] = useState(true);
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
+  const [editorContent, setEditorContent] = useState("");
   usePreventLeave(startProcessLoad);
 
   useEffect(() => {
@@ -648,6 +650,14 @@ export default function CheckFieldDetail() {
         setSelectedDays(field.open_days);
       }
     }
+    if (fieldName === "field_description") {
+      setEditorContent(currentValue || "");
+    }
+  };
+
+  const handleEditorChange = (content) => {
+    setEditorContent(content);
+    setUpdatedValue(content);
   };
 
   const saveSubField = async (sub_field_id) => {
@@ -796,6 +806,7 @@ export default function CheckFieldDetail() {
     setUpdatedSubFieldFieldSurface("");
     setUpdatedPrice("");
     setUpdatedSportId("");
+    setEditorContent("");
   };
 
   const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -2465,13 +2476,38 @@ export default function CheckFieldDetail() {
               <strong>คำแนะนำของสนาม:</strong>
               <div className="field-value-checkfield">
                 {editingField === "field_description" ? (
-                  <div className="edit-field-inline">
-                    <textarea
-                      maxLength={256}
-                      className="inline-textarea"
-                      value={updatedValue}
-                      onChange={(e) => setUpdatedValue(e.target.value)}
-                    />
+                  <div className="edit-field-full">
+                    <div className="tinymce-editor">
+                      <Editor
+                        apiKey={process.env.NEXT_PUBLIC_TINYMCE_KEY}
+                        value={editorContent}
+                        onEditorChange={handleEditorChange}
+                        init={{
+                          height: 350,
+                          menubar: false,
+                          plugins: [
+                            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                            'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                          ],
+                          toolbar: 'undo redo | blocks | ' +
+                            'bold italic forecolor | alignleft aligncenter ' +
+                            'alignright alignjustify | bullist numlist outdent indent | ' +
+                            'removeformat | help',
+                          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                          branding: false,
+                          statusbar: false,
+                          resize: false,
+                          placeholder: "ใส่รายละเอียดสนาม ช่องทางการติดต่อ หมายเหตุต่างๆ เช่น: สนามหญ้าเทียม 7 คน",
+                          max_chars: 1000,
+                          setup: function (editor) {
+                            editor.on('init', function () {
+                              editor.getContainer().style.transition = 'border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out';
+                            });
+                          }
+                        }}
+                      />
+                    </div>
                     <div className="inline-buttons">
                       <button
                         style={{
@@ -2505,7 +2541,10 @@ export default function CheckFieldDetail() {
                   </div>
                 ) : (
                   <div className="view-field-inline">
-                    <span>{field?.field_description || "ไม่มีข้อมูล"}</span>
+                    <div 
+                      className="field-description-display"
+                      dangerouslySetInnerHTML={{ __html: field?.field_description || "ไม่มีข้อมูล" }}
+                    />
                     <button
                       style={{
                         cursor: startProcessLoad ? "not-allowed" : "pointer",

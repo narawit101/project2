@@ -690,12 +690,7 @@
 }
 
 @media (max-width: 802px) {
-  /* .line-item-hours-detail.cancel-info span:last-child {
-    font-size: 0.7rem;
-  }
-  .line-item-hours-detail span:last-child {
-    font-size: rem;
-  } */
+
   .line-item-detail.plus span:last-child {
     font-size: 1rem;
   }
@@ -718,9 +713,7 @@
 }
 
 @media (max-width: 600px) {
-  /* .line-item-hours-detail span {
-    font-size: 0.9rem;
-  } */
+
   .line-item-detail span {
     font-size: 1rem;
   }
