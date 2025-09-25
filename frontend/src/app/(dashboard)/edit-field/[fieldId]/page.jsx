@@ -4,7 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import "@/app/css/edit-field.css";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { usePreventLeave } from "@/app/hooks/usePreventLeave";
-import { Editor } from '@tinymce/tinymce-react';
+import { Editor } from "@tinymce/tinymce-react";
 
 export default function CheckFieldDetail() {
   const { fieldId } = useParams();
@@ -83,6 +83,8 @@ export default function CheckFieldDetail() {
   }, [user, isLoading, router, userId]);
 
   const [editingFacility, setEditingFacility] = useState(null);
+  const [editingSingleDoc, setEditingSingleDoc] = useState(null);
+  const [singleDocFile, setSingleDocFile] = useState(null);
   const [editFacilityData, setEditFacilityData] = useState({
     facility_name: "",
     facility_price: "",
@@ -525,17 +527,6 @@ export default function CheckFieldDetail() {
       return;
     }
 
-    // if (!fac.description || fac.description.trim() === "") {
-    //   setMessage("กรุณาใส่รายละเอียดสิ่งอำนวยความสะดวก");
-    //   setMessageType("error");
-    //   return;
-    // }
-
-    // if (!fac.image_path) {
-    //   setMessage("กรุณาเลือกไฟล์รูปภาพสำหรับสิ่งอำนวยความสะดวก");
-    //   setMessageType("error");
-    //   return;
-    // }
 
     const price = parseInt(fac.fac_price);
     const quantity = parseInt(fac.quantity_total);
@@ -967,11 +958,14 @@ export default function CheckFieldDetail() {
         formData.append("documents", selectedFile[i]);
       }
 
+      if (field?.documents) {
+        formData.append("existing_documents", field.documents);
+      }
+
       const response = await fetch(
         `${API_URL}/field/${fieldId}/upload-document`,
         {
           method: "POST",
-
           credentials: "include",
           body: formData,
         }
@@ -982,10 +976,14 @@ export default function CheckFieldDetail() {
       if (response.ok) {
         setMessage("อัปโหลดเอกสารสำเร็จ");
         setMessageType("success");
+
+        const allDocuments = result.all_documents || result.paths || [];
+
         setField({
           ...field,
-          documents:
-            result.paths || selectedFile.map((file) => file.name).join(", "),
+          documents: Array.isArray(allDocuments)
+            ? allDocuments.join(",")
+            : allDocuments,
         });
         setEditingField(null);
         setSelectedFile(null);
@@ -1000,6 +998,142 @@ export default function CheckFieldDetail() {
     } finally {
       SetstartProcessLoad(false);
     }
+  };
+
+  const handleDeleteDocument = async (docUrl, index) => {
+    if (!window.confirm("ต้องการลบเอกสารนี้หรือไม่?")) {
+      return;
+    }
+
+    SetstartProcessLoad(true);
+    try {
+      const response = await fetch(
+        `${API_URL}/field/${fieldId}/delete-document`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ document_url: docUrl }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setMessage("ลบเอกสารสำเร็จ");
+        setMessageType("success");
+
+        const currentDocs = Array.isArray(field.documents)
+          ? field.documents
+          : field.documents.split(",");
+
+        const updatedDocs = currentDocs.filter((doc, i) => i !== index);
+
+        setField({
+          ...field,
+          documents: updatedDocs.join(","),
+        });
+      } else {
+        setMessage(
+          "เกิดข้อผิดพลาด: " + (result.error || "ไม่สามารถลบเอกสารได้")
+        );
+        setMessageType("error");
+      }
+    } catch (error) {
+      console.error("Error deleting document:", error);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      setMessageType("error");
+    } finally {
+      SetstartProcessLoad(false);
+    }
+  };
+
+  const handleEditSingleDocument = (index, docUrl) => {
+    setEditingSingleDoc({ index, docUrl });
+  };
+
+  const handleSingleDocFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; 
+    if (file.size > MAX_FILE_SIZE) {
+      setMessage("ไฟล์มีขนาดใหญ่เกินไป (สูงสุด 5MB)");
+      setMessageType("error");
+      return;
+    }
+    const fileType = file.type;
+    if (!fileType.startsWith("image/") && fileType !== "application/pdf") {
+      setMessage("โปรดเลือกเฉพาะไฟล์รูปภาพหรือ PDF เท่านั้น");
+      setMessageType("error");
+      return;
+    }
+
+    setSingleDocFile(file);
+  };
+
+  const saveSingleDocument = async () => {
+    if (!singleDocFile || !editingSingleDoc) {
+      setMessage("กรุณาเลือกไฟล์ก่อนบันทึก");
+      setMessageType("error");
+      return;
+    }
+
+    SetstartProcessLoad(true);
+    try {
+      const formData = new FormData();
+      formData.append("document", singleDocFile);
+      formData.append("document_index", editingSingleDoc.index);
+      formData.append("old_document_url", editingSingleDoc.docUrl);
+
+      const response = await fetch(
+        `${API_URL}/field/${fieldId}/replace-single-document`,
+        {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setMessage("แก้ไขเอกสารสำเร็จ");
+        setMessageType("success");
+
+        const currentDocs = Array.isArray(field.documents)
+          ? field.documents
+          : field.documents.split(",");
+
+        currentDocs[editingSingleDoc.index] = result.new_document_url;
+
+        setField({
+          ...field,
+          documents: currentDocs.join(","),
+        });
+
+        setEditingSingleDoc(null);
+        setSingleDocFile(null);
+      } else {
+        setMessage(
+          "เกิดข้อผิดพลาด: " + (result.error || "ไม่สามารถแก้ไขเอกสารได้")
+        );
+        setMessageType("error");
+      }
+    } catch (error) {
+      console.error("Error replacing document:", error);
+      setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+      setMessageType("error");
+    } finally {
+      SetstartProcessLoad(false);
+    }
+  };
+
+  const cancelSingleDocEdit = () => {
+    setEditingSingleDoc(null);
+    setSingleDocFile(null);
   };
 
   const isEmptyValue = (value) => {
@@ -2486,25 +2620,44 @@ export default function CheckFieldDetail() {
                           height: 350,
                           menubar: false,
                           plugins: [
-                            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                            'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                            "advlist",
+                            "autolink",
+                            "lists",
+                            "link",
+                            "image",
+                            "charmap",
+                            "preview",
+                            "anchor",
+                            "searchreplace",
+                            "visualblocks",
+                            "code",
+                            "fullscreen",
+                            "insertdatetime",
+                            "media",
+                            "table",
+                            "code",
+                            "help",
+                            "wordcount",
                           ],
-                          toolbar: 'undo redo | blocks | ' +
-                            'bold italic forecolor | alignleft aligncenter ' +
-                            'alignright alignjustify | bullist numlist outdent indent | ' +
-                            'removeformat | help',
-                          content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+                          toolbar:
+                            "undo redo | blocks | " +
+                            "bold italic forecolor | alignleft aligncenter " +
+                            "alignright alignjustify | bullist numlist outdent indent | " +
+                            "removeformat | help",
+                          content_style:
+                            "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
                           branding: false,
                           statusbar: false,
                           resize: false,
-                          placeholder: "ใส่รายละเอียดสนาม ช่องทางการติดต่อ หมายเหตุต่างๆ เช่น: สนามหญ้าเทียม 7 คน",
+                          placeholder:
+                            "ใส่รายละเอียดสนาม ช่องทางการติดต่อ หมายเหตุต่างๆ เช่น: สนามหญ้าเทียม 7 คน",
                           max_chars: 1000,
                           setup: function (editor) {
-                            editor.on('init', function () {
-                              editor.getContainer().style.transition = 'border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out';
+                            editor.on("init", function () {
+                              editor.getContainer().style.transition =
+                                "border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out";
                             });
-                          }
+                          },
                         }}
                       />
                     </div>
@@ -2541,9 +2694,11 @@ export default function CheckFieldDetail() {
                   </div>
                 ) : (
                   <div className="view-field-inline">
-                    <div 
+                    <div
                       className="field-description-display"
-                      dangerouslySetInnerHTML={{ __html: field?.field_description || "ไม่มีข้อมูล" }}
+                      dangerouslySetInnerHTML={{
+                        __html: field?.field_description || "ไม่มีข้อมูล",
+                      }}
                     />
                     <button
                       style={{
@@ -2565,89 +2720,278 @@ export default function CheckFieldDetail() {
               </div>
             </div>
           </div>
-
-          <div className="field-row-checkfield">
-            <div className="field-details-checkfield">
-              <strong>เอกสาร:</strong>
-              <div className="field-value-checkfield">
-                {editingField === "documents" ? (
-                  <div className="edit-field-inline">
-                    <input
-                      type="file"
-                      onChange={handleFileChange}
-                      multiple
-                      accept="image/*,.pdf"
-                      className="inline-file-input"
-                    />
-                    <div className="inline-buttons">
-                      <button
-                        style={{
-                          cursor: startProcessLoad ? "not-allowed" : "pointer",
-                        }}
-                        disabled={startProcessLoad}
-                        className="savebtn-inline"
-                        onClick={saveDocumentField}
-                      >
-                        {startProcessLoad ? (
-                          <span className="dot-loading">
-                            <span className="dot one">●</span>
-                            <span className="dot two">●</span>
-                            <span className="dot three">●</span>
-                          </span>
-                        ) : (
-                          "บันทึก"
-                        )}
-                      </button>
-                      <button
-                        className="canbtn-inline"
-                        style={{
-                          cursor: startProcessLoad ? "not-allowed" : "pointer",
-                        }}
-                        disabled={startProcessLoad}
-                        onClick={cancelEditing}
-                      >
-                        ยกเลิก
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="view-field-inline">
-                    <div className="documents-display">
-                      {field?.documents ? (
-                        (Array.isArray(field.documents)
-                          ? field.documents
-                          : field.documents.split(",")
-                        ).map((doc, i) => (
-                          <a
-                            key={i}
-                            href={`${doc.trim()}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="document-link-inline"
-                          >
-                            เอกสาร {i + 1}
-                          </a>
-                        ))
-                      ) : (
-                        <span>ไม่มีเอกสารแนบ</span>
-                      )}
-                    </div>
-                    <button
-                      style={{
-                        cursor: startProcessLoad ? "not-allowed" : "pointer",
-                      }}
-                      disabled={startProcessLoad}
-                      className="edit-btn-inline"
-                      onClick={() => startEditing("documents", field.documents)}
-                    >
-                      แก้ไข
-                    </button>
-                  </div>
-                )}
+        </div>
+        <div className="documents-section-full">
+          <h2>เอกสารประกอบการสมัคร</h2>
+          {editingField === "documents" ? (
+            <div className="edit-documents-section">
+              <input
+                type="file"
+                onChange={handleFileChange}
+                multiple
+                accept="image/*,.pdf"
+                className="file-input-documents"
+              />
+              <div className="edit-documents-buttons">
+                <button
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
+                  className="savebtn-inline"
+                  onClick={saveDocumentField}
+                >
+                  {startProcessLoad ? (
+                    <span className="dot-loading">
+                      <span className="dot one">●</span>
+                      <span className="dot two">●</span>
+                      <span className="dot three">●</span>
+                    </span>
+                  ) : (
+                    "บันทึก"
+                  )}
+                </button>
+                <button
+                  className="canbtn-inline"
+                  style={{
+                    cursor: startProcessLoad ? "not-allowed" : "pointer",
+                  }}
+                  disabled={startProcessLoad}
+                  onClick={cancelEditing}
+                >
+                  ยกเลิก
+                </button>
               </div>
             </div>
-          </div>
+          ) : field?.documents ? (
+            <div className="documents-grid">
+              {(Array.isArray(field.documents)
+                ? field.documents
+                : field.documents.split(",")
+              ).map((doc, i) => {
+                const docUrl = doc.trim();
+                const fileName = docUrl.split("/").pop() || `เอกสาร ${i + 1}`;
+                const fileExt = fileName.split(".").pop()?.toLowerCase();
+
+                return (
+                  <div className="document-card" key={i}>
+                    {editingSingleDoc && editingSingleDoc.index === i ? (
+                      <div className="single-doc-edit-form">
+                        <div className="document-icon">
+                          <span className="file-icon edit-mode">EDIT</span>
+                        </div>
+                        <div className="document-info">
+                          <h4 className="document-name">แก้ไขเอกสาร {i + 1}</h4>
+                          <div className="single-doc-file-input">
+                            <label className="edit-doc-label">
+                              <input
+                                type="file"
+                                style={{ display: "none" }}
+                                onChange={handleSingleDocFileChange}
+                                accept="image/*,.pdf"
+                                className="file-input-single-doc"
+                              />
+                              เลือกไฟล์ใหม่
+                            </label>
+
+                            {singleDocFile && (
+                              <p className="selected-file-name">
+                                ไฟล์ที่เลือก: {singleDocFile.name}
+                              </p>
+                            )}
+                          </div>
+                          <div className="inline-buttons">
+                            <button
+                              className="savebtn-inline"
+                              onClick={saveSingleDocument}
+                              disabled={startProcessLoad || !singleDocFile}
+                              style={{
+                                cursor:
+                                  startProcessLoad || !singleDocFile
+                                    ? "not-allowed"
+                                    : "pointer",
+                              }}
+                            >
+                              {startProcessLoad ? (
+                                <span className="dot-loading">
+                                  <span className="dot one">●</span>
+                                  <span className="dot two">●</span>
+                                  <span className="dot three">●</span>
+                                </span>
+                              ) : (
+                                "บันทึก"
+                              )}
+                            </button>
+                            <button
+                              className="canbtn-inline"
+                              onClick={cancelSingleDocEdit}
+                              disabled={startProcessLoad}
+                              style={{
+                                cursor: startProcessLoad
+                                  ? "not-allowed"
+                                  : "pointer",
+                              }}
+                            >
+                              ยกเลิก
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="document-icon">
+                          {fileExt === "pdf" ? (
+                            <div className="pdf-icon-display">
+                              <div className="pdf-icon-large">
+                                📄
+                              </div>
+                              <div className="pdf-text">PDF</div>
+                            </div>
+                          ) : fileExt === "jpg" ||
+                            fileExt === "jpeg" ||
+                            fileExt === "png" ||
+                            fileExt === "gif" ? (
+                            <div className="image-preview">
+                              <img
+                                src={docUrl}
+                                alt={`เอกสาร ${i + 1}`}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                  borderRadius: "4px",
+                                }}
+                                onError={(e) => {
+                                  e.target.style.display = "none";
+                                  e.target.nextSibling.style.display = "flex";
+                                }}
+                              />
+                              <div
+                                className="file-fallback"
+                                style={{ display: "none" }}
+                              >
+                                IMG
+                              </div>
+                            </div>
+                          ) : (
+                     
+                            <span
+                              className={`file-icon ${
+                                fileExt === "doc" || fileExt === "docx"
+                                  ? "doc-icon"
+                                  : "file-icon"
+                              }`}
+                            >
+                              {(fileExt === "doc" || fileExt === "docx") &&
+                                "DOC"}
+                              {![
+                                "pdf",
+                                "jpg",
+                                "jpeg",
+                                "png",
+                                "gif",
+                                "doc",
+                                "docx",
+                              ].includes(fileExt) && "FILE"}
+                            </span>
+                          )}
+                        </div>
+                        <div className="document-info">
+                          <h4 className="document-name">
+                            เอกสาร {i + 1}
+                            <span
+                              className={`file-type-inline ${
+                                fileExt === "pdf"
+                                  ? "pdf-type"
+                                  : fileExt === "jpg" ||
+                                    fileExt === "jpeg" ||
+                                    fileExt === "png" ||
+                                    fileExt === "gif"
+                                  ? "image-type"
+                                  : fileExt === "doc" || fileExt === "docx"
+                                  ? "doc-type"
+                                  : "file-type"
+                              }`}
+                            >
+                              {fileExt === "pdf" && " PDF"}
+                              {(fileExt === "jpg" ||
+                                fileExt === "jpeg" ||
+                                fileExt === "png" ||
+                                fileExt === "gif") &&
+                                "  รูป"}
+                              {(fileExt === "doc" || fileExt === "docx") &&
+                                "DOC"}
+                              {![
+                                "pdf",
+                                "jpg",
+                                "jpeg",
+                                "png",
+                                "gif",
+                                "doc",
+                                "docx",
+                              ].includes(fileExt) && "FILE"}
+                            </span>
+                          </h4>
+                          <p className="document-filename">{fileName}</p>
+                          <div className="document-actions">
+                            <a
+                              href={docUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn-preview"
+                            >
+                              เปิด
+                            </a>
+
+                            <button
+                              className="edit-btn-inline"
+                              onClick={() =>
+                                handleEditSingleDocument(i, docUrl)
+                              }
+                              disabled={startProcessLoad || editingSingleDoc}
+                              style={{
+                                cursor:
+                                  startProcessLoad || editingSingleDoc
+                                    ? "not-allowed"
+                                    : "pointer",
+                              }}
+                            >
+                              แก้ไข
+                            </button>
+                            <button
+                              className="btn-delete-doc"
+                              onClick={() => handleDeleteDocument(docUrl, i)}
+                              disabled={startProcessLoad || editingSingleDoc}
+                              style={{
+                                cursor:
+                                  startProcessLoad || editingSingleDoc
+                                    ? "not-allowed"
+                                    : "pointer",
+                              }}
+                            >
+                              <img
+                                width={15}
+                                height={15}
+                                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAR1JREFUSEvNlusRwiAQhG870U5MJ6YStRLTiXZiOjmzGXAQjofJMCO/HDzug7tlCaQwVPUgIhcRORths5sbAPjfSRgqgIeInEoxC3wGcMzF1ADKhQCSOHe6VzcAwaqa3YA/0bozVW0pRaVSyd9r6Tzgnmnkr0nD+CeAodiDPdm/ShQmUlVKkvLcMliWKVxoqYPK2ApIFGcB9jQ8uROtAN7U+FTW3NrYWoliRa2LIilbc8w7ARhrgKvzHx/3V4Db4irc4GdYPaBMWaYtJxhbZEr3pJK6AagW3oUtgGP8NpRsuA+AWb0NO0Kziqx3wzQ7VQ3togsgtAsPsKDhnPl05k4Q+1GLVSQ2wRLnAPFdaLHu5JKVAKXPFQuWeJAPegM03+AZ7kVVEgAAAABJRU5ErkJggg=="
+                                alt=""
+                              />
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="no-documents">
+              <div className="no-documents-icon">ไม่มีเอกสาร</div>
+              <p>ไม่มีเอกสารแนบ</p>
+            </div>
+          )}
         </div>
+        <div className="check-field-info"></div>
 
         <div className="field-row-checkfield">
           <div className="field-details-checkfield-fac">

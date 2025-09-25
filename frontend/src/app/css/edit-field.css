@@ -1074,7 +1074,6 @@
   color: var(--text-color);
   font-size: 1.25rem;
   font-weight: 600;
-  /* margin: 10px auto; */
   justify-content: center;
   border-radius: var(--border-radius);
 }
@@ -1992,7 +1991,6 @@
 .subfield-form-editfield {
   width: 100%;
   gap: 1rem;
-  /* margin-top: 1rem; */
   padding: 1rem;
   background: var(--secondary-bg);
   border-radius: var(--border-radius);
@@ -2037,7 +2035,7 @@
   margin-top: 1rem;
 }
 
-.editfield-container button {
+.input-group-editfield-profile button {
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   font-weight: 600;
@@ -2048,9 +2046,114 @@
   margin: 0.5rem;
 }
 
-.editfield-container button:active {
+.input-group-editfield-profile button:active {
   transform: scale(0.98);
 }
+.field-row-checkfield button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin: 0.5rem;
+}
+
+.field-row-checkfield button:active {
+  transform: scale(0.98);
+}
+.field-row-checkfield button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin: 0.5rem;
+}
+
+.field-row-checkfield button:active {
+  transform: scale(0.98);
+}
+.sub-fields-container-editfield button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin: 0.5rem;
+}
+
+.sub-fields-container-editfield button:active {
+  transform: scale(0.98);
+}
+.edit-doc-label {
+  margin: 10px auto;
+  display: block;
+  padding: 10px 14px;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+.edit-doc-label:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+.pdf-type {
+  background: #dc3545;
+  color: white;
+}
+
+.image-type {
+  background: #28a745;
+  color: white;
+}
+
+.doc-type {
+  background: #007bff;
+  color: white;
+}
+
+.file-type {
+  background: #6c757d;
+  color: white;
+}
+.file-type-inline {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.pdf-icon-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+.pdf-icon-display:hover {
+  background: #e9ecef;
+  border-color: #c82333;
+  color: #c82333;
+}
+
 .field-image-label-editfield {
   width: 50%;
   justify-content: center;
@@ -2478,5 +2581,318 @@
   .input-group-editfield-center {
     font-size: 1.1rem;
     padding: 0.75rem;
+  }
+}
+
+.documents-section-full {
+  margin: 2rem 0;
+  background: var(--primary-bg);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.documents-section-full h2 {
+  color: var(--text-color);
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.documents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.document-card {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  padding: 1.2rem;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.document-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.document-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+}
+
+.file-icon {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-align: center;
+  min-width: 35px;
+}
+
+.pdf-icon {
+  background: #dc3545;
+}
+
+.image-icon {
+  background: #28a745;
+}
+
+.doc-icon {
+  background: #007bff;
+}
+
+.file-icon:not(.pdf-icon):not(.image-icon):not(.doc-icon) {
+  background: #214a6f;
+}
+
+.document-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.document-name {
+  color: var(--text-color);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.3rem 0;
+}
+
+.document-filename {
+  color: #6c757d;
+  font-size: 0.85rem;
+  margin: 0 0 1rem 0;
+  word-break: break-all;
+}
+
+.document-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-preview {
+  height: 30px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.btn-preview {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+}
+
+.btn-preview:hover {
+  background: linear-gradient(135deg, #0056b3, #004085);
+  color: white;
+}
+
+.btn-delete-doc {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 5;
+}
+
+.btn-delete-doc:hover {
+  background-color: #c82333;
+}
+
+.no-documents {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6c757d;
+}
+
+.no-documents-icon {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  opacity: 0.7;
+  color: #6c757d;
+}
+
+.no-documents p {
+  font-size: 1rem;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .documents-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .document-card {
+    padding: 1rem;
+  }
+
+  .document-icon {
+    font-size: 2rem;
+  }
+
+  .document-actions {
+    flex-direction: column;
+  }
+
+  .btn-preview,
+  .btn-edit-doc,
+  .btn-edit-single-doc {
+    justify-content: center;
+  }
+
+  .single-doc-file-input {
+    margin: 1rem 0;
+  }
+
+  .file-input-single-doc {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .selected-file-name {
+    margin-top: 0.5rem;
+    font-size: 12px;
+    color: #6c757d;
+    font-style: italic;
+  }
+
+  .single-doc-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .pdf-preview,
+  .image-preview {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .file-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .document-icon:hover .file-overlay {
+    opacity: 1;
+  }
+
+  .file-fallback {
+    width: 100%;
+    height: 100%;
+    background: #6c757d;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    border-radius: 4px;
+  }
+
+  .document-icon img {
+    transition: transform 0.3s ease;
+  }
+
+  .document-icon:hover img {
+    transform: scale(1.05);
+  }
+
+  .file-type-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+  }
+
+  .pdf-badge {
+    background: #dc3545;
+    color: white;
+  }
+
+  .image-badge {
+    background: #28a745;
+    color: white;
+  }
+
+  .fallback-badge {
+    position: static;
+    margin-bottom: 8px;
+    box-shadow: none;
+  }
+
+  .pdf-icon-large {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .pdf-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 }

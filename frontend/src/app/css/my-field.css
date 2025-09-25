@@ -82,6 +82,7 @@
 .card-delete-btn:hover {
   background-color: #c82333;
 }
+
 .card-myfield-img {
   object-fit: contain;
   width: 100%;

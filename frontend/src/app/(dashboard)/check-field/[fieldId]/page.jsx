@@ -462,38 +462,135 @@ export default function CheckFieldDetail() {
           <div className="field-row-checkfield">
             <div className="field-details-checkfield">
               <strong>รายละเอียดสนาม:</strong>
-              <div 
+              <div
                 className="field-value-checkfield"
-                dangerouslySetInnerHTML={{ __html: fieldData?.field_description || "ไม่มีข้อมูล" }}
+                dangerouslySetInnerHTML={{
+                  __html: fieldData?.field_description || "ไม่มีข้อมูล",
+                }}
               />
             </div>
           </div>
-          <div className="field-row-checkfield">
-            <div className="doc-fac-conntainer-check-field">
-              <div className="documents-container-check-field">
-                <h1>เอกสาร: </h1>
-                {fieldData?.documents ? (
-                  (Array.isArray(fieldData.documents)
-                    ? fieldData.documents
-                    : fieldData.documents.split(",")
-                  ).map((doc, i) => (
-                    <div className="document-container" key={i}>
-                      <a
-                        href={`${doc.trim()}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="document-link"
-                      >
-                        <p>{i + 1}</p>
-                      </a>
+        </div>
+
+        {/* เอกสารแยกออกมาแสดงเต็มความกว้าง */}
+        <div className="documents-section-full">
+          <h2>เอกสารประกอบการสมัคร</h2>
+          {fieldData?.documents ? (
+            <div className="documents-grid">
+              {(Array.isArray(fieldData.documents)
+                ? fieldData.documents
+                : fieldData.documents.split(",")
+              ).map((doc, i) => {
+                const docUrl = doc.trim();
+                const fileName = docUrl.split("/").pop() || `เอกสาร ${i + 1}`;
+                const fileExt = fileName.split(".").pop()?.toLowerCase();
+
+                return (
+                  <div className="document-card" key={i}>
+                    <div className="document-icon">
+                      {fileExt === "pdf" ? (
+                        // แสดงไอคอน PDF
+                        <div className="pdf-icon-display">
+                          <div className="pdf-icon-large">
+                            📄
+                          </div>
+                          <div className="pdf-text">PDF</div>
+                        </div>
+                      ) : (fileExt === "jpg" ||
+                          fileExt === "jpeg" ||
+                          fileExt === "png" ||
+                          fileExt === "gif") ? (
+                        // แสดงรูปภาพ
+                        <div className="image-preview">
+                          <img
+                            src={docUrl}
+                            alt={`เอกสาร ${i + 1}`}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                              borderRadius: "4px"
+                            }}
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                              e.target.nextSibling.style.display = "flex";
+                            }}
+                          />
+                          <div 
+                            className="file-fallback"
+                            style={{ display: "none" }}
+                          >
+                            IMG
+                          </div>
+                        </div>
+                      ) : (
+                        // สำหรับไฟล์ประเภทอื่นๆ
+                        <span
+                          className={`file-icon ${
+                            (fileExt === "doc" || fileExt === "docx")
+                              ? "doc-icon"
+                              : "file-icon"
+                          }`}
+                        >
+                          {(fileExt === "doc" || fileExt === "docx") && "DOC"}
+                          {![
+                            "pdf",
+                            "jpg",
+                            "jpeg",
+                            "png",
+                            "gif",
+                            "doc",
+                            "docx",
+                          ].includes(fileExt) && "FILE"}
+                        </span>
+                      )}
                     </div>
-                  ))
-                ) : (
-                  <p>ไม่มีเอกสารแนบ</p>
-                )}
-              </div>
+                    <div className="document-info">
+                      <h4 className="document-name">
+                        เอกสาร {i + 1} 
+                        <span className={`file-type-inline ${
+                          fileExt === "pdf" 
+                            ? "pdf-type" 
+                            : (fileExt === "jpg" || fileExt === "jpeg" || fileExt === "png" || fileExt === "gif")
+                            ? "image-type"
+                            : (fileExt === "doc" || fileExt === "docx")
+                            ? "doc-type"
+                            : "file-type"
+                        }`}>
+                          {fileExt === "pdf" && "PDF"}
+                          {(fileExt === "jpg" || fileExt === "jpeg" || fileExt === "png" || fileExt === "gif") && "รูป"}
+                          {(fileExt === "doc" || fileExt === "docx") && "DOC"}
+                          {![
+                            "pdf",
+                            "jpg", 
+                            "jpeg",
+                            "png",
+                            "gif", 
+                            "doc",
+                            "docx",
+                          ].includes(fileExt) && "FILE"}
+                        </span>
+                      </h4>
+                      <p className="document-filename">{fileName}</p>
+                      <div className="document-actions">
+                        <button
+                          className="btn-preview"
+                          onClick={() => window.open(docUrl, "_blank")}
+                        >
+                          เปิด
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          </div>
+          ) : (
+            <div className="no-documents">
+              <div className="no-documents-icon">ไม่มีเอกสาร</div>
+              <p>ไม่มีเอกสารแนบ</p>
+            </div>
+          )}
         </div>
 
         <div className="field-facilities-check-field">
@@ -657,7 +754,6 @@ export default function CheckFieldDetail() {
                 </button>
               )}
             </>
-            
           )}
         </div>
         {showConfirmModal && (

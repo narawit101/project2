@@ -1267,43 +1267,161 @@ router.post(
   async (req, res) => {
     try {
       const { field_id } = req.params;
+      const { existing_documents } = req.body; 
 
       if (!req.files || req.files.length === 0) {
         return res.status(400).json({ error: "ไม่พบไฟล์เอกสาร" });
       }
-
-      const oldDocs = await pool.query(
-        "SELECT documents FROM field WHERE field_id = $1",
-        [field_id]
-      );
-      const docPaths = oldDocs.rows[0]?.documents;
-
-      if (docPaths) {
-        const cleanedPaths = docPaths
-          .replace(/^{|}$/g, "")
+      const newFilePaths = req.files.map((file) => file.path);
+      
+      let allDocuments = [];
+      
+      if (existing_documents) {
+        const existingPaths = existing_documents
           .split(",")
-          .map((p) => p.replace(/"/g, "").replace(/\\/g, "/").trim())
+          .map(path => path.trim())
           .filter(Boolean);
-
-        for (const url of cleanedPaths) {
-          await deleteCloudinaryFile(url);
-        }
+        allDocuments = [...existingPaths];
       }
-
-      const filePaths = req.files.map((file) => file.path);
+      
+      allDocuments = [...allDocuments, ...newFilePaths];
 
       await pool.query(`UPDATE field SET documents = $1 WHERE field_id = $2`, [
-        filePaths.join(", "),
+        allDocuments.join(", "),
         field_id,
       ]);
 
-      res.json({ message: "อัปโหลดเอกสารสำเร็จ", paths: filePaths });
-      console.log("filepayh", filePaths);
+      res.json({ 
+        message: "อัปโหลดเอกสารสำเร็จ", 
+        paths: newFilePaths,
+        all_documents: allDocuments 
+      });
+      console.log("New file paths:", newFilePaths);
+      console.log("All documents:", allDocuments);
     } catch (error) {
       console.error("Upload document error:", error);
       res
         .status(500)
         .json({ error: "อัปโหลดเอกสารไม่สำเร็จ", details: error.message });
+    }
+  }
+);
+
+router.delete(
+  "/:field_id/delete-document",
+  authMiddleware,
+  async (req, res) => {
+    try {
+      const { field_id } = req.params;
+      const { document_url } = req.body;
+
+      if (!document_url) {
+        return res.status(400).json({ error: "ไม่พบ URL เอกสารที่ต้องการลบ" });
+      }
+
+      const currentDocs = await pool.query(
+        "SELECT documents FROM field WHERE field_id = $1",
+        [field_id]
+      );
+      
+      if (!currentDocs.rows[0]?.documents) {
+        return res.status(404).json({ error: "ไม่พบเอกสารในระบบ" });
+      }
+
+      const documentsString = currentDocs.rows[0].documents;
+      const documentsList = documentsString
+        .split(",")
+        .map(doc => doc.trim())
+        .filter(Boolean);
+
+      const updatedDocuments = documentsList.filter(doc => doc !== document_url.trim());
+
+      try {
+        await deleteCloudinaryFile(document_url);
+      } catch (cloudinaryError) {
+        console.warn("Could not delete from Cloudinary:", cloudinaryError.message);
+      }
+
+      await pool.query(
+        "UPDATE field SET documents = $1 WHERE field_id = $2",
+        [updatedDocuments.join(", "), field_id]
+      );
+
+      res.json({ 
+        message: "ลบเอกสารสำเร็จ",
+        remaining_documents: updatedDocuments
+      });
+    } catch (error) {
+      console.error("Delete document error:", error);
+      res.status(500).json({ 
+        error: "ลบเอกสารไม่สำเร็จ", 
+        details: error.message 
+      });
+    }
+  }
+);
+
+router.post(
+  "/:field_id/replace-single-document",
+  upload.single("document"),
+  authMiddleware,
+  async (req, res) => {
+    try {
+      const { field_id } = req.params;
+      const { document_index, old_document_url } = req.body;
+
+      if (!req.file) {
+        return res.status(400).json({ error: "ไม่พบไฟล์เอกสารใหม่" });
+      }
+
+      if (document_index === undefined || !old_document_url) {
+        return res.status(400).json({ error: "ข้อมูลไม่ครบถ้วน" });
+      }
+
+      const currentDocs = await pool.query(
+        "SELECT documents FROM field WHERE field_id = $1",
+        [field_id]
+      );
+      
+      if (!currentDocs.rows[0]?.documents) {
+        return res.status(404).json({ error: "ไม่พบเอกสารในระบบ" });
+      }
+
+      const documentsString = currentDocs.rows[0].documents;
+      const documentsList = documentsString
+        .split(",")
+        .map(doc => doc.trim())
+        .filter(Boolean);
+
+      const index = parseInt(document_index);
+      if (index < 0 || index >= documentsList.length) {
+        return res.status(400).json({ error: "ตำแหน่งเอกสารไม่ถูกต้อง" });
+      }
+
+      try {
+        await deleteCloudinaryFile(old_document_url);
+      } catch (cloudinaryError) {
+        console.warn("Could not delete old file from Cloudinary:", cloudinaryError.message);
+      }
+
+      documentsList[index] = req.file.path;
+
+      await pool.query(
+        "UPDATE field SET documents = $1 WHERE field_id = $2",
+        [documentsList.join(", "), field_id]
+      );
+
+      res.json({ 
+        message: "แก้ไขเอกสารสำเร็จ",
+        new_document_url: req.file.path,
+        all_documents: documentsList
+      });
+    } catch (error) {
+      console.error("Replace single document error:", error);
+      res.status(500).json({ 
+        error: "แก้ไขเอกสารไม่สำเร็จ", 
+        details: error.message 
+      });
     }
   }
 );
@@ -1687,11 +1805,6 @@ router.put(
           message: "กรุณาระบุชื่อสิ่งอำนวยความสะดวก",
         });
       }
-      // if (!description || description.toString().trim() === "") {
-      //   return res.status(400).json({
-      //     message: "กรุณาระบุรายละเอียด",
-      //   });
-      // }
 
       if (fac_price === undefined || fac_price === null || fac_price === "") {
         return res.status(400).json({

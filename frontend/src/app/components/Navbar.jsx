@@ -19,8 +19,14 @@ export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotifyOpen, setIsNotifyOpen] = useState(false);
   const [isAuthDropdownOpen, setIsAuthDropdownOpen] = useState(false);
- const fieldId = typeof window !== 'undefined' ? sessionStorage.getItem("field_id") || null : null;
-  const fieldName = typeof window !== 'undefined' ? sessionStorage.getItem("field_name") || null : null;
+  const fieldId =
+    typeof window !== "undefined"
+      ? sessionStorage.getItem("field_id") || null
+      : null;
+  const fieldName =
+    typeof window !== "undefined"
+      ? sessionStorage.getItem("field_name") || null
+      : null;
   const searchRef = useRef(null);
   const dropdownRef = useRef(null);
   const userProfileRef = useRef(null);
@@ -1091,7 +1097,11 @@ export default function Navbar() {
                 <div className="contact-field-lasted">
                   ติดต่อสนามกีฬาที่ดูล่าสุด
                   <ul>
-                    <li> สนาม: {''}{fieldName}</li>
+                    <li>
+                      {" "}
+                      สนาม: {""}
+                      {fieldName}
+                    </li>
                   </ul>
                 </div>
               </Link>
