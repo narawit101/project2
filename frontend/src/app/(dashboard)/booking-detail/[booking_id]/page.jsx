@@ -18,6 +18,8 @@ const getStatusLabel = (status) => {
       return { text: "รอตรวจสอบ", className: "status-pending" };
     case "complete":
       return { text: "การจองสำเร็จ", className: "status-complete" };
+    case "verified":
+      return { text: "ตรวจสอบสลิปมัดจำแล้ว", className: "status-complete" };
     default:
       return { text: "ไม่ทราบสถานะ", className: "status-unknown" };
   }
@@ -151,6 +153,8 @@ export default function BookingDetail() {
   const [reasoning, setReasoning] = useState("");
   const [reasoningCancel, setReasoningCancel] = useState("");
   const [notFoundFlag, setNotFoundFlag] = useState(false);
+  const [editSlip, setEditSlip] = useState(false);
+  const [slipAll, setSlipAll] = useState([]);
 
   usePreventLeave(startProcessLoad);
   useEffect(() => {
@@ -185,6 +189,8 @@ export default function BookingDetail() {
       if (res.ok) {
         setMybooking(data.data);
         console.log(" Booking Data:", data.data);
+        setSlipAll(data.slipAll || []);
+        console.log(" Slip All Data:", data.slipAll);
       } else if (res.status === 404) {
         setNotFoundFlag(true);
       } else {
@@ -369,13 +375,19 @@ export default function BookingDetail() {
               ? "อนุมัติแล้ว"
               : status === "rejected"
               ? "ไม่อนุมัติ"
+              : status === "verified"
+              ? "ตรวจสอบแล้ว"
               : status === "complete"
               ? "การจองสำเร็จ"
               : status
           }`
         );
         setMessageType(
-          status === "approved" || status === "complete" ? "success" : "error"
+          status === "approved" ||
+            status === "complete" ||
+            status === "verified"
+            ? "success"
+            : "error"
         );
         const updatedRes = await fetch(
           `${API_URL}/booking/bookings-detail/${booking_id}`,
@@ -501,6 +513,12 @@ export default function BookingDetail() {
     if (depositSlip) formData.append("deposit_slip", depositSlip);
 
     SetstartProcessLoad(true);
+    const isValid = await checkSlip(depositSlip);
+    if (!isValid) {
+      SetstartProcessLoad(false);
+      return;
+    }
+
     try {
       const res = await fetch(
         `${API_URL}/booking/upload-slip/${booking.booking_id}`,
@@ -521,6 +539,7 @@ export default function BookingDetail() {
         setTotalSlip(null);
         setImgPreviewTotal("");
         setQrCode(null);
+        setEditSlip(false);
       } else {
         setMessage(data.message || "อัปโหลดไม่สำเร็จ");
         setMessageType("error");
@@ -543,6 +562,12 @@ export default function BookingDetail() {
     const formData = new FormData();
 
     if (totalSlip) formData.append("total_slip", totalSlip);
+    SetstartProcessLoad(true);
+    const isValid = await checkSlip(depositSlip);
+    if (!isValid) {
+      SetstartProcessLoad(false);
+      return;
+    }
     SetstartProcessLoad(true);
     try {
       const res = await fetch(
@@ -645,6 +670,10 @@ export default function BookingDetail() {
     fetchReview();
   }, [fetchReview]);
 
+  const handleEditSlip = () => {
+    setEditSlip(true);
+  };
+
   const handleSubmitReview = async () => {
     if (!rating || rating < 1) {
       setMessage("กรุณาให้คะแนนการรีวิว");
@@ -688,6 +717,46 @@ export default function BookingDetail() {
       setMessage("เกิดข้อผิดพลาด: " + error);
       setMessageType("error");
       console.error("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
+    } finally {
+      SetstartProcessLoad(false);
+    }
+  };
+
+  const checkSlip = async (depositSlip) => {
+    if (!depositSlip) {
+      setMessage("กรุณาแนบสลิปก่อนตรวจสอบ");
+      setMessageType("error");
+      return;
+    }
+
+    SetstartProcessLoad(true);
+    try {
+      const formData = new FormData();
+      formData.append("slip_image", depositSlip);
+
+      const res = await fetch(`${API_URL}/booking/validate-slip`, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+
+      const data = await res.json();
+      console.log("SlipOK API response via backend:", data);
+
+      if (res.ok && data.valid) {
+        setMessage("ตรวจสอบสลิปสำเร็จ: เป็นสลิปที่ถูกต้อง");
+        setMessageType("success");
+        return true;
+      } else {
+        setMessage(data.message || "สลิปไม่ถูกต้องหรือไม่สามารถตรวจสอบได้");
+        setMessageType("error");
+        return false;
+      }
+    } catch (err) {
+      console.error("SlipOK API Error:", err);
+      setMessage("เกิดข้อผิดพลาดในการตรวจสอบสลิป");
+      setMessageType("error");
+      return false;
     } finally {
       SetstartProcessLoad(false);
     }
@@ -851,7 +920,8 @@ export default function BookingDetail() {
                 if (startDate >= today) {
                   if (
                     booking?.status === "approved" ||
-                    booking?.status === "complete"
+                    booking?.status === "complete" ||
+                    booking?.status === "verified"
                   ) {
                     return (
                       <div className="deposit-slip-container-order-detail">
@@ -859,12 +929,150 @@ export default function BookingDetail() {
                           <div>
                             {booking.deposit_slip ? (
                               <>
-                                <strong>สลิปมัดจำ</strong>
-                                <img
-                                  src={`${booking.deposit_slip}`}
-                                  alt="สลิปมัดจำ"
-                                  className="deposit-slip-order-detail"
-                                />
+                                {editSlip === false ? (
+                                  <>
+                                    {booking.field_user_id == user?.user_id ? (
+                                      <>
+                                        <strong>สลิปมัดจำ</strong>
+                                        {slipAll.map((slip, index) => (
+                                          <div
+                                            key={index}
+                                            className="slip-item"
+                                          >
+                                            <img
+                                              src={`${slip.deposit_slip}`}
+                                              alt={`สลิปมัดจำ ${index + 1}`}
+                                              className="deposit-slip-order-detail"
+                                            />
+                                          </div>
+                                        ))}
+                                      </>
+                                    ) : (
+                                      <>
+                                        <strong>สลิปมัดจำ</strong>
+                                        <img
+                                          src={`${booking.deposit_slip}`}
+                                          alt="สลิปมัดจำ"
+                                          className="deposit-slip-order-detail"
+                                        />
+                                        {booking.status !== "verified" &&
+                                          booking?.user_id ===
+                                            user?.user_id && (
+                                            <button
+                                              className="edit-slip-button"
+                                              onClick={handleEditSlip}
+                                            >
+                                              แก้ไขสลิปมัดจำ
+                                            </button>
+                                          )}
+                                      </>
+                                    )}
+                                  </>
+                                ) : (
+                                  // ส่วนแก้ไขสลิป
+                                  <div className="edit-slip-section">
+                                    <strong>แก้ไขสลิปมัดจำ</strong>
+                                    <label className="file-label-order-detail">
+                                      <input
+                                        type="file"
+                                        onChange={handleDepositSlip}
+                                        accept="image/*"
+                                        className="file-input-hidden-order-detail"
+                                      />
+                                      เลือกสลิปใหม่
+                                    </label>
+
+                                    {imgPreviewDeposit && (
+                                      <div className="preview-container-order-detail">
+                                        <img
+                                          src={imgPreviewDeposit}
+                                          alt="preview"
+                                          className="deposit-slip-order-detail"
+                                        />
+                                      </div>
+                                    )}
+
+                                    {qrCode && (
+                                      <div className="qr-code-container">
+                                        <span>
+                                          QR Code ค่ามัดจำ จำนวน{" "}
+                                          {formatPrice(booking.price_deposit)}{" "}
+                                          บาท
+                                        </span>
+                                        <img
+                                          style={{
+                                            marginBottom: "10px",
+                                            marginTop: "40px",
+                                          }}
+                                          width={200}
+                                          src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Thai_QR_Logo.svg/3000px-Thai_QR_Logo.svg.png"
+                                          alt=""
+                                        />
+                                        <img
+                                          src={qrCode}
+                                          alt="QR Code"
+                                          className="qr-code-detail"
+                                        />
+                                      </div>
+                                    )}
+
+                                    <div className="edit-slip-buttons">
+                                      <div className="create-qr-slip-again">
+                                        <button
+                                          style={{
+                                            cursor:
+                                              !depositSlip || startProcessLoad
+                                                ? "not-allowed"
+                                                : "pointer",
+                                          }}
+                                          onClick={uploadSlip}
+                                          disabled={
+                                            !depositSlip || startProcessLoad
+                                          }
+                                        >
+                                          อัปโหลดสลิปมัดจำใหม่
+                                        </button>
+                                      </div>
+
+                                      <div className="create-qr-slip-again">
+                                        {!qrCode && (
+                                          <>
+                                            {booking?.name_bank ===
+                                              "พร้อมเพย์" && (
+                                              <button
+                                                style={{
+                                                  cursor: qrCode
+                                                    ? "not-allowed"
+                                                    : "pointer",
+                                                }}
+                                                disabled={qrCode}
+                                                onClick={() =>
+                                                  handleGenQR(
+                                                    booking_id,
+                                                    booking.price_deposit
+                                                  )
+                                                }
+                                              >
+                                                สร้าง QR Code ค่ามัดจำใหม่
+                                              </button>
+                                            )}
+                                          </>
+                                        )}
+                                      </div>
+                                      <button
+                                        className="cancel-booking-btn-order-detail"
+                                        onClick={() => {
+                                          setEditSlip(false);
+                                          setDepositSlip(null);
+                                          setImgPreviewDeposit("");
+                                          setQrCode(null);
+                                        }}
+                                      >
+                                        ยกเลิก
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
                               </>
                             ) : (
                               <p>ไม่มีสลิปมัดจำ</p>
@@ -883,63 +1091,86 @@ export default function BookingDetail() {
                               booking?.user_id === user?.user_id &&
                               booking?.pay_method != "เงินสด" && (
                                 <div>
-                                  <div className="create-qr-slip">
-                                    {booking?.name_bank === "พร้อมเพย์" && (
-                                      <button
-                                        style={{
-                                          cursor: qrCode
-                                            ? "not-allowed"
-                                            : "pointer",
-                                        }}
-                                        disabled={qrCode}
-                                        onClick={() =>
-                                          handleGenQR(
-                                            booking_id,
-                                            booking.total_remaining
-                                          )
-                                        }
-                                      >
-                                        สร้าง QR Code สำหรับยอดคงเหลือ
-                                      </button>
-                                    )}
-                                    {qrCode && (
-                                      <div className="qr-code-container">
-                                        <span>
-                                          Qr Code ยอดคงเหลือ จำนวน {""}
-                                          {formatPrice(
-                                            booking.total_remaining
-                                          )}{" "}
-                                          บาท
-                                        </span>
-                                        <img
-                                          src={qrCode}
-                                          alt="QR Code"
-                                          className="qr-code-detail"
-                                        />
+                                  <div>
+                                    {booking.status === "verified" && (
+                                      <div className="create-qr-slip">
+                                        {!qrCode && (
+                                          <>
+                                            {booking?.name_bank ===
+                                              "พร้อมเพย์" && (
+                                              <button
+                                                style={{
+                                                  cursor: qrCode
+                                                    ? "not-allowed"
+                                                    : "pointer",
+                                                }}
+                                                disabled={qrCode}
+                                                onClick={() =>
+                                                  handleGenQR(
+                                                    booking_id,
+                                                    booking.total_remaining
+                                                  )
+                                                }
+                                              >
+                                                สร้าง QR Code สำหรับยอดคงเหลือ
+                                              </button>
+                                            )}
+                                          </>
+                                        )}
+
+                                        {qrCode && (
+                                          <div className="qr-code-container">
+                                            <span>
+                                              Qr Code ยอดคงเหลือ จำนวน {""}
+                                              {formatPrice(
+                                                booking.total_remaining
+                                              )}{" "}
+                                              บาท
+                                            </span>
+                                            <img
+                                              style={{
+                                                marginBottom: "10px",
+                                                marginTop: "40px",
+                                              }}
+                                              width={200}
+                                              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Thai_QR_Logo.svg/3000px-Thai_QR_Logo.svg.png"
+                                              alt=""
+                                            />
+                                            <img
+                                              src={qrCode}
+                                              alt="QR Code"
+                                              className="qr-code-detail"
+                                            />
+                                          </div>
+                                        )}
                                       </div>
                                     )}
+                                    {booking.status === "verified" && (
+                                      <label className="file-label-order-detail">
+                                        <input
+                                          type="file"
+                                          onChange={handleTotalSlip}
+                                          accept="image/*"
+                                          className="file-input-hidden-order-detail"
+                                        />
+                                        เลือกสลิปยอดคงเหลือ
+                                      </label>
+                                    )}
                                   </div>
-                                  <label className="file-label-order-detail">
-                                    <input
-                                      type="file"
-                                      onChange={handleTotalSlip}
-                                      accept="image/*"
-                                      className="file-input-hidden-order-detail"
-                                    />
-                                    อัปโหลดสลิปยอดคงเหลือ
-                                  </label>
-                                  <p>
-                                    <strong>ชื่อเจ้าของบัญชี</strong>{" "}
-                                    {booking.account_holder}
-                                  </p>
-                                  <p>
-                                    <strong>ชื่อธนาคาร</strong>{" "}
-                                    {booking.name_bank}
-                                  </p>
-                                  <p>
-                                    <strong>เลขบัญชี</strong>{" "}
-                                    {booking.number_bank}
-                                  </p>
+                                  <div className="bank-account-info-slip">
+                                    <p>
+                                      <strong>ชื่อเจ้าของบัญชี</strong>{" "}
+                                      {booking.account_holder}
+                                    </p>
+                                    <p>
+                                      <strong>ชื่อธนาคาร</strong>{" "}
+                                      {booking.name_bank}
+                                    </p>
+                                    <p>
+                                      <strong>เลขบัญชี</strong>{" "}
+                                      {booking.number_bank}
+                                    </p>
+                                  </div>
                                   {imgPreviewTotal && (
                                     <div className="preview-container-order-detail">
                                       <img
@@ -950,25 +1181,27 @@ export default function BookingDetail() {
                                     </div>
                                   )}
                                   <div className="confirm-upload-slip">
-                                    <button
-                                      disabled={startProcessLoad}
-                                      style={{
-                                        cursor: startProcessLoad
-                                          ? "not-allowed"
-                                          : "pointer",
-                                      }}
-                                      onClick={uploadTotalSlip}
-                                    >
-                                      {startProcessLoad ? (
-                                        <span className="dot-loading">
-                                          <span className="dot one">●</span>
-                                          <span className="dot two">●</span>
-                                          <span className="dot three">●</span>
-                                        </span>
-                                      ) : (
-                                        "อัพโหลด"
-                                      )}
-                                    </button>
+                                    {booking.status == "verified" && (
+                                      <button
+                                        disabled={startProcessLoad}
+                                        style={{
+                                          cursor: startProcessLoad
+                                            ? "not-allowed"
+                                            : "pointer",
+                                        }}
+                                        onClick={uploadTotalSlip}
+                                      >
+                                        {startProcessLoad ? (
+                                          <span className="dot-loading">
+                                            <span className="dot one">●</span>
+                                            <span className="dot two">●</span>
+                                            <span className="dot three">●</span>
+                                          </span>
+                                        ) : (
+                                          "อัพโหลดสลิปยอดคงเหลือ"
+                                        )}
+                                      </button>
+                                    )}
                                   </div>
                                 </div>
                               )
@@ -999,6 +1232,15 @@ export default function BookingDetail() {
                                     Qr Code ค่ามัดจำ จำนวน {""}
                                     {formatPrice(booking.price_deposit)} บาท
                                   </span>
+                                  <img
+                                    style={{
+                                      marginBottom: "10px",
+                                      marginTop: "40px",
+                                    }}
+                                    width={200}
+                                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Thai_QR_Logo.svg/3000px-Thai_QR_Logo.svg.png"
+                                    alt=""
+                                  />
                                   <img
                                     src={qrCode}
                                     alt="QR Code"
@@ -1097,6 +1339,7 @@ export default function BookingDetail() {
                                 />
                               </div>
                             )}
+
                             {canUploadslip && (
                               <div className="confirm-upload-slip">
                                 <button
@@ -1143,6 +1386,8 @@ export default function BookingDetail() {
                     ? "ไม่อนุมัติ"
                     : booking.status === "complete"
                     ? "การจองสำเร็จ"
+                    : booking.status === "verified"
+                    ? "ตรวจสอบสลิปมัดจำแล้ว"
                     : "ไม่ทราบสถานะ"}
                 </span>
               </p>
@@ -1248,37 +1493,39 @@ export default function BookingDetail() {
                   user?.user_id === booking.field_user_id
                 ) {
                   return (
-                    <div className="status-buttons-order-detail">
-                      {booking?.status !== "approved" &&
-                        booking?.status !== "complete" && (
-                          <button
-                            className="approve-btn-order-detail"
-                            style={{
-                              cursor: startProcessLoad
-                                ? "not-allowed"
-                                : "pointer",
-                            }}
-                            disabled={startProcessLoad}
-                            onClick={() => openConfirmModal("approved")}
-                          >
-                            อนุมัติ
-                          </button>
-                        )}
-                      {booking?.status !== "rejected" &&
-                        booking?.status !== "complete" && (
-                          <button
-                            className="reject-btn-order-detail"
-                            style={{
-                              cursor: startProcessLoad
-                                ? "not-allowed"
-                                : "pointer",
-                            }}
-                            disabled={startProcessLoad}
-                            onClick={() => openConfirmModal("rejected")}
-                          >
-                            ไม่อนุมัติ
-                          </button>
-                        )}
+                    <div>
+                      <div className="status-buttons-order-detail">
+                        {booking?.status !== "approved" &&
+                          booking?.status !== "complete" && (
+                            <button
+                              className="approve-btn-order-detail"
+                              style={{
+                                cursor: startProcessLoad
+                                  ? "not-allowed"
+                                  : "pointer",
+                              }}
+                              disabled={startProcessLoad}
+                              onClick={() => openConfirmModal("approved")}
+                            >
+                              อนุมัติ
+                            </button>
+                          )}
+                        {booking?.status !== "rejected" &&
+                          booking?.status !== "complete" && (
+                            <button
+                              className="reject-btn-order-detail"
+                              style={{
+                                cursor: startProcessLoad
+                                  ? "not-allowed"
+                                  : "pointer",
+                              }}
+                              disabled={startProcessLoad}
+                              onClick={() => openConfirmModal("rejected")}
+                            >
+                              ไม่อนุมัติ
+                            </button>
+                          )}
+                      </div>
                     </div>
                   );
                 }
@@ -1286,6 +1533,19 @@ export default function BookingDetail() {
                 return null;
               })()}
               {booking?.status === "approved" &&
+                user?.user_id === booking.field_user_id && (
+                  <button
+                    className="complete-deposit-btn-order-detail"
+                    style={{
+                      cursor: startProcessLoad ? "not-allowed" : "pointer",
+                    }}
+                    disabled={startProcessLoad}
+                    onClick={() => openConfirmModal("verified")}
+                  >
+                    ตรวจสอบสลิปค่ามัดจำเสร็จสิ้น
+                  </button>
+                )}
+              {booking?.status === "verified" &&
                 user?.user_id === booking.field_user_id && (
                   <button
                     className="complete-btn-order-detail"

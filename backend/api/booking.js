@@ -14,6 +14,8 @@ module.exports = function (io) {
   const qrcode = require("qrcode");
   const promptpay = require("promptpay-qr");
   const rateLimit = require("express-rate-limit");
+  const axios = require("axios");
+  const FormData = require("form-data");
 
   const LimiterBookingsRequest = rateLimit({
     windowMs: 10 * 60 * 1000,
@@ -81,6 +83,11 @@ module.exports = function (io) {
       files: 10,
       fileSize: 8 * 1024 * 1024,
     },
+  });
+
+  const uploadMemory = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 },
   });
 
   async function deleteCloudinaryFile(fileUrl) {
@@ -256,7 +263,7 @@ module.exports = function (io) {
     USING users u, field f
     WHERE b.user_id = u.user_id
       AND b.field_id = f.field_id
-      AND b.status IN ('approved', 'complete')
+      AND b.status IN ('approved', 'complete','verified')
       AND f.price_deposit > 0
       AND b.booking_id NOT IN (SELECT booking_id FROM payment)
       AND (
@@ -648,7 +655,7 @@ module.exports = function (io) {
          WHERE sub_field_id = $1
          AND booking_date >= $2
          AND booking_date < $3
-         AND status IN ('pending', 'approved', 'complete')`,
+         AND status IN ('pending', 'approved', 'complete', 'verified')`,
           [subFieldId, startDate, endDate]
         );
         client.release();
@@ -960,7 +967,10 @@ LIMIT 1;
         );
 
         const booking = result.rows[0];
-
+        const slipAll = await pool.query(
+          `SELECT * FROM payment WHERE booking_id = $1 ORDER BY payment_id DESC`,
+          [booking_id]
+        );
         if (!booking) {
           return res.status(404).json({
             success: false,
@@ -979,7 +989,7 @@ LIMIT 1;
           });
         }
 
-        return res.status(200).json({ data: booking });
+        return res.status(200).json({ data: booking, slipAll: slipAll.rows });
       } catch (error) {
         console.error("Error fetching booking detail:", error);
         return res.status(500).json({
@@ -1000,8 +1010,6 @@ LIMIT 1;
 
       try {
         let result;
-
-        let qrDeposit = null;
 
         const field = await pool.query(
           `SELECT field_id FROM bookings WHERE booking_id = $1`,
@@ -1241,8 +1249,36 @@ LIMIT 1;
                 notifyErr.message
               );
             }
-          }
+          } else if (booking_status === "verified") {
+            try {
+              const notifyInsert = await pool.query(
+                `INSERT INTO notifications (sender_id, recive_id, topic, messages, key_id, status)
+                 VALUES ($1,$2,$3,$4,$5,'unread') RETURNING notify_id`,
+                [
+                  req.user?.user_id || null,
+                  booking.user_id,
+                  "booking_verified",
+                  "ระบบได้ตรวจสอบสลิปการชำระเงินมัดจำเรียบร้อยแล้ว",
+                  booking.booking_id,
+                ]
+              );
 
+              if (req.io) {
+                req.io.emit("new_notification", {
+                  notifyId: notifyInsert.rows[0].notify_id,
+                  bookingId: booking.booking_id,
+                  topic: "booking_verified",
+                  reciveId: booking.user_id,
+                  keyId: booking.booking_id,
+                });
+              }
+            } catch (notifyErr) {
+              console.error(
+                "Insert booking_verified notification failed:",
+                notifyErr.message
+              );
+            }
+          }
           if (subject) {
             await resend.emails.send({
               from: process.env.Sender_Email,
@@ -1628,10 +1664,6 @@ LIMIT 1;
           `
         INSERT INTO payment (booking_id, deposit_slip, total_slip)
         VALUES ($1, $2, $3)
-        ON CONFLICT (booking_id)
-        DO UPDATE SET 
-          deposit_slip = COALESCE(EXCLUDED.deposit_slip, payment.deposit_slip),
-          total_slip = COALESCE(EXCLUDED.total_slip, payment.total_slip)
         RETURNING *;
         `,
           [bookingId, depositSlip, totalSlip]
@@ -1711,15 +1743,15 @@ LIMIT 1;
             .json({ success: false, message: "ต้องแนบสลิป" });
         }
         const check = await client.query(
-          `SELECT * FROM payment WHERE booking_id = $1`,
+          `SELECT * FROM payment WHERE booking_id = $1 ORDER BY payment_id DESC LIMIT 1`,
           [bookingId]
         );
 
         let result;
         if (check.rows.length > 0) {
           result = await client.query(
-            `UPDATE payment SET total_slip = $1 WHERE booking_id = $2 RETURNING *`,
-            [totalSlip, bookingId]
+            `UPDATE payment SET total_slip = $1 WHERE booking_id = $2 AND payment_id = $3 RETURNING *`,
+            [totalSlip, bookingId, check.rows[0].payment_id]
           );
         } else {
           result = await client.query(
@@ -1916,6 +1948,72 @@ LIMIT 1;
       console.error("Error generating QR code:", error);
       return res.status(500).json({ status: false, message: "Server error" });
     }
+  });
+
+  router.post(
+    "/validate-slip",
+    uploadMemory.single("slip_image"),
+    async (req, res) => {
+      try {
+        if (!req.file) {
+          return res
+            .status(400)
+            .json({ valid: false, message: "ไม่พบไฟล์รูปภาพ" });
+        }
+        if (!req.file.mimetype.startsWith("image/")) {
+          return res
+            .status(400)
+            .json({ valid: false, message: "กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น" });
+        }
+
+        const fd = new FormData();
+        fd.append("files", req.file.buffer, {
+          filename: req.file.originalname || "slip.jpg",
+          contentType: req.file.mimetype,
+        });
+
+        const resp = await axios.post(
+          "https://api.slipok.com/api/line/apikey/53359",
+          fd,
+          {
+            headers: { ...fd.getHeaders(), "x-authorization": "SLIPOK9DHNEZK" },
+            timeout: 15000,
+          }
+        );
+
+        const ok =
+          resp?.data?.success === true && resp?.data?.data?.success === true;
+
+        if (ok) {
+          return res.json({
+            valid: true,
+            message: "สลิปผ่านการตรวจสอบ",
+            slipok: resp.data.data,
+          });
+        }
+        return res.status(400).json({
+          valid: false,
+          message:
+            resp?.data?.message || "ไม่สามารถยืนยันว่าเป็นสลิปธนาคารจริง",
+          slipok: resp.data,
+        });
+      } catch (err) {
+        console.error("SlipOK API Error:", err.response?.data || err.message);
+        return res.status(500).json({
+          valid: false,
+          message: "ไม่สามารถยืนยันว่าเป็นสลิปธนาคารจริง",
+        });
+      }
+    }
+  );
+
+  router.get("/server-time", (req, res) => {
+    const serverTime = DateTime.now().setZone("Asia/Bangkok");
+    res.json({
+      time: serverTime.toISO(),
+      timestamp: serverTime.toMillis(),
+    });
+    console.log("Server time fetched:", serverTime.toISO());
   });
 
   return router;

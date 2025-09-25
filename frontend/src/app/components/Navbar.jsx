@@ -229,6 +229,7 @@ export default function Navbar() {
         "total_slip_payment_uploaded",
         "booking_cancelled",
         "cancel_booking_by_customer",
+        "booking_verified",
       ].includes(currentTopic)
     ) {
       if (currentKeyId) {
@@ -740,6 +741,39 @@ export default function Navbar() {
                             </small>
                           </>
                         )}
+                        {notification.topic === "booking_verified" && (
+                          <>
+                            <strong className="notif-new_booking">
+                              สลิปมัดจำของคุณได้รับการยืนยันแล้ว
+                            </strong>
+                            <br />
+                            <small>หมายเลข: #{notification.keyId}</small>
+                            <br />
+                            {notification.reciveName && (
+                              <small>
+                                ผู้จอง: {notification.reciveName || "-"}
+                              </small>
+                            )}
+                            <br />
+                            {notification.fieldName && (
+                              <small>
+                                สนาม: {notification.fieldName || "-"}
+                                <br />
+                                สนามย่อย: {notification.subFieldName || "-"}
+                              </small>
+                            )}
+                            <br />
+                            {notification.bookingDate && (
+                              <small>
+                                วันที่: {formatDate(notification.bookingDate)}
+                                <br />
+                                เวลา: {notification.startTime} -{" "}
+                                {notification.endTime}
+                              </small>
+                            )}
+                            <br />
+                          </>
+                        )}
                         {notification.topic === "deposit_payment_uploaded" && (
                           <>
                             <strong className="notif-new_booking">
@@ -965,6 +999,7 @@ export default function Navbar() {
                           "booking_cancelled",
                           "cancel_booking_by_customer",
                           "new_following",
+                          "booking_verified",
                         ].includes(notification.topic) && (
                           <>
                             <strong>การแจ้งเตือน</strong>

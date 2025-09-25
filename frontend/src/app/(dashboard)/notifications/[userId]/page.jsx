@@ -138,6 +138,7 @@ export default function Page() {
         "total_slip_payment_uploaded",
         "booking_cancelled",
         "cancel_booking_by_customer",
+        "booking_verified",
       ].includes(topic)
     ) {
       if (keyId) router.push(`/booking-detail/${keyId}`);
@@ -489,6 +490,36 @@ export default function Page() {
                     </small>
                   </>
                 )}
+                {n.topic === "booking_verified" && (
+                  <>
+                    <strong className="notif-new_booking-all">
+                      สลิปมัดจำของคุณได้รับการยืนยันแล้ว
+                    </strong>
+                    <br />
+                    <small>หมายเลข: #{n.keyId}</small>
+                    <br />
+                    {n.reciveName && (
+                      <small>ผู้จอง: {n.reciveName || "-"}</small>
+                    )}
+                    <br />
+                    {n.fieldName && (
+                      <small>
+                        สนาม: {n.fieldName || "-"}
+                        <br />
+                        สนามย่อย: {n.subFieldName || "-"}
+                      </small>
+                    )}
+                    <br />
+                    {n.bookingDate && (
+                      <small>
+                        วันที่: {formatDate(n.bookingDate)}
+                        <br />
+                        เวลา: {n.startTime} - {n.endTime}
+                      </small>
+                    )}
+                    <br />
+                  </>
+                )}
                 {n.topic === "deposit_payment_uploaded" && (
                   <>
                     <strong className="notif-new_booking-all">
@@ -684,6 +715,7 @@ export default function Page() {
                   "booking_cancelled",
                   "cancel_booking_by_customer",
                   "new_following",
+                  "booking_verified",
                 ].includes(n.topic) && (
                   <>
                     <strong>การแจ้งเตือน</strong>
