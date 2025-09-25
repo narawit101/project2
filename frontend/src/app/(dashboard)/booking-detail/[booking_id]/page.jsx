@@ -563,12 +563,11 @@ export default function BookingDetail() {
 
     if (totalSlip) formData.append("total_slip", totalSlip);
     SetstartProcessLoad(true);
-    const isValid = await checkSlip(depositSlip);
+    const isValid = await checkSlip(totalSlip);
     if (!isValid) {
       SetstartProcessLoad(false);
       return;
     }
-    SetstartProcessLoad(true);
     try {
       const res = await fetch(
         `${API_URL}/booking/upload-slip/${booking.booking_id}`,
@@ -1210,22 +1209,30 @@ export default function BookingDetail() {
                         ) : booking?.price_deposit !== 0 ? (
                           booking?.user_id === user?.user_id ? (
                             <div className="create-qr-slip">
-                              {booking?.name_bank === "พร้อมเพย์" && (
-                                <button
-                                  style={{
-                                    cursor: qrCode ? "not-allowed" : "pointer",
-                                  }}
-                                  disabled={qrCode}
-                                  onClick={() =>
-                                    handleGenQR(
-                                      booking_id,
-                                      booking.price_deposit
-                                    )
-                                  }
-                                >
-                                  สร้าง QR code สำหรับค่ามัดจำ
-                                </button>
-                              )}
+                              <div>
+                                {!qrCode && (
+                                  <>
+                                    {booking?.name_bank === "พร้อมเพย์" && (
+                                      <button
+                                        style={{
+                                          cursor: qrCode
+                                            ? "not-allowed"
+                                            : "pointer",
+                                        }}
+                                        disabled={qrCode}
+                                        onClick={() =>
+                                          handleGenQR(
+                                            booking_id,
+                                            booking.price_deposit
+                                          )
+                                        }
+                                      >
+                                        สร้าง QR code สำหรับค่ามัดจำ
+                                      </button>
+                                    )}
+                                  </>
+                                )}
+                              </div>
                               {qrCode && (
                                 <div className="qr-code-container">
                                   <span>
