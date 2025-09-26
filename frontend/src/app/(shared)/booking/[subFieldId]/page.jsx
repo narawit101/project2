@@ -58,8 +58,8 @@ export default function Booking() {
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
   const [facilityAvailability, setFacilityAvailability] = useState({});
   const summaryRef = useRef(null);
-  const [serverTime, setServerTime] = useState(null);     // เวลาเซิร์ฟเวอร์ที่ sync แล้ว
-  const serverOffsetRef = useRef(0);                      // ms = serverTs - Date.now()
+  const [serverTime, setServerTime] = useState(null);
+  const serverOffsetRef = useRef(0);
   const tickRef = useRef(null);
   const socketRef = useRef(null);
 
@@ -71,7 +71,9 @@ export default function Booking() {
 
   const fetchServerTimeOnce = useCallback(async () => {
     try {
-      const res = await fetch(`${API_URL}/booking/server-time`, { credentials: "include" });
+      const res = await fetch(`${API_URL}/booking/server-time`, {
+        credentials: "include",
+      });
       const data = await res.json();
       if (data?.timestamp) {
         const clientTs = Date.now();
@@ -83,11 +85,13 @@ export default function Booking() {
     }
   }, [API_URL]);
 
-useEffect(() => {
-    const socket = io(API_URL, { transports: ["websocket"], withCredentials: true });
+  useEffect(() => {
+    const socket = io(API_URL, {
+      transports: ["websocket"],
+      withCredentials: true,
+    });
     socketRef.current = socket;
 
-    // แจ้งเซิร์ฟเวอร์ว่าเข้าหน้า booking
     socket.on("connect", () => {
       socket.emit("join_booking");
     });
@@ -109,11 +113,14 @@ useEffect(() => {
       setServerTime(new Date(Date.now() + serverOffsetRef.current));
     }, 1000);
 
-    socket.on("connect_error", (err) => console.error("socket connect_error:", err?.message));
+    socket.on("connect_error", (err) =>
+      console.error("socket connect_error:", err?.message)
+    );
 
     return () => {
-      // แจ้งว่าออกจากหน้า booking ก่อนปิดการเชื่อมต่อ
-      try { socket.emit("leave_booking"); } catch {}
+      try {
+        socket.emit("leave_booking");
+      } catch {}
       clearTimeout(fallback);
       clearInterval(tickRef.current);
       socket.off("server_time", onServerTime);
@@ -544,7 +551,6 @@ useEffect(() => {
     setPayMethod(e.target.value);
   };
 
-  // ใช้ serverTime แทน new Date() ทุกที่ที่ต้องเทียบ “เวลาปัจจุบัน”
   function isPastSlot(slot) {
     if (!serverTime) return false;
     const [startTime] = slot.split(" - ");
@@ -554,8 +560,6 @@ useEffect(() => {
     const slotDateTime = new Date(bookingDateObj);
     slotDateTime.setHours(h, m, 0, 0);
 
-    // ถ้าสนามข้ามวัน (ปิดหลังเที่ยงคืน) และ slot อยู่หลังปิด-เปิด ให้ปรับวันที่ตามเงื่อนไขของคุณ
-    // ตัวอย่าง (ถ้าปิด < เปิด ถือว่าข้ามวัน)
     if (openHours && closeHours) {
       const [oh] = openHours.split(":").map(Number);
       const [ch] = closeHours.split(":").map(Number);
@@ -1069,12 +1073,14 @@ useEffect(() => {
                   ? serverTime.toLocaleTimeString("th-TH", {
                       hour: "2-digit",
                       minute: "2-digit",
+                      second: "2-digit",
                     })
                   : new Date().toLocaleTimeString("th-TH", {
                       hour: "2-digit",
                       minute: "2-digit",
+                      second: "2-digit",
                     })}{" "}
-                GMT+7
+                {/* GMT+7 */}
               </small>
             </div>
 
@@ -1157,7 +1163,6 @@ useEffect(() => {
                 </div>
               </div>
 
-              {/* Facilities Section with Images */}
               {facilities.length > 0 && (
                 <div className="facilities-summary-section">
                   <h4>สิ่งอำนวยความสะดวก</h4>

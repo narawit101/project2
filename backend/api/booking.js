@@ -121,8 +121,6 @@ module.exports = function (io) {
     }
   }
 
-  
- // ส่งเวลาเฉพาะเมื่อมี client อยู่หน้า booking
   if (io) {
     const emitServerTime = () => {
       const now = DateTime.now().setZone('Asia/Bangkok');
@@ -132,14 +130,14 @@ module.exports = function (io) {
       });
     };
 
-    // ตัวแปร global กันซ้ำและเก็บจำนวนลูกค้าที่อยู่หน้า booking
+
     if (!global.__serverTimeTicker) global.__serverTimeTicker = null;
     if (!global.__bookingClients) global.__bookingClients = new Set();
 
     io.on('connection', (socket) => {
       let joinedBooking = false;
 
-      // client แจ้งว่าเข้าหน้า booking
+
       socket.on('join_booking', () => {
         if (joinedBooking) return;
         joinedBooking = true;
@@ -147,17 +145,14 @@ module.exports = function (io) {
         global.__bookingClients.add(socket.id);
         socket.join('booking');
 
-        // ส่งเวลาทันทีครั้งแรก
         emitServerTime();
 
-        // ถ้ายังไม่มี interval ให้เริ่ม
         if (!global.__serverTimeTicker) {
           global.__serverTimeTicker = setInterval(emitServerTime, 60_000);
           console.log('server_time ticker started');
         }
       });
 
-      // client แจ้งว่าออกจากหน้า booking
       socket.on('leave_booking', () => {
         if (!joinedBooking) return;
         joinedBooking = false;
@@ -165,7 +160,6 @@ module.exports = function (io) {
         global.__bookingClients.delete(socket.id);
         socket.leave('booking');
 
-        // ถ้าไม่มีใครอยู่หน้า booking แล้ว ให้หยุด interval
         if (global.__bookingClients.size === 0 && global.__serverTimeTicker) {
           clearInterval(global.__serverTimeTicker);
           global.__serverTimeTicker = null;
@@ -173,7 +167,6 @@ module.exports = function (io) {
         }
       });
 
-      // รองรับกรณีแท็บปิด/หลุด
       socket.on('disconnect', () => {
         if (joinedBooking) {
           global.__bookingClients.delete(socket.id);
