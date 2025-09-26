@@ -59,6 +59,7 @@ export default function Booking() {
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
   const [facilityAvailability, setFacilityAvailability] = useState({});
   const summaryRef = useRef(null);
+  const [serverTime, setServerTime] = useState(null);
 
   usePreventLeave(startProcessLoad);
   const searchParams = useSearchParams();
@@ -79,6 +80,23 @@ export default function Booking() {
       router.replace("/verification");
     }
   }, [user, isLoading, router, bookingDate]);
+
+  const fetchServerTime = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_URL}/booking/server-time`, {
+        credentials: "include",
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setServerTime(new Date(data.time));
+      }
+    } catch (error) {
+      console.error("Failed to fetch server time:", error);
+
+      setServerTime(new Date());
+    }
+  }, [API_URL]);
 
   const fetchBookedSlots = useCallback(async () => {
     try {
@@ -127,6 +145,16 @@ export default function Booking() {
       setDataLoading(false);
     }
   }, [API_URL, subFieldId, bookingDate]);
+
+  useEffect(() => {
+    fetchServerTime();
+
+    const interval = setInterval(() => {
+      fetchServerTime();
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [fetchServerTime]);
 
   useEffect(() => {
     fetchBookedSlots();
@@ -490,10 +518,12 @@ export default function Booking() {
   };
 
   function isPastSlot(slot) {
+    if (!serverTime) return false;
+
     const [startTime] = slot.split(" - ");
     const [hour, minute] = startTime.split(":").map(Number);
 
-    const now = new Date();
+    const now = serverTime;
     const bookingDateObj = new Date(bookingDateFormatted);
 
     const isToday =
@@ -556,9 +586,9 @@ export default function Booking() {
     }
   };
 
-  const today = new Date();
+  const today = serverTime || new Date();
 
-  const maxDate = new Date();
+  const maxDate = serverTime ? new Date(serverTime) : new Date();
   maxDate.setDate(maxDate.getDate() + 60);
 
   const tileClassName = ({ date, view }) => {
@@ -907,6 +937,8 @@ export default function Booking() {
                 else if (slotStatus === "complete")
                   slotClass += " complete-slot";
                 else if (slotStatus === "pending") slotClass += " pending-slot";
+                else if (slotStatus === "verified")
+                  slotClass += " complete-slot";
                 else if (isSelected) slotClass += " selected-slot";
 
                 return (

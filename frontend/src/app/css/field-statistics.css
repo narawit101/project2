@@ -119,6 +119,13 @@
   border-radius: 16px;
   font-weight: 600;
 }
+.status-text-detail-stat.verified {
+color: #155724;
+  background-color: #caf9c7;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-weight: 600;
+}
 
 .status-text-detail-stat.rejected {
   color: #721c24;

@@ -2007,14 +2007,14 @@ LIMIT 1;
     }
   );
 
-  router.get("/server-time", (req, res) => {
-    const serverTime = DateTime.now().setZone("Asia/Bangkok");
-    res.json({
-      time: serverTime.toISO(),
-      timestamp: serverTime.toMillis(),
-    });
-    console.log("Server time fetched:", serverTime.toISO());
+  router.get('/server-time', (req, res) => {
+  const serverTime = DateTime.now().setZone('Asia/Bangkok');
+  res.json({ 
+    time: serverTime.toISO(),
+    timestamp: serverTime.toMillis() 
   });
+  console.log("Server time fetched:", serverTime.toISO());
+});
 
   return router;
 };

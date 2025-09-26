@@ -165,6 +165,7 @@ export default function Myorder() {
       approved: booking.filter((item) => item.status === "approved").length,
       rejected: booking.filter((item) => item.status === "rejected").length,
       complete: booking.filter((item) => item.status === "complete").length,
+      verified: booking.filter((item) => item.status === "verified").length,
       totalRevenue: booking
 
         .filter((item) => item.status === "complete")
@@ -299,6 +300,7 @@ export default function Myorder() {
                 <option value="approved">อนุมัติแล้ว</option>
                 <option value="rejected">ไม่อนุมัติ</option>
                 <option value="complete">การจองสำเร็จ</option>
+                <option value="verified">ตรวจสอบสลิปมัดจำแล้ว</option>
               </select>
             </label>
             <div className="btn-group-filter">
@@ -378,6 +380,7 @@ export default function Myorder() {
                 <option value="approved">อนุมัติแล้ว</option>
                 <option value="rejected">ไม่อนุมัติ</option>
                 <option value="complete">การจองสำเร็จ</option>
+                <option value="verified">ตรวจสอบสลิปมัดจำแล้ว</option>
               </select>
             </label>
 
@@ -446,6 +449,12 @@ export default function Myorder() {
                 <p className="stat-inline">
                   การจองสำเร็จ:{" "}
                   <span className="stat-number">{stats.complete}</span>
+                </p>
+              </div>
+              <div className="stat-card verified">
+                <p className="stat-inline">
+                  ตรวจสอบสลิปมัดจำแล้ว:{" "}
+                  <span className="stat-number">{stats.verified}</span>
                 </p>
               </div>
             </div>
@@ -581,6 +590,8 @@ export default function Myorder() {
                           ? "ไม่อนุมัติ"
                           : item.status === "complete"
                           ? "การจองสำเร็จ"
+                          : item.status === "verified"
+                          ? "ตรวจสอบสลิปมัดจำแล้ว"
                           : "ไม่ทราบสถานะ"}
                       </span>
                     </p>

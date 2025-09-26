@@ -263,6 +263,7 @@ export default function Mybooking() {
               <option value="approved">อนุมัติแล้ว</option>
               <option value="rejected">ไม่อนุมัติ</option>
               <option value="complete">การจองสำเร็จ</option>
+              <option value="verified">ตรวจสอบสลิปมัดจำแล้ว</option>
             </select>
           </label>
           <div className="button-clear-order">
@@ -413,6 +414,8 @@ export default function Mybooking() {
                           ? "ไม่อนุมัติ"
                           : item.status === "complete"
                           ? "การจองสำเร็จ"
+                          : item.status === "verified"
+                          ? "ตรวจสอบสลิปมัดจำแล้ว"
                           : "ไม่ทราบสถานะ"}
                       </span>
                     </p>

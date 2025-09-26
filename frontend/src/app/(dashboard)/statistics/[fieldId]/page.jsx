@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { io } from "socket.io-client";
 import "@/app/css/my-order.css";
 import "@/app/css/field-statistics.css";
+import { verify } from "jsonwebtoken";
 
 export default function Statistics() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -142,6 +143,7 @@ export default function Statistics() {
       approved: booking.filter((item) => item.status === "approved").length,
       rejected: booking.filter((item) => item.status === "rejected").length,
       complete: booking.filter((item) => item.status === "complete").length,
+      verified: booking.filter((item) => item.status === "verified").length,
       totalRevenue: booking
 
         .filter((item) => item.status === "complete")
@@ -290,6 +292,7 @@ export default function Statistics() {
                 <option value="approved">อนุมัติแล้ว</option>
                 <option value="rejected">ไม่อนุมัติ</option>
                 <option value="complete">การจองสำเร็จ</option>
+                <option value="verified">ตรวจสอบสลิปมัดจำแล้ว</option>
               </select>
             </label>
             <div className="btn-group-filter">
@@ -372,6 +375,7 @@ export default function Statistics() {
                 <option value="approved">อนุมัติแล้ว</option>
                 <option value="rejected">ไม่อนุมัติ</option>
                 <option value="complete">การจองสำเร็จ</option>
+                <option value="verified">ตรวจสอบสลิปมัดจำแล้ว</option>
               </select>
             </label>
 
@@ -441,6 +445,12 @@ export default function Statistics() {
                 <p className="stat-inline">
                   การจองสำเร็จ:{" "}
                   <span className="stat-number">{stats.complete}</span>
+                </p>
+              </div>
+              <div className="stat-card approved">
+                <p className="stat-inline">
+                  ตรวจสอบสลิปค่ามัดจำแล้ว:{" "}
+                  <span className="stat-number">{stats.verified}</span>
                 </p>
               </div>
             </div>
@@ -549,6 +559,8 @@ export default function Statistics() {
                         ? "ไม่อนุมัติ"
                         : item.status === "complete"
                         ? "การจองสำเร็จ"
+                        : item.status === "verified"
+                        ? "ตรวจสอบสลิปมัดจำแล้ว"
                         : "ไม่ทราบสถานะ"}
                     </td>
                   </tr>

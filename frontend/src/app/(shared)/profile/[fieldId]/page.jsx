@@ -160,6 +160,7 @@ export default function CheckFieldDetail() {
     const fetchFieldData = async () => {
       try {
         sessionStorage.setItem("field_id", fieldId);
+        localStorage.setItem("field_id", fieldId);
 
         const res = await fetch(`${API_URL}/profile/${fieldId}`, {
           method: "GET",
@@ -181,10 +182,8 @@ export default function CheckFieldDetail() {
           setMessageType("error");
           return;
         }
-        const fieldName = sessionStorage.setItem(
-          "field_name",
-          data.data.field_name
-        );
+        sessionStorage.setItem("field_name", data.data.field_name);
+        localStorage.setItem("field_name", data.data.field_name);
         const fieldOwnerId = data.data?.user_id;
         const currentUserId = user?.user_id;
         const currentUserRole = user?.role;
@@ -1387,7 +1386,7 @@ export default function CheckFieldDetail() {
               onClick={handleCancel}
               className="btn-cancel-subfield-profile"
             >
-              Xปิด
+              X
             </button>
             <div className="undercontainer-proflie-overlay">
               <h1 className="sub-fields-profile">เลือกสนามย่อย</h1>

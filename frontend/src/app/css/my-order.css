@@ -427,6 +427,14 @@
   font-weight: 500;
 }
 
+.status-text-detail.verified {
+  color: #155724;
+  background-color: #caf9c7;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
 .status-text-detail.rejected {
   color: #721c24;
   background-color: #fddede;
@@ -501,6 +509,14 @@
 }
 
 .stat-card.approved .stat-number {
+  color: #155724;
+}
+
+.stat-card.verified {
+  border-color: #28a745;
+}
+
+.stat-card.verified .stat-number {
   color: #155724;
 }
 

@@ -21,11 +21,11 @@ export default function Navbar() {
   const [isAuthDropdownOpen, setIsAuthDropdownOpen] = useState(false);
   const fieldId =
     typeof window !== "undefined"
-      ? sessionStorage.getItem("field_id") || null
+      ? localStorage.getItem("field_id") || null
       : null;
   const fieldName =
     typeof window !== "undefined"
-      ? sessionStorage.getItem("field_name") || null
+      ? localStorage.getItem("field_name") || null
       : null;
   const searchRef = useRef(null);
   const dropdownRef = useRef(null);
@@ -1120,7 +1120,7 @@ export default function Navbar() {
             <li>
               <Link
                 className={pathname === "/profile" ? "active" : ""}
-                href={`profile/${fieldId}?showDescription=true`}
+                href={`/profile/${fieldId}?showDescription=true`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 <img
