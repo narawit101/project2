@@ -83,9 +83,14 @@ export default function Booking() {
     }
   }, [API_URL]);
 
-  useEffect(() => {
+useEffect(() => {
     const socket = io(API_URL, { transports: ["websocket"], withCredentials: true });
     socketRef.current = socket;
+
+    // แจ้งเซิร์ฟเวอร์ว่าเข้าหน้า booking
+    socket.on("connect", () => {
+      socket.emit("join_booking");
+    });
 
     const onServerTime = (payload) => {
       const serverTs = Number(payload?.timestamp);
@@ -94,15 +99,12 @@ export default function Booking() {
       serverOffsetRef.current = serverTs - clientTs;
       setServerTime(new Date(clientTs + serverOffsetRef.current));
     };
-
     socket.on("server_time", onServerTime);
 
-    // fallback ถ้า 3 วิแรกยังไม่ได้เวลา ให้ดึง HTTP ครั้งเดียว
     const fallback = setTimeout(() => {
       if (!serverTime) fetchServerTimeOnce();
-      // console.log("fallback set",fetchServerTimeOnce());
-    }, 1000);
-    // เดินเวลาเองทุก 1 วิ โดยใช้ offset (ไม่ยิง API)
+    }, 3000);
+
     tickRef.current = setInterval(() => {
       setServerTime(new Date(Date.now() + serverOffsetRef.current));
     }, 1000);
@@ -110,6 +112,8 @@ export default function Booking() {
     socket.on("connect_error", (err) => console.error("socket connect_error:", err?.message));
 
     return () => {
+      // แจ้งว่าออกจากหน้า booking ก่อนปิดการเชื่อมต่อ
+      try { socket.emit("leave_booking"); } catch {}
       clearTimeout(fallback);
       clearInterval(tickRef.current);
       socket.off("server_time", onServerTime);

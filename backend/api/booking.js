@@ -122,18 +122,69 @@ module.exports = function (io) {
   }
 
   
-   // ส่งเวลาเซิร์ฟเวอร์ให้ client ทุกคนผ่าน Socket.IO
-  if (io) {                                  // ตรวจว่ามี instance ของ Socket.IO ถูกส่งเข้ามาหรือไม่
-    // กันสร้าง interval ซ้ำเวลามี reload (เช่น hot-reload / nodemon)
-    if (!global.__serverTimeTicker) {        // ถ้ายังไม่มีตัว interval นี้ในตัวแปร global
-      global.__serverTimeTicker = setInterval(() => {  // สร้าง interval แล้วเก็บ reference ไว้ใน global
-        const now = DateTime.now().setZone('Asia/Bangkok'); // อ่านเวลาปัจจุบันของเซิร์ฟเวอร์ (โซนเวลาไทย)
-        io.emit('server_time', {             // กระจาย event 'server_time' ไปยัง client ทุกคนที่เชื่อมต่ออยู่
-          timestamp: now.toMillis(),         // ส่งค่าเวลาแบบ Unix timestamp หน่วยมิลลิวินาที (เหมาะกับคำนวณ offset)
-          iso: now.toISO(),                  // ส่งค่าเวลาแบบ ISO string (อ่าน/ดีบักง่าย)
-        });
-      }, 60_000);                            // ทำซ้ำทุก 60,000 มิลลิวินาที = 60 วินาที (ปรับได้ตามต้องการ)
-    }
+ // ส่งเวลาเฉพาะเมื่อมี client อยู่หน้า booking
+  if (io) {
+    const emitServerTime = () => {
+      const now = DateTime.now().setZone('Asia/Bangkok');
+      io.to('booking').emit('server_time', {
+        timestamp: now.toMillis(),
+        iso: now.toISO(),
+      });
+    };
+
+    // ตัวแปร global กันซ้ำและเก็บจำนวนลูกค้าที่อยู่หน้า booking
+    if (!global.__serverTimeTicker) global.__serverTimeTicker = null;
+    if (!global.__bookingClients) global.__bookingClients = new Set();
+
+    io.on('connection', (socket) => {
+      let joinedBooking = false;
+
+      // client แจ้งว่าเข้าหน้า booking
+      socket.on('join_booking', () => {
+        if (joinedBooking) return;
+        joinedBooking = true;
+
+        global.__bookingClients.add(socket.id);
+        socket.join('booking');
+
+        // ส่งเวลาทันทีครั้งแรก
+        emitServerTime();
+
+        // ถ้ายังไม่มี interval ให้เริ่ม
+        if (!global.__serverTimeTicker) {
+          global.__serverTimeTicker = setInterval(emitServerTime, 60_000);
+          console.log('server_time ticker started');
+        }
+      });
+
+      // client แจ้งว่าออกจากหน้า booking
+      socket.on('leave_booking', () => {
+        if (!joinedBooking) return;
+        joinedBooking = false;
+
+        global.__bookingClients.delete(socket.id);
+        socket.leave('booking');
+
+        // ถ้าไม่มีใครอยู่หน้า booking แล้ว ให้หยุด interval
+        if (global.__bookingClients.size === 0 && global.__serverTimeTicker) {
+          clearInterval(global.__serverTimeTicker);
+          global.__serverTimeTicker = null;
+          console.log('server_time ticker stopped (no clients in booking)');
+        }
+      });
+
+      // รองรับกรณีแท็บปิด/หลุด
+      socket.on('disconnect', () => {
+        if (joinedBooking) {
+          global.__bookingClients.delete(socket.id);
+        }
+        if (global.__bookingClients.size === 0 && global.__serverTimeTicker) {
+          clearInterval(global.__serverTimeTicker);
+          global.__serverTimeTicker = null;
+          console.log('server_time ticker stopped (disconnect)');
+        }
+      });
+    });
   }
 
   cron.schedule(
