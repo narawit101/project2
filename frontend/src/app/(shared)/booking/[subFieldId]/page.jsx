@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import "@/app/css/booking-slot.css";
 import { useAuth } from "@/app/contexts/AuthContext";
@@ -11,7 +11,6 @@ import "@/app/css/calendar-styles.css";
 export default function Booking() {
   const { subFieldId } = useParams();
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const socketRef = useRef(null);
 
   const [openHours, setOpenHours] = useState("");
   const [closeHours, setCloseHours] = useState("");
@@ -59,13 +58,64 @@ export default function Booking() {
   const [startProcessLoad, SetstartProcessLoad] = useState(false);
   const [facilityAvailability, setFacilityAvailability] = useState({});
   const summaryRef = useRef(null);
-  const [serverTime, setServerTime] = useState(null);
+  const [serverTime, setServerTime] = useState(null);     // เวลาเซิร์ฟเวอร์ที่ sync แล้ว
+  const serverOffsetRef = useRef(0);                      // ms = serverTs - Date.now()
+  const tickRef = useRef(null);
+  const socketRef = useRef(null);
 
   usePreventLeave(startProcessLoad);
   const searchParams = useSearchParams();
   const currentUrl = `/booking/${subFieldId}${
     searchParams.toString() ? `?${searchParams.toString()}` : ""
   }`;
+
+  const fetchServerTimeOnce = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_URL}/booking/server-time`, { credentials: "include" });
+      const data = await res.json();
+      if (data?.timestamp) {
+        const clientTs = Date.now();
+        serverOffsetRef.current = Number(data.timestamp) - clientTs;
+        setServerTime(new Date(clientTs + serverOffsetRef.current));
+      }
+    } catch (e) {
+      console.error("fallback server-time failed:", e);
+    }
+  }, [API_URL]);
+
+  useEffect(() => {
+    const socket = io(API_URL, { transports: ["websocket"], withCredentials: true });
+    socketRef.current = socket;
+
+    const onServerTime = (payload) => {
+      const serverTs = Number(payload?.timestamp);
+      if (!Number.isFinite(serverTs)) return;
+      const clientTs = Date.now();
+      serverOffsetRef.current = serverTs - clientTs;
+      setServerTime(new Date(clientTs + serverOffsetRef.current));
+    };
+
+    socket.on("server_time", onServerTime);
+
+    // fallback ถ้า 3 วิแรกยังไม่ได้เวลา ให้ดึง HTTP ครั้งเดียว
+    const fallback = setTimeout(() => {
+      if (!serverTime) fetchServerTimeOnce();
+    }, 3000);
+
+    // เดินเวลาเองทุก 1 วิ โดยใช้ offset (ไม่ยิง API)
+    tickRef.current = setInterval(() => {
+      setServerTime(new Date(Date.now() + serverOffsetRef.current));
+    }, 1000);
+
+    socket.on("connect_error", (err) => console.error("socket connect_error:", err?.message));
+
+    return () => {
+      clearTimeout(fallback);
+      clearInterval(tickRef.current);
+      socket.off("server_time", onServerTime);
+      socket.disconnect();
+    };
+  }, [API_URL, fetchServerTimeOnce]);
 
   useEffect(() => {
     if (isLoading) return;
@@ -80,23 +130,6 @@ export default function Booking() {
       router.replace("/verification");
     }
   }, [user, isLoading, router, bookingDate]);
-
-  const fetchServerTime = useCallback(async () => {
-    try {
-      const res = await fetch(`${API_URL}/booking/server-time`, {
-        credentials: "include",
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        setServerTime(new Date(data.time));
-      }
-    } catch (error) {
-      console.error("Failed to fetch server time:", error);
-
-      setServerTime(new Date());
-    }
-  }, [API_URL]);
 
   const fetchBookedSlots = useCallback(async () => {
     try {
@@ -145,16 +178,6 @@ export default function Booking() {
       setDataLoading(false);
     }
   }, [API_URL, subFieldId, bookingDate]);
-
-  useEffect(() => {
-    fetchServerTime();
-
-    const interval = setInterval(() => {
-      setServerTime(new Date());
-    }, 300000);
-
-    return () => clearInterval(interval);
-  }, [fetchServerTime]);
 
   useEffect(() => {
     fetchBookedSlots();
@@ -225,7 +248,7 @@ export default function Booking() {
           setMessageType("error");
         }
       } catch (error) {
-        setMessage("ไม่สามารถเชือมต่อกับเซิร์ฟเวอร์ได้", error);
+        setMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้", error);
         setMessageType("error");
       } finally {
         setDataLoading(false);
@@ -517,34 +540,30 @@ export default function Booking() {
     setPayMethod(e.target.value);
   };
 
+  // ใช้ serverTime แทน new Date() ทุกที่ที่ต้องเทียบ “เวลาปัจจุบัน”
   function isPastSlot(slot) {
     if (!serverTime) return false;
-
     const [startTime] = slot.split(" - ");
-    const [hour, minute] = startTime.split(":").map(Number);
+    const [h, m] = startTime.split(":").map(Number);
 
-    const now = serverTime;
     const bookingDateObj = new Date(bookingDateFormatted);
-
-    const isToday =
-      now.toLocaleDateString("en-CA") ===
-      bookingDateObj.toLocaleDateString("en-CA");
-
-    if (!isToday) return false;
-
     const slotDateTime = new Date(bookingDateObj);
-    slotDateTime.setHours(hour);
-    slotDateTime.setMinutes(minute);
-    slotDateTime.setSeconds(0);
+    slotDateTime.setHours(h, m, 0, 0);
 
-    const [openHour] = openHours.split(":").map(Number);
-    const [closeHour] = closeHours.split(":").map(Number);
-
-    if (closeHour < openHour && hour < openHour) {
-      slotDateTime.setDate(slotDateTime.getDate() + 1);
+    // ถ้าสนามข้ามวัน (ปิดหลังเที่ยงคืน) และ slot อยู่หลังปิด-เปิด ให้ปรับวันที่ตามเงื่อนไขของคุณ
+    // ตัวอย่าง (ถ้าปิด < เปิด ถือว่าข้ามวัน)
+    if (openHours && closeHours) {
+      const [oh] = openHours.split(":").map(Number);
+      const [ch] = closeHours.split(":").map(Number);
+      if (ch < oh && h < oh) slotDateTime.setDate(slotDateTime.getDate() + 1);
     }
 
-    return now > slotDateTime;
+    const isSameDay =
+      serverTime.toLocaleDateString("en-CA") ===
+      bookingDateObj.toLocaleDateString("en-CA");
+
+    if (!isSameDay) return false;
+    return serverTime > slotDateTime;
   }
 
   function resetSelection() {
@@ -588,8 +607,8 @@ export default function Booking() {
 
   const today = serverTime || new Date();
 
-  const maxDate = serverTime ? new Date(serverTime) : new Date();
-  maxDate.setDate(maxDate.getDate() + 60);
+  const maxDate = serverTime ? new Date(serverTime.getTime()) : undefined;
+  if (maxDate) maxDate.setDate(maxDate.getDate() + 60);
 
   const tileClassName = ({ date, view }) => {
     const day = date.getDay();

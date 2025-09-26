@@ -121,6 +121,21 @@ module.exports = function (io) {
     }
   }
 
+  
+   // ส่งเวลาเซิร์ฟเวอร์ให้ client ทุกคนผ่าน Socket.IO
+  if (io) {                                  // ตรวจว่ามี instance ของ Socket.IO ถูกส่งเข้ามาหรือไม่
+    // กันสร้าง interval ซ้ำเวลามี reload (เช่น hot-reload / nodemon)
+    if (!global.__serverTimeTicker) {        // ถ้ายังไม่มีตัว interval นี้ในตัวแปร global
+      global.__serverTimeTicker = setInterval(() => {  // สร้าง interval แล้วเก็บ reference ไว้ใน global
+        const now = DateTime.now().setZone('Asia/Bangkok'); // อ่านเวลาปัจจุบันของเซิร์ฟเวอร์ (โซนเวลาไทย)
+        io.emit('server_time', {             // กระจาย event 'server_time' ไปยัง client ทุกคนที่เชื่อมต่ออยู่
+          timestamp: now.toMillis(),         // ส่งค่าเวลาแบบ Unix timestamp หน่วยมิลลิวินาที (เหมาะกับคำนวณ offset)
+          iso: now.toISO(),                  // ส่งค่าเวลาแบบ ISO string (อ่าน/ดีบักง่าย)
+        });
+      }, 60_000);                            // ทำซ้ำทุก 60,000 มิลลิวินาที = 60 วินาที (ปรับได้ตามต้องการ)
+    }
+  }
+
   cron.schedule(
     "*/5 * * * *",
     async () => {
