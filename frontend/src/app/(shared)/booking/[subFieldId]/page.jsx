@@ -151,7 +151,7 @@ export default function Booking() {
 
     const interval = setInterval(() => {
       fetchServerTime();
-    }, 60000);
+    }, 300000);
 
     return () => clearInterval(interval);
   }, [fetchServerTime]);
