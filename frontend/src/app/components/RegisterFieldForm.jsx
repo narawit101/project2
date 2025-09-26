@@ -126,7 +126,7 @@ export default function RegisterFieldForm() {
           name: "",
           price: "",
           sport_id: "",
-          user_id: user.user_id,
+          user_id: user?.user_id,
           addOns: [],
           wid_field: "",
           length_field: "",
@@ -554,19 +554,18 @@ export default function RegisterFieldForm() {
     });
   };
 
-  // ฟังก์ชันแสดง Preview Modal
+
   const handlePreview = (e) => {
     e.preventDefault();
 
-    // ทำการตรวจสอบข้อมูลก่อนแสดง preview
     if (!validateForm()) {
-      return; // หยุดถ้าข้อมูลไม่ถูกต้อง
+      return;
     }
 
     setShowPreview(true);
   };
 
-  // ฟังก์ชันตรวจสอบข้อมูลฟอร์ม
+
   const validateForm = () => {
     if (!user) {
       setMessage("กรุณาเข้าสู่ระบบก่อน!");

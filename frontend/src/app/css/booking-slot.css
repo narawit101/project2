@@ -188,6 +188,21 @@
   padding: 30px;
 }
 
+.local-time-info {
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.local-time-info small {
+  color: #495057;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
 .detail-total-hour {
   border: 1px solid #ddd;
   padding: 12px;

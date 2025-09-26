@@ -150,7 +150,7 @@ export default function Booking() {
     fetchServerTime();
 
     const interval = setInterval(() => {
-      fetchServerTime();
+      setServerTime(new Date());
     }, 300000);
 
     return () => clearInterval(interval);
@@ -1038,6 +1038,23 @@ export default function Booking() {
                 สนาม: {subFieldData}
               </h2>
             )}
+
+            <div className="local-time-info">
+              <small>
+                เวลาปัจจุบัน:{" "}
+                {serverTime
+                  ? serverTime.toLocaleTimeString("th-TH", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : new Date().toLocaleTimeString("th-TH", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}{" "}
+                GMT+7
+              </small>
+            </div>
+
             <div className="time-info">
               <p>
                 วันที่:{" "}
