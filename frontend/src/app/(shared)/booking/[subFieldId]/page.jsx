@@ -103,7 +103,7 @@ useEffect(() => {
 
     const fallback = setTimeout(() => {
       if (!serverTime) fetchServerTimeOnce();
-    }, 3000);
+    }, 1000);
 
     tickRef.current = setInterval(() => {
       setServerTime(new Date(Date.now() + serverOffsetRef.current));
