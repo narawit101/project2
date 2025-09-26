@@ -100,8 +100,8 @@ export default function Booking() {
     // fallback ถ้า 3 วิแรกยังไม่ได้เวลา ให้ดึง HTTP ครั้งเดียว
     const fallback = setTimeout(() => {
       if (!serverTime) fetchServerTimeOnce();
-    }, 3000);
-
+      // console.log("fallback set",fetchServerTimeOnce());
+    }, 1000);
     // เดินเวลาเองทุก 1 วิ โดยใช้ offset (ไม่ยิง API)
     tickRef.current = setInterval(() => {
       setServerTime(new Date(Date.now() + serverOffsetRef.current));
