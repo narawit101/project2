@@ -1190,6 +1190,7 @@ export default function BookingDetail() {
                                         }}
                                         onClick={uploadTotalSlip}
                                       >
+                                        
                                         {startProcessLoad ? (
                                           <span className="dot-loading">
                                             <span className="dot one">●</span>
@@ -1337,6 +1338,20 @@ export default function BookingDetail() {
                               />
                               อัปโหลดสลิปยอดคงเหลือ
                             </label>
+                                <div className="bank-account-info-slip">
+                                    <p>
+                                      <strong>ชื่อเจ้าของบัญชี</strong>{" "}
+                                      {booking.account_holder}
+                                    </p>
+                                    <p>
+                                      <strong>ชื่อธนาคาร</strong>{" "}
+                                      {booking.name_bank}
+                                    </p>
+                                    <p>
+                                      <strong>เลขบัญชี</strong>{" "}
+                                      {booking.number_bank}
+                                    </p>
+                                  </div>
                             {imgPreviewTotal && (
                               <div className="preview-container-order-detail">
                                 <img
