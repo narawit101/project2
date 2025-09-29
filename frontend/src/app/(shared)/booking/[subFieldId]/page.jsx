@@ -1066,7 +1066,7 @@ export default function Booking() {
               </h2>
             )}
 
-            <div className="local-time-info">
+            {/* <div className="local-time-info">
               <small>
                 เวลาปัจจุบัน:{" "}
                 {serverTime
@@ -1080,9 +1080,9 @@ export default function Booking() {
                       minute: "2-digit",
                       second: "2-digit",
                     })}{" "}
-                {/* GMT+7 */}
+                GMT+7
               </small>
-            </div>
+            </div> */}
 
             <div className="time-info">
               <p>
