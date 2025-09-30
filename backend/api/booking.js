@@ -2035,7 +2035,7 @@ LIMIT 1;
           "https://api.slipok.com/api/line/apikey/53359",
           fd,
           {
-            headers: { ...fd.getHeaders(), "x-authorization": "SLIPOK9DHNEZK" },
+            headers: { ...fd.getHeaders(), "x-authorization": process.env.SLIPOK_API_KEY },
             timeout: 15000,
           }
         );
